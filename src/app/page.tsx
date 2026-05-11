@@ -48,6 +48,15 @@ export default function Home() {
           ))}
         </ul>
       </section>
+
+      <footer className="mt-auto border-t border-slate-200 bg-slate-50 py-6 text-center">
+        <p className="text-sm text-slate-600">
+          © {new Date().getFullYear()} Camiprint - Camisetas personalizadas para empresas
+        </p>
+        <p className="mt-2 text-xs text-slate-500">
+          🚀 Sitio actualizado y funcionando correctamente
+        </p>
+      </footer>
     </div>
   );
 }
