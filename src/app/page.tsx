@@ -12,7 +12,7 @@ export default function Home() {
   ];
 
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-10 px-6 py-10 md:px-10">
+    <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-10 px-6 py-10 md:px-10">
       <section className="rounded-2xl bg-gradient-to-r from-slate-900 to-blue-800 p-8 text-white shadow-lg">
         <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-blue-200">
           Camiprint · Venta rápida online
@@ -48,6 +48,6 @@ export default function Home() {
           ))}
         </ul>
       </section>
-    </main>
+    </div>
   );
 }
