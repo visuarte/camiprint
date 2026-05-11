@@ -8,7 +8,7 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
 
 ## Tasks
 
-- [ ] 1. Configuración inicial y estructura del proyecto
+- [x] 1. Configuración inicial y estructura del proyecto
   - Verificar versiones de Next.js 16.2.6, React 19 y Tailwind CSS 4
   - Leer la documentación de Next.js 16 en `node_modules/next/dist/docs/` para identificar breaking changes
   - Crear estructura de directorios para componentes: `src/app/components/`
@@ -18,8 +18,8 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
   - Configurar metadata SEO en `layout.tsx` (título, descripción, keywords, Open Graph)
   - _Requirements: 11.1, 11.2_
 
-- [ ] 2. Implementar Navigation Component
-  - [ ] 2.1 Crear componente Navigation con parte Server y Client
+- [x] 2. Implementar Navigation Component
+  - [x] 2.1 Crear componente Navigation con parte Server y Client
     - Crear `src/app/components/Navigation.tsx` como Client Component ('use client')
     - Implementar estructura HTML semántica con `<nav>` y `<header>`
     - Añadir logo de Camiprint en el lado izquierdo
@@ -28,7 +28,7 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Implementar posicionamiento fijo con `position: fixed` y `backdrop-blur`
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.8_
   
-  - [ ] 2.2 Implementar menú móvil responsive
+  - [x] 2.2 Implementar menú móvil responsive
     - Añadir estado `isMobileMenuOpen` con useState
     - Implementar icono hamburguesa visible solo en viewport < 768px
     - Crear menú móvil que se desliza desde la derecha con animación transform
@@ -37,14 +37,14 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Asegurar que todos los enlaces de navegación funcionen con smooth scroll
     - _Requirements: 1.5, 1.6, 1.7, 9.2, 9.6_
   
-  - [ ]* 2.3 Escribir tests unitarios para Navigation
+  - [x] 2.3 Escribir tests unitarios para Navigation
     - Test: renderiza todos los enlaces de navegación
     - Test: menú móvil se abre y cierra correctamente
     - Test: botón CTA está presente y enlaza a #contacto
     - _Requirements: 1.1, 1.2, 1.3_
 
 - [ ] 3. Implementar Hero Section
-  - [ ] 3.1 Crear componente Hero
+  - [x] 3.1 Crear componente Hero
     - Crear `src/app/components/Hero.tsx` como Server Component
     - Implementar estructura HTML semántica con `<section>` y heading `<h1>`
     - Añadir título principal con la propuesta de valor de Camiprint
@@ -53,7 +53,7 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Asegurar texto responsive (text-3xl en móvil, text-5xl en desktop)
     - _Requirements: 2.1, 2.2, 2.8, 9.5_
   
-  - [ ] 3.2 Añadir CTAs y trust indicators
+  - [x] 3.2 Añadir CTAs y trust indicators
     - Implementar botón CTA primario "Ver Ofertas" que enlaza a #ofertas
     - Implementar botón CTA secundario "Solicitar Cotización" que enlaza a #contacto
     - Añadir trust indicators: "Entrega en 7-10 días", "Desde 50 unidades", "Diseño gratuito"
@@ -61,7 +61,7 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Asegurar contraste de color adecuado (ratio 4.5:1) para accesibilidad
     - _Requirements: 2.3, 2.4, 2.5, 2.6, 2.7, 10.1, 10.2, 11.4_
   
-  - [ ]* 3.3 Escribir tests unitarios para Hero
+  - [x] 3.3 Escribir tests unitarios para Hero
     - Test: renderiza heading y subheading correctamente
     - Test: ambos CTAs están presentes con texto correcto
     - Test: trust indicators se muestran correctamente

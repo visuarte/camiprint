@@ -31,7 +31,7 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 
 **User Story:** Como usuario, quiero una barra de navegación clara y accesible, para poder navegar fácilmente por las diferentes secciones de la página.
 
-#### Acceptance Criteria
+#### Acceptance Criteria 1
 
 1. THE Navigation_Bar SHALL display the Camiprint logo on the left side
 2. THE Navigation_Bar SHALL include navigation links to all main sections (Inicio, Ofertas, Proceso, Testimonios, FAQ, Contacto)
@@ -46,7 +46,7 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 
 **User Story:** Como usuario, quiero una sección hero impactante y clara, para entender inmediatamente la propuesta de valor de Camiprint.
 
-#### Acceptance Criteria
+#### Acceptance Criteria 2
 
 1. THE Hero_Section SHALL display a main heading with the value proposition
 2. THE Hero_Section SHALL display a descriptive subheading explaining the service
@@ -61,7 +61,7 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 
 **User Story:** Como usuario, quiero ver claramente los precios y descuentos por volumen, para tomar una decisión informada sobre mi pedido.
 
-#### Acceptance Criteria
+#### Acceptance Criteria 3
 
 1. THE Pricing_Section SHALL display at least three pricing tiers (10+, 25+, 50+ units)
 2. FOR EACH pricing tier, THE Pricing_Section SHALL display the quantity range, price per unit, and percentage savings
@@ -75,7 +75,7 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 
 **User Story:** Como usuario, quiero entender el proceso de compra paso a paso, para saber qué esperar al hacer un pedido.
 
-#### Acceptance Criteria
+#### Acceptance Criteria 4
 
 1. THE Process_Section SHALL display at least four steps in the purchase process
 2. FOR EACH step, THE Process_Section SHALL display a step number, title, and brief description
@@ -89,7 +89,7 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 
 **User Story:** Como usuario, quiero leer opiniones de otros clientes, para confiar en la calidad del servicio de Camiprint.
 
-#### Acceptance Criteria
+#### Acceptance Criteria 5
 
 1. THE Testimonial_Section SHALL display at least three customer testimonials
 2. FOR EACH testimonial, THE Testimonial_Section SHALL display customer name, company name, and testimonial text
@@ -103,7 +103,7 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 
 **User Story:** Como usuario, quiero encontrar respuestas a preguntas comunes, para resolver mis dudas sin necesidad de contactar.
 
-#### Acceptance Criteria
+#### Acceptance Criteria 6
 
 1. THE FAQ_Section SHALL display at least six frequently asked questions with answers
 2. WHEN a User clicks a question, THE FAQ_Section SHALL expand to show the answer
@@ -118,7 +118,7 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 
 **User Story:** Como usuario, quiero solicitar una cotización fácilmente, para recibir información personalizada sobre mi pedido.
 
-#### Acceptance Criteria
+#### Acceptance Criteria 7
 
 1. THE Contact_Form SHALL include fields for: name, email, phone, company name, quantity, and message
 2. THE Contact_Form SHALL mark required fields with a visual indicator (asterisk)
@@ -135,7 +135,7 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 
 **User Story:** Como usuario, quiero acceder a información adicional y enlaces importantes en el footer, para encontrar detalles de contacto y políticas.
 
-#### Acceptance Criteria
+#### Acceptance Criteria 8
 
 1. THE Footer SHALL display the Camiprint logo
 2. THE Footer SHALL include contact information (email, phone, address)
@@ -151,7 +151,7 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 
 **User Story:** Como usuario móvil, quiero que la página se vea y funcione correctamente en mi dispositivo, para tener una buena experiencia de navegación.
 
-#### Acceptance Criteria
+#### Acceptance Criteria 9
 
 1. THE Landing_Page SHALL display correctly on viewport widths from 320 pixels to 1920 pixels
 2. WHEN the viewport width is less than 768 pixels, THE Landing_Page SHALL use mobile-optimized layouts
@@ -166,7 +166,7 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 
 **User Story:** Como propietario del negocio, quiero maximizar las conversiones de visitantes a leads, para aumentar las ventas.
 
-#### Acceptance Criteria
+#### Acceptance Criteria 10
 
 1. THE Landing_Page SHALL include at least three visible CTA_Buttons above the fold
 2. THE Landing_Page SHALL use contrasting colors for all CTA_Buttons to ensure visibility
@@ -181,7 +181,7 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 
 **User Story:** Como usuario con discapacidad, quiero poder navegar y usar la página con tecnologías asistivas, para acceder a la información y servicios.
 
-#### Acceptance Criteria
+#### Acceptance Criteria 11
 
 1. THE Landing_Page SHALL use semantic HTML elements (header, nav, main, section, footer)
 2. THE Landing_Page SHALL include alt text for all images
@@ -196,7 +196,7 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 
 **User Story:** Como usuario, quiero una experiencia visual fluida y moderna, para disfrutar de una navegación agradable.
 
-#### Acceptance Criteria
+#### Acceptance Criteria 12
 
 1. WHEN a User scrolls to a new section, THE Landing_Page SHALL animate elements with a fade-in effect
 2. WHEN a User hovers over a CTA_Button, THE Landing_Page SHALL display a smooth hover transition
@@ -205,4 +205,3 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 5. THE Landing_Page SHALL respect user's prefers-reduced-motion setting and disable animations accordingly
 6. WHEN the Mobile_Menu opens or closes, THE Landing_Page SHALL animate the transition smoothly
 7. THE Landing_Page SHALL avoid animations that could trigger motion sickness (excessive rotation, rapid flashing)
-
