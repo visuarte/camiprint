@@ -1,30 +1,23 @@
-import Navigation from './components/Navigation';
+import Header from './components/Header';
 import Hero from './components/Hero';
-import Pricing from './components/Pricing';
+import PricingBand from './components/PricingBand';
+import StatsBanner from './components/StatsBanner';
 import Process from './components/Process';
+import TestimonialsSection from './components/TestimonialsSection';
+import FAQSection from './components/FAQSection';
+import ContactSection from './components/ContactSection';
 
 export default function Home() {
   return (
     <>
-      <Navigation />
+      <Header />
       <Hero />
-      <Pricing />
+      <PricingBand />
+      <StatsBanner />
       <Process />
-      <section id="testimonios" className="scroll-mt-20 bg-gray-50 px-4 py-16 md:px-6 md:py-24">
-        <div className="mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold text-gray-900 md:text-4xl">Testimonios</h2>
-        </div>
-      </section>
-      <section id="faq" className="scroll-mt-20 px-4 py-16 md:px-6 md:py-24">
-        <div className="mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold text-gray-900 md:text-4xl">FAQ</h2>
-        </div>
-      </section>
-      <section id="contacto" className="scroll-mt-20 bg-slate-900 px-4 py-16 text-white md:px-6 md:py-24">
-        <div className="mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold md:text-4xl">Contacto</h2>
-        </div>
-      </section>
+      <TestimonialsSection />
+      <FAQSection />
+      <ContactSection />
     </>
   );
 }
