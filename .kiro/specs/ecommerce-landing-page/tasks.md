@@ -200,7 +200,7 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Test: cantidad se pre-selecciona desde URL parameter
     - _Requirements: 7.1, 7.3, 7.4, 7.7, 7.8_
   
-  - [ ]* 9.5 Escribir tests de integración para flujo de cotización
+  - [x]* 9.5 Escribir tests de integración para flujo de cotización
     - Test: usuario hace clic en CTA de pricing tier
     - Test: formulario aparece en viewport con cantidad pre-seleccionada
     - Test: usuario completa formulario y recibe mensaje de éxito
