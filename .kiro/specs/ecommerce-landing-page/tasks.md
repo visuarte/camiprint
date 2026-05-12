@@ -43,7 +43,7 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Test: botón CTA está presente y enlaza a #contacto
     - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 3. Implementar Hero Section
+- [x] 3. Implementar Hero Section
   - [x] 3.1 Crear componente Hero
     - Crear `src/app/components/Hero.tsx` como Server Component
     - Implementar estructura HTML semántica con `<section>` y heading `<h1>`
@@ -67,8 +67,8 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Test: trust indicators se muestran correctamente
     - _Requirements: 2.1, 2.2, 2.3, 2.4_
 
-- [ ] 4. Implementar Pricing Section
-  - [ ] 4.1 Crear datos y componente Pricing
+- [x] 4. Implementar Pricing Section
+  - [x] 4.1 Crear datos y componente Pricing
     - Crear archivo de datos con los 3 pricing tiers (10+, 25+, 50+ unidades)
     - Definir interface `PricingTier` con id, quantity, pricePerUnit, savings, isPopular
     - Crear `src/app/components/Pricing.tsx` como Server Component
@@ -76,28 +76,28 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Renderizar cada tier como una card con sombra y hover effect
     - _Requirements: 3.1, 3.2, 3.6, 9.2_
   
-  - [ ] 4.2 Añadir destacado y CTAs por tier
+  - [x] 4.2 Añadir destacado y CTAs por tier
     - Marcar el tier de 25+ como "Más Popular" con badge y borde destacado
     - Añadir botón CTA "Solicitar Cotización" en cada tier
     - Implementar enlaces que incluyan parámetro de cantidad: `#contacto?quantity=tier-{id}`
     - Añadir nota disclaimer: "Precios orientativos. Cotización final según diseño y especificaciones"
     - _Requirements: 3.3, 3.4, 3.5, 3.7_
   
-  - [ ]* 4.3 Escribir tests unitarios para Pricing
+  - [x] 4.3 Escribir tests unitarios para Pricing
     - Test: renderiza los 3 tiers correctamente
     - Test: tier popular tiene indicador visual
     - Test: cada tier tiene CTA con enlace correcto
     - _Requirements: 3.1, 3.2, 3.3, 3.4_
 
-- [ ] 5. Checkpoint - Verificar estructura base
+- [x] 5. Checkpoint - Verificar estructura base
   - Asegurar que Navigation, Hero y Pricing se renderizan correctamente
   - Verificar navegación smooth scroll entre secciones
   - Probar responsive design en móvil (320px), tablet (768px) y desktop (1280px)
   - Verificar que no hay errores de consola
   - Preguntar al usuario si hay dudas o ajustes necesarios
 
-- [ ] 6. Implementar Process Section
-  - [ ] 6.1 Crear datos y componente Process
+- [x] 6. Implementar Process Section
+  - [x] 6.1 Crear datos y componente Process
     - Crear archivo de datos con los 4 pasos del proceso
     - Definir interface `ProcessStep` con stepNumber, title, description, icon, timeframe
     - Crear `src/app/components/Process.tsx` como Server Component
@@ -105,13 +105,13 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Renderizar cada paso con número, icono, título, descripción y timeframe
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 9.2_
   
-  - [ ] 6.2 Añadir conectores visuales y CTA final
+  - [x] 6.2 Añadir conectores visuales y CTA final
     - Añadir líneas conectoras entre pasos (solo visible en desktop)
     - Implementar botón CTA final "Comenzar Ahora" que enlaza a #contacto
     - Asegurar que los iconos sean accesibles (usar emojis o SVG con aria-label)
     - _Requirements: 4.7, 11.5_
   
-  - [ ]* 6.3 Escribir tests unitarios para Process
+  - [x] 6.3 Escribir tests unitarios para Process
     - Test: renderiza los 4 pasos en orden correcto
     - Test: cada paso muestra timeframe
     - Test: CTA final está presente
