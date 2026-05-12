@@ -73,3 +73,33 @@ Evidencia complementaria existente:
 - Frontend se considera cerrado de momento para evolucion.
 - Se habilita inicio de fase backend bajo reglas definidas en `CIERRE_FRONTEND_Y_REGLAS_BACKEND.md`.
 - Cualquier cambio posterior en frontend debe limitarse a integracion backend o correcciones criticas.
+
+## 7. Addendum - Blindaje de arquitectura (actualizacion)
+
+Fecha de actualizacion: 2026-05-12
+
+Se incorporo un refuerzo explicito para evitar mezcla de conceptos entre UI, API y Engine:
+
+1. Barrera estatica en commit
+- Se activo y endurecio el hook `architecture-check.hook`.
+- El hook bloquea:
+  - imports de `next/server`, `next/navigation` y `react` dentro de `src/engine` o `src/core`.
+  - imports directos desde Client Components hacia capas `engine/core/server/db` y ORMs.
+  - imports hacia `engine/core` fuera del Puente permitido (`src/app/api/...` o `*.action.ts(x)`).
+- La salida de error ahora incluye archivo, linea, columna e import exacto.
+
+2. Candado nativo de compilador
+- Se instalo `server-only` y se agrego guardrail en `src/engine/_engine.guard.ts`.
+- Se exige `import 'server-only';` para archivos de Engine/Core (excepto tests y tipos), reforzando aislamiento server-side.
+
+3. Integracion operativa
+- Script de control agregado en `package.json`: `arch:check`.
+- Hook pre-commit operativo en `.githooks/pre-commit`.
+- Configuracion local confirmada: `core.hooksPath = .githooks`.
+
+4. Verificacion de alineacion posterior al refuerzo
+- `npm run arch:check`: OK.
+- `npm run test`: OK (9 files, 44 tests en verde).
+
+Conclusion del addendum:
+- La implementacion queda alineada con arquitectura de 3 capas y control persistente, con barreras preventivas en commit, compilacion y estructura.
