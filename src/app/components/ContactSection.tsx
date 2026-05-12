@@ -39,6 +39,26 @@ const quantityFromTierMap: Record<string, string> = {
   'tier-50': '50-99',
 };
 
+const resolvePrefilledQuantity = (): string | null => {
+  if (typeof window === 'undefined') return null;
+
+  const queryParams = new URLSearchParams(window.location.search);
+  const queryValue = queryParams.get('quantity');
+  if (queryValue) {
+    if (quantityFromTierMap[queryValue]) return quantityFromTierMap[queryValue];
+    if (quantityOptions.includes(queryValue)) return queryValue;
+  }
+
+  const hash = window.location.hash || '';
+  const queryInHash = hash.includes('?') ? hash.split('?')[1] : '';
+  const hashParams = new URLSearchParams(queryInHash);
+  const hashQuantity = hashParams.get('quantity');
+  if (!hashQuantity) return null;
+  if (quantityFromTierMap[hashQuantity]) return quantityFromTierMap[hashQuantity];
+  if (quantityOptions.includes(hashQuantity)) return hashQuantity;
+  return null;
+};
+
 const ContactSection = () => {
   const [state, setState] = useState<ContactFormState>({
     formData: initialForm,
@@ -47,6 +67,7 @@ const ContactSection = () => {
     isSubmitting: false,
     isSuccess: false,
   });
+  const [prefilledQuantity, setPrefilledQuantity] = useState<string | null>(null);
 
   const formData = state.formData;
   const errors = state.errors;
@@ -79,33 +100,30 @@ const ContactSection = () => {
     return undefined;
   };
 
-  const prefilledQuantity = useMemo(() => {
-    if (typeof window === 'undefined') return null;
-
-    const queryParams = new URLSearchParams(window.location.search);
-    const queryValue = queryParams.get('quantity');
-    if (queryValue) {
-      if (quantityFromTierMap[queryValue]) return quantityFromTierMap[queryValue];
-      if (quantityOptions.includes(queryValue)) return queryValue;
-    }
-
-    const hash = window.location.hash || '';
-    const queryInHash = hash.includes('?') ? hash.split('?')[1] : '';
-    const hashParams = new URLSearchParams(queryInHash);
-    const hashQuantity = hashParams.get('quantity');
-    if (!hashQuantity) return null;
-    if (quantityFromTierMap[hashQuantity]) return quantityFromTierMap[hashQuantity];
-    if (quantityOptions.includes(hashQuantity)) return hashQuantity;
-    return null;
-  }, []);
-
   useEffect(() => {
-    if (!prefilledQuantity) return;
-    setState((prev) => ({
-      ...prev,
-      formData: { ...prev.formData, quantity: prefilledQuantity },
-    }));
-  }, [prefilledQuantity]);
+    const syncPrefilledQuantity = () => {
+      const nextQuantity = resolvePrefilledQuantity();
+      if (!nextQuantity) return;
+
+      setPrefilledQuantity(nextQuantity);
+      setState((prev) => {
+        if (prev.formData.quantity === nextQuantity) return prev;
+        return {
+          ...prev,
+          formData: { ...prev.formData, quantity: nextQuantity },
+        };
+      });
+    };
+
+    syncPrefilledQuantity();
+    window.addEventListener('hashchange', syncPrefilledQuantity);
+    window.addEventListener('popstate', syncPrefilledQuantity);
+
+    return () => {
+      window.removeEventListener('hashchange', syncPrefilledQuantity);
+      window.removeEventListener('popstate', syncPrefilledQuantity);
+    };
+  }, []);
 
   const inputErrorClass = (field: keyof ContactFormData) =>
     errors[field] && state.touched[field] ? 'border-red-300 ring-red-300' : 'border-white/15 ring-accent-400';

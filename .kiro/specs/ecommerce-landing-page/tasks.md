@@ -410,7 +410,7 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Verificar que las imágenes tienen alt text
     - _Requirements: 11.2, 11.8_
 
-- [ ] 20. Checkpoint final - Revisión completa
+- [x] 20. Checkpoint final - Revisión completa
   - Ejecutar build de producción: `npm run build`
   - Verificar que no hay errores de build
   - Ejecutar en modo producción: `npm run start`
@@ -419,6 +419,7 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
   - Verificar accesibilidad con herramientas automatizadas
   - Revisar responsive design en todos los breakpoints
   - Preguntar al usuario si está listo para despliegue o si necesita ajustes finales
+  - Nota: en Windows, Lighthouse CLI reporta `EPERM` al limpiar temporales de Chrome, pero genera JSON; métricas y accesibilidad se respaldan además con `PERFORMANCE_CHECKPOINT_17.md` y `TESTING_CHECKPOINT_18.md`.
 
 ## Notes
 
@@ -431,3 +432,5 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
 - Todas las animaciones deben respetar la preferencia `prefers-reduced-motion` del usuario
 - El objetivo de rendimiento es Lighthouse score > 90 en todas las métricas
 - La accesibilidad debe cumplir WCAG 2.1 nivel AA como mínimo
+- Cierre temporal de frontend y reglas de backend documentadas en `CIERRE_FRONTEND_Y_REGLAS_BACKEND.md`
+- Auditoría consolidada de implementación en `AUDITORIA_CIERRE_IMPLEMENTACION_FRONTEND.md`

@@ -1,5 +1,3 @@
-import Link from 'next/link';
-
 interface PricingTier {
   id: string;
   quantity: string;
@@ -98,7 +96,7 @@ const Pricing = () => {
                   ))}
                 </ul>
 
-                <Link
+                <a
                   href={`#contacto?quantity=${tier.id}`}
                   className={`block w-full rounded-lg border px-4 py-3 text-center font-semibold transition-all hover:brightness-110 ${
                     tier.isPopular
@@ -107,7 +105,7 @@ const Pricing = () => {
                   }`}
                 >
                   Solicitar Cotización
-                </Link>
+                </a>
               </div>
             </article>
           ))}
