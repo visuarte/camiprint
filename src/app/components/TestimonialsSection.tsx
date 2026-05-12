@@ -9,6 +9,9 @@ const TestimonialsSection = () => {
           <p className="mx-auto mt-4 max-w-2xl text-base text-cami-300 md:text-lg">
             Casos reales de empresas que confiaron en Camiprint para su ropa laboral y campanas de marca.
           </p>
+          <p className="mx-auto mt-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-cami-100">
+            4.9/5 en satisfaccion con mas de 1200 pedidos entregados
+          </p>
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">

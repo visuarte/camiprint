@@ -6,6 +6,8 @@ import Script from 'next/script';
 const Hero = () => {
   const [units, setUnits] = useState(1);
   const [modelReady, setModelReady] = useState(false);
+  const [shouldLoadModel, setShouldLoadModel] = useState(false);
+  const trustSignals = ['Entrega estimada 7-10 dias', 'Diseño tecnico incluido', 'Produccion para empresas'];
 
   const handleDecrease = () => setUnits((prev) => Math.max(1, prev - 1));
   const handleIncrease = () => setUnits((prev) => prev + 1);
@@ -16,17 +18,23 @@ const Hero = () => {
   };
 
   useEffect(() => {
+    if (!shouldLoadModel) {
+      return;
+    }
+
     const timer = window.setTimeout(() => setModelReady(true), 120);
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [shouldLoadModel]);
 
   return (
-    <section id="inicio" data-reveal data-reveal-delay="0" className="scroll-mt-20 bg-cami-hero bg-cami-noise px-4 pb-10 pt-12 md:px-6 md:pb-14 md:pt-20">
-      <Script
-        type="module"
-        src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
-        strategy="afterInteractive"
-      />
+    <section id="inicio" data-reveal data-reveal-delay="0" className="scroll-mt-20 bg-cami-hero px-4 pb-10 pt-12 md:px-6 md:pb-14 md:pt-20">
+      {shouldLoadModel ? (
+        <Script
+          type="module"
+          src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
+          strategy="lazyOnload"
+        />
+      ) : null}
 
       <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-5 lg:gap-6">
         <div className="lg:col-span-3">
@@ -35,7 +43,7 @@ const Hero = () => {
           </h1>
 
           <p className="mt-5 max-w-xl text-lg text-cami-200">
-            Plataforma sencilla de usar para impresion de ropa de alta calidad a pedido. Crea tu mercancia sin esfuerzo.
+            Impresion de ropa de alta calidad a pedido. Crea tus camisetas sin esfuerzo.
           </p>
 
           <div className="mt-7 inline-flex items-center overflow-hidden rounded-xl border border-white/20 bg-white/10 shadow-glow backdrop-blur-sm">
@@ -67,13 +75,38 @@ const Hero = () => {
             </div>
           </div>
 
-          <a
-            href="#contacto"
-            onClick={handleRequestQuote}
-            className="mt-5 inline-flex w-full max-w-md items-center justify-center rounded-xl border border-white/35 bg-metal-button px-6 py-3 text-xl font-semibold text-cami-100 shadow-metal transition-all hover:brightness-110"
-          >
-            Recibir propuesta en minutos
-          </a>
+          <div className="mt-5 flex w-full max-w-xl flex-col gap-3 sm:flex-row">
+            <a
+              href="#contacto"
+              onClick={handleRequestQuote}
+              className="inline-flex w-full items-center justify-center rounded-xl border border-white/35 bg-metal-button px-6 py-3 text-lg font-semibold text-cami-100 shadow-metal transition-all hover:brightness-110"
+            >
+              Recibir propuesta en minutos
+            </a>
+            <a
+              href="#ofertas"
+              className="inline-flex w-full items-center justify-center rounded-xl border border-white/20 bg-white/10 px-6 py-3 text-lg font-semibold text-cami-100 shadow-glow transition-all hover:brightness-110"
+            >
+              Ver ofertas por volumen
+            </a>
+          </div>
+
+          <div className="mt-5 flex flex-wrap gap-2">
+            {trustSignals.map((signal) => (
+              <span
+                key={signal}
+                className="inline-flex items-center rounded-full border border-white/18 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-cami-200"
+              >
+                {signal}
+              </span>
+            ))}
+          </div>
+
+          <div className="mt-5 grid max-w-lg grid-cols-2 gap-3 text-sm text-cami-200 sm:grid-cols-3">
+            <p className="rounded-lg border border-white/12 bg-cami-900/60 px-3 py-2"><span className="font-bold text-white">1200+</span> pedidos entregados</p>
+            <p className="rounded-lg border border-white/12 bg-cami-900/60 px-3 py-2"><span className="font-bold text-white">4.9/5</span> valoracion media</p>
+            <p className="rounded-lg border border-white/12 bg-cami-900/60 px-3 py-2 sm:col-span-1 col-span-2"><span className="font-bold text-white">72h</span> primera propuesta</p>
+          </div>
         </div>
 
         <div className="relative mx-auto h-[360px] w-full max-w-[430px] lg:col-span-2 lg:h-[460px] lg:max-w-[520px]">
@@ -83,19 +116,32 @@ const Hero = () => {
               modelReady ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
             }`}
           >
-            <model-viewer
-              src="/models/camiseta-camiprint.glb"
-              alt="Modelo 3D de camiseta Camiprint"
-              auto-rotate
-              auto-rotate-delay="0"
-              rotation-per-second="18deg"
-              camera-orbit="20deg 78deg 115%"
-              field-of-view="32deg"
-              shadow-intensity="1"
-              exposure="0.9"
-              className="h-full w-full rounded-2xl bg-transparent pointer-events-none select-none"
-              style={{ ['--poster-color' as string]: 'transparent' }}
-            />
+            {shouldLoadModel ? (
+              <model-viewer
+                src="/models/camiseta-camiprint.glb"
+                alt="Modelo 3D de camiseta Camiprint"
+                auto-rotate
+                auto-rotate-delay="0"
+                rotation-per-second="18deg"
+                camera-orbit="20deg 78deg 115%"
+                field-of-view="32deg"
+                shadow-intensity="1"
+                exposure="0.9"
+                className="h-full w-full rounded-2xl bg-transparent pointer-events-none select-none"
+                style={{ ['--poster-color' as string]: 'transparent' }}
+              />
+            ) : (
+              <div className="flex flex-col items-center gap-4 px-6 text-center">
+                <p className="text-sm text-cami-200">Carga la vista 3D interactiva cuando la necesites.</p>
+                <button
+                  type="button"
+                  onClick={() => setShouldLoadModel(true)}
+                  className="inline-flex items-center justify-center rounded-lg border border-white/25 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition-all hover:brightness-110"
+                >
+                  Cargar modelo 3D
+                </button>
+              </div>
+            )}
           </div>
 
           <span className="absolute left-8 top-16 h-28 w-28 rounded-full border border-white/20 opacity-50" aria-hidden="true" />

@@ -196,6 +196,10 @@ const ContactSection = () => {
           className="rounded-2xl border border-white/12 bg-gradient-to-b from-cami-800 to-cami-900 p-6 shadow-glow md:p-8"
         >
           <div className="grid grid-cols-1 gap-4">
+            <p className="rounded-lg border border-accent-400/30 bg-accent-400/10 px-3 py-2 text-xs font-medium text-cami-100">
+              Cupos de produccion de esta semana limitados. Te confirmamos disponibilidad y precio en la primera respuesta.
+            </p>
+
             <div>
               <label htmlFor="name" className="mb-1 block text-sm font-medium text-cami-200">Nombre *</label>
               <input
@@ -283,6 +287,9 @@ const ContactSection = () => {
 
             <p className="text-xs text-cami-300">
               Tus datos estan protegidos y no seran compartidos con terceros.
+            </p>
+            <p className="text-xs text-cami-300">
+              Solo pedimos 5 campos obligatorios para darte una cotizacion precisa.
             </p>
 
             <button

@@ -53,6 +53,11 @@ const Pricing = () => {
           <p className="mx-auto max-w-2xl text-base text-cami-300 md:text-lg">
             Cuantas más camisetas, mayor descuento. Precios competitivos para tu negocio.
           </p>
+          <div className="mx-auto mt-6 grid max-w-4xl grid-cols-1 gap-3 text-sm text-cami-200 sm:grid-cols-3">
+            <p className="rounded-lg border border-white/12 bg-cami-900/60 px-3 py-2"><span className="font-bold text-white">+300 empresas</span> activas este ano</p>
+            <p className="rounded-lg border border-white/12 bg-cami-900/60 px-3 py-2"><span className="font-bold text-white">98%</span> de entregas en plazo</p>
+            <p className="rounded-lg border border-white/12 bg-cami-900/60 px-3 py-2"><span className="font-bold text-white">Garantia</span> de reimpresion si hay fallo</p>
+          </div>
         </div>
 
         {/* Pricing Cards Grid */}
