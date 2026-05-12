@@ -326,36 +326,36 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
   - Verificar que las animaciones respetan prefers-reduced-motion
   - Preguntar al usuario si hay dudas o ajustes necesarios
 
-- [ ] 16. Implementar optimizaciones de conversión
-  - [ ] 16.1 Optimizar CTAs y trust signals
+- [x] 16. Implementar optimizaciones de conversión
+  - [x] 16.1 Optimizar CTAs y trust signals
     - Verificar que hay al menos 3 CTAs visibles above the fold
     - Asegurar que todos los CTAs usan colores contrastantes
     - Verificar que el lenguaje de los CTAs es orientado a la acción
     - Añadir trust signals en al menos 2 secciones (hero y pricing)
     - _Requirements: 10.1, 10.2, 10.4_
   
-  - [ ] 16.2 Añadir elementos de social proof
+  - [x] 16.2 Añadir elementos de social proof
     - Asegurar que los testimonios son visibles sin scroll excesivo
     - Considerar añadir contador de clientes o años en el negocio
     - Añadir garantías o badges de confianza si están disponibles
     - _Requirements: 10.3, 10.6_
   
-  - [ ] 16.3 Optimizar formulario para conversión
+  - [x] 16.3 Optimizar formulario para conversión
     - Verificar que el formulario tiene máximo 6 campos requeridos
     - Asegurar que los campos están claramente etiquetados
     - Verificar que los mensajes de error son claros y útiles
     - Considerar añadir indicadores de urgencia si son apropiados
     - _Requirements: 10.5, 10.7_
 
-- [ ] 17. Optimización de rendimiento
-  - [ ] 17.1 Optimizar carga de recursos
+- [x] 17. Optimización de rendimiento
+  - [x] 17.1 Optimizar carga de recursos
     - Configurar `next/font` para optimizar carga de fuentes web
     - Verificar que las imágenes usan formatos modernos (WebP)
     - Asegurar que Tailwind purga CSS no utilizado
     - Verificar que no hay imports innecesarios en los componentes
     - _Requirements: 10.8_
   
-  - [ ] 17.2 Ejecutar auditoría de rendimiento
+  - [x] 17.2 Ejecutar auditoría de rendimiento
     - Ejecutar Lighthouse en modo incógnito
     - Verificar First Contentful Paint (FCP) < 1.5s
     - Verificar Largest Contentful Paint (LCP) < 2.5s
@@ -364,19 +364,19 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Objetivo: Performance score > 90
     - _Requirements: 10.8_
   
-  - [ ]* 17.3 Optimizar bundle size
+  - [x]* 17.3 Optimizar bundle size
     - Ejecutar `npm run build` y revisar el tamaño de los bundles
     - Identificar dependencias grandes innecesarias
     - Considerar code splitting si es necesario
     - Verificar que no hay duplicación de código
 
-- [ ] 18. Testing completo
-  - [ ]* 18.1 Ejecutar suite de tests unitarios
+- [x] 18. Testing completo
+  - [x]* 18.1 Ejecutar suite de tests unitarios
     - Ejecutar todos los tests unitarios con `npm run test`
     - Asegurar que todos los tests pasan
     - Verificar cobertura de código (objetivo: >80% para componentes principales)
   
-  - [ ]* 18.2 Ejecutar tests de integración
+  - [x]* 18.2 Ejecutar tests de integración
     - Ejecutar tests de flujos de usuario completos
     - Verificar flujo de cotización end-to-end
     - Verificar flujo de navegación entre secciones
@@ -389,13 +389,13 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Probar en Chrome Mobile (Android)
     - Probar en Safari Mobile (iOS)
   
-  - [ ]* 18.4 Testing de accesibilidad automatizado
+  - [x]* 18.4 Testing de accesibilidad automatizado
     - Ejecutar axe DevTools o similar
     - Verificar que no hay violaciones críticas de WCAG 2.1 AA
     - Corregir cualquier issue encontrado
 
-- [ ] 19. Configuración de metadata y SEO
-  - [ ] 19.1 Configurar metadata en layout.tsx
+- [x] 19. Configuración de metadata y SEO
+  - [x] 19.1 Configurar metadata en layout.tsx
     - Añadir título: "Camiprint - Camisetas Personalizadas para Empresas"
     - Añadir descripción meta optimizada para SEO
     - Añadir keywords relevantes
@@ -403,7 +403,7 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Añadir favicon y app icons
     - _Requirements: 11.1_
   
-  - [ ] 19.2 Verificar SEO básico
+  - [x] 19.2 Verificar SEO básico
     - Verificar que hay un solo h1 por página
     - Verificar jerarquía de headings correcta
     - Asegurar que todos los enlaces tienen texto descriptivo
