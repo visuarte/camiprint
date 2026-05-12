@@ -6,7 +6,6 @@ import Script from 'next/script';
 const Hero = () => {
   const [units, setUnits] = useState(1);
   const [modelReady, setModelReady] = useState(false);
-  const [shouldLoadModel, setShouldLoadModel] = useState(false);
   const trustSignals = ['Entrega estimada 7-10 dias', 'Diseño tecnico incluido', 'Produccion para empresas'];
 
   const handleDecrease = () => setUnits((prev) => Math.max(1, prev - 1));
@@ -18,23 +17,17 @@ const Hero = () => {
   };
 
   useEffect(() => {
-    if (!shouldLoadModel) {
-      return;
-    }
-
     const timer = window.setTimeout(() => setModelReady(true), 120);
     return () => window.clearTimeout(timer);
-  }, [shouldLoadModel]);
+  }, []);
 
   return (
     <section id="inicio" data-reveal data-reveal-delay="0" className="scroll-mt-20 bg-cami-hero px-4 pb-10 pt-12 md:px-6 md:pb-14 md:pt-20">
-      {shouldLoadModel ? (
-        <Script
-          type="module"
-          src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
-          strategy="lazyOnload"
-        />
-      ) : null}
+      <Script
+        type="module"
+        src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
+        strategy="afterInteractive"
+      />
 
       <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-5 lg:gap-6">
         <div className="lg:col-span-3">
@@ -116,32 +109,19 @@ const Hero = () => {
               modelReady ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
             }`}
           >
-            {shouldLoadModel ? (
-              <model-viewer
-                src="/models/camiseta-camiprint.glb"
-                alt="Modelo 3D de camiseta Camiprint"
-                auto-rotate
-                auto-rotate-delay="0"
-                rotation-per-second="18deg"
-                camera-orbit="20deg 78deg 115%"
-                field-of-view="32deg"
-                shadow-intensity="1"
-                exposure="0.9"
-                className="h-full w-full rounded-2xl bg-transparent pointer-events-none select-none"
-                style={{ ['--poster-color' as string]: 'transparent' }}
-              />
-            ) : (
-              <div className="flex flex-col items-center gap-4 px-6 text-center">
-                <p className="text-sm text-cami-200">Carga la vista 3D interactiva cuando la necesites.</p>
-                <button
-                  type="button"
-                  onClick={() => setShouldLoadModel(true)}
-                  className="inline-flex items-center justify-center rounded-lg border border-white/25 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition-all hover:brightness-110"
-                >
-                  Cargar modelo 3D
-                </button>
-              </div>
-            )}
+            <model-viewer
+              src="/models/camiseta-camiprint.glb"
+              alt="Modelo 3D de camiseta Camiprint"
+              auto-rotate
+              auto-rotate-delay="0"
+              rotation-per-second="18deg"
+              camera-orbit="20deg 78deg 115%"
+              field-of-view="32deg"
+              shadow-intensity="1"
+              exposure="0.9"
+              className="h-full w-full rounded-2xl bg-transparent pointer-events-none select-none"
+              style={{ ['--poster-color' as string]: 'transparent' }}
+            />
           </div>
 
           <span className="absolute left-8 top-16 h-28 w-28 rounded-full border border-white/20 opacity-50" aria-hidden="true" />
