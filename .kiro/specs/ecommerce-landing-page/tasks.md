@@ -117,8 +117,8 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Test: CTA final está presente
     - _Requirements: 4.1, 4.5, 4.6, 4.7_
 
-- [ ] 7. Implementar Testimonials Section
-  - [ ] 7.1 Crear datos y componente Testimonials
+- [x] 7. Implementar Testimonials Section
+  - [x] 7.1 Crear datos y componente Testimonials
     - Crear archivo de datos con al menos 3 testimonios
     - Definir interface `Testimonial` con id, customerName, companyName, testimonialText, rating, avatarUrl
     - Crear `src/app/components/Testimonials.tsx` como Server Component
@@ -126,21 +126,21 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Renderizar cada testimonio como card con sombra
     - _Requirements: 5.1, 5.2, 5.4, 5.7, 9.2_
   
-  - [ ] 7.2 Añadir ratings y avatars
+  - [x] 7.2 Añadir ratings y avatars
     - Implementar sistema de estrellas (1-5) usando SVG o Unicode stars (★)
     - Añadir avatares o logos de empresa donde estén disponibles
     - Añadir heading "Lo que dicen nuestros clientes"
     - Implementar truncado de texto largo con "..." si es necesario
     - _Requirements: 5.3, 5.5, 5.6_
   
-  - [ ]* 7.3 Escribir tests unitarios para Testimonials
+  - [x]* 7.3 Escribir tests unitarios para Testimonials
     - Test: renderiza al menos 3 testimonios
     - Test: cada testimonio muestra rating correcto
     - Test: nombres de clientes y empresas se muestran
     - _Requirements: 5.1, 5.2, 5.3_
 
-- [ ] 8. Implementar FAQ Section
-  - [ ] 8.1 Crear datos y componente FAQ
+- [x] 8. Implementar FAQ Section
+  - [x] 8.1 Crear datos y componente FAQ
     - Crear archivo de datos con al menos 6 preguntas frecuentes
     - Definir interface `FAQItem` con id, question, answer
     - Crear `src/app/components/FAQ.tsx` como Client Component ('use client')
@@ -148,7 +148,7 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Implementar patrón accordion: solo un item expandido a la vez
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
   
-  - [ ] 8.2 Añadir interactividad y CTA final
+  - [x] 8.2 Añadir interactividad y CTA final
     - Implementar click handler para expandir/colapsar items
     - Añadir iconos chevron que rotan 180° cuando el item está expandido
     - Implementar animación de altura con CSS transitions
@@ -156,15 +156,15 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Asegurar accesibilidad con aria-expanded y aria-controls
     - _Requirements: 6.6, 6.7, 6.8, 11.3, 11.5_
   
-  - [ ]* 8.3 Escribir tests unitarios para FAQ
+  - [x]* 8.3 Escribir tests unitarios para FAQ
     - Test: renderiza las 6 preguntas
     - Test: click en pregunta expande la respuesta
     - Test: solo una respuesta expandida a la vez
     - Test: chevron rota correctamente
     - _Requirements: 6.1, 6.2, 6.3, 6.4_
 
-- [ ] 9. Implementar Contact Form
-  - [ ] 9.1 Crear componente ContactForm con estado
+- [x] 9. Implementar Contact Form
+  - [x] 9.1 Crear componente ContactForm con estado
     - Crear `src/app/components/ContactForm.tsx` como Client Component ('use client')
     - Definir interfaces `FormData`, `FormErrors`, `ContactFormState`
     - Implementar estado con useState para formData, errors, isSubmitting, isSuccess
@@ -173,7 +173,7 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Implementar selector de cantidad con opciones predefinidas (10-24, 25-49, 50-99, 100+)
     - _Requirements: 7.1, 7.2, 7.5, 9.6_
   
-  - [ ] 9.2 Implementar validación del formulario
+  - [x] 9.2 Implementar validación del formulario
     - Crear función `validateForm` con reglas de validación
     - Validar campos requeridos: name (min 2 chars), email (formato), phone (formato), companyName, quantity
     - Implementar validación en blur y en submit
@@ -181,7 +181,7 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Añadir borde rojo a campos con error
     - _Requirements: 7.3, 7.4, 7.10_
   
-  - [ ] 9.3 Implementar submit y estados de éxito
+  - [x] 9.3 Implementar submit y estados de éxito
     - Implementar handler de submit que valida el formulario
     - Mostrar mensaje de éxito después de submit exitoso
     - Resetear todos los campos después de submit exitoso
@@ -190,7 +190,7 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Para MVP, loguear datos a consola (sin backend real)
     - _Requirements: 7.6, 7.7, 7.8, 7.9_
   
-  - [ ]* 9.4 Escribir tests unitarios para ContactForm
+  - [x]* 9.4 Escribir tests unitarios para ContactForm
     - Test: renderiza todos los campos correctamente
     - Test: validación muestra errores para campos vacíos
     - Test: validación de formato de email funciona

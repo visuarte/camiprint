@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import Script from 'next/script';
 
 const Hero = () => {
   const [units, setUnits] = useState(1);
+  const [modelReady, setModelReady] = useState(false);
 
   const handleDecrease = () => setUnits((prev) => Math.max(1, prev - 1));
   const handleIncrease = () => setUnits((prev) => prev + 1);
@@ -13,8 +15,19 @@ const Hero = () => {
     return units;
   };
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => setModelReady(true), 120);
+    return () => window.clearTimeout(timer);
+  }, []);
+
   return (
     <section id="inicio" className="scroll-mt-20 bg-cami-hero bg-cami-noise px-4 pb-10 pt-12 md:px-6 md:pb-14 md:pt-20">
+      <Script
+        type="module"
+        src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
+        strategy="afterInteractive"
+      />
+
       <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-5 lg:gap-6">
         <div className="lg:col-span-3">
           <h1 className="max-w-2xl text-4xl font-bold leading-tight text-white md:text-5xl">
@@ -65,11 +78,24 @@ const Hero = () => {
 
         <div className="relative mx-auto h-[360px] w-full max-w-[430px] lg:col-span-2 lg:h-[460px] lg:max-w-[520px]">
           <div className="absolute inset-0 rounded-3xl border border-white/15 bg-gradient-to-b from-white/10 to-white/0 shadow-glow backdrop-blur-sm" />
-          <div className="absolute inset-6 flex items-center justify-center rounded-2xl border border-white/10 bg-cami-900/70">
-            <div className="text-center">
-              <div className="mx-auto h-44 w-44 rounded-full border border-white/20 bg-gradient-to-br from-cami-700 to-cami-900 shadow-glow md:h-56 md:w-56" />
-              <p className="mt-5 text-sm text-cami-300">Placeholder 3D camiseta (.glb / .gltf)</p>
-            </div>
+          <div
+            className={`absolute inset-6 flex items-center justify-center rounded-2xl border border-white/10 bg-cami-900/70 transition-all duration-700 ease-out ${
+              modelReady ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+            }`}
+          >
+            <model-viewer
+              src="/models/camiseta-camiprint.glb"
+              alt="Modelo 3D de camiseta Camiprint"
+              auto-rotate
+              auto-rotate-delay="0"
+              rotation-per-second="18deg"
+              camera-orbit="20deg 78deg 115%"
+              field-of-view="32deg"
+              shadow-intensity="1"
+              exposure="0.9"
+              className="h-full w-full rounded-2xl bg-transparent pointer-events-none select-none"
+              style={{ ['--poster-color' as string]: 'transparent' }}
+            />
           </div>
 
           <span className="absolute left-8 top-16 h-28 w-28 rounded-full border border-white/20 opacity-50" aria-hidden="true" />

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { faqItems } from '../data/faqs';
 
 const FAQSection = () => {
@@ -14,18 +13,12 @@ const FAQSection = () => {
   return (
     <section id="faq" className="scroll-mt-20 bg-cami-950 px-4 py-16 md:px-6 md:py-24">
       <div className="mx-auto max-w-5xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.45, ease: 'easeOut' }}
-          className="mb-10 text-center md:mb-14"
-        >
+        <div className="mb-10 text-center md:mb-14">
           <h2 className="text-3xl font-bold text-white md:text-4xl lg:text-5xl">Preguntas frecuentes</h2>
           <p className="mx-auto mt-4 max-w-2xl text-base text-cami-300 md:text-lg">
             Respuestas rapidas para que tomes decision sin friccion.
           </p>
-        </motion.div>
+        </div>
 
         <div className="space-y-3">
           {faqItems.map((item) => {
@@ -34,6 +27,7 @@ const FAQSection = () => {
             return (
               <div key={item.id} className="overflow-hidden rounded-xl border border-white/12 bg-gradient-to-b from-cami-800 to-cami-900 shadow-glow">
                 <button
+                  id={`${item.id}-trigger`}
                   type="button"
                   className="flex w-full items-center justify-between px-5 py-4 text-left"
                   onClick={() => toggleItem(item.id)}
@@ -41,33 +35,29 @@ const FAQSection = () => {
                   aria-controls={`${item.id}-panel`}
                 >
                   <span className="pr-4 text-base font-semibold text-white md:text-lg">{item.question}</span>
-                  <motion.span
-                    initial={false}
-                    animate={{ rotate: isExpanded ? 180 : 0 }}
-                    transition={{ duration: 0.22 }}
-                    className="text-cami-300"
+                  <span
+                    className={`text-cami-300 transition-transform duration-300 ${isExpanded ? 'rotate-180' : 'rotate-0'}`}
                     aria-hidden="true"
                   >
-                    v
-                  </motion.span>
+                    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M5 8l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
                 </button>
 
-                <AnimatePresence initial={false}>
-                  {isExpanded && (
-                    <motion.div
-                      id={`${item.id}-panel`}
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: 'easeInOut' }}
-                      className="overflow-hidden"
-                    >
-                      <p className="border-t border-white/10 px-5 py-4 text-sm leading-relaxed text-cami-200 md:text-base">
-                        {item.answer}
-                      </p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                <div
+                  id={`${item.id}-panel`}
+                  role="region"
+                  aria-labelledby={`${item.id}-trigger`}
+                  className="grid overflow-hidden transition-all duration-300 ease-in-out"
+                  style={{ gridTemplateRows: isExpanded ? '1fr' : '0fr', opacity: isExpanded ? 1 : 0 }}
+                >
+                  <div className="min-h-0">
+                    <p className="border-t border-white/10 px-5 py-4 text-sm leading-relaxed text-cami-200 md:text-base">
+                      {item.answer}
+                    </p>
+                  </div>
+                </div>
               </div>
             );
           })}

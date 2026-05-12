@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 
 interface ContactFormData {
@@ -14,6 +14,14 @@ interface ContactFormData {
 
 type ContactFormErrors = Partial<Record<keyof ContactFormData, string>>;
 
+interface ContactFormState {
+  formData: ContactFormData;
+  errors: ContactFormErrors;
+  touched: Partial<Record<keyof ContactFormData, boolean>>;
+  isSubmitting: boolean;
+  isSuccess: boolean;
+}
+
 const initialForm: ContactFormData = {
   name: '',
   email: '',
@@ -25,11 +33,25 @@ const initialForm: ContactFormData = {
 
 const quantityOptions = ['10-24', '25-49', '50-99', '100+'];
 
+const quantityFromTierMap: Record<string, string> = {
+  'tier-10': '10-24',
+  'tier-25': '25-49',
+  'tier-50': '50-99',
+};
+
 const ContactSection = () => {
-  const [formData, setFormData] = useState<ContactFormData>(initialForm);
-  const [errors, setErrors] = useState<ContactFormErrors>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [state, setState] = useState<ContactFormState>({
+    formData: initialForm,
+    errors: {},
+    touched: {},
+    isSubmitting: false,
+    isSuccess: false,
+  });
+
+  const formData = state.formData;
+  const errors = state.errors;
+  const isSubmitting = state.isSubmitting;
+  const isSuccess = state.isSuccess;
 
   const isDisabled = useMemo(() => isSubmitting, [isSubmitting]);
 
@@ -45,29 +67,102 @@ const ContactSection = () => {
     return nextErrors;
   };
 
+  const validateField = <K extends keyof ContactFormData>(key: K, value: ContactFormData[K]): string | undefined => {
+    const textValue = String(value).trim();
+
+    if (key === 'name') return textValue.length < 2 ? 'Nombre minimo de 2 caracteres' : undefined;
+    if (key === 'email') return /^\S+@\S+\.\S+$/.test(textValue) ? undefined : 'Email invalido';
+    if (key === 'phone') return /^[+0-9\s()-]{7,}$/.test(textValue) ? undefined : 'Telefono invalido';
+    if (key === 'companyName') return textValue ? undefined : 'Empresa requerida';
+    if (key === 'quantity') return textValue ? undefined : 'Selecciona una cantidad';
+
+    return undefined;
+  };
+
+  const prefilledQuantity = useMemo(() => {
+    if (typeof window === 'undefined') return null;
+
+    const queryParams = new URLSearchParams(window.location.search);
+    const queryValue = queryParams.get('quantity');
+    if (queryValue) {
+      if (quantityFromTierMap[queryValue]) return quantityFromTierMap[queryValue];
+      if (quantityOptions.includes(queryValue)) return queryValue;
+    }
+
+    const hash = window.location.hash || '';
+    const queryInHash = hash.includes('?') ? hash.split('?')[1] : '';
+    const hashParams = new URLSearchParams(queryInHash);
+    const hashQuantity = hashParams.get('quantity');
+    if (!hashQuantity) return null;
+    if (quantityFromTierMap[hashQuantity]) return quantityFromTierMap[hashQuantity];
+    if (quantityOptions.includes(hashQuantity)) return hashQuantity;
+    return null;
+  }, []);
+
+  useEffect(() => {
+    if (!prefilledQuantity) return;
+    setState((prev) => ({
+      ...prev,
+      formData: { ...prev.formData, quantity: prefilledQuantity },
+    }));
+  }, [prefilledQuantity]);
+
+  const inputErrorClass = (field: keyof ContactFormData) =>
+    errors[field] && state.touched[field] ? 'border-red-300 ring-red-300' : 'border-white/15 ring-accent-400';
+
   const setField = <K extends keyof ContactFormData>(key: K, value: ContactFormData[K]) => {
-    setFormData((prev) => ({ ...prev, [key]: value }));
-    setErrors((prev) => ({ ...prev, [key]: undefined }));
+    setState((prev) => ({
+      ...prev,
+      formData: { ...prev.formData, [key]: value },
+      errors: { ...prev.errors, [key]: undefined },
+    }));
+  };
+
+  const handleBlur = <K extends keyof ContactFormData>(key: K) => {
+    setState((prev) => {
+      const fieldError = validateField(key, prev.formData[key]);
+      return {
+        ...prev,
+        touched: { ...prev.touched, [key]: true },
+        errors: { ...prev.errors, [key]: fieldError },
+      };
+    });
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsSuccess(false);
+    setState((prev) => ({ ...prev, isSuccess: false }));
 
     const nextErrors = validateForm(formData);
-    setErrors(nextErrors);
+    setState((prev) => ({
+      ...prev,
+      errors: nextErrors,
+      touched: {
+        name: true,
+        email: true,
+        phone: true,
+        companyName: true,
+        quantity: true,
+      },
+    }));
 
     if (Object.keys(nextErrors).length > 0) return;
 
-    setIsSubmitting(true);
+    setState((prev) => ({ ...prev, isSubmitting: true }));
 
     try {
-      // Placeholder para futuro puente API.
+      // MVP: simulamos envío y registramos payload para validación manual.
+      console.log('Contact form payload', formData);
       await new Promise((resolve) => setTimeout(resolve, 650));
-      setIsSuccess(true);
-      setFormData(initialForm);
+      setState((prev) => ({
+        ...prev,
+        isSuccess: true,
+        formData: { ...initialForm, quantity: prefilledQuantity ?? initialForm.quantity },
+        errors: {},
+        touched: {},
+      }));
     } finally {
-      setIsSubmitting(false);
+      setState((prev) => ({ ...prev, isSubmitting: false }));
     }
   };
 
@@ -107,10 +202,11 @@ const ContactSection = () => {
                 id="name"
                 value={formData.name}
                 onChange={(e) => setField('name', e.target.value)}
-                className="w-full rounded-lg border border-white/15 bg-cami-950/60 px-3 py-2 text-white outline-none ring-accent-400 placeholder:text-cami-700 focus:ring-2"
+                  onBlur={() => handleBlur('name')}
+                  className={`w-full rounded-lg border bg-cami-950/60 px-3 py-2 text-white outline-none placeholder:text-cami-700 focus:ring-2 ${inputErrorClass('name')}`}
                 placeholder="Tu nombre"
               />
-              {errors.name && <p className="mt-1 text-xs text-red-300">{errors.name}</p>}
+                {errors.name && state.touched.name && <p className="mt-1 text-xs text-red-300">{errors.name}</p>}
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -121,10 +217,11 @@ const ContactSection = () => {
                   type="email"
                   value={formData.email}
                   onChange={(e) => setField('email', e.target.value)}
-                  className="w-full rounded-lg border border-white/15 bg-cami-950/60 px-3 py-2 text-white outline-none ring-accent-400 placeholder:text-cami-700 focus:ring-2"
+                  onBlur={() => handleBlur('email')}
+                  className={`w-full rounded-lg border bg-cami-950/60 px-3 py-2 text-white outline-none placeholder:text-cami-700 focus:ring-2 ${inputErrorClass('email')}`}
                   placeholder="empresa@correo.com"
                 />
-                {errors.email && <p className="mt-1 text-xs text-red-300">{errors.email}</p>}
+                {errors.email && state.touched.email && <p className="mt-1 text-xs text-red-300">{errors.email}</p>}
               </div>
 
               <div>
@@ -133,10 +230,11 @@ const ContactSection = () => {
                   id="phone"
                   value={formData.phone}
                   onChange={(e) => setField('phone', e.target.value)}
-                  className="w-full rounded-lg border border-white/15 bg-cami-950/60 px-3 py-2 text-white outline-none ring-accent-400 placeholder:text-cami-700 focus:ring-2"
+                  onBlur={() => handleBlur('phone')}
+                  className={`w-full rounded-lg border bg-cami-950/60 px-3 py-2 text-white outline-none placeholder:text-cami-700 focus:ring-2 ${inputErrorClass('phone')}`}
                   placeholder="+34 600 000 000"
                 />
-                {errors.phone && <p className="mt-1 text-xs text-red-300">{errors.phone}</p>}
+                {errors.phone && state.touched.phone && <p className="mt-1 text-xs text-red-300">{errors.phone}</p>}
               </div>
             </div>
 
@@ -147,10 +245,11 @@ const ContactSection = () => {
                   id="companyName"
                   value={formData.companyName}
                   onChange={(e) => setField('companyName', e.target.value)}
-                  className="w-full rounded-lg border border-white/15 bg-cami-950/60 px-3 py-2 text-white outline-none ring-accent-400 placeholder:text-cami-700 focus:ring-2"
+                  onBlur={() => handleBlur('companyName')}
+                  className={`w-full rounded-lg border bg-cami-950/60 px-3 py-2 text-white outline-none placeholder:text-cami-700 focus:ring-2 ${inputErrorClass('companyName')}`}
                   placeholder="Nombre de tu empresa"
                 />
-                {errors.companyName && <p className="mt-1 text-xs text-red-300">{errors.companyName}</p>}
+                {errors.companyName && state.touched.companyName && <p className="mt-1 text-xs text-red-300">{errors.companyName}</p>}
               </div>
 
               <div>
@@ -159,13 +258,14 @@ const ContactSection = () => {
                   id="quantity"
                   value={formData.quantity}
                   onChange={(e) => setField('quantity', e.target.value)}
-                  className="w-full rounded-lg border border-white/15 bg-cami-950/60 px-3 py-2 text-white outline-none ring-accent-400 focus:ring-2"
+                  onBlur={() => handleBlur('quantity')}
+                  className={`w-full rounded-lg border bg-cami-950/60 px-3 py-2 text-white outline-none focus:ring-2 ${inputErrorClass('quantity')}`}
                 >
                   {quantityOptions.map((option) => (
                     <option key={option} value={option}>{option}</option>
                   ))}
                 </select>
-                {errors.quantity && <p className="mt-1 text-xs text-red-300">{errors.quantity}</p>}
+                {errors.quantity && state.touched.quantity && <p className="mt-1 text-xs text-red-300">{errors.quantity}</p>}
               </div>
             </div>
 
@@ -180,6 +280,10 @@ const ContactSection = () => {
                 placeholder="Cuentanos brevemente tu idea, tejido y colores."
               />
             </div>
+
+            <p className="text-xs text-cami-300">
+              Tus datos estan protegidos y no seran compartidos con terceros.
+            </p>
 
             <button
               type="submit"
