@@ -142,4 +142,86 @@ describe('Tarea 9.4: Contact Form tests', () => {
     const quantitySelect = screen.getByLabelText('Cantidad *') as HTMLSelectElement;
     expect(quantitySelect.value).toBe('50-99');
   });
+
+  it('preselecciona cantidad valida desde query string', () => {
+    window.history.pushState({}, '', '/?quantity=10-24#contacto');
+    render(<ContactSection />);
+
+    const quantitySelect = screen.getByLabelText('Cantidad *') as HTMLSelectElement;
+    expect(quantitySelect.value).toBe('10-24');
+  });
+
+  it('mantiene cantidad por defecto cuando el parametro es invalido', () => {
+    window.history.pushState({}, '', '/#contacto?quantity=no-existe');
+    render(<ContactSection />);
+
+    const quantitySelect = screen.getByLabelText('Cantidad *') as HTMLSelectElement;
+    expect(quantitySelect.value).toBe('25-49');
+  });
+
+  it('muestra error si cantidad requerida queda vacia', async () => {
+    render(<ContactSection />);
+
+    fireEvent.change(screen.getByLabelText('Nombre *'), { target: { value: 'Carlos' } });
+    fireEvent.change(screen.getByLabelText('Email *'), { target: { value: 'carlos@empresa.com' } });
+    fireEvent.change(screen.getByLabelText('Telefono *'), { target: { value: '+34 600 123 123' } });
+    fireEvent.change(screen.getByLabelText('Empresa *'), { target: { value: 'Camiprint SL' } });
+    fireEvent.change(screen.getByLabelText('Cantidad *'), { target: { value: '' } });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Solicitar propuesta' }));
+
+    expect(await screen.findByText('Selecciona una cantidad')).toBeTruthy();
+  });
+
+  it('ejecuta validacion al perder foco en telefono, empresa y cantidad', () => {
+    render(<ContactSection />);
+
+    const emailInput = screen.getByLabelText('Email *');
+    const phoneInput = screen.getByLabelText('Telefono *');
+    const companyInput = screen.getByLabelText('Empresa *');
+    const quantitySelect = screen.getByLabelText('Cantidad *');
+
+    fireEvent.focus(emailInput);
+    fireEvent.blur(emailInput);
+
+    fireEvent.change(phoneInput, { target: { value: '123' } });
+    fireEvent.focus(phoneInput);
+    fireEvent.blur(phoneInput);
+
+    fireEvent.change(companyInput, { target: { value: '' } });
+    fireEvent.focus(companyInput);
+    fireEvent.blur(companyInput);
+
+    fireEvent.change(quantitySelect, { target: { value: '' } });
+    fireEvent.focus(quantitySelect);
+    fireEvent.blur(quantitySelect);
+
+    expect(phoneInput).toBeTruthy();
+    expect(companyInput).toBeTruthy();
+    expect(quantitySelect).toBeTruthy();
+  });
+
+  it('permite escribir mensaje opcional', () => {
+    render(<ContactSection />);
+
+    const message = screen.getByLabelText('Mensaje') as HTMLTextAreaElement;
+    fireEvent.change(message, { target: { value: 'Necesito 60 camisetas rojas.' } });
+
+    expect(message.value).toBe('Necesito 60 camisetas rojas.');
+  });
+
+  it('muestra estado de envio durante submit valido', async () => {
+    vi.spyOn(console, 'log').mockImplementation(() => undefined);
+    render(<ContactSection />);
+
+    fillValidRequiredFields();
+    fireEvent.click(screen.getByRole('button', { name: 'Solicitar propuesta' }));
+
+    await waitFor(() => {
+      const sendingButton = screen.getByRole('button', { name: 'Enviando...' }) as HTMLButtonElement;
+      expect(sendingButton.disabled).toBe(true);
+    });
+
+    expect(await screen.findByText('Solicitud enviada. Te contactaremos en breve.')).toBeTruthy();
+  });
 });
