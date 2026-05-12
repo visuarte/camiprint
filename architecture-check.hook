@@ -22,6 +22,7 @@ const ENGINE_PATH_RE = new RegExp('(^|\\\\|/)src(\\\\|/)(engine|core)(\\\\|/)');
 const DB_IMPORT_RE = /@prisma\/client|prisma|drizzle-orm|kysely|typeorm|sequelize|mongodb|mongoose/;
 const FORBIDDEN_ENGINE_IMPORT_RE = /^(next\/server|next\/navigation|react)(\/|$)/;
 const IMPORT_LINE_RE = /import\s+(?:[^'";]+\s+from\s+)?["']([^"']+)["']/g;
+const SERVER_ONLY_IMPORT_RE = /import\s+["']server-only["'];?/;
 
 function run(command) {
   return cp.execSync(command, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim();
@@ -60,6 +61,14 @@ function normalize(p) {
 
 function isEngineFile(relPath) {
   return ENGINE_PATH_RE.test(relPath);
+}
+
+function shouldRequireServerOnly(relPath) {
+  const n = normalize(relPath);
+  if (!isEngineFile(n)) return false;
+  if (/\.d\.ts$/i.test(n)) return false;
+  if (/\.test\.[cm]?[jt]sx?$/i.test(n) || /\.spec\.[cm]?[jt]sx?$/i.test(n)) return false;
+  return /\.[cm]?[jt]sx?$/i.test(n);
 }
 
 function isClientComponent(content, relPath) {
@@ -111,6 +120,17 @@ function isUIToEngineOrDbImport(specifier) {
   return false;
 }
 
+function importsEngineOrCore(specifier) {
+  return /(^|\/)(engine|core)(\/|$)/.test(specifier);
+}
+
+function isAllowedBridgeFile(relPath) {
+  const n = normalize(relPath);
+  const isApiRoute = n.includes('/src/app/api/');
+  const isServerAction = /\.action\.[cm]?[jt]sx?$/i.test(n);
+  return isApiRoute || isServerAction;
+}
+
 function main() {
   const relFiles = getFilesFromArgs(process.argv);
   if (relFiles.length === 0) process.exit(0);
@@ -127,6 +147,17 @@ function main() {
 
     // Regla A: engine/core no importa next/react.
     if (isEngineFile(relNorm)) {
+      if (shouldRequireServerOnly(relNorm) && !SERVER_ONLY_IMPORT_RE.test(content)) {
+        violations.push({
+          file: relNorm,
+          rule: 'ENGINE_MISSING_SERVER_ONLY',
+          detail: 'Todo archivo engine/core debe declarar import "server-only" al inicio.',
+          line: 1,
+          col: 1,
+          importLine: "import 'server-only';",
+        });
+      }
+
       for (const imp of imports) {
         if (FORBIDDEN_ENGINE_IMPORT_RE.test(imp.specifier)) {
           violations.push({
@@ -149,6 +180,22 @@ function main() {
             file: relNorm,
             rule: 'UI_FORBIDDEN_DIRECT_IMPORT',
             detail: `Client Component no puede importar capa engine/db/server: "${imp.specifier}"`,
+            line: imp.line,
+            col: imp.col,
+            importLine: imp.fullImport,
+          });
+        }
+      }
+    }
+
+    // Regla C: Engine/Core solo puede ser importado desde el "Puente" (API routes o Server Actions).
+    if (!isEngineFile(relNorm)) {
+      for (const imp of imports) {
+        if (importsEngineOrCore(imp.specifier) && !isAllowedBridgeFile(relNorm)) {
+          violations.push({
+            file: relNorm,
+            rule: 'ENGINE_IMPORT_OUTSIDE_BRIDGE',
+            detail: `Import a engine/core fuera del Puente permitido: "${imp.specifier}"`,
             line: imp.line,
             col: imp.col,
             importLine: imp.fullImport,
