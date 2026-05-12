@@ -1,0 +1,178 @@
+#!/usr/bin/env node
+/*
+  Architecture Check Hook
+  - Bloquea violaciones de capas en guardado/commit.
+
+  Uso recomendado:
+  1) Pre-commit:
+     node architecture-check.hook --staged
+
+  2) On-save (pasando archivo guardado):
+     node architecture-check.hook src/app/components/Foo.tsx
+*/
+
+const fs = require('fs');
+const path = require('path');
+const cp = require('child_process');
+
+const ROOT = process.cwd();
+
+const ENGINE_PATH_RE = new RegExp('(^|\\\\|/)src(\\\\|/)(engine|core)(\\\\|/)');
+
+const DB_IMPORT_RE = /@prisma\/client|prisma|drizzle-orm|kysely|typeorm|sequelize|mongodb|mongoose/;
+const FORBIDDEN_ENGINE_IMPORT_RE = /^(next\/server|next\/navigation|react)(\/|$)/;
+const IMPORT_LINE_RE = /import\s+(?:[^'";]+\s+from\s+)?["']([^"']+)["']/g;
+
+function run(command) {
+  return cp.execSync(command, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim();
+}
+
+function getFilesFromArgs(argv) {
+  const args = argv.slice(2);
+  if (args.includes('--staged')) {
+    const out = run('git diff --cached --name-only --diff-filter=ACMR');
+    return out ? out.split(/\r?\n/).filter(Boolean) : [];
+  }
+
+  const directFiles = args.filter((a) => !a.startsWith('--'));
+  if (directFiles.length > 0) return directFiles;
+
+  // Fallback: staged si no se pasaron rutas.
+  try {
+    const out = run('git diff --cached --name-only --diff-filter=ACMR');
+    if (out) return out.split(/\r?\n/).filter(Boolean);
+  } catch (_) {}
+
+  return [];
+}
+
+function readIfTextFile(absPath) {
+  const ext = path.extname(absPath).toLowerCase();
+  const allowed = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs']);
+  if (!allowed.has(ext)) return null;
+  if (!fs.existsSync(absPath)) return null;
+  return fs.readFileSync(absPath, 'utf8');
+}
+
+function normalize(p) {
+  return p.replace(/\\/g, '/');
+}
+
+function isEngineFile(relPath) {
+  return ENGINE_PATH_RE.test(relPath);
+}
+
+function isClientComponent(content, relPath) {
+  if (!content) return false;
+  const firstChunk = content.slice(0, 300);
+  if (/['\"]use client['\"];?/.test(firstChunk)) return true;
+
+  // Heuristica adicional para interfaz
+  const n = normalize(relPath);
+  return n.includes('/src/app/components/') || n.includes('/src/components/');
+}
+
+function indexToLineCol(content, index) {
+  const before = content.slice(0, index);
+  const lines = before.split(/\r?\n/);
+  const line = lines.length;
+  const col = lines[lines.length - 1].length + 1;
+  return { line, col };
+}
+
+function collectImports(content) {
+  const imports = [];
+  let m;
+  while ((m = IMPORT_LINE_RE.exec(content)) !== null) {
+    const specifier = m[1];
+    const fullImport = m[0];
+    const pos = indexToLineCol(content, m.index);
+    imports.push({
+      specifier,
+      fullImport,
+      line: pos.line,
+      col: pos.col,
+    });
+  }
+  return imports;
+}
+
+function isUIToEngineOrDbImport(specifier) {
+  // Bloquea imports directos a engine/core/server/db y ORMs.
+  if (DB_IMPORT_RE.test(specifier)) return true;
+
+  if (
+    /(^|\/)(engine|core)(\/|$)/.test(specifier) ||
+    /(^|\/)(server|db|database|repositories)(\/|$)/.test(specifier)
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+function main() {
+  const relFiles = getFilesFromArgs(process.argv);
+  if (relFiles.length === 0) process.exit(0);
+
+  const violations = [];
+
+  for (const rel of relFiles) {
+    const relNorm = normalize(rel);
+    const abs = path.resolve(ROOT, rel);
+    const content = readIfTextFile(abs);
+    if (content == null) continue;
+
+    const imports = collectImports(content);
+
+    // Regla A: engine/core no importa next/react.
+    if (isEngineFile(relNorm)) {
+      for (const imp of imports) {
+        if (FORBIDDEN_ENGINE_IMPORT_RE.test(imp.specifier)) {
+          violations.push({
+            file: relNorm,
+            rule: 'ENGINE_FORBIDDEN_IMPORT',
+            detail: `Import prohibido en engine/core: "${imp.specifier}"`,
+            line: imp.line,
+            col: imp.col,
+            importLine: imp.fullImport,
+          });
+        }
+      }
+    }
+
+    // Regla B: Client Components no importan engine/db.
+    if (isClientComponent(content, relNorm)) {
+      for (const imp of imports) {
+        if (isUIToEngineOrDbImport(imp.specifier)) {
+          violations.push({
+            file: relNorm,
+            rule: 'UI_FORBIDDEN_DIRECT_IMPORT',
+            detail: `Client Component no puede importar capa engine/db/server: "${imp.specifier}"`,
+            line: imp.line,
+            col: imp.col,
+            importLine: imp.fullImport,
+          });
+        }
+      }
+    }
+  }
+
+  if (violations.length > 0) {
+    console.error('\n❌ Architecture Check Failed\n');
+    for (const v of violations) {
+      console.error(`- [${v.rule}] ${v.file}:${v.line}:${v.col}`);
+      console.error(`  ${v.detail}`);
+      console.error(`  > ${v.importLine}`);
+    }
+
+    console.error('\nAccion requerida:');
+    console.error('- Mantener UI -> API -> Engine -> Persistence.');
+    console.error('- Remover imports directos que rompen la arquitectura de 3 capas.\n');
+    process.exit(1);
+  }
+
+  process.exit(0);
+}
+
+main();

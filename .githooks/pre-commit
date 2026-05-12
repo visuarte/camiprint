@@ -1,0 +1,8 @@
+#!/bin/sh
+# Architecture guard: block layer violations before commit
+node architecture-check.hook --staged
+status=$?
+if [ $status -ne 0 ]; then
+  echo "pre-commit blocked by architecture-check.hook"
+  exit $status
+fi
