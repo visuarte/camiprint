@@ -100,3 +100,12 @@ Checklist de cierre de primera iteracion backend:
 ## 6. Siguiente accion recomendada
 
 Crear la especificacion tecnica de backend fase 1 enfocada en cotizaciones y convertir el submit actual del formulario (hoy simulado) a llamada real a API con persistencia.
+
+Documentos creados para ejecutar la fase:
+- `API_V1_COTIZACIONES_TECNICO.md`
+- `.kiro/specs/backend-cotizaciones-v1/requirements.md`
+- `.kiro/specs/backend-cotizaciones-v1/design.md`
+- `.kiro/specs/backend-cotizaciones-v1/tasks.md`
+- `.kiro/specs/backend-cotizaciones-v1/hooks.md`
+- `.kiro/specs/backend-cotizaciones-v1/SKILL.md`
+- `SUGERENCIAS_RENDIMIENTO_BACKEND.md`

@@ -434,3 +434,5 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
 - La accesibilidad debe cumplir WCAG 2.1 nivel AA como mínimo
 - Cierre temporal de frontend y reglas de backend documentadas en `CIERRE_FRONTEND_Y_REGLAS_BACKEND.md`
 - Auditoría consolidada de implementación en `AUDITORIA_CIERRE_IMPLEMENTACION_FRONTEND.md`
+- API y contrato backend v1 documentados en `API_V1_COTIZACIONES_TECNICO.md`
+- Spec backend inicial en `.kiro/specs/backend-cotizaciones-v1/` (requirements, design, tasks, hooks, SKILL)
