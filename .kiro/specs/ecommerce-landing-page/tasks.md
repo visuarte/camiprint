@@ -214,8 +214,8 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
   - Asegurar que no hay errores de consola
   - Preguntar al usuario si hay dudas o ajustes necesarios
 
-- [ ] 11. Implementar Footer Component
-  - [ ] 11.1 Crear componente Footer
+- [x] 11. Implementar Footer Component
+  - [x] 11.1 Crear componente Footer
     - Crear `src/app/components/Footer.tsx` como Server Component
     - Implementar estructura HTML semántica con `<footer>`
     - Implementar grid de 4 columnas en desktop, stack vertical en móvil
@@ -223,7 +223,7 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Añadir descripción breve de la empresa
     - _Requirements: 8.1, 8.6, 8.7, 8.8, 9.2_
   
-  - [ ] 11.2 Añadir contenido del Footer
+  - [x] 11.2 Añadir contenido del Footer
     - Añadir información de contacto (email, teléfono, dirección)
     - Añadir enlaces: Política de Privacidad, Términos y Condiciones, Política de Envíos
     - Añadir iconos de redes sociales con enlaces (Facebook, Instagram, LinkedIn)
@@ -232,55 +232,55 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Implementar hover effects en enlaces
     - _Requirements: 8.2, 8.3, 8.4, 8.5, 8.9, 11.5_
   
-  - [ ]* 11.3 Escribir tests unitarios para Footer
+  - [x]* 11.3 Escribir tests unitarios para Footer
     - Test: renderiza todas las secciones (Company Info, Quick Links, Contact, Social Media)
     - Test: copyright muestra año actual
     - Test: todos los enlaces están presentes
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
 
-- [ ] 12. Integrar todos los componentes en la página principal
-  - [ ] 12.1 Actualizar page.tsx con todos los componentes
+- [x] 12. Integrar todos los componentes en la página principal
+  - [x] 12.1 Actualizar page.tsx con todos los componentes
     - Importar todos los componentes creados
     - Organizar componentes en orden: Navigation, Hero, Pricing, Process, Testimonials, FAQ, ContactForm, Footer
     - Añadir IDs de sección apropiados para navegación (#inicio, #ofertas, #proceso, #testimonios, #faq, #contacto)
     - Asegurar que cada sección usa elementos HTML semánticos (`<section>`, `<main>`)
     - _Requirements: 11.1, 1.2_
   
-  - [ ] 12.2 Verificar navegación entre secciones
+  - [x] 12.2 Verificar navegación entre secciones
     - Probar que todos los enlaces de navegación funcionan correctamente
     - Verificar smooth scroll entre secciones
     - Probar que los CTAs de pricing enlazan correctamente al formulario
     - Verificar que el parámetro de cantidad se pasa correctamente
     - _Requirements: 1.5, 2.5, 2.6, 3.5_
 
-- [ ] 13. Implementar animaciones y transiciones
-  - [ ] 13.1 Añadir animaciones de scroll
+- [x] 13. Implementar animaciones y transiciones
+  - [x] 13.1 Añadir animaciones de scroll
     - Implementar fade-in effect cuando las secciones entran en viewport
     - Usar Intersection Observer API o librería como `framer-motion` si es necesario
     - Asegurar que las animaciones tienen duración entre 200ms y 400ms
     - _Requirements: 12.1, 12.4_
   
-  - [ ] 13.2 Añadir transiciones de hover y estados
+  - [x] 13.2 Añadir transiciones de hover y estados
     - Implementar hover transitions en todos los botones CTA
     - Añadir transiciones suaves al abrir/cerrar menú móvil
     - Añadir transiciones suaves al expandir/colapsar FAQ
     - Implementar animación de scroll suave con easing
     - _Requirements: 12.2, 12.3, 12.6_
   
-  - [ ] 13.3 Implementar respeto a prefers-reduced-motion
+  - [x] 13.3 Implementar respeto a prefers-reduced-motion
     - Añadir media query `@media (prefers-reduced-motion: reduce)` en globals.css
     - Deshabilitar o reducir animaciones para usuarios con esta preferencia
     - Asegurar que la funcionalidad no se pierde sin animaciones
     - _Requirements: 12.5, 12.7_
   
-  - [ ]* 13.4 Escribir tests para animaciones
+  - [x]* 13.4 Escribir tests para animaciones
     - Test: elementos se animan al entrar en viewport
     - Test: botones tienen hover transitions
     - Test: menú móvil se anima al abrir/cerrar
     - _Requirements: 12.1, 12.2, 12.6_
 
-- [ ] 14. Optimización responsive y accesibilidad
-  - [ ] 14.1 Verificar responsive design en todos los breakpoints
+- [x] 14. Optimización responsive y accesibilidad
+  - [x] 14.1 Verificar responsive design en todos los breakpoints
     - Probar en viewport 320px (móvil pequeño)
     - Probar en viewport 375px (móvil estándar)
     - Probar en viewport 768px (tablet)
@@ -291,20 +291,20 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Verificar que el texto es legible sin zoom en todos los dispositivos
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.8_
   
-  - [ ] 14.2 Verificar tamaños de touch targets en móvil
+  - [x] 14.2 Verificar tamaños de touch targets en móvil
     - Asegurar que todos los botones tienen mínimo 44x44px en móvil
     - Verificar que los enlaces tienen suficiente área de toque
     - Ajustar padding si es necesario para cumplir con el mínimo
     - _Requirements: 9.6_
   
-  - [ ] 14.3 Implementar optimización de imágenes
+  - [x] 14.3 Implementar optimización de imágenes
     - Usar componente `next/image` para todas las imágenes
     - Configurar tamaños responsive apropiados
     - Añadir placeholders para evitar layout shift
     - Añadir alt text descriptivo a todas las imágenes
     - _Requirements: 9.7, 11.2_
   
-  - [ ] 14.4 Implementar mejoras de accesibilidad
+  - [x] 14.4 Implementar mejoras de accesibilidad
     - Añadir skip-to-content link al inicio de la página
     - Verificar jerarquía de headings (h1 → h2 → h3)
     - Añadir aria-labels a botones con solo iconos (hamburger, social media)
@@ -312,13 +312,13 @@ El plan está organizado en 6 fases que cubren desde la configuración inicial h
     - Implementar focus indicators visibles para navegación por teclado
     - _Requirements: 11.1, 11.3, 11.5, 11.6, 11.7, 11.8_
   
-  - [ ]* 14.5 Verificar contraste de colores
+  - [x]* 14.5 Verificar contraste de colores
     - Usar herramienta como WebAIM Contrast Checker
     - Asegurar ratio mínimo 4.5:1 para texto normal
     - Ajustar colores si es necesario para cumplir WCAG 2.1 AA
     - _Requirements: 11.4_
 
-- [ ] 15. Checkpoint - Verificar responsive y accesibilidad
+- [x] 15. Checkpoint - Verificar responsive y accesibilidad
   - Probar la página en diferentes dispositivos físicos (iOS, Android)
   - Probar navegación completa con teclado (Tab, Enter, Escape)
   - Verificar con lector de pantalla (NVDA o VoiceOver)

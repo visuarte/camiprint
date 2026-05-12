@@ -11,7 +11,7 @@ const FAQSection = () => {
   };
 
   return (
-    <section id="faq" className="scroll-mt-20 bg-cami-950 px-4 py-16 md:px-6 md:py-24">
+    <section id="faq" data-reveal data-reveal-delay="110" className="scroll-mt-20 bg-cami-950 px-4 py-16 md:px-6 md:py-24">
       <div className="mx-auto max-w-5xl">
         <div className="mb-10 text-center md:mb-14">
           <h2 className="text-3xl font-bold text-white md:text-4xl lg:text-5xl">Preguntas frecuentes</h2>

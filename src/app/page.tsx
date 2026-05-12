@@ -1,23 +1,25 @@
-import Header from './components/Header';
+import Navigation from './components/Navigation';
 import Hero from './components/Hero';
-import PricingBand from './components/PricingBand';
-import StatsBanner from './components/StatsBanner';
+import Pricing from './components/Pricing';
 import Process from './components/Process';
 import TestimonialsSection from './components/TestimonialsSection';
 import FAQSection from './components/FAQSection';
 import ContactSection from './components/ContactSection';
+import Footer from './components/Footer';
+import ViewportAnimator from './components/ViewportAnimator';
 
 export default function Home() {
   return (
     <>
-      <Header />
+      <ViewportAnimator />
+      <Navigation />
       <Hero />
-      <PricingBand />
-      <StatsBanner />
+      <Pricing />
       <Process />
       <TestimonialsSection />
       <FAQSection />
       <ContactSection />
+      <Footer />
     </>
   );
 }

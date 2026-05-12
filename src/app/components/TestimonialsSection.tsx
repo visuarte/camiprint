@@ -2,7 +2,7 @@ import { testimonials } from '../data/testimonials';
 
 const TestimonialsSection = () => {
   return (
-    <section id="testimonios" className="scroll-mt-20 bg-gradient-to-b from-cami-900 to-cami-950 px-4 py-16 md:px-6 md:py-24">
+    <section id="testimonios" data-reveal data-reveal-delay="90" className="scroll-mt-20 bg-gradient-to-b from-cami-900 to-cami-950 px-4 py-16 md:px-6 md:py-24">
       <div className="mx-auto max-w-6xl">
         <div className="mb-10 text-center md:mb-14">
           <h2 className="text-3xl font-bold text-white md:text-4xl lg:text-5xl">Lo que dicen nuestros clientes</h2>

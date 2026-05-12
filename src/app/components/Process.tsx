@@ -3,7 +3,7 @@ import { processSteps } from '../data/processSteps';
 
 const Process = () => {
   return (
-    <section id="proceso" className="scroll-mt-20 bg-cami-950 px-4 py-16 md:px-6 md:py-24">
+    <section id="proceso" data-reveal data-reveal-delay="70" className="scroll-mt-20 bg-cami-950 px-4 py-16 md:px-6 md:py-24">
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 text-center md:mb-16">
           <h2 className="mb-4 text-3xl font-bold text-white md:text-4xl lg:text-5xl">

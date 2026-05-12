@@ -167,7 +167,7 @@ const ContactSection = () => {
   };
 
   return (
-    <section id="contacto" className="scroll-mt-20 bg-gradient-to-b from-cami-900 to-cami-950 px-4 py-16 md:px-6 md:py-24">
+    <section id="contacto" data-reveal data-reveal-delay="130" className="scroll-mt-20 bg-gradient-to-b from-cami-900 to-cami-950 px-4 py-16 md:px-6 md:py-24">
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-12">
         <motion.div
           initial={{ opacity: 0, x: -20 }}

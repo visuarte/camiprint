@@ -21,7 +21,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <section id="inicio" className="scroll-mt-20 bg-cami-hero bg-cami-noise px-4 pb-10 pt-12 md:px-6 md:pb-14 md:pt-20">
+    <section id="inicio" data-reveal data-reveal-delay="0" className="scroll-mt-20 bg-cami-hero bg-cami-noise px-4 pb-10 pt-12 md:px-6 md:pb-14 md:pt-20">
       <Script
         type="module"
         src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"

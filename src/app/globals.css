@@ -27,6 +27,26 @@ body {
   font-family: var(--font-sans);
 }
 
+/* Accessibility: skip link */
+.skip-link {
+  position: absolute;
+  left: 0.75rem;
+  top: -120px;
+  z-index: 100;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: top 180ms ease;
+}
+
+.skip-link:focus-visible {
+  top: 0.75rem;
+}
+
 /* Base typography */
 h1,
 h2,
@@ -42,4 +62,83 @@ h6 {
 button,
 a {
   transition: all 0.3s ease-in-out;
+}
+
+/* Motion system */
+:where(button, a, input, textarea, select) {
+  transition-duration: 280ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Visible keyboard focus */
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideDown {
+  animation: slideDown 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+[data-motion='enabled'] [data-reveal] {
+  opacity: 0;
+  transform: translateY(16px) scale(0.985);
+  transition:
+    opacity 340ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 340ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, opacity;
+}
+
+[data-motion='enabled'] [data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Mobile touch target safety */
+@media (max-width: 768px) {
+  button,
+  [type='button'],
+  [type='submit'],
+  a.touch-target {
+    min-height: 44px;
+  }
+
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
 }

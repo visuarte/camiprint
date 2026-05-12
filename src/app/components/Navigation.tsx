@@ -23,9 +23,19 @@ const Navigation = () => {
       }
     };
 
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
     if (isMobileMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleEscape);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('keydown', handleEscape);
+      };
     }
   }, [isMobileMenuOpen]);
 
@@ -45,23 +55,23 @@ const Navigation = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
+    <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-cami-950/78 backdrop-blur-md">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
         {/* Logo */}
         <div className="flex-shrink-0">
-          <a href="#inicio" className="text-2xl font-bold text-blue-600 hover:text-blue-700">
+          <a href="#inicio" className="text-2xl font-bold tracking-tight text-white transition-colors hover:text-cami-200">
             Camiprint
           </a>
         </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-8">
+        <div className="hidden items-center space-x-8 md:flex">
           {navigationLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
               onClick={(e) => handleNavigate(e, link.href)}
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+              className="font-medium text-cami-200 transition-colors hover:text-white"
             >
               {link.label}
             </a>
@@ -73,7 +83,7 @@ const Navigation = () => {
           <a
             href="#contacto"
             onClick={(e) => handleNavigate(e, '#contacto')}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold transition-colors"
+            className="rounded-lg border border-white/25 bg-metal-button px-6 py-2 font-semibold text-cami-100 shadow-metal transition-all hover:brightness-110"
           >
             Solicitar Cotización
           </a>
@@ -82,12 +92,13 @@ const Navigation = () => {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          className="rounded-lg border border-white/15 bg-white/5 p-2 text-cami-100 transition-colors hover:bg-white/10 md:hidden"
           aria-label="Toggle navigation menu"
           aria-expanded={isMobileMenuOpen}
+          aria-controls="mobile-main-menu"
         >
           <svg
-            className="w-6 h-6 text-gray-700"
+            className="h-6 w-6"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -114,10 +125,11 @@ const Navigation = () => {
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div
+          id="mobile-main-menu"
           ref={menuRef}
-          className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-gray-200 shadow-lg animate-slideDown"
+          className="absolute left-0 right-0 top-full animate-slideDown border-b border-white/10 bg-cami-950/95 shadow-glow md:hidden"
         >
-          <div className="px-4 py-4 space-y-3">
+          <div className="space-y-3 px-4 py-4">
             {navigationLinks.map((link) => (
               <a
                 key={link.href}
@@ -126,7 +138,7 @@ const Navigation = () => {
                   handleNavigate(e, link.href);
                   handleLinkClick();
                 }}
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg hover:text-blue-600 font-medium transition-all"
+                className="touch-target block rounded-lg border border-transparent px-4 py-3 font-medium text-cami-100 transition-all hover:border-white/15 hover:bg-white/10 hover:text-white"
               >
                 {link.label}
               </a>
@@ -137,7 +149,7 @@ const Navigation = () => {
                 handleNavigate(e, '#contacto');
                 handleLinkClick();
               }}
-              className="block w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold transition-colors text-center"
+              className="touch-target block w-full rounded-lg border border-white/25 bg-metal-button px-4 py-3 text-center font-semibold text-cami-100 shadow-metal transition-all hover:brightness-110"
             >
               Solicitar Cotización
             </a>
