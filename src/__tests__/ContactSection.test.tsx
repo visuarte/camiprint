@@ -3,6 +3,12 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ContactSection from '../app/components/ContactSection';
 
+const mockApiResponse = (status: number, body: unknown) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { 'content-type': 'application/json' },
+  });
+
 const stripMotionProps = (props: Record<string, unknown>) => {
   const {
     initial,
@@ -39,6 +45,20 @@ vi.mock('framer-motion', () => ({
 describe('Tarea 9.4: Contact Form tests', () => {
   beforeEach(() => {
     window.history.pushState({}, '', '/');
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        mockApiResponse(201, {
+          ok: true,
+          data: {
+            id: 'q_test',
+            status: 'received',
+            createdAt: new Date().toISOString(),
+          },
+          meta: { requestId: 'req_test' },
+        })
+      )
+    );
   });
 
   afterEach(() => {
@@ -107,19 +127,16 @@ describe('Tarea 9.4: Contact Form tests', () => {
   });
 
   it('muestra mensaje de exito despues de submit valido', async () => {
-    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
     render(<ContactSection />);
 
     fillValidRequiredFields();
     fireEvent.click(screen.getByRole('button', { name: 'Solicitar propuesta' }));
 
     expect(await screen.findByText('Solicitud enviada. Te contactaremos en breve.')).toBeTruthy();
-
-    expect(logSpy).toHaveBeenCalled();
+    expect(fetch).toHaveBeenCalledWith('/api/v1/quotes', expect.objectContaining({ method: 'POST' }));
   });
 
   it('resetea el formulario despues de submit exitoso', async () => {
-    vi.spyOn(console, 'log').mockImplementation(() => undefined);
     render(<ContactSection />);
 
     fillValidRequiredFields();
@@ -211,7 +228,17 @@ describe('Tarea 9.4: Contact Form tests', () => {
   });
 
   it('muestra estado de envio durante submit valido', async () => {
-    vi.spyOn(console, 'log').mockImplementation(() => undefined);
+    let resolveFetch: ((value: Response) => void) | null = null;
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(
+        () =>
+          new Promise<Response>((resolve) => {
+            resolveFetch = resolve;
+          })
+      )
+    );
+
     render(<ContactSection />);
 
     fillValidRequiredFields();
@@ -222,6 +249,88 @@ describe('Tarea 9.4: Contact Form tests', () => {
       expect(sendingButton.disabled).toBe(true);
     });
 
+    if (!resolveFetch) {
+      throw new Error('No se pudo resolver fetch en la prueba');
+    }
+
+    resolveFetch(
+      mockApiResponse(201, {
+        ok: true,
+        data: {
+          id: 'q_test',
+          status: 'received',
+          createdAt: new Date().toISOString(),
+        },
+        meta: { requestId: 'req_test' },
+      })
+    );
+
     expect(await screen.findByText('Solicitud enviada. Te contactaremos en breve.')).toBeTruthy();
+  });
+
+  it('mapea errores 422 del backend en campos del formulario', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        mockApiResponse(422, {
+          ok: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Payload invalido',
+            details: [
+              { field: 'email', issue: 'Formato de email invalido.' },
+              { field: 'quantity', issue: 'Valor invalido.' },
+            ],
+          },
+          meta: { requestId: 'req_bad' },
+        })
+      )
+    );
+
+    render(<ContactSection />);
+    fillValidRequiredFields();
+    fireEvent.click(screen.getByRole('button', { name: 'Solicitar propuesta' }));
+
+    expect(await screen.findByText('Payload invalido')).toBeTruthy();
+    expect(screen.getByText('Formato de email invalido.')).toBeTruthy();
+    expect(screen.getByText('Valor invalido.')).toBeTruthy();
+  });
+
+  it('muestra mensaje de saturacion para 429', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        mockApiResponse(429, {
+          ok: false,
+          error: { code: 'RATE_LIMITED', message: 'Too many requests' },
+          meta: { requestId: 'req_429' },
+        })
+      )
+    );
+
+    render(<ContactSection />);
+    fillValidRequiredFields();
+    fireEvent.click(screen.getByRole('button', { name: 'Solicitar propuesta' }));
+
+    expect(await screen.findByText('Hay alta demanda en este momento. Intentalo nuevamente en unos minutos.')).toBeTruthy();
+  });
+
+  it('muestra mensaje generico para errores 500', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        mockApiResponse(500, {
+          ok: false,
+          error: { code: 'INTERNAL_ERROR', message: 'Error interno' },
+          meta: { requestId: 'req_500' },
+        })
+      )
+    );
+
+    render(<ContactSection />);
+    fillValidRequiredFields();
+    fireEvent.click(screen.getByRole('button', { name: 'Solicitar propuesta' }));
+
+    expect(await screen.findByText('No pudimos procesar tu solicitud. Intentalo de nuevo.')).toBeTruthy();
   });
 });

@@ -20,6 +20,38 @@ interface ContactFormState {
   touched: Partial<Record<keyof ContactFormData, boolean>>;
   isSubmitting: boolean;
   isSuccess: boolean;
+  submitError: string | null;
+  supportRequestId: string | null;
+  isSupportIdCopied: boolean;
+}
+
+interface QuoteApiValidationDetail {
+  field: string;
+  issue: string;
+}
+
+interface QuoteApiErrorResponse {
+  ok: false;
+  error: {
+    code: string;
+    message: string;
+    details?: QuoteApiValidationDetail[];
+  };
+  meta?: {
+    requestId?: string;
+  };
+}
+
+interface QuoteApiSuccessResponse {
+  ok: true;
+  data: {
+    id: string;
+    status: string;
+    createdAt: string;
+  };
+  meta?: {
+    requestId?: string;
+  };
 }
 
 const initialForm: ContactFormData = {
@@ -60,12 +92,16 @@ const resolvePrefilledQuantity = (): string | null => {
 };
 
 const ContactSection = () => {
+  const isDevelopment = process.env.NODE_ENV === 'development';
   const [state, setState] = useState<ContactFormState>({
     formData: initialForm,
     errors: {},
     touched: {},
     isSubmitting: false,
     isSuccess: false,
+    submitError: null,
+    supportRequestId: null,
+    isSupportIdCopied: false,
   });
   const [prefilledQuantity, setPrefilledQuantity] = useState<string | null>(null);
 
@@ -73,6 +109,7 @@ const ContactSection = () => {
   const errors = state.errors;
   const isSubmitting = state.isSubmitting;
   const isSuccess = state.isSuccess;
+  const submitError = state.submitError;
 
   const isDisabled = useMemo(() => isSubmitting, [isSubmitting]);
 
@@ -133,7 +170,39 @@ const ContactSection = () => {
       ...prev,
       formData: { ...prev.formData, [key]: value },
       errors: { ...prev.errors, [key]: undefined },
+      submitError: null,
+      supportRequestId: null,
+      isSupportIdCopied: false,
     }));
+  };
+
+  const handleCopySupportId = async () => {
+    const requestId = state.supportRequestId;
+    if (!requestId) return;
+
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(requestId);
+        setState((prev) => ({ ...prev, isSupportIdCopied: true }));
+      }
+    } catch {
+      setState((prev) => ({ ...prev, isSupportIdCopied: false }));
+    }
+  };
+
+  const mapApiValidationErrors = (details: QuoteApiValidationDetail[] | undefined): ContactFormErrors => {
+    const nextErrors: ContactFormErrors = {};
+    if (!details) return nextErrors;
+
+    details.forEach((detail) => {
+      if (detail.field === 'name') nextErrors.name = detail.issue;
+      if (detail.field === 'email') nextErrors.email = detail.issue;
+      if (detail.field === 'phone') nextErrors.phone = detail.issue;
+      if (detail.field === 'companyName') nextErrors.companyName = detail.issue;
+      if (detail.field === 'quantity') nextErrors.quantity = detail.issue;
+    });
+
+    return nextErrors;
   };
 
   const handleBlur = <K extends keyof ContactFormData>(key: K) => {
@@ -149,7 +218,13 @@ const ContactSection = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setState((prev) => ({ ...prev, isSuccess: false }));
+    setState((prev) => ({
+      ...prev,
+      isSuccess: false,
+      submitError: null,
+      supportRequestId: null,
+      isSupportIdCopied: false,
+    }));
 
     const nextErrors = validateForm(formData);
     setState((prev) => ({
@@ -169,15 +244,81 @@ const ContactSection = () => {
     setState((prev) => ({ ...prev, isSubmitting: true }));
 
     try {
-      // MVP: simulamos envío y registramos payload para validación manual.
-      console.log('Contact form payload', formData);
-      await new Promise((resolve) => setTimeout(resolve, 650));
+      const response = await fetch('/api/v1/quotes', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      let responseBody: QuoteApiSuccessResponse | QuoteApiErrorResponse | null = null;
+      try {
+        responseBody = (await response.json()) as QuoteApiSuccessResponse | QuoteApiErrorResponse;
+      } catch {
+        responseBody = null;
+      }
+
+      const requestId = responseBody?.meta?.requestId;
+      if (isDevelopment && requestId) {
+        console.info('[support][quotes] requestId:', requestId, 'status:', response.status);
+      }
+
+      if (response.status === 201) {
+        setState((prev) => ({
+          ...prev,
+          isSuccess: true,
+          formData: { ...initialForm, quantity: prefilledQuantity ?? initialForm.quantity },
+          errors: {},
+          touched: {},
+          submitError: null,
+          supportRequestId: null,
+          isSupportIdCopied: false,
+        }));
+        return;
+      }
+
+      if (response.status === 422) {
+        const body = responseBody as QuoteApiErrorResponse | null;
+        const apiErrors = mapApiValidationErrors(body?.error.details);
+        setState((prev) => ({
+          ...prev,
+          errors: { ...prev.errors, ...apiErrors },
+          touched: {
+            ...prev.touched,
+            name: true,
+            email: true,
+            phone: true,
+            companyName: true,
+            quantity: true,
+          },
+          submitError: body?.error.message || 'Payload invalido',
+          supportRequestId: isDevelopment ? requestId ?? null : null,
+          isSupportIdCopied: false,
+        }));
+        return;
+      }
+
+      if (response.status === 429) {
+        setState((prev) => ({
+          ...prev,
+          submitError: 'Hay alta demanda en este momento. Intentalo nuevamente en unos minutos.',
+          supportRequestId: isDevelopment ? requestId ?? null : null,
+          isSupportIdCopied: false,
+        }));
+        return;
+      }
+
       setState((prev) => ({
         ...prev,
-        isSuccess: true,
-        formData: { ...initialForm, quantity: prefilledQuantity ?? initialForm.quantity },
-        errors: {},
-        touched: {},
+        submitError: 'No pudimos procesar tu solicitud. Intentalo de nuevo.',
+        supportRequestId: isDevelopment ? requestId ?? null : null,
+        isSupportIdCopied: false,
+      }));
+    } catch {
+      setState((prev) => ({
+        ...prev,
+        submitError: 'No pudimos enviar tu solicitud por un problema de red. Intentalo de nuevo.',
+        supportRequestId: null,
+        isSupportIdCopied: false,
       }));
     } finally {
       setState((prev) => ({ ...prev, isSubmitting: false }));
@@ -322,6 +463,27 @@ const ContactSection = () => {
               <p className="text-sm font-medium text-emerald-300">
                 Solicitud enviada. Te contactaremos en breve.
               </p>
+            )}
+            {submitError && (
+              <div>
+                <p className="text-sm font-medium text-red-300">
+                  {submitError}
+                </p>
+                {isDevelopment && state.supportRequestId && (
+                  <div className="mt-1 flex items-center gap-2">
+                    <p className="text-xs text-cami-300">
+                      Soporte QA ID: {state.supportRequestId}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={handleCopySupportId}
+                      className="rounded border border-white/25 px-2 py-0.5 text-[11px] font-medium text-cami-100 hover:bg-white/10"
+                    >
+                      {state.isSupportIdCopied ? 'Copiado' : 'Copiar'}
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </motion.form>

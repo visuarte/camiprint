@@ -4,6 +4,12 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import Pricing from '../app/components/Pricing';
 import ContactSection from '../app/components/ContactSection';
 
+const mockApiResponse = (status: number, body: unknown) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { 'content-type': 'application/json' },
+  });
+
 vi.mock('next/link', () => ({
   default: ({ href, children, ...props }: React.PropsWithChildren<{ href: string } & Record<string, unknown>>) => (
     <a href={href} {...props}>{children}</a>
@@ -46,6 +52,20 @@ vi.mock('framer-motion', () => ({
 describe('Tarea 9.5: Integracion flujo de cotizacion', () => {
   beforeEach(() => {
     window.history.pushState({}, '', '/');
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        mockApiResponse(201, {
+          ok: true,
+          data: {
+            id: 'q_test',
+            status: 'received',
+            createdAt: new Date().toISOString(),
+          },
+          meta: { requestId: 'req_test' },
+        })
+      )
+    );
   });
 
   afterEach(() => {
@@ -68,7 +88,6 @@ describe('Tarea 9.5: Integracion flujo de cotizacion', () => {
 
   it('formulario se muestra con cantidad preseleccionada y permite submit exitoso', async () => {
     window.history.pushState({}, '', '/#contacto?quantity=tier-50');
-    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
     render(
       <>
@@ -91,6 +110,6 @@ describe('Tarea 9.5: Integracion flujo de cotizacion', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Solicitar propuesta' }));
 
     expect(await screen.findByText('Solicitud enviada. Te contactaremos en breve.')).toBeTruthy();
-    expect(logSpy).toHaveBeenCalled();
+    expect(fetch).toHaveBeenCalledWith('/api/v1/quotes', expect.objectContaining({ method: 'POST' }));
   });
 });
