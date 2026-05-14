@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 
+const MOBILE_HEADER_HEIGHT = 73;
+
 const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -17,7 +19,7 @@ const Navigation = () => {
 
   // Cerrar menú al hacer click fuera
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsMobileMenuOpen(false);
       }
@@ -31,12 +33,36 @@ const Navigation = () => {
 
     if (isMobileMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
       document.addEventListener('keydown', handleEscape);
       return () => {
         document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('touchstart', handleClickOutside);
         document.removeEventListener('keydown', handleEscape);
       };
     }
+  }, [isMobileMenuOpen]);
+
+  // Evitar scroll de fondo y cerrar menú al pasar a desktop.
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('resize', handleResize);
+    };
   }, [isMobileMenuOpen]);
 
   // Cerrar menú al hacer click en un enlace
@@ -91,6 +117,7 @@ const Navigation = () => {
 
         {/* Mobile Menu Button */}
         <button
+          type="button"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="rounded-lg border border-white/15 bg-white/5 p-2 text-cami-100 transition-colors hover:bg-white/10 md:hidden"
           aria-label="Toggle navigation menu"
@@ -124,35 +151,40 @@ const Navigation = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div
-          id="mobile-main-menu"
-          ref={menuRef}
-          className="absolute left-0 right-0 top-full animate-slideDown border-b border-white/10 bg-cami-950/95 shadow-glow md:hidden"
-        >
-          <div className="space-y-3 px-4 py-4">
-            {navigationLinks.map((link) => (
+        <div className="md:hidden">
+          <div className="fixed inset-0 top-[73px] bg-black/55 backdrop-blur-[1px]" aria-hidden="true" />
+
+          <div
+            id="mobile-main-menu"
+            ref={menuRef}
+            className="mobile-nav-panel animate-slideDown fixed left-0 right-0 top-[73px] border-b border-white/10 bg-cami-950/96 shadow-glow"
+            style={{ '--mobile-header-height': `${MOBILE_HEADER_HEIGHT}px` } as React.CSSProperties}
+          >
+            <div className="space-y-3 px-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+              {navigationLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={(e) => {
+                    handleNavigate(e, link.href);
+                    handleLinkClick();
+                  }}
+                  className="touch-target block rounded-lg border border-transparent bg-white/[0.03] px-4 py-3 font-medium text-cami-100 transition-all hover:border-white/15 hover:bg-white/10 hover:text-white"
+                >
+                  {link.label}
+                </a>
+              ))}
               <a
-                key={link.href}
-                href={link.href}
+                href="#contacto"
                 onClick={(e) => {
-                  handleNavigate(e, link.href);
+                  handleNavigate(e, '#contacto');
                   handleLinkClick();
                 }}
-                className="touch-target block rounded-lg border border-transparent px-4 py-3 font-medium text-cami-100 transition-all hover:border-white/15 hover:bg-white/10 hover:text-white"
+                className="touch-target block w-full rounded-lg border border-white/25 bg-metal-button px-4 py-3 text-center font-semibold text-cami-100 shadow-metal transition-all hover:brightness-110"
               >
-                {link.label}
+                Solicitar Cotización
               </a>
-            ))}
-            <a
-              href="#contacto"
-              onClick={(e) => {
-                handleNavigate(e, '#contacto');
-                handleLinkClick();
-              }}
-              className="touch-target block w-full rounded-lg border border-white/25 bg-metal-button px-4 py-3 text-center font-semibold text-cami-100 shadow-metal transition-all hover:brightness-110"
-            >
-              Solicitar Cotización
-            </a>
+            </div>
           </div>
         </div>
       )}

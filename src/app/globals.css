@@ -91,6 +91,13 @@ a {
   animation: slideDown 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+.mobile-nav-panel {
+  max-height: calc(100dvh - var(--mobile-header-height, 73px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
 [data-motion='enabled'] [data-reveal] {
   opacity: 0;
   transform: translateY(16px) scale(0.985);
