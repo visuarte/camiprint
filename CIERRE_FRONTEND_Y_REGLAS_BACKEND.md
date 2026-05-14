@@ -1,7 +1,7 @@
 # Cierre temporal de Frontend y Reglas para Fase Backend
 
-Fecha: 2026-05-12
-Estado del proyecto: Frontend en pausa controlada, listo para fase backend.
+Fecha: 2026-05-14
+Estado del proyecto: Backend v1 implementado, frontend en estabilidad y hardening operativo.
 
 ## 1. Resumen de cierre (frontend)
 
@@ -76,30 +76,43 @@ No se permite (hasta nueva aprobacion):
   - Mensajes de error claros
   - Mensaje de exito
 
-## 4. Definition of Done para iniciar backend
+## 4. Definition of Done historica (inicio backend) y estado actual
 
-Checklist minimo de inicio:
-- [ ] ADR corta de stack backend y base de datos.
-- [ ] Especificacion de endpoint inicial de cotizacion (`POST /api/v1/quotes`).
-- [ ] Politica de variables de entorno y secretos.
-- [ ] Estrategia de migraciones y seed minima.
-- [ ] Plan de pruebas (unitario + integracion).
+Checklist minimo de inicio (historico, completado):
+- [x] ADR corta de stack backend y base de datos.
+- [x] Especificacion de endpoint inicial de cotizacion (`POST /api/v1/quotes`).
+- [x] Politica de variables de entorno y secretos.
+- [x] Estrategia de persistencia y pruebas de estabilidad.
+- [x] Plan de pruebas (unitario + integracion).
 
-Checklist de cierre de primera iteracion backend:
-- [ ] Endpoint de cotizacion operativo en local y produccion.
-- [ ] Validacion server-side completa.
-- [ ] Persistencia de lead funcionando.
-- [ ] Manejo de errores estandarizado.
-- [ ] Integracion con frontend validada end-to-end.
+Checklist de cierre de primera iteracion backend (completado):
+- [x] Endpoint de cotizacion operativo en local y build de produccion.
+- [x] Validacion server-side completa.
+- [x] Persistencia de lead funcionando de forma durable.
+- [x] Manejo de errores estandarizado.
+- [x] Integracion con frontend validada end-to-end.
+
+Estado actualizado 2026-05-14:
+- [x] POST /api/v1/quotes operativo con respuestas 201, 422, 429, 500, 503, 415 y 413.
+- [x] GET /api/v1/health operativo con chequeo de persistencia.
+- [x] GET /api/v1/metrics operativo en formato texto compatible para scraping.
+- [x] Observabilidad activa en runtime: logs estructurados y metricas.
+- [x] Cobertura y suite de pruebas en verde en modulos criticos.
 
 ## 5. Riesgos controlados y pendientes
 
 - Pendiente de QA manual multibrowser completo (Firefox/Safari/Edge/iOS/Android) como actividad de hardening.
 - Lighthouse en Windows puede mostrar EPERM al limpiar temporales; usar evidencia combinada de checkpoints y ejecucion controlada por entorno.
 
-## 6. Siguiente accion recomendada
+## 6. Siguiente accion recomendada (hardening final)
 
-Crear la especificacion tecnica de backend fase 1 enfocada en cotizaciones y convertir el submit actual del formulario (hoy simulado) a llamada real a API con persistencia.
+- Ejecutar QA manual multibrowser y mobile real (Firefox/Safari/Edge/iOS/Android).
+- Consolidar evidencia final de operacion para go-live:
+  - resultados de build
+  - resultados de test
+  - evidencia de endpoints health y metrics
+  - evidencia visual del menu movil corregido
+- Cerrar pendientes documentales de operacion y observabilidad.
 
 Documentos creados para ejecutar la fase:
 - `API_V1_COTIZACIONES_TECNICO.md`

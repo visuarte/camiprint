@@ -1,196 +1,108 @@
 # API v1 Cotizaciones - Documento Tecnico
 
-Fecha: 2026-05-12
+Fecha: 2026-05-14
 Version: v1
 Base path: /api/v1
 
 ## 1. Objetivo
 
-Definir el contrato tecnico de la API de cotizaciones para sustituir el submit simulado del frontend por una integracion real, segura y observable.
+Contrato tecnico de la API de cotizaciones en produccion, con persistencia durable, validacion robusta, resiliencia y observabilidad.
 
-## 2. Endpoint inicial
+## 2. Endpoints activos
 
-Metodo: POST
-Ruta: /api/v1/quotes
-Content-Type: application/json
+- POST /api/v1/quotes
+- GET /api/v1/health
+- GET /api/v1/metrics
 
-## 3. Contrato request
+## 3. Contrato request (POST /quotes)
 
-### 3.1 Body JSON
+Content-Type requerido: application/json
 
-```json
-{
-  "name": "Carlos Perez",
-  "email": "carlos@empresa.com",
-  "phone": "+34 600 123 123",
-  "companyName": "Camiprint SL",
-  "quantity": "50-99",
-  "message": "Necesitamos camisetas para evento corporativo"
-}
-```
-
-### 3.2 Reglas de validacion
-
-- name: requerido, string, 2 a 120 caracteres.
-- email: requerido, string, formato email valido, max 254.
-- phone: requerido, string, 7 a 30 caracteres, solo `+`, digitos, espacios y `()-`.
-- companyName: requerido, string, 1 a 160 caracteres.
-- quantity: requerido, enum: `10-24 | 25-49 | 50-99 | 100+`.
-- message: opcional, string, max 2000 caracteres.
-
-## 4. Contrato response
-
-### 4.1 Exito 201
-
-```json
-{
-  "ok": true,
-  "data": {
-    "id": "q_01JV8Q8R7QW6Y7K8N9P0",
-    "status": "received",
-    "createdAt": "2026-05-12T18:05:00.000Z"
-  },
-  "meta": {
-    "requestId": "req_5f9db8f7d9ab4af9"
-  }
-}
-```
-
-### 4.2 Error de validacion 422
-
-```json
-{
-  "ok": false,
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Payload invalido",
-    "details": [
-      {
-        "field": "email",
-        "issue": "Formato de email invalido"
-      }
-    ]
-  },
-  "meta": {
-    "requestId": "req_5f9db8f7d9ab4af9"
-  }
-}
-```
-
-### 4.3 Error de limite 429
-
-```json
-{
-  "ok": false,
-  "error": {
-    "code": "RATE_LIMITED",
-    "message": "Demasiadas solicitudes, intenta nuevamente en unos minutos"
-  },
-  "meta": {
-    "requestId": "req_5f9db8f7d9ab4af9"
-  }
-}
-```
-
-### 4.4 Error interno 500
-
-```json
-{
-  "ok": false,
-  "error": {
-    "code": "INTERNAL_ERROR",
-    "message": "Error interno"
-  },
-  "meta": {
-    "requestId": "req_5f9db8f7d9ab4af9"
-  }
-}
-```
-
-## 5. Estandar de errores
-
-Todos los errores usan estructura:
-
-```json
-{
-  "ok": false,
-  "error": {
-    "code": "STRING_CODE",
-    "message": "Mensaje legible",
-    "details": []
-  },
-  "meta": {
-    "requestId": "req_x"
-  }
-}
-```
-
-## 6. Persistencia minima sugerida
-
-Tabla/coleccion: quotes
-
-Campos:
-- id (string, unico)
+Body:
 - name
 - email
 - phone
-- company_name
+- companyName
 - quantity
-- message
-- status (received | contacted | archived)
-- created_at (UTC ISO8601)
-- updated_at (UTC ISO8601)
-- source (default: landing-v1)
+- message (opcional)
 
-## 7. Seguridad minima
+Reglas de validacion:
+- name: requerido, 2 a 120 caracteres.
+- email: requerido, regex de frontend, max 254.
+- phone: requerido, minimo 7, sin maximo.
+- companyName: requerido, 1 a 160.
+- quantity: enum exacto 10-24, 25-49, 50-99, 100+.
+- message: opcional, max 2000.
+- payload maximo: 32KB.
+- rechazo de campos extra no permitidos.
 
-- Validacion server-side obligatoria.
-- Sanitizacion de strings (trim + normalizacion).
-- Limite de tamano de body.
-- Rate limiting por IP + fingerprint basico.
-- CORS estricto (solo origenes permitidos).
-- No loguear PII completa en texto plano.
+## 4. Contrato response (POST /quotes)
 
-## 8. Observabilidad minima
+Exito:
+- 201 con ok true, data id/status/createdAt, meta requestId.
 
-Por request registrar:
-- requestId
-- route
-- method
-- statusCode
-- durationMs
-- errorCode (si aplica)
+Errores:
+- 422 VALIDATION_ERROR para payload invalido o JSON invalido.
+- 429 RATE_LIMITED con Retry-After.
+- 415 UNSUPPORTED_MEDIA_TYPE si Content-Type no es application/json.
+- 413 PAYLOAD_TOO_LARGE si body supera 32KB.
+- 503 SERVICE_UNAVAILABLE con Retry-After (timeout o circuit breaker).
+- 500 INTERNAL_ERROR para fallo inesperado.
 
-Correlacion:
-- Generar requestId en middleware si no existe.
-- Devolver requestId en `meta.requestId`.
+Estandar comun:
+- ok siempre presente.
+- meta.requestId siempre presente.
 
-## 9. Integracion frontend actual
+## 5. Headers de respuesta
 
-Mapeo directo desde el formulario actual:
-- name -> name
-- email -> email
-- phone -> phone
-- companyName -> companyName
-- quantity -> quantity
-- message -> message
+Siempre:
+- Content-Type application/json en respuestas JSON.
+- X-Request-Id.
+- X-Content-Type-Options: nosniff.
+- X-Frame-Options: DENY.
 
-Comportamiento de UI esperado:
-- Durante submit: estado de carga.
-- En 201: mostrar mensaje de exito.
-- En 422: mostrar errores por campo cuando `details` exista.
-- En 429/500: mostrar mensaje general de error.
+En produccion:
+- Strict-Transport-Security: max-age=31536000; includeSubDomains.
 
-## 10. Versionado y compatibilidad
+## 6. Persistencia real
 
-- Mantener `v1` estable para no romper el frontend actual.
-- Cambios breaking deben salir en `v2`.
-- Cambios no breaking: nuevos campos opcionales permitidos.
+- Source persistido: landing-contact-form.
+- Status inicial: received.
+- Fechas: ISO 8601 UTC.
+- Escrituras atomicas y serializadas para evitar corrupcion.
 
-## 11. Criterio de aceptacion fase 1
+## 7. Observabilidad real
 
-- POST /api/v1/quotes operativo en local y produccion.
+- Logs estructurados por request con requestId, metodo, ruta, status, duracion.
+- Enmascaramiento de PII en email y telefono.
+- Metricas runtime:
+  - quotes_created_count
+  - quotes_validation_error_count
+  - quotes_rate_limited_count
+  - quotes_internal_error_count
+  - quotes_circuit_open_count
+  - quotes_in_flight_requests
+  - percentiles de latencia p50/p95/p99
+  - labels por status e IP enmascarada
+
+## 8. Integracion frontend
+
+Mensajes esperados:
+- 201: Solicitud enviada. Te contactaremos en breve.
+- 422: mapeo por campo con details.
+- 429: Hay alta demanda en este momento. Intentalo nuevamente en unos minutos.
+- 500 o 503: No pudimos procesar tu solicitud. Intentalo de nuevo.
+
+## 9. Versionado y compatibilidad
+
+- Mantener v1 estable para no romper frontend actual.
+- Cambios breaking salen en v2.
+- Cambios no breaking: solo campos opcionales nuevos.
+
+## 10. Criterio de aceptacion fase 1 (estado actual)
+
+- POST /api/v1/quotes operativo.
 - Validaciones y errores estandarizados funcionando.
-- Persistencia de leads activa.
-- RequestId visible en respuestas y logs.
-- Frontend integrado sin regresiones en tests existentes.
+- Persistencia durable activa.
+- requestId visible en body y header.
+- Frontend integrado sin regresiones en pruebas automatizadas.

@@ -28,11 +28,10 @@ src/
 │   ├── http/
 │   │   ├── errors.ts            # Mapeo de errores a respuestas HTTP
 │   │   ├── request-id.ts        # Generación y propagación de requestId
+│   │   └── rate-limit.ts        # Rate limiting con sliding window
+│   ├── observability/
 │   │   ├── logger.ts            # Logger estructurado con PII masking
-│   │   ├── metrics.ts           # Collector de métricas (contadores, histogramas)
-│   │   ├── rate-limiter.ts      # Rate limiting con sliding window
-│   │   ├── security.ts          # Headers de seguridad y CORS
-│   │   └── resilience.ts        # Timeouts y circuit breakers
+│   │   └── metrics.ts           # Collector de métricas (contadores, histogramas)
 │   └── quotes/
 │       ├── types.ts             # Tipos de dominio
 │       ├── validation.ts        # Validación y sanitización de payloads
@@ -107,7 +106,7 @@ sequenceDiagram
 
 ## Components and Interfaces
 
-### 1. Rate Limiter (`rate-limiter.ts`)
+### 1. Rate Limiter (`rate-limit.ts`)
 
 **Responsabilidad:** Proteger contra abuso limitando requests por IP.
 
@@ -119,7 +118,7 @@ interface RateLimitResult {
   retryAfter?: number; // segundos hasta reset
 }
 
-export const checkRateLimit = (request: Request): RateLimitResult;
+export const checkQuoteRateLimit = (request: Request): RateLimitResult;
 ```
 
 **Configuración:**
@@ -131,7 +130,7 @@ export const checkRateLimit = (request: Request): RateLimitResult;
 
 ---
 
-### 2. Structured Logger (`logger.ts`)
+### 2. Structured Logger (`observability/logger.ts`)
 
 **Responsabilidad:** Logging estructurado con enmascaramiento de PII.
 
@@ -163,7 +162,7 @@ export const logError = (requestId: string, error: Error, context?: Record<strin
 
 ---
 
-### 3. Metrics Collector (`metrics.ts`)
+### 3. Metrics Collector (`observability/metrics.ts`)
 
 **Responsabilidad:** Recolectar métricas operacionales en tiempo real.
 
@@ -222,7 +221,7 @@ export const validateQuotePayload = (payload: unknown): ValidationResult;
 **Validaciones:**
 - `name`: 2-120 caracteres
 - `email`: RFC 5322 simplificado, max 254 caracteres
-- `phone`: Regex `/^[+0-9\s()-]{7,30}$/`
+- `phone`: Regex `/^[+0-9\s()-]{7,}$/` (mínimo 7, sin máximo)
 - `companyName`: 1-160 caracteres
 - `quantity`: Enum `['10-24', '25-49', '50-99', '100+']`
 - `message`: Opcional, max 2000 caracteres
@@ -269,61 +268,29 @@ interface QuoteLeadRecord {
 
 ---
 
-### 6. Resilience Layer (`resilience.ts`)
+### 6. Resiliencia en QuotesService (`quotes/service.ts`)
 
-**Responsabilidad:** Timeouts y circuit breakers para dependencias.
+**Responsabilidad:** aplicar timeout y circuit breaker en la operación de persistencia de cotizaciones.
 
-```typescript
-export const withTimeout = <T>(
-  promise: Promise<T>,
-  timeoutMs: number,
-  errorMessage?: string
-): Promise<T>;
-
-class CircuitBreaker {
-  execute<T>(fn: () => Promise<T>): Promise<T>;
-  getState(): 'closed' | 'open' | 'half-open';
-}
-
-export const dbCircuitBreaker: CircuitBreaker;
-```
-
-**Configuración de circuit breaker:**
-- Umbral: 5 fallos consecutivos → estado `open`
-- Timeout de recuperación: 30 segundos → estado `half-open`
-- En estado `open`: rechazar requests inmediatamente sin intentar operación
-
-**Timeouts:**
-- Operaciones de DB: 5 segundos
-- Health checks: 2 segundos
+Implementación real:
+- Timeout de persistencia: 5 segundos.
+- Circuit breaker: estados `closed`, `open`, `half-open`.
+- Umbral de apertura: 5 fallos consecutivos.
+- Ventana de recuperación: 30 segundos para transición a half-open.
+- Estado open: rechaza de inmediato con `SERVICE_UNAVAILABLE`.
+- Eventos del circuito registrados en logs estructurados y métricas.
 
 ---
 
-### 7. Security Layer (`security.ts`)
+### 7. Seguridad HTTP en rutas y respuestas
 
-**Responsabilidad:** Headers de seguridad y CORS.
+**Responsabilidad:** aplicar headers de seguridad y validaciones HTTP directamente en helpers de respuesta y route handlers.
 
-```typescript
-export const securityHeaders: Record<string, string>;
-export const corsHeaders: (origin: string | null) => Record<string, string>;
-export const validateContentType: (request: Request) => boolean;
-```
-
-**Headers de seguridad:**
-```typescript
-{
-  'X-Content-Type-Options': 'nosniff',
-  'X-Frame-Options': 'DENY',
-  'X-XSS-Protection': '1; mode=block',
-  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains' // solo producción
-}
-```
-
-**CORS:**
-- Whitelist configurable por entorno vía `ALLOWED_ORIGINS`
-- Métodos permitidos: `POST, OPTIONS`
-- Headers permitidos: `Content-Type, X-Request-Id`
-- Max age: 86400 segundos (24 horas)
+Implementación real:
+- Validación de `Content-Type: application/json` en `POST /api/v1/quotes`.
+- Headers `X-Content-Type-Options: nosniff` y `X-Frame-Options: DENY` en respuestas.
+- `Strict-Transport-Security` en producción.
+- `X-Request-Id` en respuestas para correlación.
 
 ## Data Models
 
@@ -960,7 +927,7 @@ describe('GET /api/v1/health', () => {
 | `validation.ts` | 95% | Crítica |
 | `repository.ts` | 90% | Crítica |
 | `service.ts` | 90% | Alta |
-| `rate-limiter.ts` | 85% | Alta |
+| `rate-limit.ts` | 85% | Alta |
 | `logger.ts` | 80% | Media |
 | `metrics.ts` | 80% | Media |
 | `route.ts` | 85% | Alta |
@@ -1003,8 +970,8 @@ const generateInvalidEmail = () => faker.helpers.arrayElement([
 **Día 1-2: Infraestructura base**
 - [ ] Crear estructura de carpetas (`server/http`, `server/quotes`)
 - [ ] Implementar `errors.ts` y `request-id.ts`
-- [ ] Implementar `logger.ts` con PII masking
-- [ ] Implementar `metrics.ts` con contadores e histogramas
+- [ ] Implementar `observability/logger.ts` con PII masking
+- [ ] Implementar `observability/metrics.ts` con contadores e histogramas
 - [ ] Tests unitarios para cada módulo
 
 **Día 3-4: Validación y sanitización**
@@ -1020,8 +987,8 @@ const generateInvalidEmail = () => faker.helpers.arrayElement([
 - [ ] Tests de concurrencia (10 requests simultáneos)
 
 **Día 7-8: Rate limiting y seguridad**
-- [ ] Implementar `rate-limiter.ts` con sliding window
-- [ ] Implementar `security.ts` (headers + CORS)
+- [ ] Implementar `rate-limit.ts` con sliding window
+- [ ] Consolidar reglas de seguridad HTTP en rutas y helpers de respuesta
 - [ ] Configurar whitelist de orígenes por entorno
 - [ ] Tests de rate limiting
 
