@@ -26,12 +26,13 @@ Esta especificación define el backend de producción para Camiprint: captura de
 #### Acceptance Criteria
 
 1. THE Quote_API SHALL expose `POST /api/v1/quotes`
-2. THE Quote_API SHALL accept JSON body con campos `name`, `email`, `phone`, `companyName`, `quantity`, `message`
-3. WHEN el payload es válido, THE Quote_API SHALL return `201` con `id`, `status`, `createdAt` en menos de 500ms (p95)
-4. WHEN el payload es inválido, THE Quote_API SHALL return `422` con errores por campo
+2. THE Quote_API SHALL accept JSON body con campos exactos: `name`, `email`, `phone`, `companyName`, `quantity`, `message` (mismo contrato que frontend)
+3. WHEN el payload es válido, THE Quote_API SHALL return `201` con estructura `{ ok: true, data: { id, status, createdAt }, meta: { requestId } }` en menos de 500ms (p95)
+4. WHEN el payload es inválido, THE Quote_API SHALL return `422` con estructura `{ ok: false, error: { code, message, details: [{ field, issue }] }, meta: { requestId } }`
 5. WHEN el sistema está sobrecargado, THE Quote_API SHALL return `503` con `Retry-After` header
 6. THE Quote_API SHALL set `Content-Type: application/json` en todas las respuestas
 7. THE Quote_API SHALL validate `Content-Type: application/json` en requests
+8. THE Quote_API SHALL incluir `requestId` en `meta.requestId` de todas las respuestas (no solo en header)
 
 ### Requirement 2: Validación y sanitización robusta
 
@@ -42,10 +43,10 @@ Esta especificación define el backend de producción para Camiprint: captura de
 1. THE Sanitizer SHALL trim espacios en todos los campos de texto
 2. THE Sanitizer SHALL normalizar espacios múltiples a uno solo en campos de texto largo
 3. THE Sanitizer SHALL remover caracteres de control (excepto newline en `message`)
-4. THE Sanitizer SHALL validar formato email según RFC 5322 simplificado
-5. THE Sanitizer SHALL validar teléfono con regex `/^[+0-9\s()-]{7,30}$/`
-6. THE Sanitizer SHALL validar longitudes: `name` (2-120), `email` (max 254), `phone` (7-30), `companyName` (1-160), `message` (max 2000)
-7. THE Sanitizer SHALL validar enum `quantity` contra valores permitidos
+4. THE Sanitizer SHALL validar formato email con regex exacto `/^\S+@\S+\.\S+$/` (mismo que frontend)
+5. THE Sanitizer SHALL validar teléfono con regex exacto `/^[+0-9\s()-]{7,}$/` (mínimo 7 caracteres, sin máximo)
+6. THE Sanitizer SHALL validar longitudes: `name` (2-120), `email` (max 254), `phone` (mínimo 7, sin máximo), `companyName` (1-160), `message` (opcional, max 2000)
+7. THE Sanitizer SHALL validar enum `quantity` contra valores exactos `['10-24', '25-49', '50-99', '100+']`
 8. WHEN validación falla, THE Quote_API SHALL return `422` con array `details` conteniendo `field` e `issue`
 9. THE Sanitizer SHALL reject payloads con campos adicionales no especificados
 10. THE Sanitizer SHALL reject payloads que excedan 32KB
@@ -74,7 +75,7 @@ Esta especificación define el backend de producción para Camiprint: captura de
 
 1. THE Rate_Limiter SHALL limitar a 5 requests por IP por ventana de 60 segundos
 2. THE Rate_Limiter SHALL usar algoritmo sliding window o token bucket
-3. WHEN límite es excedido, THE Rate_Limiter SHALL return `429` con código `RATE_LIMITED`
+3. WHEN límite es excedido, THE Rate_Limiter SHALL return `429` con estructura `{ ok: false, error: { code: 'RATE_LIMITED', message }, meta: { requestId } }`
 4. WHEN límite es excedido, THE Rate_Limiter SHALL incluir header `Retry-After` en segundos
 5. THE Rate_Limiter SHALL usar almacenamiento en memoria con expiración automática
 6. THE Rate_Limiter SHALL identificar origen por IP del header `x-forwarded-for` o `x-real-ip` (con fallback a socket IP)
@@ -174,19 +175,22 @@ Esta especificación define el backend de producción para Camiprint: captura de
 4. THE Quote_API SHALL preservar tipos de datos en round-trip: parsear request → procesar → serializar response
 5. FOR ALL valid Quote_Lead records, serializar a JSON y parsear SHALL producir objeto equivalente (round-trip property)
 
-### Requirement 12: Compatibilidad con frontend actual
+### Requirement 12: Compatibilidad exacta con frontend actual
 
 **User Story:** Como usuario, quiero que el formulario actual funcione sin cambios, para mantener experiencia consistente.
 
 #### Acceptance Criteria
 
-1. THE Quote_API contract SHALL mapear 1:1 con campos del formulario actual
-2. THE frontend SHALL mostrar estado de carga durante submit
-3. WHEN response is `201`, THE frontend SHALL mostrar mensaje de éxito
-4. WHEN response is `422`, THE frontend SHALL mostrar errores por campo usando `details` array
-5. WHEN response is `429`, THE frontend SHALL mostrar mensaje "Demasiadas solicitudes, intenta en unos minutos"
-6. WHEN response is `500` o `503`, THE frontend SHALL mostrar error general recuperable con opción de reintentar
-7. THE frontend SHALL incluir `requestId` en reportes de error para soporte
+1. THE Quote_API contract SHALL aceptar exactamente los campos que envía el frontend: `name`, `email`, `phone`, `companyName`, `quantity`, `message`
+2. THE Quote_API SHALL retornar estructura de éxito exacta: `{ ok: true, data: { id, status, createdAt }, meta: { requestId } }`
+3. THE Quote_API SHALL retornar estructura de error exacta: `{ ok: false, error: { code, message, details?: [{ field, issue }] }, meta: { requestId } }`
+4. WHEN response is `201`, THE frontend SHALL mostrar mensaje "Solicitud enviada. Te contactaremos en breve."
+5. WHEN response is `422`, THE frontend SHALL mapear `error.details[]` a campos del formulario usando `field` y `issue`
+6. WHEN response is `429`, THE frontend SHALL mostrar mensaje "Hay alta demanda en este momento. Intentalo nuevamente en unos minutos."
+7. WHEN response is `500` o `503`, THE frontend SHALL mostrar mensaje "No pudimos procesar tu solicitud. Intentalo de nuevo."
+8. THE Quote_API SHALL incluir `requestId` en `meta.requestId` para soporte (frontend lo captura en development)
+9. THE Quote_API validation SHALL usar exactamente las mismas reglas que el frontend: `name` min 2 chars, `email` regex `/^\S+@\S+\.\S+$/`, `phone` regex `/^[+0-9\s()-]{7,}$/`, `companyName` no vacío, `quantity` enum `['10-24', '25-49', '50-99', '100+']`
+10. THE Quote_API error messages SHALL ser claros y en español para experiencia de usuario consistente
 
 ### Requirement 13: Observabilidad de errores
 
@@ -198,4 +202,20 @@ Esta especificación define el backend de producción para Camiprint: captura de
 2. WHEN error 5xx ocurre, THE Structured_Logger SHALL registrar payload sanitizado (sin PII completa)
 3. WHEN Persistence_Layer falla, THE Structured_Logger SHALL registrar tipo de error y duración del intento
 4. THE Quote_API SHALL incluir `requestId` en header `X-Request-Id` de respuesta para correlación
-5. THE Quote_API SHALL propagar `requestId` a Persistence_Layer para trazabilidad end-to-end
+5. THE Quote_API SHALL incluir `requestId` en `meta.requestId` del body de respuesta (requerido por frontend)
+6. THE Quote_API SHALL propagar `requestId` a Persistence_Layer para trazabilidad end-to-end
+
+### Requirement 14: Estructura de respuesta exacta para compatibilidad frontend
+
+**User Story:** Como frontend, quiero recibir respuestas en formato exacto esperado, para procesar correctamente éxitos y errores.
+
+#### Acceptance Criteria
+
+1. THE Quote_API success response (201) SHALL tener estructura exacta: `{ ok: true, data: { id: string, status: string, createdAt: string }, meta: { requestId: string } }`
+2. THE Quote_API validation error response (422) SHALL tener estructura exacta: `{ ok: false, error: { code: string, message: string, details: [{ field: string, issue: string }] }, meta: { requestId: string } }`
+3. THE Quote_API rate limit error response (429) SHALL tener estructura exacta: `{ ok: false, error: { code: string, message: string }, meta: { requestId: string } }`
+4. THE Quote_API server error response (500/503) SHALL tener estructura exacta: `{ ok: false, error: { code: string, message: string }, meta: { requestId: string } }`
+5. THE Quote_API SHALL SIEMPRE incluir campo `ok: boolean` en todas las respuestas para discriminación de tipo en frontend
+6. THE Quote_API SHALL SIEMPRE incluir campo `meta.requestId` en todas las respuestas para trazabilidad
+7. THE Quote_API validation errors SHALL mapear nombres de campo exactos del frontend: `name`, `email`, `phone`, `companyName`, `quantity`, `message`
+8. THE Quote_API error messages SHALL estar en español y ser user-friendly (no técnicos)
