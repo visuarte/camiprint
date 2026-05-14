@@ -32,11 +32,11 @@ const Hero = () => {
       <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-5 lg:gap-6">
         <div className="lg:col-span-3">
           <h1 className="max-w-2xl text-4xl font-bold leading-tight text-white md:text-5xl">
-            Camisetas personalizadas para tu negocio.
+            Tu marca, puesta en cada camiseta.
           </h1>
 
           <p className="mt-5 max-w-xl text-lg text-cami-200">
-            Impresion de ropa de alta calidad a pedido. Crea tus camisetas sin esfuerzo.
+            Produccion personalizada, calidad profesional y entrega agil.
           </p>
 
           <div className="mt-7 inline-flex items-center overflow-hidden rounded-xl border border-white/20 bg-white/10 shadow-glow backdrop-blur-sm">
