@@ -103,6 +103,7 @@ Estado actualizado 2026-05-14:
 
 - Pendiente de QA manual multibrowser completo (Firefox/Safari/Edge/iOS/Android) como actividad de hardening.
 - Lighthouse en Windows puede mostrar EPERM al limpiar temporales; usar evidencia combinada de checkpoints y ejecucion controlada por entorno.
+- Plan de ejecucion definido en `QA_MANUAL_MULTIBROWSER_HARDENING.md`.
 
 ## 6. Siguiente accion recomendada (hardening final)
 
