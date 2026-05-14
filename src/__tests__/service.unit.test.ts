@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { QuotesService, __resetQuotesCircuitBreakerForTests } from '@/server/quotes/service';
 import type { QuoteLeadRecord, QuoteRequestInput } from '@/server/quotes/types';
 
@@ -21,8 +21,18 @@ const buildRecord = (): QuoteLeadRecord => ({
 });
 
 describe('QuotesService', () => {
+  let warnSpy: ReturnType<typeof vi.spyOn>;
+  let infoSpy: ReturnType<typeof vi.spyOn>;
+
   beforeEach(() => {
     __resetQuotesCircuitBreakerForTests();
+    warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    infoSpy = vi.spyOn(console, 'info').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    warnSpy.mockRestore();
+    infoSpy.mockRestore();
   });
 
   it('retorna resultado cuando repository.create resuelve', async () => {
@@ -97,5 +107,16 @@ describe('QuotesService', () => {
     const next = await service.createQuote(quoteInput);
     expect(next.status).toBe('received');
     expect(repository.create).toHaveBeenCalledTimes(3);
+
+    const warnMessages = warnSpy.mock.calls.flat().map((value) => String(value));
+    const infoMessages = infoSpy.mock.calls.flat().map((value) => String(value));
+
+    expect(warnMessages.some((line) => line.includes('Circuit breaker opened for quotes persistence'))).toBe(true);
+    expect(
+      infoMessages.some((line) => line.includes('Circuit breaker moved to half-open for quotes persistence'))
+    ).toBe(true);
+    expect(infoMessages.some((line) => line.includes('Circuit breaker closed for quotes persistence'))).toBe(
+      true
+    );
   });
 });

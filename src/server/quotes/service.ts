@@ -1,6 +1,7 @@
 import type { QuoteRequestInput } from '@/server/quotes/types';
 import { QuotesRepository } from '@/server/quotes/repository';
 import { incrementCircuitOpenCount } from '@/server/observability/metrics';
+import { logOperationalEvent } from '@/server/observability/logger';
 
 export interface CreateQuoteResult {
   id: string;
@@ -51,13 +52,29 @@ const openCircuit = (nowMs: number, failureThreshold: number) => {
   state.openedAtMs = nowMs;
   state.failureCount = failureThreshold;
   incrementCircuitOpenCount();
+  logOperationalEvent('warn', 'Circuit breaker opened for quotes persistence', {
+    circuit: 'quotes-persistence',
+    state: 'open',
+    failureThreshold,
+    openedAtMs: nowMs,
+  });
 };
 
 const closeCircuit = () => {
   const state = getCircuitBreakerState();
+  const previousState = state.state;
+
   state.state = 'closed';
   state.failureCount = 0;
   state.openedAtMs = null;
+
+  if (previousState !== 'closed') {
+    logOperationalEvent('info', 'Circuit breaker closed for quotes persistence', {
+      circuit: 'quotes-persistence',
+      state: 'closed',
+      previousState,
+    });
+  }
 };
 
 const toServiceUnavailableError = (reason: string): Error => {
@@ -106,6 +123,12 @@ export class QuotesService {
     }
 
     state.state = 'half-open';
+    logOperationalEvent('info', 'Circuit breaker moved to half-open for quotes persistence', {
+      circuit: 'quotes-persistence',
+      state: 'half-open',
+      elapsedMs,
+      openWindowMs: this.openWindowMs,
+    });
   }
 
   private registerFailure(): void {

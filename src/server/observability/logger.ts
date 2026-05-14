@@ -93,3 +93,7 @@ export const logRequestError = (message: string, context: ErrorLogContext, extra
     ...(extra ?? {}),
   });
 };
+
+export const logOperationalEvent = (level: LogLevel, message: string, payload: Record<string, unknown> = {}) => {
+  emitLog(level, message, payload);
+};
