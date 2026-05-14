@@ -2,17 +2,31 @@ import { QUANTITY_VALUES, type QuoteRequestInput } from '@/server/quotes/types';
 import type { ValidationIssue } from '@/server/http/errors';
 
 const EMAIL_RE = /^\S+@\S+\.\S+$/;
-const PHONE_RE = /^[+0-9\s()-]{7,30}$/;
+const PHONE_RE = /^[+0-9\s()-]{7,}$/;
+const ALLOWED_FIELDS = new Set(['name', 'email', 'phone', 'companyName', 'quantity', 'message']);
+
+const normalizeWhitespace = (value: string): string => value.replace(/\s+/g, ' ').trim();
+
+const sanitizeSingleLine = (value: string): string => normalizeWhitespace(value).replace(/[\x00-\x1F\x7F]/g, '');
+
+const sanitizeMessage = (value: string): string => {
+  const withoutControlChars = value.replace(/[\x00-\x09\x0B-\x1F\x7F]/g, '');
+  return withoutControlChars
+    .split('\n')
+    .map((line) => line.replace(/\s+/g, ' ').trim())
+    .join('\n')
+    .trim();
+};
 
 const readOptionalString = (value: unknown): string | undefined => {
   if (typeof value !== 'string') return undefined;
-  const trimmed = value.trim();
-  return trimmed.length > 0 ? trimmed : undefined;
+  const sanitized = sanitizeMessage(value);
+  return sanitized.length > 0 ? sanitized : undefined;
 };
 
 const readRequiredString = (value: unknown): string => {
   if (typeof value !== 'string') return '';
-  return value.trim();
+  return sanitizeSingleLine(value);
 };
 
 export const validateQuotePayload = (payload: unknown): { data?: QuoteRequestInput; issues: ValidationIssue[] } => {
@@ -25,6 +39,11 @@ export const validateQuotePayload = (payload: unknown): { data?: QuoteRequestInp
   }
 
   const obj = payload as Record<string, unknown>;
+  const extraFields = Object.keys(obj).filter((key) => !ALLOWED_FIELDS.has(key));
+  if (extraFields.length > 0) {
+    issues.push({ field: 'body', issue: `Campos no permitidos: ${extraFields.join(', ')}.` });
+  }
+
   const name = readRequiredString(obj.name);
   const email = readRequiredString(obj.email);
   const phone = readRequiredString(obj.phone);
@@ -41,7 +60,7 @@ export const validateQuotePayload = (payload: unknown): { data?: QuoteRequestInp
   }
 
   if (!PHONE_RE.test(phone)) {
-    issues.push({ field: 'phone', issue: 'Debe contener entre 7 y 30 caracteres validos.' });
+    issues.push({ field: 'phone', issue: 'Debe contener al menos 7 caracteres validos.' });
   }
 
   if (companyName.length < 1 || companyName.length > 160) {

@@ -23,12 +23,26 @@ export interface SuccessPayload<T> {
   };
 }
 
+const withCommonHeaders = (requestId: string, customHeaders?: HeadersInit): Headers => {
+  const headers = new Headers(customHeaders);
+  headers.set('x-request-id', requestId);
+  headers.set('x-content-type-options', 'nosniff');
+  headers.set('x-frame-options', 'DENY');
+
+  if (process.env.NODE_ENV === 'production') {
+    headers.set('strict-transport-security', 'max-age=31536000; includeSubDomains');
+  }
+
+  return headers;
+};
+
 export const jsonError = (
   status: number,
   requestId: string,
   code: string,
   message: string,
-  details?: ValidationIssue[]
+  details?: ValidationIssue[],
+  customHeaders?: HeadersInit
 ) => {
   const body: ErrorPayload = {
     ok: false,
@@ -40,15 +54,21 @@ export const jsonError = (
     meta: { requestId },
   };
 
-  return Response.json(body, { status });
+  return Response.json(body, {
+    status,
+    headers: withCommonHeaders(requestId, customHeaders),
+  });
 };
 
-export const jsonSuccess = <T>(status: number, requestId: string, data: T) => {
+export const jsonSuccess = <T>(status: number, requestId: string, data: T, customHeaders?: HeadersInit) => {
   const body: SuccessPayload<T> = {
     ok: true,
     data,
     meta: { requestId },
   };
 
-  return Response.json(body, { status });
+  return Response.json(body, {
+    status,
+    headers: withCommonHeaders(requestId, customHeaders),
+  });
 };
