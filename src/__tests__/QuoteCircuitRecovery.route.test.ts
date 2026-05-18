@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { POST } from '@/app/api/v1/quotes/route';
 import {
   __resetQuotesServiceFactoryForTests,
   __setQuotesServiceFactoryForTests,
-  POST,
-} from '@/app/api/v1/quotes/route';
+} from '@/app/api/v1/quotes/_service-factory';
 import { brandConfig } from '@/config/brand';
 import { __resetQuoteRateLimitForTests } from '@/server/http/rate-limit';
 import { __resetMetricsForTests } from '@/server/observability/metrics';

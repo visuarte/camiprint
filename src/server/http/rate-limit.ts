@@ -1,22 +1,32 @@
+import { getPlatformConfig } from '@/server/platform/config';
+import { getInMemoryRateLimitStore } from './in-memory-rate-limit.store';
+import type { IRateLimitStore } from './rate-limit.store';
+
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS = 5;
 
-interface RateBucket {
-  timestamps: number[];
-}
+const GLOBAL_STORE_KEY = '__camiprint_rate_limit_store_instance__';
 
-const GLOBAL_RATE_LIMIT_STORE_KEY = '__camiprint_rate_limit_store__';
-
-const getStore = (): Map<string, RateBucket> => {
-  const globalScope = globalThis as typeof globalThis & {
-    [GLOBAL_RATE_LIMIT_STORE_KEY]?: Map<string, RateBucket>;
+const getRateLimitStore = async (): Promise<IRateLimitStore> => {
+  const g = globalThis as typeof globalThis & {
+    [GLOBAL_STORE_KEY]?: IRateLimitStore;
   };
 
-  if (!globalScope[GLOBAL_RATE_LIMIT_STORE_KEY]) {
-    globalScope[GLOBAL_RATE_LIMIT_STORE_KEY] = new Map();
+  if (!g[GLOBAL_STORE_KEY]) {
+    const config = getPlatformConfig();
+
+    if (config.rateLimitStoreDriver === 'redis' && config.redisUrl) {
+      const [{ getRedisClient }, { RedisRateLimitStore }] = await Promise.all([
+        import('@/server/platform/redis/client'),
+        import('./redis-rate-limit.store'),
+      ]);
+      g[GLOBAL_STORE_KEY] = new RedisRateLimitStore(getRedisClient(config.redisUrl));
+    } else {
+      g[GLOBAL_STORE_KEY] = getInMemoryRateLimitStore();
+    }
   }
 
-  return globalScope[GLOBAL_RATE_LIMIT_STORE_KEY];
+  return g[GLOBAL_STORE_KEY];
 };
 
 export const getQuoteClientIp = (request: Request): string => {
@@ -34,18 +44,18 @@ export interface RateLimitResult {
   retryAfterSeconds: number;
 }
 
-export const checkQuoteRateLimit = (request: Request): RateLimitResult => {
+export const checkQuoteRateLimit = async (request: Request): Promise<RateLimitResult> => {
   const now = Date.now();
   const clientIp = getQuoteClientIp(request);
-  const store = getStore();
+  const store = await getRateLimitStore();
 
-  const bucket = store.get(clientIp) ?? { timestamps: [] };
+  const bucket = await store.get(clientIp) ?? { timestamps: [] };
   bucket.timestamps = bucket.timestamps.filter((timestamp) => now - timestamp < WINDOW_MS);
 
   if (bucket.timestamps.length >= MAX_REQUESTS) {
     const oldestTimestamp = bucket.timestamps[0];
     const retryAfterMs = Math.max(WINDOW_MS - (now - oldestTimestamp), 1_000);
-    store.set(clientIp, bucket);
+    await store.set(clientIp, bucket, WINDOW_MS);
 
     return {
       allowed: false,
@@ -54,7 +64,7 @@ export const checkQuoteRateLimit = (request: Request): RateLimitResult => {
   }
 
   bucket.timestamps.push(now);
-  store.set(clientIp, bucket);
+  await store.set(clientIp, bucket, WINDOW_MS);
 
   return { allowed: true, retryAfterSeconds: 0 };
 };
@@ -62,9 +72,11 @@ export const checkQuoteRateLimit = (request: Request): RateLimitResult => {
 export const __resetQuoteRateLimitForTests = (): void => {
   if (process.env.NODE_ENV !== 'test') return;
 
-  const globalScope = globalThis as typeof globalThis & {
-    [GLOBAL_RATE_LIMIT_STORE_KEY]?: Map<string, RateBucket>;
-  };
+  getInMemoryRateLimitStore().reset();
 
-  globalScope[GLOBAL_RATE_LIMIT_STORE_KEY] = new Map();
+  const g = globalThis as typeof globalThis & {
+    [GLOBAL_STORE_KEY]?: IRateLimitStore;
+  };
+  g[GLOBAL_STORE_KEY] = undefined;
 };
+

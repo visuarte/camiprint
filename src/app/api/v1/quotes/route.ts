@@ -12,47 +12,15 @@ import {
   incrementValidationErrorCount,
   recordRequestDuration,
 } from '@/server/observability/metrics';
-import {
-  logRequestError,
+import { logRequestError,
   logRequestInfo,
   logRequestWarn,
   sanitizeQuotePayloadForLogs,
 } from '@/server/observability/logger';
-import { QuotesService } from '@/server/quotes/service';
 import { validateQuotePayload } from '@/server/quotes/validation';
+import { getQuotesServiceFactory } from './_service-factory';
 
 const MAX_BODY_SIZE_BYTES = 32_000;
-const GLOBAL_SERVICE_FACTORY_KEY = '__camiprint_quotes_service_factory__';
-
-type QuotesServiceFactory = () => QuotesService;
-
-const getQuotesServiceFactory = (): QuotesServiceFactory => {
-  const globalScope = globalThis as typeof globalThis & {
-    [GLOBAL_SERVICE_FACTORY_KEY]?: QuotesServiceFactory;
-  };
-
-  return globalScope[GLOBAL_SERVICE_FACTORY_KEY] ?? (() => new QuotesService());
-};
-
-export const __setQuotesServiceFactoryForTests = (factory: QuotesServiceFactory) => {
-  if (process.env.NODE_ENV !== 'test') return;
-
-  const globalScope = globalThis as typeof globalThis & {
-    [GLOBAL_SERVICE_FACTORY_KEY]?: QuotesServiceFactory;
-  };
-
-  globalScope[GLOBAL_SERVICE_FACTORY_KEY] = factory;
-};
-
-export const __resetQuotesServiceFactoryForTests = () => {
-  if (process.env.NODE_ENV !== 'test') return;
-
-  const globalScope = globalThis as typeof globalThis & {
-    [GLOBAL_SERVICE_FACTORY_KEY]?: QuotesServiceFactory;
-  };
-
-  delete globalScope[GLOBAL_SERVICE_FACTORY_KEY];
-};
 
 const parseBody = async (request: Request): Promise<unknown> => {
   const rawText = await request.text();
@@ -107,7 +75,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const rateLimit = checkQuoteRateLimit(request);
+    const rateLimit = await checkQuoteRateLimit(request);
     if (!rateLimit.allowed) {
       incrementRateLimitedCount();
       const durationMs = recordOutcome(429);
