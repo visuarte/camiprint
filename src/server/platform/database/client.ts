@@ -4,9 +4,8 @@ import { getPlatformConfig } from '@/server/platform/config';
 const GLOBAL_PG_POOL_KEY = '__camiart_pg_pool__';
 
 const loadPgPoolConstructor = async (): Promise<typeof import('pg').Pool> => {
-  const packageName = ['p', 'g'].join('');
-  const pgModule = (await import(packageName)) as typeof import('pg');
-
+  // pg está en serverExternalPackages — ambos bundlers (webpack y Turbopack) lo tratan como externo
+  const pgModule = await import('pg');
   return pgModule.Pool;
 };
 
