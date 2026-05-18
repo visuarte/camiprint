@@ -12,7 +12,7 @@ const validPayload = {
   name: 'Carlos Perez',
   email: 'carlos@empresa.com',
   phone: '+34 600 123 123',
-  companyName: 'Camiprint SL',
+  companyName: 'Camiart SL',
   quantity: '50-99',
   message: 'Necesitamos camisetas para evento corporativo',
 } as const;

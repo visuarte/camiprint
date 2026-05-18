@@ -11,9 +11,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Camiprint - Camisetas Personalizadas para Empresas",
+  title: "Camiart - Camisetas Personalizadas para Empresas",
   description:
-    "Camiprint crea camisetas personalizadas para empresas, restaurantes y eventos. Diseño gratuito, producción profesional y entrega rápida con ofertas por volumen.",
+    "Camiart crea camisetas personalizadas para empresas, restaurantes y eventos. Diseño gratuito, producción profesional y entrega rápida con ofertas por volumen.",
   keywords: [
     "camisetas personalizadas para empresas",
     "camisetas laborales",
@@ -28,8 +28,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_ES",
     url: "https://camiprint.com",
-    siteName: "Camiprint",
-    title: "Camiprint - Camisetas Personalizadas para Empresas",
+    siteName: "Camiart",
+    title: "Camiart - Camisetas Personalizadas para Empresas",
     description:
       "Camisetas personalizadas para empresas con diseño gratuito, entregas rápidas y precios por volumen.",
     images: [
@@ -37,13 +37,13 @@ export const metadata: Metadata = {
         url: "/og-image.svg",
         width: 1200,
         height: 630,
-        alt: "Camiprint - Camisetas Personalizadas para Empresas",
+        alt: "Camiart - Camisetas Personalizadas para Empresas",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Camiprint - Camisetas Personalizadas para Empresas",
+    title: "Camiart - Camisetas Personalizadas para Empresas",
     description:
       "Diseño gratuito, producción profesional y entregas rápidas para camisetas corporativas.",
     images: ["/og-image.svg"],

@@ -49,9 +49,9 @@ const Footer = () => {
   return (
     <footer data-reveal data-reveal-delay="150" className="mt-10 border-t border-white/10 bg-gradient-to-b from-cami-950 to-black px-4 py-12 md:px-6 md:py-14">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
-        <section aria-label="Camiprint" className="space-y-3">
+        <section aria-label="Camiart" className="space-y-3">
           <a href="#inicio" className="inline-flex text-2xl font-extrabold tracking-tight text-white transition-opacity hover:opacity-90">
-            Camiprint
+            Camiart
           </a>
           <p className="max-w-xs text-sm leading-relaxed text-cami-300">
             Produccion de camisetas para empresas, restauracion y eventos. Propuestas claras, calidad estable y entregas puntuales.
@@ -115,7 +115,7 @@ const Footer = () => {
       </div>
 
       <div className="mx-auto mt-10 max-w-7xl border-t border-white/10 pt-5 text-xs text-cami-400">
-        © {new Date().getFullYear()} Camiprint. Todos los derechos reservados.
+        © {new Date().getFullYear()} Camiart. Todos los derechos reservados.
       </div>
     </footer>
   );

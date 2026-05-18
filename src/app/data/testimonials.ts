@@ -21,7 +21,7 @@ export const testimonials: Testimonial[] = [
     companyName: 'Nexo Logistics',
     role: 'Director comercial',
     testimonialText:
-      'Necesitabamos camisetas para una campana corporativa y Camiprint entrego a tiempo, con excelente acabado y soporte constante.',
+      'Necesitabamos camisetas para una campana corporativa y Camiart entrego a tiempo, con excelente acabado y soporte constante.',
   },
   {
     id: 't-03',

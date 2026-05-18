@@ -86,7 +86,7 @@ const Navigation = () => {
         {/* Logo */}
         <div className="flex-shrink-0">
           <a href="#inicio" className="text-2xl font-bold tracking-tight text-white transition-colors hover:text-cami-200">
-            Camiprint
+            Camiart
           </a>
         </div>
 

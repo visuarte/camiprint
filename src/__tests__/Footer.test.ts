@@ -9,7 +9,7 @@ describe('Tarea 11.3: Footer tests', () => {
   it('renderiza secciones principales de footer', () => {
     const footer = fs.readFileSync(footerPath, 'utf-8');
 
-    expect(footer).toContain('aria-label="Camiprint"');
+    expect(footer).toContain('aria-label="Camiart"');
     expect(footer).toContain('Enlaces rapidos');
     expect(footer).toContain('Contacto');
     expect(footer).toContain('Legal y social');

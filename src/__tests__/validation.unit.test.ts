@@ -5,7 +5,7 @@ const basePayload = {
   name: ' Carlos   Perez ',
   email: 'carlos@empresa.com',
   phone: '+34 600 123 123',
-  companyName: ' Camiprint   SL ',
+  companyName: ' Camiart   SL ',
   quantity: '50-99',
   message: '  Hola   equipo\n necesitamos   cotizacion\x00 ',
 };
@@ -17,7 +17,7 @@ describe('validateQuotePayload', () => {
     expect(result.issues).toHaveLength(0);
     expect(result.data).toBeTruthy();
     expect(result.data?.name).toBe('Carlos Perez');
-    expect(result.data?.companyName).toBe('Camiprint SL');
+    expect(result.data?.companyName).toBe('Camiart SL');
     expect(result.data?.message).toBe('Hola equipo\nnecesitamos cotizacion');
   });
 

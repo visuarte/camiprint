@@ -105,7 +105,7 @@ describe('Tarea 9.5: Integracion flujo de cotizacion', () => {
     fireEvent.change(screen.getByLabelText('Nombre *'), { target: { value: 'Carlos' } });
     fireEvent.change(screen.getByLabelText('Email *'), { target: { value: 'carlos@empresa.com' } });
     fireEvent.change(screen.getByLabelText('Telefono *'), { target: { value: '+34 600 123 123' } });
-    fireEvent.change(screen.getByLabelText('Empresa *'), { target: { value: 'Camiprint SL' } });
+    fireEvent.change(screen.getByLabelText('Empresa *'), { target: { value: 'Camiart SL' } });
 
     fireEvent.click(screen.getByRole('button', { name: 'Solicitar propuesta' }));
 

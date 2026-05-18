@@ -1,4 +1,4 @@
-# Camiprint
+# Camiart
 
 Tienda online de camisetas con ofertas rápidas por cantidad, enfocada en ropa laboral y publicidad para negocios, restaurantes y empresas.
 

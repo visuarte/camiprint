@@ -57,7 +57,7 @@ describe('Tarea 1: Configuración Inicial', () => {
       const layoutPath = path.join(rootPath, 'src', 'app', 'layout.tsx');
       const content = fs.readFileSync(layoutPath, 'utf-8');
       expect(content).toContain('title:');
-      expect(content).toContain('Camiprint');
+      expect(content).toContain('Camiart');
     });
 
     it('debe tener descripción en metadata', () => {

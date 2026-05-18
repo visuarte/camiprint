@@ -69,7 +69,7 @@ describe('Tarea 9.4: Contact Form tests', () => {
     fireEvent.change(screen.getByLabelText('Nombre *'), { target: { value: 'Carlos' } });
     fireEvent.change(screen.getByLabelText('Email *'), { target: { value: 'carlos@empresa.com' } });
     fireEvent.change(screen.getByLabelText('Telefono *'), { target: { value: '+34 600 123 123' } });
-    fireEvent.change(screen.getByLabelText('Empresa *'), { target: { value: 'Camiprint SL' } });
+    fireEvent.change(screen.getByLabelText('Empresa *'), { target: { value: 'Camiart SL' } });
     fireEvent.change(screen.getByLabelText('Cantidad *'), { target: { value: '50-99' } });
   };
 
@@ -102,7 +102,7 @@ describe('Tarea 9.4: Contact Form tests', () => {
     fireEvent.change(screen.getByLabelText('Nombre *'), { target: { value: 'Carlos' } });
     fireEvent.change(screen.getByLabelText('Email *'), { target: { value: 'email_invalido' } });
     fireEvent.change(screen.getByLabelText('Telefono *'), { target: { value: '+34 600 123 123' } });
-    fireEvent.change(screen.getByLabelText('Empresa *'), { target: { value: 'Camiprint SL' } });
+    fireEvent.change(screen.getByLabelText('Empresa *'), { target: { value: 'Camiart SL' } });
     const form = screen.getByRole('button', { name: 'Solicitar propuesta' }).closest('form');
 
     if (!form) {
@@ -120,7 +120,7 @@ describe('Tarea 9.4: Contact Form tests', () => {
     fireEvent.change(screen.getByLabelText('Nombre *'), { target: { value: 'Carlos' } });
     fireEvent.change(screen.getByLabelText('Email *'), { target: { value: 'carlos@empresa.com' } });
     fireEvent.change(screen.getByLabelText('Telefono *'), { target: { value: '12' } });
-    fireEvent.change(screen.getByLabelText('Empresa *'), { target: { value: 'Camiprint SL' } });
+    fireEvent.change(screen.getByLabelText('Empresa *'), { target: { value: 'Camiart SL' } });
     fireEvent.click(screen.getByRole('button', { name: 'Solicitar propuesta' }));
 
     expect(await screen.findByText('Telefono invalido')).toBeTruthy();
@@ -182,7 +182,7 @@ describe('Tarea 9.4: Contact Form tests', () => {
     fireEvent.change(screen.getByLabelText('Nombre *'), { target: { value: 'Carlos' } });
     fireEvent.change(screen.getByLabelText('Email *'), { target: { value: 'carlos@empresa.com' } });
     fireEvent.change(screen.getByLabelText('Telefono *'), { target: { value: '+34 600 123 123' } });
-    fireEvent.change(screen.getByLabelText('Empresa *'), { target: { value: 'Camiprint SL' } });
+    fireEvent.change(screen.getByLabelText('Empresa *'), { target: { value: 'Camiart SL' } });
     fireEvent.change(screen.getByLabelText('Cantidad *'), { target: { value: '' } });
 
     fireEvent.click(screen.getByRole('button', { name: 'Solicitar propuesta' }));

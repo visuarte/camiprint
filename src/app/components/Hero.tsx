@@ -111,7 +111,7 @@ const Hero = () => {
           >
             <model-viewer
               src="/models/camiseta-camiprint.glb"
-              alt="Modelo 3D de camiseta Camiprint"
+              alt="Modelo 3D de camiseta Camiart"
               auto-rotate
               auto-rotate-delay="0"
               rotation-per-second="18deg"
