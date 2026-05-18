@@ -16,8 +16,8 @@ interface QuoteRow {
   company_name: string;
   quantity: QuoteLeadRecord['quantity'];
   message: string | null;
-  created_at: string;
-  updated_at: string;
+  created_at: string | Date;
+  updated_at: string | Date;
 }
 
 const mapRowToQuoteLeadRecord = (row: QuoteRow): QuoteLeadRecord => ({
@@ -30,8 +30,8 @@ const mapRowToQuoteLeadRecord = (row: QuoteRow): QuoteLeadRecord => ({
   companyName: row.company_name,
   quantity: row.quantity,
   ...(row.message ? { message: row.message } : {}),
-  createdAt: row.created_at,
-  updatedAt: row.updated_at,
+  createdAt: new Date(row.created_at).toISOString(),
+  updatedAt: new Date(row.updated_at).toISOString(),
 });
 
 const createQuoteId = () => {

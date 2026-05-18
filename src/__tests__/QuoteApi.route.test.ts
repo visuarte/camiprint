@@ -125,4 +125,51 @@ describe('POST /api/v1/quotes', () => {
     expect(body.ok).toBe(false);
     expect(body.error.code).toBe('RATE_LIMITED');
   });
+
+  it('responde 413 cuando el payload supera el limite de bytes', async () => {
+    const request = new Request('http://localhost/api/v1/quotes', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-request-id': 'req_test_413',
+      },
+      body: 'x'.repeat(33_000),
+    });
+
+    const response = await POST(request);
+    const body = (await response.json()) as {
+      ok: boolean;
+      error: { code: string; message: string };
+      meta: { requestId: string };
+    };
+
+    expect(response.status).toBe(413);
+    expect(body.ok).toBe(false);
+    expect(body.error.code).toBe('PAYLOAD_TOO_LARGE');
+    expect(body.meta.requestId).toBe('req_test_413');
+  });
+
+  it('responde 422 cuando el body contiene JSON invalido', async () => {
+    const request = new Request('http://localhost/api/v1/quotes', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-request-id': 'req_test_invalid_json',
+      },
+      body: '{campo: sin_comillas}',
+    });
+
+    const response = await POST(request);
+    const body = (await response.json()) as {
+      ok: boolean;
+      error: { code: string; details: Array<{ field: string }> };
+      meta: { requestId: string };
+    };
+
+    expect(response.status).toBe(422);
+    expect(body.ok).toBe(false);
+    expect(body.error.code).toBe('VALIDATION_ERROR');
+    expect(body.error.details[0].field).toBe('body');
+    expect(body.meta.requestId).toBe('req_test_invalid_json');
+  });
 });
