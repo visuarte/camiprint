@@ -1,5 +1,6 @@
 import type { QuoteRequestInput } from '@/server/quotes/types';
-import { QuotesRepository } from '@/server/quotes/repository';
+import type { QuoteRepository } from '@/server/quotes/contracts';
+import { createQuoteRepository } from '@/server/quotes/repository.factory';
 import { incrementCircuitOpenCount } from '@/server/observability/metrics';
 import { logOperationalEvent } from '@/server/observability/logger';
 
@@ -101,7 +102,7 @@ export class QuotesService {
   private readonly now: () => number;
 
   constructor(
-    private readonly repository: QuotesRepository = new QuotesRepository(),
+    private readonly repository: QuoteRepository = createQuoteRepository(),
     options: QuotesServiceOptions = {}
   ) {
     this.timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;

@@ -1,4 +1,5 @@
 import type { QuoteLeadRecord, QuoteRequestInput } from '@/server/quotes/types';
+import type { QuoteRepository } from '@/server/quotes/contracts';
 import { promises as fs } from 'node:fs';
 import { dirname, join } from 'node:path';
 
@@ -70,7 +71,7 @@ const writeStoreAtomically = async (store: QuotesStore): Promise<void> => {
 
 const createQuoteId = () => `q_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
 
-export class QuotesRepository {
+export class QuotesRepository implements QuoteRepository {
   async create(input: QuoteRequestInput): Promise<QuoteLeadRecord> {
     return await withStorageLock(async () => {
       const nowIso = new Date().toISOString();

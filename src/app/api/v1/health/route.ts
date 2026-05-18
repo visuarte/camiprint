@@ -1,13 +1,13 @@
 import { jsonSuccess } from '@/server/http/errors';
 import { getOrCreateRequestId } from '@/server/http/request-id';
-import { QuotesRepository } from '@/server/quotes/repository';
+import { createQuoteRepository } from '@/server/quotes/repository.factory';
 
 export async function GET(request: Request) {
   const requestId = getOrCreateRequestId(request);
-  const repository = new QuotesRepository();
   const startedAt = Date.now();
 
   try {
+    const repository = createQuoteRepository();
     const persistenceHealthy = await repository.isHealthy();
     const durationMs = Date.now() - startedAt;
 
