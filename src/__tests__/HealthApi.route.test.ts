@@ -34,7 +34,7 @@ describe('GET /api/v1/health', () => {
     expect(body.meta.requestId).toBe('req_health_ok');
   });
 
-  it('usa la dependencia configurada y degrada si el repositorio falla', async () => {
+  it('responde down cuando el repositorio reporta fallo', async () => {
     const isHealthy = vi.fn().mockResolvedValue(false);
     __setQuoteRepositoryFactoryForTests(() => ({
       create: vi.fn(),
@@ -45,22 +45,22 @@ describe('GET /api/v1/health', () => {
     const response = await GET(
       new Request('http://localhost/api/v1/health', {
         method: 'GET',
-        headers: { 'x-request-id': 'req_health_degraded' },
+        headers: { 'x-request-id': 'req_health_down2' },
       })
     );
 
     const body = (await response.json()) as {
       ok: boolean;
-      status: 'degraded';
+      status: 'down';
       checks: Array<{ name: string; status: string; durationMs: number }>;
       meta: { requestId: string };
     };
 
     expect(response.status).toBe(503);
     expect(body.ok).toBe(false);
-    expect(body.status).toBe('degraded');
+    expect(body.status).toBe('down');
     expect(body.checks[0].status).toBe('down');
-    expect(body.meta.requestId).toBe('req_health_degraded');
+    expect(body.meta.requestId).toBe('req_health_down2');
     expect(isHealthy).toHaveBeenCalledTimes(1);
   });
 

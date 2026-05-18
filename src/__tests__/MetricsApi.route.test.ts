@@ -66,4 +66,63 @@ describe('GET /api/v1/metrics', () => {
     expect(metricsText).toContain('# TYPE quotes_in_flight_requests gauge');
     expect(metricsText).toContain('# TYPE quotes_request_duration_ms_p95 gauge');
   });
+
+  it('responde 401 cuando METRICS_TOKEN está configurado y no se envía token', async () => {
+    const originalToken = process.env.METRICS_TOKEN;
+    process.env.METRICS_TOKEN = 'secret123';
+    try {
+      const response = await GET(
+        new Request('http://localhost/api/v1/metrics', { method: 'GET' })
+      );
+      expect(response.status).toBe(401);
+      expect(response.headers.get('www-authenticate')).toContain('Bearer');
+    } finally {
+      if (originalToken === undefined) {
+        delete process.env.METRICS_TOKEN;
+      } else {
+        process.env.METRICS_TOKEN = originalToken;
+      }
+    }
+  });
+
+  it('responde 401 cuando el Bearer token es incorrecto', async () => {
+    const originalToken = process.env.METRICS_TOKEN;
+    process.env.METRICS_TOKEN = 'secret123';
+    try {
+      const response = await GET(
+        new Request('http://localhost/api/v1/metrics', {
+          method: 'GET',
+          headers: { authorization: 'Bearer wrongtoken' },
+        })
+      );
+      expect(response.status).toBe(401);
+    } finally {
+      if (originalToken === undefined) {
+        delete process.env.METRICS_TOKEN;
+      } else {
+        process.env.METRICS_TOKEN = originalToken;
+      }
+    }
+  });
+
+  it('responde 200 cuando el Bearer token es correcto', async () => {
+    const originalToken = process.env.METRICS_TOKEN;
+    process.env.METRICS_TOKEN = 'secret123';
+    try {
+      __resetMetricsForTests();
+      const response = await GET(
+        new Request('http://localhost/api/v1/metrics', {
+          method: 'GET',
+          headers: { authorization: 'Bearer secret123' },
+        })
+      );
+      expect(response.status).toBe(200);
+    } finally {
+      if (originalToken === undefined) {
+        delete process.env.METRICS_TOKEN;
+      } else {
+        process.env.METRICS_TOKEN = originalToken;
+      }
+    }
+  });
 });

@@ -29,12 +29,27 @@ const getRateLimitStore = async (): Promise<IRateLimitStore> => {
   return g[GLOBAL_STORE_KEY];
 };
 
+/**
+ * Extrae la IP real del cliente respetando el número de proxies de confianza.
+ * Con trustedProxyCount=1 (default), confía en el último hop del x-forwarded-for.
+ * Con trustedProxyCount=0 o sin header, devuelve 'unknown'.
+ */
 export const getQuoteClientIp = (request: Request): string => {
-  const forwardedFor = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
-  if (forwardedFor) return forwardedFor;
+  const config = getPlatformConfig();
+  const count = config.trustedProxyCount;
+
+  const forwardedFor = request.headers.get('x-forwarded-for');
+  if (forwardedFor && count > 0) {
+    const hops = forwardedFor.split(',').map((h) => h.trim());
+    // El proxy más a la derecha que hemos insertado nosotros es el confiable;
+    // el cliente real está count posiciones desde la derecha.
+    const clientIndex = Math.max(hops.length - count, 0);
+    const ip = hops[clientIndex];
+    if (ip) return ip;
+  }
 
   const realIp = request.headers.get('x-real-ip')?.trim();
-  if (realIp) return realIp;
+  if (realIp && count > 0) return realIp;
 
   return 'unknown';
 };

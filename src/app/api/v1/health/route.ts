@@ -1,76 +1,53 @@
 import { jsonSuccess } from '@/server/http/errors';
 import { getOrCreateRequestId } from '@/server/http/request-id';
-import { createQuoteRepository } from '@/server/quotes/repository.factory';
+import { runHealthChecks } from '@/server/observability/health';
+
+const DENY_HEADERS = {
+  'x-content-type-options': 'nosniff',
+  'x-frame-options': 'DENY',
+} as const;
 
 export async function GET(request: Request) {
   const requestId = getOrCreateRequestId(request);
-  const startedAt = Date.now();
 
   try {
-    const repository = createQuoteRepository();
-    const persistenceHealthy = await repository.isHealthy();
-    const durationMs = Date.now() - startedAt;
+    const report = await runHealthChecks();
+    const statusCode = report.status === 'ok' ? 200 : 503;
 
-    if (!persistenceHealthy || durationMs > 2_000) {
-      return Response.json(
-        {
-          ok: false,
-          status: 'degraded',
-          timestamp: new Date().toISOString(),
-          checks: [
-            {
-              name: 'quotes-persistence',
-              status: persistenceHealthy ? 'ok' : 'down',
-              durationMs,
-            },
-          ],
-          meta: { requestId },
-        },
-        {
-          status: 503,
-          headers: {
-            'x-request-id': requestId,
-            'x-content-type-options': 'nosniff',
-            'x-frame-options': 'DENY',
-          },
-        }
-      );
+    const body = {
+      ...report,
+      meta: { requestId },
+    };
+
+    if (statusCode === 200) {
+      return jsonSuccess(200, requestId, {
+        status: report.status,
+        timestamp: report.timestamp,
+        checks: report.checks,
+      });
     }
 
-    return jsonSuccess(200, requestId, {
-      status: 'ok',
-      timestamp: new Date().toISOString(),
-      checks: [
-        {
-          name: 'quotes-persistence',
-          status: 'ok',
-          durationMs,
-        },
-      ],
-    });
+    return Response.json(
+      { ok: false, ...body },
+      {
+        status: statusCode,
+        headers: { 'x-request-id': requestId, ...DENY_HEADERS },
+      }
+    );
   } catch {
     return Response.json(
       {
         ok: false,
-        status: 'down',
+        status: 'down' as const,
         timestamp: new Date().toISOString(),
-        checks: [
-          {
-            name: 'quotes-persistence',
-            status: 'down',
-            durationMs: Date.now() - startedAt,
-          },
-        ],
+        checks: [{ name: 'health-runner', status: 'down' as const, durationMs: 0 }],
         meta: { requestId },
       },
       {
         status: 503,
-        headers: {
-          'x-request-id': requestId,
-          'x-content-type-options': 'nosniff',
-          'x-frame-options': 'DENY',
-        },
+        headers: { 'x-request-id': requestId, ...DENY_HEADERS },
       }
     );
   }
 }
+

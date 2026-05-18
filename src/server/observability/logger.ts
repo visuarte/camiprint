@@ -1,3 +1,5 @@
+import pino from 'pino';
+
 export type LogLevel = 'info' | 'warn' | 'error';
 
 export interface RequestLogContext {
@@ -33,67 +35,103 @@ const maskPhone = (value: string): string => {
 };
 
 export const sanitizeQuotePayloadForLogs = (payload: Record<string, unknown>) => {
-  const sanitizedPayload = { ...payload };
+  const sanitized = { ...payload };
 
-  if (typeof sanitizedPayload.email === 'string') {
-    sanitizedPayload.email = maskEmail(sanitizedPayload.email);
+  if (typeof sanitized.email === 'string') {
+    sanitized.email = maskEmail(sanitized.email);
   }
 
-  if (typeof sanitizedPayload.phone === 'string') {
-    sanitizedPayload.phone = maskPhone(sanitizedPayload.phone);
+  if (typeof sanitized.phone === 'string') {
+    sanitized.phone = maskPhone(sanitized.phone);
   }
 
-  return sanitizedPayload;
+  return sanitized;
 };
 
-const emitLog = (level: LogLevel, message: string, payload: Record<string, unknown>) => {
-  const logEntry = {
-    timestamp: new Date().toISOString(),
-    level,
-    message,
-    environment: process.env.NODE_ENV ?? 'unknown',
-    ...payload,
+const GLOBAL_LOGGER_KEY = '__camiprint_pino_logger__';
+
+const makeLogger = (): pino.Logger => {
+  const baseOpts: pino.LoggerOptions = {
+    level: process.env.LOG_LEVEL ?? 'info',
+    base: { environment: process.env.NODE_ENV ?? 'unknown' },
+    timestamp: pino.stdTimeFunctions.isoTime,
+    formatters: {
+      level: (label) => ({ level: label }),
+    },
   };
 
-  const serialized = JSON.stringify(logEntry);
-
-  if (level === 'error') {
-    console.error(serialized);
-    return;
+  // En tests, enruta la salida de pino a través de console.{info,warn,error}
+  // para que los vi.spyOn existentes sigan funcionando.
+  if (process.env.NODE_ENV === 'test') {
+    const destination: pino.DestinationStream = {
+      write(msg: string) {
+        try {
+          const parsed = JSON.parse(msg) as { level?: string };
+          const lvl = parsed.level;
+          if (lvl === 'error') console.error(msg);
+          else if (lvl === 'warn') console.warn(msg);
+          else console.info(msg);
+        } catch {
+          console.info(msg);
+        }
+      },
+    };
+    return pino({ ...baseOpts, level: 'trace' }, destination);
   }
 
-  if (level === 'warn') {
-    console.warn(serialized);
-    return;
+  return pino(baseOpts);
+};
+
+const getLogger = (): pino.Logger => {
+  const g = globalThis as typeof globalThis & {
+    [GLOBAL_LOGGER_KEY]?: pino.Logger;
+  };
+
+  if (!g[GLOBAL_LOGGER_KEY]) {
+    g[GLOBAL_LOGGER_KEY] = makeLogger();
   }
 
-  console.info(serialized);
+  return g[GLOBAL_LOGGER_KEY];
 };
 
-export const logRequestInfo = (message: string, context: RequestLogContext, extra?: Record<string, unknown>) => {
-  emitLog('info', message, {
-    ...context,
-    ...(extra ?? {}),
-  });
+export const logRequestInfo = (
+  message: string,
+  context: RequestLogContext,
+  extra?: Record<string, unknown>
+) => {
+  getLogger().info({ ...context, ...(extra ?? {}) }, message);
 };
 
-export const logRequestWarn = (message: string, context: RequestLogContext, extra?: Record<string, unknown>) => {
-  emitLog('warn', message, {
-    ...context,
-    ...(extra ?? {}),
-  });
+export const logRequestWarn = (
+  message: string,
+  context: RequestLogContext,
+  extra?: Record<string, unknown>
+) => {
+  getLogger().warn({ ...context, ...(extra ?? {}) }, message);
 };
 
-export const logRequestError = (message: string, context: ErrorLogContext, extra?: Record<string, unknown>) => {
-  emitLog('error', message, {
-    ...context,
-    ...(process.env.NODE_ENV === 'development' && context.errorStack
-      ? { stackTrace: context.errorStack }
-      : {}),
-    ...(extra ?? {}),
-  });
+export const logRequestError = (
+  message: string,
+  context: ErrorLogContext,
+  extra?: Record<string, unknown>
+) => {
+  getLogger().error(
+    {
+      ...context,
+      ...(process.env.NODE_ENV === 'development' && context.errorStack
+        ? { stackTrace: context.errorStack }
+        : {}),
+      ...(extra ?? {}),
+    },
+    message
+  );
 };
 
-export const logOperationalEvent = (level: LogLevel, message: string, payload: Record<string, unknown> = {}) => {
-  emitLog(level, message, payload);
+export const logOperationalEvent = (
+  level: LogLevel,
+  message: string,
+  payload: Record<string, unknown> = {}
+) => {
+  getLogger()[level](payload, message);
 };
+
