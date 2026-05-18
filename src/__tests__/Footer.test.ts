@@ -9,7 +9,8 @@ describe('Tarea 11.3: Footer tests', () => {
   it('renderiza secciones principales de footer', () => {
     const footer = fs.readFileSync(footerPath, 'utf-8');
 
-    expect(footer).toContain('aria-label="Camiart"');
+    expect(footer).toContain("import { brandConfig } from '@/config/brand'");
+    expect(footer).toContain('aria-label={brandConfig.displayName}');
     expect(footer).toContain('Enlaces rapidos');
     expect(footer).toContain('Contacto');
     expect(footer).toContain('Legal y social');
@@ -40,9 +41,9 @@ describe('Tarea 11.3: Footer tests', () => {
   it('incluye contacto y redes sociales', () => {
     const footer = fs.readFileSync(footerPath, 'utf-8');
 
-    expect(footer).toContain('mailto:hola@camiprint.com');
-    expect(footer).toContain('tel:+34900111222');
-    expect(footer).toContain('Av. de la Industria 18, Madrid');
+    expect(footer).toContain('brandConfig.supportEmail');
+    expect(footer).toContain('brandConfig.phoneHref');
+    expect(footer).toContain('brandConfig.postalAddress');
 
     expect(footer).toContain('aria-label={social.label}');
     expect(footer).toContain('Instagram');

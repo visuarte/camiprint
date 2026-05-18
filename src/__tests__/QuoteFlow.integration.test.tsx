@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import Pricing from '../app/components/Pricing';
 import ContactSection from '../app/components/ContactSection';
+import { brandConfig } from '@/config/brand';
 
 const mockApiResponse = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), {
@@ -105,7 +106,7 @@ describe('Tarea 9.5: Integracion flujo de cotizacion', () => {
     fireEvent.change(screen.getByLabelText('Nombre *'), { target: { value: 'Carlos' } });
     fireEvent.change(screen.getByLabelText('Email *'), { target: { value: 'carlos@empresa.com' } });
     fireEvent.change(screen.getByLabelText('Telefono *'), { target: { value: '+34 600 123 123' } });
-    fireEvent.change(screen.getByLabelText('Empresa *'), { target: { value: 'Camiart SL' } });
+    fireEvent.change(screen.getByLabelText('Empresa *'), { target: { value: brandConfig.companyExample } });
 
     fireEvent.click(screen.getByRole('button', { name: 'Solicitar propuesta' }));
 

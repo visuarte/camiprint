@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Script from 'next/script';
+import { brandConfig } from '@/config/brand';
 
 const Hero = () => {
   const [units, setUnits] = useState(1);
@@ -110,8 +111,8 @@ const Hero = () => {
             }`}
           >
             <model-viewer
-              src="/models/camiseta-camiprint.glb"
-              alt="Modelo 3D de camiseta Camiart"
+              src={brandConfig.assets.heroModelSrc}
+              alt={brandConfig.copy.heroModelAlt}
               auto-rotate
               auto-rotate-delay="0"
               rotation-per-second="18deg"

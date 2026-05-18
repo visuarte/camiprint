@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { brandConfig } from '@/config/brand';
 
 const navItems = [
   { label: 'Haz tu pedido', href: '#contacto' },
@@ -17,7 +18,7 @@ const Header = () => {
     <header className="sticky top-0 z-50 border-b border-white/10 bg-cami-950/60 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
         <a href="#inicio" className="text-2xl font-bold tracking-tight text-white">
-          Camiart
+          {brandConfig.displayName}
         </a>
 
         <nav className="hidden items-center gap-3 text-sm text-cami-200 md:flex">

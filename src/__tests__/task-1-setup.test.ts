@@ -57,7 +57,8 @@ describe('Tarea 1: Configuración Inicial', () => {
       const layoutPath = path.join(rootPath, 'src', 'app', 'layout.tsx');
       const content = fs.readFileSync(layoutPath, 'utf-8');
       expect(content).toContain('title:');
-      expect(content).toContain('Camiart');
+      expect(content).toContain("import { brandConfig } from '@/config/brand'");
+      expect(content).toContain('brandConfig.seo.defaultTitle');
     });
 
     it('debe tener descripción en metadata', () => {

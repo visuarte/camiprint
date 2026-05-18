@@ -4,6 +4,7 @@ import {
   __setQuotesServiceFactoryForTests,
   POST,
 } from '@/app/api/v1/quotes/route';
+import { brandConfig } from '@/config/brand';
 import { __resetQuoteRateLimitForTests } from '@/server/http/rate-limit';
 import { __resetMetricsForTests } from '@/server/observability/metrics';
 import { __resetQuotesCircuitBreakerForTests, QuotesService } from '@/server/quotes/service';
@@ -12,7 +13,7 @@ const validPayload = {
   name: 'Carlos Perez',
   email: 'carlos@empresa.com',
   phone: '+34 600 123 123',
-  companyName: 'Camiart SL',
+  companyName: brandConfig.companyExample,
   quantity: '50-99',
   message: 'Necesitamos camisetas para evento corporativo',
 } as const;

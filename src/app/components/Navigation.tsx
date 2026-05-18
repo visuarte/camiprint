@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { brandConfig } from '@/config/brand';
 
 const MOBILE_HEADER_HEIGHT = 73;
 
@@ -86,7 +87,7 @@ const Navigation = () => {
         {/* Logo */}
         <div className="flex-shrink-0">
           <a href="#inicio" className="text-2xl font-bold tracking-tight text-white transition-colors hover:text-cami-200">
-            Camiart
+            {brandConfig.displayName}
           </a>
         </div>
 

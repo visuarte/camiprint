@@ -59,9 +59,10 @@ describe('Tarea 2: Navigation Component', () => {
       });
     });
 
-    it('debe tener logo de Camiart', () => {
+    it('debe resolver el logo desde brandConfig', () => {
       const content = fs.readFileSync(navigationPath, 'utf-8');
-      expect(content).toContain('Camiart');
+      expect(content).toContain("import { brandConfig } from '@/config/brand'");
+      expect(content).toContain('{brandConfig.displayName}');
     });
 
     it('debe tener botón CTA "Solicitar Cotización"', () => {

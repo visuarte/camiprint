@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+import { brandConfig } from '@/config/brand';
 import { QuotesRepository, __resetQuotesStorageForTests } from '@/server/quotes/repository';
 import type { QuoteRequestInput } from '@/server/quotes/types';
 
@@ -6,7 +7,7 @@ const quoteInput: QuoteRequestInput = {
   name: 'Carlos Perez',
   email: 'carlos@empresa.com',
   phone: '+34 600 123 123',
-  companyName: 'Camiart SL',
+  companyName: brandConfig.companyExample,
   quantity: '50-99',
   message: 'Necesitamos 100 camisetas',
 };
@@ -36,7 +37,7 @@ describe('QuotesRepository', () => {
     const records = await repositoryB.list();
 
     expect(records).toHaveLength(1);
-    expect(records[0].companyName).toBe('Camiart SL');
+    expect(records[0].companyName).toBe(brandConfig.companyExample);
   });
 
   it('reporta healthy cuando storage es valido', async () => {

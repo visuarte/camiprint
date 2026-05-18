@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { brandConfig } from '@/config/brand';
 import { QuotesService, __resetQuotesCircuitBreakerForTests } from '@/server/quotes/service';
 import type { QuoteLeadRecord, QuoteRequestInput } from '@/server/quotes/types';
 
@@ -6,7 +7,7 @@ const quoteInput: QuoteRequestInput = {
   name: 'Carlos Perez',
   email: 'carlos@empresa.com',
   phone: '+34 600 123 123',
-  companyName: 'Camiart SL',
+  companyName: brandConfig.companyExample,
   quantity: '50-99',
   message: 'Necesitamos 100 camisetas',
 };

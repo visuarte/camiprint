@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { Inter } from "next/font/google";
+import { brandConfig } from "@/config/brand";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -11,9 +12,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Camiart - Camisetas Personalizadas para Empresas",
-  description:
-    "Camiart crea camisetas personalizadas para empresas, restaurantes y eventos. Diseño gratuito, producción profesional y entrega rápida con ofertas por volumen.",
+  title: brandConfig.seo.defaultTitle,
+  description: brandConfig.seo.description,
   keywords: [
     "camisetas personalizadas para empresas",
     "camisetas laborales",
@@ -23,13 +23,13 @@ export const metadata: Metadata = {
     "merchandising textil",
     "estampacion de camisetas",
   ],
-  metadataBase: new URL("https://camiprint.com"),
+  metadataBase: new URL(brandConfig.siteUrl),
   openGraph: {
     type: "website",
     locale: "es_ES",
-    url: "https://camiprint.com",
-    siteName: "Camiart",
-    title: "Camiart - Camisetas Personalizadas para Empresas",
+    url: brandConfig.siteUrl,
+    siteName: brandConfig.displayName,
+    title: brandConfig.seo.defaultTitle,
     description:
       "Camisetas personalizadas para empresas con diseño gratuito, entregas rápidas y precios por volumen.",
     images: [
@@ -37,13 +37,13 @@ export const metadata: Metadata = {
         url: "/og-image.svg",
         width: 1200,
         height: 630,
-        alt: "Camiart - Camisetas Personalizadas para Empresas",
+        alt: brandConfig.seo.ogImageAlt,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Camiart - Camisetas Personalizadas para Empresas",
+    title: brandConfig.seo.defaultTitle,
     description:
       "Diseño gratuito, producción profesional y entregas rápidas para camisetas corporativas.",
     images: ["/og-image.svg"],
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest",
   alternates: {
-    canonical: "https://camiprint.com",
+    canonical: brandConfig.siteUrl,
   },
   robots: {
     index: true,
