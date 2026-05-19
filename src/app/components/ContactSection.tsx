@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 
 interface ContactFormData {
@@ -23,6 +23,8 @@ interface ContactFormState {
   submitError: string | null;
   supportRequestId: string | null;
   isSupportIdCopied: boolean;
+  retryCount: number;
+  isServerError: boolean;
 }
 
 interface QuoteApiValidationDetail {
@@ -93,6 +95,7 @@ const resolvePrefilledQuantity = (): string | null => {
 
 const ContactSection = () => {
   const isDevelopment = process.env.NODE_ENV === 'development';
+  const isApiEnabled = process.env.NEXT_PUBLIC_QUOTES_API_ENABLED !== 'false';
   const [state, setState] = useState<ContactFormState>({
     formData: initialForm,
     errors: {},
@@ -102,8 +105,11 @@ const ContactSection = () => {
     submitError: null,
     supportRequestId: null,
     isSupportIdCopied: false,
+    retryCount: 0,
+    isServerError: false,
   });
   const [prefilledQuantity, setPrefilledQuantity] = useState<string | null>(null);
+  const successMessageRef = useRef<HTMLParagraphElement>(null);
 
   const formData = state.formData;
   const errors = state.errors;
@@ -216,38 +222,29 @@ const ContactSection = () => {
     });
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setState((prev) => ({
-      ...prev,
-      isSuccess: false,
-      submitError: null,
-      supportRequestId: null,
-      isSupportIdCopied: false,
-    }));
-
-    const nextErrors = validateForm(formData);
-    setState((prev) => ({
-      ...prev,
-      errors: nextErrors,
-      touched: {
-        name: true,
-        email: true,
-        phone: true,
-        companyName: true,
-        quantity: true,
-      },
-    }));
-
-    if (Object.keys(nextErrors).length > 0) return;
-
-    setState((prev) => ({ ...prev, isSubmitting: true }));
-
+  const executeSubmit = async (data: ContactFormData) => {
     try {
+      if (!isApiEnabled) {
+        setState((prev) => ({
+          ...prev,
+          isSuccess: true,
+          formData: { ...initialForm, quantity: prefilledQuantity ?? initialForm.quantity },
+          errors: {},
+          touched: {},
+          submitError: null,
+          supportRequestId: null,
+          retryCount: 0,
+          isServerError: false,
+          isSupportIdCopied: false,
+        }));
+        setTimeout(() => successMessageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+        return;
+      }
+
       const response = await fetch('/api/v1/quotes', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(data),
       });
 
       let responseBody: QuoteApiSuccessResponse | QuoteApiErrorResponse | null = null;
@@ -257,7 +254,7 @@ const ContactSection = () => {
         responseBody = null;
       }
 
-      const requestId = responseBody?.meta?.requestId;
+      const requestId = responseBody?.meta?.requestId ?? null;
       if (isDevelopment && requestId) {
         console.info('[support][quotes] requestId:', requestId, 'status:', response.status);
       }
@@ -271,8 +268,11 @@ const ContactSection = () => {
           touched: {},
           submitError: null,
           supportRequestId: null,
+          retryCount: 0,
+          isServerError: false,
           isSupportIdCopied: false,
         }));
+        setTimeout(() => successMessageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
         return;
       }
 
@@ -291,18 +291,24 @@ const ContactSection = () => {
             quantity: true,
           },
           submitError: body?.error.message || 'Payload invalido',
-          supportRequestId: isDevelopment ? requestId ?? null : null,
+          supportRequestId: requestId,
           isSupportIdCopied: false,
+          isServerError: false,
         }));
         return;
       }
 
       if (response.status === 429) {
+        const retryAfter = response.headers.get('Retry-After');
+        const retryText = retryAfter
+          ? ` Intenta de nuevo en ${retryAfter} segundos.`
+          : ' Intentalo nuevamente en unos minutos.';
         setState((prev) => ({
           ...prev,
-          submitError: 'Hay alta demanda en este momento. Intentalo nuevamente en unos minutos.',
-          supportRequestId: isDevelopment ? requestId ?? null : null,
+          submitError: `Hay alta demanda en este momento.${retryText}`,
+          supportRequestId: requestId,
           isSupportIdCopied: false,
+          isServerError: false,
         }));
         return;
       }
@@ -310,8 +316,9 @@ const ContactSection = () => {
       setState((prev) => ({
         ...prev,
         submitError: 'No pudimos procesar tu solicitud. Intentalo de nuevo.',
-        supportRequestId: isDevelopment ? requestId ?? null : null,
+        supportRequestId: requestId,
         isSupportIdCopied: false,
+        isServerError: true,
       }));
     } catch {
       setState((prev) => ({
@@ -319,10 +326,56 @@ const ContactSection = () => {
         submitError: 'No pudimos enviar tu solicitud por un problema de red. Intentalo de nuevo.',
         supportRequestId: null,
         isSupportIdCopied: false,
+        isServerError: false,
       }));
     } finally {
       setState((prev) => ({ ...prev, isSubmitting: false }));
     }
+  };
+
+  const handleRetry = async () => {
+    const RETRY_DELAYS_MS = [1000, 2000, 4000];
+    const delay = RETRY_DELAYS_MS[Math.min(state.retryCount, RETRY_DELAYS_MS.length - 1)];
+    setState((prev) => ({
+      ...prev,
+      isSubmitting: true,
+      submitError: null,
+      isServerError: false,
+      retryCount: prev.retryCount + 1,
+    }));
+    await new Promise<void>((resolve) => setTimeout(resolve, delay));
+    await executeSubmit(state.formData);
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setState((prev) => ({
+      ...prev,
+      isSuccess: false,
+      submitError: null,
+      supportRequestId: null,
+      isSupportIdCopied: false,
+      isServerError: false,
+      retryCount: 0,
+    }));
+
+    const nextErrors = validateForm(formData);
+    setState((prev) => ({
+      ...prev,
+      errors: nextErrors,
+      touched: {
+        name: true,
+        email: true,
+        phone: true,
+        companyName: true,
+        quantity: true,
+      },
+    }));
+
+    if (Object.keys(nextErrors).length > 0) return;
+
+    setState((prev) => ({ ...prev, isSubmitting: true }));
+    await executeSubmit(formData);
   };
 
   return (
@@ -460,7 +513,7 @@ const ContactSection = () => {
             </button>
 
             {isSuccess && (
-              <p className="text-sm font-medium text-emerald-300">
+              <p ref={successMessageRef} className="text-sm font-medium text-emerald-300">
                 Solicitud enviada. Te contactaremos en breve.
               </p>
             )}
@@ -469,10 +522,19 @@ const ContactSection = () => {
                 <p className="text-sm font-medium text-red-300">
                   {submitError}
                 </p>
-                {isDevelopment && state.supportRequestId && (
+                {state.isServerError && state.retryCount < 3 && !isSubmitting && (
+                  <button
+                    type="button"
+                    onClick={() => { void handleRetry(); }}
+                    className="mt-2 text-sm font-medium text-cami-200 underline hover:text-white"
+                  >
+                    Reintentar
+                  </button>
+                )}
+                {state.supportRequestId && (
                   <div className="mt-1 flex items-center gap-2">
                     <p className="text-xs text-cami-300">
-                      Soporte QA ID: {state.supportRequestId}
+                      Si el problema persiste, contacta a soporte con el código: {state.supportRequestId}
                     </p>
                     <button
                       type="button"

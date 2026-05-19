@@ -1,0 +1,23 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "installCommand": "npm ci",
+  "regions": ["iad1"],
+  "env": {
+    "QUOTES_REPOSITORY_DRIVER": "postgres",
+    "RATE_LIMIT_STORE_DRIVER": "memory",
+    "LOG_LEVEL": "info",
+    "TRUSTED_PROXY_COUNT": "1",
+    "NEXT_PUBLIC_QUOTES_API_ENABLED": "true"
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" }
+      ]
+    }
+  ]
+}

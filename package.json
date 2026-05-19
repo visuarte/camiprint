@@ -10,6 +10,8 @@
     "start": "next start",
     "db:migrate": "node scripts/run-postgres-migrations.mjs",
     "validate:e2e:quotes-postgres": "node scripts/validate-postgres-route-e2e.mjs",
+    "smoke:staging": "node scripts/smoke-test.mjs",
+    "smoke:prod": "BASE_URL=https://camiprint.com node scripts/smoke-test.mjs",
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",

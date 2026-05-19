@@ -1,3 +1,20 @@
+export const getCorsHeaders = (origin: string | null): Record<string, string> => {
+  if (!origin) return {};
+
+  const raw = process.env.ALLOWED_ORIGINS?.trim();
+  if (!raw) return {};
+
+  const allowed = raw.split(',').map((s) => s.trim()).filter(Boolean);
+  if (!allowed.includes(origin)) return {};
+
+  return {
+    'access-control-allow-origin': origin,
+    'access-control-allow-methods': 'POST, OPTIONS',
+    'access-control-allow-headers': 'Content-Type, X-Request-Id',
+    'access-control-max-age': '86400',
+  };
+};
+
 export interface ValidationIssue {
   field: string;
   issue: string;
@@ -33,6 +50,14 @@ const withCommonHeaders = (requestId: string, customHeaders?: HeadersInit): Head
     headers.set('strict-transport-security', 'max-age=31536000; includeSubDomains');
   }
 
+  return headers;
+};
+
+export const withCors = (headers: Headers, origin: string | null): Headers => {
+  const cors = getCorsHeaders(origin);
+  for (const [key, value] of Object.entries(cors)) {
+    headers.set(key, value);
+  }
   return headers;
 };
 

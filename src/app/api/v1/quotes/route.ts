@@ -1,4 +1,4 @@
-import { jsonError, jsonSuccess } from '@/server/http/errors';
+import { jsonError, jsonSuccess, getCorsHeaders, withCors } from '@/server/http/errors';
 import { getOrCreateRequestId } from '@/server/http/request-id';
 import { checkQuoteRateLimit, getQuoteClientIp } from '@/server/http/rate-limit';
 import {
@@ -43,6 +43,7 @@ export async function POST(request: Request) {
   const method = request.method;
   const path = new URL(request.url).pathname;
   const clientIp = getQuoteClientIp(request);
+  const origin = request.headers.get('origin');
 
   const recordOutcome = (statusCode: number) => {
     const durationMs = Date.now() - startedAt;
@@ -127,7 +128,9 @@ export async function POST(request: Request) {
       durationMs,
     });
 
-    return jsonSuccess(201, requestId, created);
+    const successResponse = jsonSuccess(201, requestId, created);
+    withCors(successResponse.headers, origin);
+    return successResponse;
   } catch (error) {
     if (error instanceof SyntaxError) {
       incrementValidationErrorCount();
@@ -204,4 +207,22 @@ export async function POST(request: Request) {
   } finally {
     decrementInFlightRequests();
   }
+}
+
+export async function OPTIONS(request: Request) {
+  const origin = request.headers.get('origin');
+  const cors = getCorsHeaders(origin);
+  const headers = new Headers({
+    ...cors,
+    'x-content-type-options': 'nosniff',
+    'x-frame-options': 'DENY',
+    'access-control-allow-methods': 'POST, OPTIONS',
+    'access-control-allow-headers': 'Content-Type, X-Request-Id',
+  });
+
+  if (process.env.NODE_ENV === 'production') {
+    headers.set('strict-transport-security', 'max-age=31536000; includeSubDomains');
+  }
+
+  return new Response(null, { status: 204, headers });
 }

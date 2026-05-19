@@ -335,3 +335,131 @@ describe('Tarea 9.4: Contact Form tests', () => {
     expect(await screen.findByText('No pudimos procesar tu solicitud. Intentalo de nuevo.')).toBeTruthy();
   });
 });
+
+describe('ContactSection – Epic 11: retry, requestId, feature flag', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+  });
+
+  const fillValidRequiredFields = () => {
+    fireEvent.change(screen.getByLabelText('Nombre *'), { target: { value: 'Carlos' } });
+    fireEvent.change(screen.getByLabelText('Email *'), { target: { value: 'carlos@empresa.com' } });
+    fireEvent.change(screen.getByLabelText('Telefono *'), { target: { value: '+34 600 123 123' } });
+    fireEvent.change(screen.getByLabelText('Empresa *'), { target: { value: brandConfig.companyExample } });
+    fireEvent.change(screen.getByLabelText('Cantidad *'), { target: { value: '50-99' } });
+  };
+
+  it('muestra boton Reintentar tras recibir error 500', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            ok: false,
+            error: { code: 'INTERNAL_ERROR', message: 'Error interno del servidor' },
+            meta: { requestId: 'req_500_test' },
+          }),
+          { status: 500, headers: { 'content-type': 'application/json' } }
+        )
+      )
+    );
+
+    render(<ContactSection />);
+    fillValidRequiredFields();
+    fireEvent.click(screen.getByRole('button', { name: 'Solicitar propuesta' }));
+
+    expect(await screen.findByRole('button', { name: 'Reintentar' })).toBeTruthy();
+  });
+
+  it('no muestra boton Reintentar tras error 422 de validacion', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            ok: false,
+            error: { code: 'VALIDATION_ERROR', message: 'Payload invalido', details: [] },
+            meta: { requestId: 'req_422_test' },
+          }),
+          { status: 422, headers: { 'content-type': 'application/json' } }
+        )
+      )
+    );
+
+    render(<ContactSection />);
+    fillValidRequiredFields();
+    fireEvent.click(screen.getByRole('button', { name: 'Solicitar propuesta' }));
+
+    // Para 422 el componente muestra el mensaje de la API, no el genérico
+    await screen.findByText('Payload invalido');
+    expect(screen.queryByRole('button', { name: 'Reintentar' })).toBeNull();
+  });
+
+  it('muestra el requestId de soporte para todos los usuarios tras error 500', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            ok: false,
+            error: { code: 'INTERNAL_ERROR', message: 'Error interno' },
+            meta: { requestId: 'req_soporte_xyz789' },
+          }),
+          { status: 500, headers: { 'content-type': 'application/json' } }
+        )
+      )
+    );
+
+    render(<ContactSection />);
+    fillValidRequiredFields();
+    fireEvent.click(screen.getByRole('button', { name: 'Solicitar propuesta' }));
+
+    expect(await screen.findByText(/req_soporte_xyz789/)).toBeTruthy();
+    expect(screen.getByText(/Si el problema persiste/)).toBeTruthy();
+  });
+
+  it('muestra segundos de espera cuando la respuesta 429 incluye Retry-After', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            ok: false,
+            error: { code: 'RATE_LIMITED', message: 'Too many requests' },
+            meta: { requestId: 'req_429_ra' },
+          }),
+          {
+            status: 429,
+            headers: {
+              'content-type': 'application/json',
+              'retry-after': '45',
+            },
+          }
+        )
+      )
+    );
+
+    render(<ContactSection />);
+    fillValidRequiredFields();
+    fireEvent.click(screen.getByRole('button', { name: 'Solicitar propuesta' }));
+
+    expect(await screen.findByText(/45 segundos/)).toBeTruthy();
+  });
+
+  it('simula exito sin llamar a fetch cuando la feature flag esta desactivada', async () => {
+    vi.stubEnv('NEXT_PUBLIC_QUOTES_API_ENABLED', 'false');
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+
+    render(<ContactSection />);
+    fillValidRequiredFields();
+    fireEvent.click(screen.getByRole('button', { name: 'Solicitar propuesta' }));
+
+    expect(
+      await screen.findByText('Solicitud enviada. Te contactaremos en breve.')
+    ).toBeTruthy();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
