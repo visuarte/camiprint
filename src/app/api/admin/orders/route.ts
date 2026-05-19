@@ -1,0 +1,77 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const status = searchParams.get('status');
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = parseInt(searchParams.get('limit') || '10', 10);
+    const search = searchParams.get('search');
+    const sortBy = searchParams.get('sortBy') || 'createdAt';
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
+
+    // Build where clause
+    const where: any = {};
+
+    if (status) {
+      where.status = status;
+    }
+
+    if (search) {
+      where.OR = [
+        { id: { contains: search } },
+        { email: { contains: search } },
+      ];
+    }
+
+    if (startDate || endDate) {
+      where.createdAt = {};
+      if (startDate) {
+        where.createdAt.gte = new Date(startDate);
+      }
+      if (endDate) {
+        where.createdAt.lte = new Date(endDate);
+      }
+    }
+
+    // Get total count
+    const total = await prisma.order.count({ where });
+
+    // Get orders with pagination
+    const orders = await prisma.order.findMany({
+      where,
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy: { [sortBy]: 'desc' },
+      select: {
+        id: true,
+        customerId: true,
+        email: true,
+        phone: true,
+        totalAmount: true,
+        status: true,
+        createdAt: true,
+      },
+    });
+
+    const totalPages = Math.ceil(total / limit);
+
+    return NextResponse.json({
+      orders,
+      total,
+      page,
+      limit,
+      totalPages,
+    });
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch orders' },
+      { status: 500 }
+    );
+  }
+}
