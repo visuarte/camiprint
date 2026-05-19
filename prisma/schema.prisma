@@ -1,0 +1,115 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Product model - T-shirt catalog
+model Product {
+  id        String   @id @default(cuid())
+  name      String   @db.VarChar(255)
+  description String? @db.Text
+  price     Float    // Price in USD/local currency
+  imageUrl  String?  @db.Text // URL to product image
+  size      String   // e.g., "XS", "S", "M", "L", "XL", "XXL"
+  quantity  Int      // Stock quantity
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  cartItems CartItem[]
+  orderItems OrderItem[]
+
+  @@index([createdAt])
+}
+
+// Cart model - Shopping cart per user
+model Cart {
+  id        String   @id @default(cuid())
+  userId    String   @db.VarChar(255) // Temporary user ID (no auth yet)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  items CartItem[]
+
+  @@index([userId])
+}
+
+// CartItem model - Items in cart
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  productId String
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, productId])
+  @@index([cartId])
+  @@index([productId])
+}
+
+// Customer model - Customer information
+model Customer {
+  id        String   @id @default(cuid())
+  name      String   @db.VarChar(255)
+  email     String   @db.VarChar(255) @unique
+  phone     String   @db.VarChar(20)
+  address   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  orders    Order[]
+
+  @@index([email])
+}
+
+// Order model - Customer orders
+model Order {
+  id            String   @id @default(cuid())
+  customerId    String
+  totalAmount   Float    // Total order amount
+  status        String   @default("pending") // pending, paid, shipped, delivered, cancelled
+  email         String   @db.VarChar(255)
+  phone         String   @db.VarChar(20)
+  address       String   @db.Text
+  stripePaymentIntentId String? @db.VarChar(255) // Stripe payment intent ID
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  customer      Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  items         OrderItem[]
+
+  @@index([customerId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// OrderItem model - Items in order
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Float    // Price at time of purchase
+  createdAt DateTime @default(now())
+
+  // Relations
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}

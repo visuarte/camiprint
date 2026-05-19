@@ -345,3 +345,520 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 5. THE Ticket_System SHALL provide API documentation with endpoint descriptions, parameters, and example requests/responses
 6. THE Ticket_System SHALL implement rate limiting to prevent API abuse (100 requests per minute per API key)
 7. WHEN an API request fails validation, THE Ticket_System SHALL return descriptive error messages with HTTP status codes
+
+---
+
+## Architecture & Design
+
+### High-Level Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                          Customer Portal                             │
+│  ┌──────────────────────────────────────────────────────────────┐  │
+│  │  Ticket Client UI (React + Framer-Motion)                    │  │
+│  │  - Create/View Tickets, Messages, File Upload                │  │
+│  │  - Real-time Notifications & SLA Tracking                    │  │
+│  └──────────────────────────────────────────────────────────────┘  │
+└──────────────────────┬──────────────────────────────────────────────┘
+                       │
+                       ↓
+┌─────────────────────────────────────────────────────────────────────┐
+│                        API Gateway & Auth                            │
+│  - JWT/OAuth2 Authentication                                         │
+│  - Role-Based Access Control (RBAC)                                  │
+│  - Rate Limiting (100 req/min per API key)                           │
+│  - Request Validation & Error Handling                               │
+└──────────────────────┬──────────────────────────────────────────────┘
+                       │
+        ┌──────────────┼──────────────┐
+        ↓              ↓              ↓
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│   Ticket     │ │  Support     │ │  Knowledge   │
+│   Service    │ │  Service     │ │  Base        │
+│              │ │              │ │  Service     │
+│ - CRUD       │ │ - Assignment │ │              │
+│ - Status     │ │ - Escalation │ │ - Articles   │
+│ - Priority   │ │ - SLA Track  │ │ - Versioning │
+│ - Messages   │ │              │ │              │
+└──────┬───────┘ └──────┬───────┘ └──────┬───────┘
+       │                │                │
+       └────────────────┼────────────────┘
+                        ↓
+        ┌───────────────────────────────┐
+        │  Notification Service         │
+        │  - Email (SMTP)               │
+        │  - In-App (WebSocket)         │
+        │  - Escalation Rules           │
+        └───────────────┬───────────────┘
+                        │
+        ┌───────────────┼───────────────┐
+        ↓               ↓               ↓
+    ┌────────┐    ┌──────────┐    ┌─────────┐
+    │ Email  │    │ In-App   │    │ External│
+    │ Queue  │    │ Notif DB │    │Services │
+    │(RabbitQ)   │          │    │(Webhooks)
+    └────────┘    └──────────┘    └─────────┘
+                        │
+                        ↓
+        ┌────────────────────────────────┐
+        │   PostgreSQL Database          │
+        │                                │
+        │ - Tickets & Messages           │
+        │ - Users & Assignments          │
+        │ - Notifications & History      │
+        │ - Knowledge Base Articles      │
+        │ - Audit Logs                   │
+        └────────────────────────────────┘
+```
+
+### Data Model (Core Entities)
+
+#### Ticket
+- `id` (UUID)
+- `clientId` (UUID) → References Client
+- `createdBy` (UUID) → References Support_Agent | Client
+- `title` (string)
+- `description` (text)
+- `status` (enum: Nuevo, Asignado, En Progreso, Esperando Cliente, Resuelto, Cerrado)
+- `priority` (enum: Baja, Media, Alta, Crítica)
+- `category` (UUID) → References Category
+- `assignedTo` (UUID) → References Support_Agent (nullable)
+- `slaDeadlineResponse` (datetime)
+- `slaDeadlineResolution` (datetime)
+- `slaStatus` (enum: On Track, Warning, Breached)
+- `createdAt` (datetime)
+- `updatedAt` (datetime)
+- `resolvedAt` (datetime, nullable)
+- `closedAt` (datetime, nullable)
+- `satisfactionRating` (int 1-5, nullable)
+
+#### Message
+- `id` (UUID)
+- `ticketId` (UUID) → References Ticket
+- `authorId` (UUID) → References User
+- `content` (text)
+- `isInternal` (boolean) - hidden from Client
+- `createdAt` (datetime)
+- `attachments` (Attachment[])
+
+#### Notification
+- `id` (UUID)
+- `userId` (UUID) → References User
+- `ticketId` (UUID) → References Ticket (nullable)
+- `type` (enum: ticket_created, assigned, status_changed, message_added, sla_warning, escalated, survey_requested)
+- `channel` (enum: email, in_app, both)
+- `isRead` (boolean)
+- `sentAt` (datetime)
+- `expiresAt` (datetime) - 30 days
+
+#### User
+- `id` (UUID)
+- `email` (string, unique)
+- `name` (string)
+- `role` (enum: Client, Support_Agent, Supervisor, Admin)
+- `category` (UUID, nullable) → For Support_Agents, category specialization
+- `workload` (int) → Current open assigned tickets
+- `createdAt` (datetime)
+
+#### KnowledgeBase Article
+- `id` (UUID)
+- `title` (string)
+- `content` (text, rich HTML)
+- `category` (UUID) → References Category
+- `status` (enum: draft, published, archived)
+- `author` (UUID) → References Support_Agent
+- `viewCount` (int)
+- `helpfulCount` (int)
+- `notHelpfulCount` (int)
+- `createdAt` (datetime)
+- `publishedAt` (datetime, nullable)
+- `version` (int)
+
+#### TicketHistory
+- `id` (UUID)
+- `ticketId` (UUID)
+- `fieldName` (string)
+- `oldValue` (string)
+- `newValue` (string)
+- `changedBy` (UUID) → References User
+- `changedAt` (datetime)
+
+### Technology Stack
+
+**Frontend:**
+- React 18+ (TSX)
+- Framer-motion (animations)
+- TanStack Query (data fetching)
+- Zustand (state management)
+- Tailwind CSS (styling)
+- Zod (form validation)
+
+**Backend:**
+- Next.js 16+ (App Router)
+- TypeScript
+- PostgreSQL (primary database)
+- Pino (structured logging)
+- Vitest (unit testing)
+- Playwright (E2E testing)
+
+**Services & Integrations:**
+- SMTP (email notifications)
+- WebSocket (real-time notifications)
+- Redis (caching, rate limiting)
+- SendGrid or Postmark (optional, email service)
+- AWS S3 or local storage (file attachments)
+
+### API Endpoints
+
+**Ticket Management:**
+- `POST /api/v1/tickets` - Create ticket
+- `GET /api/v1/tickets` - List tickets (paginated, filtered)
+- `GET /api/v1/tickets/:id` - Get ticket details
+- `PATCH /api/v1/tickets/:id` - Update ticket (status, priority, assignment)
+- `DELETE /api/v1/tickets/:id` - Delete ticket (admin only)
+
+**Messages:**
+- `POST /api/v1/tickets/:id/messages` - Add message
+- `GET /api/v1/tickets/:id/messages` - Get messages
+- `PATCH /api/v1/messages/:id` - Update message (internal note)
+- `DELETE /api/v1/messages/:id` - Soft delete message
+
+**Knowledge Base:**
+- `GET /api/v1/articles` - List published articles
+- `GET /api/v1/articles/:id` - Get article
+- `POST /api/v1/articles` - Create article (agent/admin)
+- `PATCH /api/v1/articles/:id` - Update article
+- `POST /api/v1/articles/:id/publish` - Publish article
+- `POST /api/v1/articles/:id/rate` - Rate article (helpful/not helpful)
+
+**Notifications:**
+- `GET /api/v1/notifications` - Get user notifications
+- `PATCH /api/v1/notifications/:id/read` - Mark as read
+- `PATCH /api/v1/notifications/read-all` - Mark all as read
+
+**Admin (Configuration):**
+- `GET/POST /api/v1/admin/sla-config` - SLA configuration
+- `GET/POST /api/v1/admin/categories` - Manage categories
+- `GET/POST /api/v1/admin/users` - Manage users & roles
+- `GET /api/v1/admin/reports` - Performance reports
+
+**Health & Metrics:**
+- `GET /health` - Health check
+- `GET /metrics` - System metrics (admin only)
+
+---
+
+## Implementation Plan
+
+### Phase 1: Core Ticket Management (Weeks 1-3)
+
+**Epic 1.1: Database Schema & ORM Setup**
+- [ ] Design and create PostgreSQL schema (Tickets, Users, Messages, History, Attachments)
+- [ ] Setup Prisma or TypeORM migrations
+- [ ] Create database seed scripts for test data
+
+**Epic 1.2: Ticket CRUD Operations**
+- [ ] Implement Ticket creation (client & support agent)
+- [ ] Implement Ticket retrieval (list & detail views)
+- [ ] Implement Ticket updates (status, priority, assignment)
+- [ ] Add request validation and error handling
+- [ ] Create unit tests (>80% coverage)
+
+**Epic 1.3: API Foundation**
+- [ ] Setup API routes structure
+- [ ] Implement authentication middleware (JWT/OAuth)
+- [ ] Implement RBAC middleware
+- [ ] Add rate limiting
+- [ ] Create API documentation (OpenAPI/Swagger)
+
+**Tasks:**
+1. Create database schema migrations file
+2. Setup ORM configuration
+3. Implement Ticket model & repository
+4. Create API route handlers for /api/v1/tickets
+5. Add input validation using Zod
+6. Write unit tests for Ticket service
+7. Setup API documentation
+
+---
+
+### Phase 2: Messaging & Communication (Weeks 4-5)
+
+**Epic 2.1: Bidirectional Messaging**
+- [ ] Implement Message model and CRUD
+- [ ] Support message attachments
+- [ ] Internal notes (hidden from clients)
+- [ ] Auto-status change when client replies in "Esperando Cliente" state
+
+**Epic 2.2: Email Notifications**
+- [ ] Setup email service (SMTP or SendGrid)
+- [ ] Create notification templates
+- [ ] Implement event-driven email sending
+- [ ] Test email delivery
+
+**Epic 2.3: In-App Notifications**
+- [ ] Implement Notification model
+- [ ] Create WebSocket server for real-time updates
+- [ ] Build notification UI components
+- [ ] Implement notification preferences
+
+**Tasks:**
+1. Create Message model & API endpoints
+2. Design email notification templates
+3. Implement Email Service with queue
+4. Setup WebSocket server
+5. Create Notification UI components
+6. Add notification preference storage
+7. Write integration tests for messaging
+
+---
+
+### Phase 3: Support Operations (Weeks 6-7)
+
+**Epic 3.1: Ticket Assignment & Routing**
+- [ ] Implement assignment logic
+- [ ] Support auto-assignment with workload balancing
+- [ ] Track assignment history
+- [ ] Assignment notifications
+
+**Epic 3.2: Status & Priority Management**
+- [ ] Validate status transitions
+- [ ] Implement priority changes with audit logging
+- [ ] Auto-closure after resolution period
+- [ ] Reopen logic for client responses
+
+**Epic 3.3: Advanced Search & Filtering**
+- [ ] Full-text search in ticket title, description, messages
+- [ ] Filter by status, priority, category, date range, assignee
+- [ ] Boolean search operators (AND, OR, NOT)
+- [ ] Search performance optimization (< 2 sec for 100k tickets)
+
+**Tasks:**
+1. Implement assignment service with workload calculation
+2. Add status transition validation
+3. Create search service with PostgreSQL full-text search
+4. Build advanced filter UI
+5. Create filtering API endpoints
+6. Write tests for search performance
+7. Add search query history
+
+---
+
+### Phase 4: SLA & Escalation (Weeks 8-9)
+
+**Epic 4.1: SLA Configuration & Tracking**
+- [ ] Admin SLA configuration by priority
+- [ ] SLA deadline calculation
+- [ ] Time tracking (pause during "Esperando Cliente")
+- [ ] SLA breach detection
+- [ ] Automated escalation on breach
+
+**Epic 4.2: Escalation Logic**
+- [ ] Auto-escalate critical tickets
+- [ ] SLA violation escalation
+- [ ] Manual escalation support
+- [ ] Supervisor notifications
+
+**Tasks:**
+1. Create SLA Config model
+2. Implement SLA calculation service
+3. Add background job for SLA monitoring
+4. Create escalation rule engine
+5. Implement escalation notification logic
+6. Add SLA display to ticket UI
+7. Create SLA reports
+
+---
+
+### Phase 5: Knowledge Base (Weeks 10-11)
+
+**Epic 5.1: Knowledge Base Articles**
+- [ ] CRUD operations for articles
+- [ ] Draft/Publish workflow
+- [ ] Version history
+- [ ] Category organization
+
+**Epic 5.2: Article Search & Suggestions**
+- [ ] Full-text search in articles
+- [ ] Ranking by relevance and ratings
+- [ ] Automatic suggestions on ticket creation
+- [ ] View/rating tracking
+
+**Tasks:**
+1. Create Article model & ORM
+2. Implement Article API endpoints
+3. Add article search and filtering
+4. Create article management UI
+5. Implement suggestion engine
+6. Add rating system UI
+7. Write article integration tests
+
+---
+
+### Phase 6: Admin & Reporting (Weeks 12-13)
+
+**Epic 6.1: Admin Configuration**
+- [ ] Category management
+- [ ] User & role management
+- [ ] SLA settings
+- [ ] Notification preferences
+
+**Epic 6.2: Performance Reports**
+- [ ] Dashboard with key metrics
+- [ ] Ticket volume trends
+- [ ] Response/Resolution times
+- [ ] SLA compliance rates
+- [ ] Agent performance metrics
+- [ ] Customer satisfaction tracking
+- [ ] CSV export
+
+**Tasks:**
+1. Create admin configuration pages
+2. Implement category management
+3. Implement user role assignment
+4. Create reporting service
+5. Build dashboard with charts
+6. Implement CSV export
+7. Add report scheduling (email delivery)
+
+---
+
+### Phase 7: Advanced Features (Weeks 14-15)
+
+**Epic 7.1: Customer Satisfaction**
+- [ ] Survey on resolution
+- [ ] 1-5 star rating
+- [ ] Written feedback
+- [ ] Agent satisfaction metrics
+
+**Epic 7.2: Response Templates**
+- [ ] Template CRUD
+- [ ] Template variables
+- [ ] Organization-wide templates
+- [ ] Suggested templates in message composer
+
+**Epic 7.3: Multi-Channel Support**
+- [ ] Email-to-ticket conversion
+- [ ] Email reply integration
+- [ ] Channel source tracking
+
+**Tasks:**
+1. Create satisfaction survey UI
+2. Implement survey submission API
+3. Create response template service
+4. Add template variable substitution
+5. Setup email ingestion service
+6. Implement email forwarding logic
+7. Add multi-channel tests
+
+---
+
+### Phase 8: Integrations & Deployment (Weeks 16-17)
+
+**Epic 8.1: Customer Portal Integration**
+- [ ] Embed ticket system in portal
+- [ ] Shared authentication
+- [ ] Consistent styling
+- [ ] Deep linking
+
+**Epic 8.2: API & External Integrations**
+- [ ] Complete REST API
+- [ ] API key management
+- [ ] OAuth2 support
+- [ ] Webhook support
+- [ ] Rate limiting enforcement
+
+**Epic 8.3: Deployment & Monitoring**
+- [ ] Docker containerization
+- [ ] Kubernetes deployment
+- [ ] Monitoring & alerting
+- [ ] Error tracking (Sentry)
+- [ ] Performance monitoring (DataDog)
+
+**Tasks:**
+1. Create API key management system
+2. Implement webhook system
+3. Write API client SDKs (Node.js, Python)
+4. Create deployment documentation
+5. Setup CI/CD pipeline
+6. Configure monitoring
+7. Conduct load testing
+
+---
+
+### Phase 9: Testing & QA (Weeks 18-20)
+
+**Epic 9.1: Automated Testing**
+- [ ] Unit tests (>85% coverage)
+- [ ] Integration tests
+- [ ] E2E tests with Playwright
+- [ ] Performance tests
+- [ ] Load testing
+
+**Epic 9.2: Manual QA & UAT**
+- [ ] Cross-browser testing
+- [ ] Accessibility testing (WCAG 2.1)
+- [ ] Security testing (OWASP)
+- [ ] User acceptance testing
+
+**Tasks:**
+1. Expand unit test coverage
+2. Create integration test suites
+3. Write E2E test scenarios
+4. Setup load testing environment
+5. Create QA test plan
+6. Conduct security audit
+7. Accessibility audit
+
+---
+
+### Phase 10: Production Rollout (Weeks 21-22)
+
+**Epic 10.1: Pre-Production Preparation**
+- [ ] Database backup strategy
+- [ ] Disaster recovery plan
+- [ ] Performance baselines
+- [ ] Runbooks for incident response
+
+**Epic 10.2: Staged Rollout**
+- [ ] Internal team access
+- [ ] Beta customer group
+- [ ] General availability
+- [ ] Post-launch monitoring
+
+**Tasks:**
+1. Create database backup procedures
+2. Write runbook documentation
+3. Setup monitoring dashboards
+4. Create incident response plan
+5. Conduct training for support team
+6. Launch beta program
+7. Monitor and optimize post-launch
+
+---
+
+## Risk Mitigation
+
+| Risk | Likelihood | Impact | Mitigation |
+|------|-----------|--------|-----------|
+| Database performance degradation | Medium | High | Implement indexing strategy, query optimization, archiving old tickets |
+| Email delivery failures | Low | Medium | Setup retry mechanism, fallback email provider, logging |
+| Real-time notification lag | Medium | Medium | Use WebSocket with fallback to polling, Redis for caching |
+| File upload security | High | High | Implement virus scanning, file type validation, secure storage |
+| SLA calculation errors | Medium | High | Comprehensive unit tests, audit logging, manual verification |
+| High API usage/rate limiting | Low | Medium | Monitor usage, implement tiered rate limits, customer communication |
+| Data privacy/GDPR compliance | High | Critical | Data encryption, access logs, right to deletion, data export |
+
+---
+
+## Success Metrics
+
+- **Performance:** API response time < 200ms (p95), Search < 2 sec for 100k tickets
+- **Reliability:** 99.9% uptime, <1% error rate
+- **User Adoption:** >80% of support team using system within 1 month
+- **Customer Satisfaction:** >4.0 avg rating on 5-star scale
+- **SLA Compliance:** >95% of tickets meet SLA targets
+- **Code Quality:** >85% test coverage, 0 critical security vulnerabilities
+
+
