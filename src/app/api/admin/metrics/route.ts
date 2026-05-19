@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
     const cancelledOrders = orders.filter((o: typeof orders[0]) => o.status === 'cancelled').length;
     const totalRevenue = orders
       .filter((o: typeof orders[0]) => o.status === 'paid')
-      .reduce((sum, o) => sum + o.totalAmount, 0);
+      .reduce((sum: number, o: typeof orders[0]) => sum + o.totalAmount, 0);
     const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
     return NextResponse.json({
