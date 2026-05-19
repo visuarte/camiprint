@@ -1,8 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "buildCommand": "npm run build:webpack",
-  "installCommand": "npm install --legacy-peer-deps",
   "regions": ["iad1"],
   "env": {
     "QUOTES_REPOSITORY_DRIVER": "json",
