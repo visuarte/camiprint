@@ -5,7 +5,7 @@
   "installCommand": "npm install --legacy-peer-deps",
   "regions": ["iad1"],
   "env": {
-    "QUOTES_REPOSITORY_DRIVER": "postgres",
+    "QUOTES_REPOSITORY_DRIVER": "json",
     "RATE_LIMIT_STORE_DRIVER": "memory",
     "LOG_LEVEL": "info",
     "TRUSTED_PROXY_COUNT": "1",
