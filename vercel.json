@@ -10,7 +10,8 @@
     "TRUSTED_PROXY_COUNT": "1",
     "NEXT_PUBLIC_QUOTES_API_ENABLED": "false",
     "NODE_ENV": "production",
-    "REDEPLOY_TRIGGER": "2"
+    "RESEND_FROM_EMAIL": "noreply@camiprint.com",
+    "RESEND_FROM_NAME": "Camiprint"
   },
   "headers": [
     {

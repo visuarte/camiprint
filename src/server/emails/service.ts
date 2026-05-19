@@ -1,9 +1,9 @@
 /**
- * Email service using Nodemailer
+ * Email service using Resend
  * Sends order confirmation emails to customers
  */
 
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import { orderConfirmationTemplate, OrderConfirmationData } from './templates';
 
 interface EmailPayload {
@@ -14,71 +14,60 @@ interface EmailPayload {
 }
 
 export class EmailService {
-  private transporter: nodemailer.Transporter | null = null;
+  private resend: Resend;
   private isConfigured: boolean = false;
+  private fromEmail: string;
+  private fromName: string;
 
   constructor() {
-    this.initializeTransporter();
-  }
+    const apiKey = process.env.RESEND_API_KEY;
+    this.fromEmail = process.env.RESEND_FROM_EMAIL || 'noreply@camiprint.com';
+    this.fromName = process.env.RESEND_FROM_NAME || 'Camiprint';
 
-  private initializeTransporter(): void {
-    // Check if SMTP is configured
-    const smtpHost = process.env.SMTP_HOST;
-    const smtpPort = process.env.SMTP_PORT;
-    const smtpUser = process.env.SMTP_USER;
-    const smtpPass = process.env.SMTP_PASS;
-
-    if (smtpHost && smtpPort) {
-      try {
-        const port = parseInt(smtpPort, 10);
-
-        this.transporter = nodemailer.createTransport({
-          host: smtpHost,
-          port: port,
-          secure: port === 465, // true for 465, false for other ports
-          auth: smtpUser && smtpPass ? {
-            user: smtpUser,
-            pass: smtpPass,
-          } : undefined,
-        });
-
-        this.isConfigured = true;
-        console.log('[EmailService] SMTP configured successfully');
-      } catch (error) {
-        const err = error as Error;
-        console.error('[EmailService] Failed to initialize SMTP transporter:', err.message);
-        this.isConfigured = false;
-      }
+    if (apiKey) {
+      this.resend = new Resend(apiKey);
+      this.isConfigured = true;
+      console.log('[EmailService] Resend configured successfully');
     } else {
-      console.warn('[EmailService] SMTP not configured. Using console logging for development.');
+      console.warn('[EmailService] RESEND_API_KEY not configured. Using console logging for development.');
       this.isConfigured = false;
+      // Create a dummy Resend instance to avoid runtime errors
+      this.resend = new Resend('dummy_key_for_dev');
     }
   }
 
   async sendEmail(payload: EmailPayload): Promise<boolean> {
-    if (!this.isConfigured || !this.transporter) {
+    if (!this.isConfigured) {
       // Development fallback: log to console
       console.log('[EmailService] [DEV MODE - NO ACTUAL SEND]');
       console.log(`To: ${payload.to}`);
       console.log(`Subject: ${payload.subject}`);
-      console.log(`Reply-To: ${payload.replyTo || 'noreply@camiprint.com'}`);
+      console.log(`From: ${this.fromName} <${this.fromEmail}>`);
+      console.log(`Reply-To: ${payload.replyTo || 'support@camiprint.com'}`);
       console.log(`HTML Preview: ${payload.html.substring(0, 200)}...`);
       return true;
     }
 
     try {
-      const smtpFrom = process.env.SMTP_FROM || 'noreply@camiprint.com';
-
-      const info = await this.transporter.sendMail({
-        from: smtpFrom,
+      const data = await this.resend.emails.send({
+        from: `${this.fromName} <${this.fromEmail}>`,
         to: payload.to,
         subject: payload.subject,
         html: payload.html,
         replyTo: payload.replyTo || 'support@camiprint.com',
       });
 
+      if (data.error) {
+        console.error('[EmailService] Resend error:', {
+          to: payload.to,
+          subject: payload.subject,
+          error: data.error,
+        });
+        return false;
+      }
+
       console.log('[EmailService] Email sent successfully:', {
-        messageId: info.messageId,
+        id: data.data?.id,
         to: payload.to,
         subject: payload.subject,
       });
@@ -119,28 +108,14 @@ export class EmailService {
       return result;
     } catch (error) {
       const err = error as Error;
-      console.error('[EmailService] Error in sendOrderConfirmation:', err.message);
-      return false;
-    }
-  }
-
-  async healthCheck(): Promise<boolean> {
-    if (!this.isConfigured || !this.transporter) {
-      console.warn('[EmailService] SMTP not configured - health check skipped');
-      return false;
-    }
-
-    try {
-      await this.transporter.verify();
-      console.log('[EmailService] SMTP connection verified');
-      return true;
-    } catch (error) {
-      const err = error as Error;
-      console.error('[EmailService] SMTP health check failed:', err.message);
+      console.error('[EmailService] Error sending order confirmation:', {
+        email,
+        error: err.message,
+      });
       return false;
     }
   }
 }
 
-// Singleton instance
+// Export singleton instance
 export const emailService = new EmailService();
