@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/server/db';
 import Stripe from 'stripe';
 import { stripe } from '@/lib/stripe';
 import { emailService } from '@/server/emails/service';
-
-const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
   try {
