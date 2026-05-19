@@ -1,7 +1,7 @@
 'use client';
 
 import React, { ReactNode } from 'react';
-import { loadStripe } from '@stripe/js';
+import { loadStripe } from '@stripe/react-stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 
 const stripePromise = loadStripe(
