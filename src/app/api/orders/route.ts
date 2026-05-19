@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/server/db';
 import { stripe } from '@/lib/stripe';
 import { validateOrder } from '@/lib/validation';
 import { ApiErrorHandler, createErrorResponse, createSuccessResponse } from '@/lib/error-handler';
-
-const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
   try {
