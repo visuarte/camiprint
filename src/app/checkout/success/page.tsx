@@ -4,14 +4,46 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+interface OrderStatus {
+  id: string;
+  status: 'pending' | 'paid' | 'cancelled' | 'shipped' | 'delivered';
+  email: string;
+}
+
 export default function SuccessPage() {
   const searchParams = useSearchParams();
   const orderId = searchParams?.get('orderId');
   const [mounted, setMounted] = useState(false);
+  const [orderStatus, setOrderStatus] = useState<OrderStatus | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+
+    // Fetch order status
+    if (orderId) {
+      fetchOrderStatus();
+      // Poll for order status updates (webhook may take a moment)
+      const interval = setInterval(fetchOrderStatus, 3000); // Poll every 3 seconds
+      return () => clearInterval(interval);
+    }
+  }, [orderId]);
+
+  const fetchOrderStatus = async () => {
+    if (!orderId) return;
+    try {
+      // Note: This endpoint doesn't exist yet, we'll create a GET endpoint
+      const response = await fetch(`/api/orders/${orderId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setOrderStatus(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch order status:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!mounted) {
     return (
@@ -33,6 +65,10 @@ export default function SuccessPage() {
     month: 'long',
     day: 'numeric',
   });
+
+  const isPaid = orderStatus?.status === 'paid';
+  const isPending = orderStatus?.status === 'pending';
+  const isCancelled = orderStatus?.status === 'cancelled';
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center p-4">
@@ -71,12 +107,38 @@ export default function SuccessPage() {
             </div>
 
             <div className="flex items-start">
-              <svg className="w-5 h-5 text-blue-600 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              <svg
+                className={`w-5 h-5 mr-3 mt-0.5 flex-shrink-0 ${
+                  isPaid ? 'text-green-600' : isPending ? 'text-yellow-600' : 'text-blue-600'
+                }`}
+                fill={isPaid || isPending ? 'currentColor' : 'none'}
+                stroke={!isPaid && !isPending ? 'currentColor' : 'none'}
+                viewBox="0 0 20 20"
+              >
+                {isPaid ? (
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                ) : isPending ? (
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm0-2a6 6 0 100-12 6 6 0 000 12z" clipRule="evenodd" />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                )}
               </svg>
               <div>
-                <p className="text-sm font-semibold text-gray-900">Confirmación Enviada</p>
-                <p className="text-sm text-gray-600">Recibirás un email con los detalles.</p>
+                <p className="text-sm font-semibold text-gray-900">
+                  {isPaid && '✉️ Confirmación Enviada'}
+                  {isPending && '⏳ Procesando Confirmación'}
+                  {!isPaid && !isPending && 'Confirmación'}
+                </p>
+                <p className="text-sm text-gray-600">
+                  {isPaid && 'Recibirás un email con los detalles de tu pedido.'}
+                  {isPending && 'El email de confirmación será enviado en breve.'}
+                  {!isPaid && !isPending && 'Procesando...'}
+                </p>
               </div>
             </div>
 
