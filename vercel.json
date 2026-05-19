@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "buildCommand": "npm run build",
-  "installCommand": "npm install --legacy-peer-deps && npm rebuild",
+  "installCommand": "npm install --legacy-peer-deps",
   "regions": ["iad1"],
   "env": {
     "QUOTES_REPOSITORY_DRIVER": "json",
@@ -12,8 +12,7 @@
     "NEXT_PUBLIC_QUOTES_API_ENABLED": "false",
     "NODE_ENV": "production",
     "RESEND_FROM_EMAIL": "noreply@camiprint.com",
-    "RESEND_FROM_NAME": "Camiprint",
-    "NEXT_BUILD_SKIP_MANIFEST": "true"
+    "RESEND_FROM_NAME": "Camiprint"
   },
   "headers": [
     {
