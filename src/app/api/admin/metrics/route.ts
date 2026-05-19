@@ -28,11 +28,11 @@ export async function GET(req: NextRequest) {
 
     // Calculate metrics
     const totalOrders = orders.length;
-    const paidOrders = orders.filter((o) => o.status === 'paid').length;
-    const pendingOrders = orders.filter((o) => o.status === 'pending').length;
-    const cancelledOrders = orders.filter((o) => o.status === 'cancelled').length;
+    const paidOrders = orders.filter((o: typeof orders[0]) => o.status === 'paid').length;
+    const pendingOrders = orders.filter((o: typeof orders[0]) => o.status === 'pending').length;
+    const cancelledOrders = orders.filter((o: typeof orders[0]) => o.status === 'cancelled').length;
     const totalRevenue = orders
-      .filter((o) => o.status === 'paid')
+      .filter((o: typeof orders[0]) => o.status === 'paid')
       .reduce((sum, o) => sum + o.totalAmount, 0);
     const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
