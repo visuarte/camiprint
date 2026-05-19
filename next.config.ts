@@ -16,15 +16,6 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 7,
   },
-  // Webpack config para evitar problemas con symlinks en Prisma (Windows)
-  webpack: (config, { isServer }) => {
-    if (process.platform === 'win32') {
-      config.snapshot = config.snapshot || {};
-      config.snapshot.immutable = false;
-      config.snapshot.managed = false;
-    }
-    return config;
-  },
   async headers() {
     return [
       {
