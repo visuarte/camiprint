@@ -10,7 +10,8 @@
     "LOG_LEVEL": "info",
     "TRUSTED_PROXY_COUNT": "1",
     "NEXT_PUBLIC_QUOTES_API_ENABLED": "false",
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "REDEPLOY_TRIGGER": "2"
   },
   "headers": [
     {
