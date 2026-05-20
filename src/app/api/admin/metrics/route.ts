@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/server/db';
+import { verifyAdminToken, unauthorized, serverError, successResponse } from '../auth-utils';
 
 export async function GET(req: NextRequest) {
+  // Verify admin token
+  if (!verifyAdminToken(req)) {
+    return unauthorized();
+  }
+
   try {
     const { searchParams } = new URL(req.url);
     const days = parseInt(searchParams.get('days') || '30', 10);
@@ -36,7 +42,7 @@ export async function GET(req: NextRequest) {
       .reduce((sum: number, o: typeof orders[0]) => sum + o.totalAmount, 0);
     const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
-    return NextResponse.json({
+    return successResponse({
       totalOrders,
       paidOrders,
       pendingOrders,
@@ -46,10 +52,6 @@ export async function GET(req: NextRequest) {
       lastUpdated: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Error fetching metrics:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch metrics' },
-      { status: 500 }
-    );
+    return serverError(error, 'Failed to fetch metrics');
   }
 }

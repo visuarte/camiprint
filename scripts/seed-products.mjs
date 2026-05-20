@@ -2,7 +2,13 @@
 
 import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+let prisma;
+try {
+  prisma = new PrismaClient();
+} catch (error) {
+  console.error('Error initializing Prisma:', error);
+  process.exit(1);
+}
 
 async function seedProducts() {
   console.log('🌱 Starting product seed...');
