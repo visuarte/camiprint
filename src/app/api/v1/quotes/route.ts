@@ -1,4 +1,4 @@
-import { jsonError, jsonSuccess, getCorsHeaders, withCors } from '@/server/http/errors';
+import { jsonError, jsonSuccess, getCorsHeaders, withCors, type ValidationIssue } from '@/server/http/errors';
 import { getOrCreateRequestId } from '@/server/http/request-id';
 import { checkQuoteRateLimit, getQuoteClientIp } from '@/server/http/rate-limit';
 import {
