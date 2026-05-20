@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { adminFetch, getAdminToken } from '../auth-client';
 
 interface Order {
   id: string;
@@ -27,7 +28,14 @@ export default function AdminOrdersPage() {
     const fetchOrders = async () => {
       try {
         setIsLoading(true);
-        const token = getCookie('admin_token');
+        const token = getAdminToken();
+        
+        if (!token) {
+          setError('No autorizado. Por favor inicia sesión.');
+          setIsLoading(false);
+          return;
+        }
+
         const params = new URLSearchParams({
           page: page.toString(),
           limit: limit.toString(),
@@ -36,14 +44,10 @@ export default function AdminOrdersPage() {
         if (status) params.append('status', status);
         if (search) params.append('search', search);
 
-        const response = await fetch(`/api/admin/orders?${params}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const response = await adminFetch(`/api/admin/orders?${params}`);
 
         if (!response.ok) {
-          throw new Error('Failed to fetch orders');
+          throw new Error(`Failed to fetch orders: ${response.status}`);
         }
 
         const data = await response.json();

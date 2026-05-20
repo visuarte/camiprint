@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { setAdminToken } from '../auth-client';
 
 export default function AdminLoginPage() {
   const [token, setToken] = useState('');
@@ -27,7 +28,8 @@ export default function AdminLoginPage() {
       });
 
       if (response.ok) {
-        // Token válido, redirigir al dashboard
+        // Token válido, guardarlo y redirigir al dashboard
+        setAdminToken(token);
         router.push('/admin');
       } else {
         setError('Token de administrador inválido');

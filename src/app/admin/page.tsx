@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { adminFetch, getAdminToken } from './auth-client';
 
 interface Metrics {
   totalOrders: number;
@@ -20,14 +21,17 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
-        const response = await fetch('/api/admin/metrics', {
-          headers: {
-            'Authorization': `Bearer ${getCookie('admin_token')}`,
-          },
-        });
+        const token = getAdminToken();
+        if (!token) {
+          setError('No autorizado. Por favor inicia sesión.');
+          setIsLoading(false);
+          return;
+        }
+
+        const response = await adminFetch('/api/admin/metrics');
 
         if (!response.ok) {
-          throw new Error('Failed to fetch metrics');
+          throw new Error(`Failed to fetch metrics: ${response.status}`);
         }
 
         const data = await response.json();
