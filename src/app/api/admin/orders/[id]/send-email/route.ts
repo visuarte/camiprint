@@ -42,7 +42,7 @@ export async function POST(
     // Generate HTML email
     const itemsHtml = order.items
       .map(
-        (item) =>
+        (item: typeof order.items[number]) =>
           `<tr>
             <td style="padding: 8px; border-bottom: 1px solid #e5e7eb;">
               ${item.product?.name || 'Product'}

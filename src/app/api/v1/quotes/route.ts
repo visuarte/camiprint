@@ -111,7 +111,7 @@ export async function POST(request: Request) {
         statusCode: 422,
         durationMs,
       }, {
-        validationIssues: issues.map((issue) => issue.field),
+        validationIssues: issues.map((issue: ValidationIssue) => issue.field),
       });
 
       return jsonError(422, requestId, 'VALIDATION_ERROR', 'Payload invalido', issues);

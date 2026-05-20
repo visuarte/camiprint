@@ -68,7 +68,7 @@ export async function POST(
     const orderConfirmationData = {
       orderNumber: orderId.substring(0, 8).toUpperCase(),
       customerName: order.customer.name || order.email.split('@')[0],
-      items: order.items.map((item) => ({
+      items: order.items.map((item: typeof order.items[number]) => ({
         productName: item.product.name,
         quantity: item.quantity,
         size: item.product.size || 'N/A',
