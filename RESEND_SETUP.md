@@ -23,8 +23,8 @@ Camiprint uses **Resend** for reliable transactional email delivery. Resend is a
 #### Local Development (.env.local)
 ```bash
 RESEND_API_KEY=re_your_api_key_here
-RESEND_FROM_EMAIL=noreply@camiprint.com
-RESEND_FROM_NAME=Camiprint
+RESEND_FROM_EMAIL=noreply@camiart.com
+RESEND_FROM_NAME=Camiart
 ```
 
 #### Vercel Production (Dashboard)
@@ -36,8 +36,8 @@ RESEND_FROM_NAME=Camiprint
 | Variable | Value | Type |
 |----------|-------|------|
 | `RESEND_API_KEY` | Your API key from Resend | Secret |
-| `RESEND_FROM_EMAIL` | `noreply@camiprint.com` | Plain |
-| `RESEND_FROM_NAME` | `Camiprint` | Plain |
+| `RESEND_FROM_EMAIL` | `noreply@camiart.com` | Plain |
+| `RESEND_FROM_NAME` | `Camiart` | Plain |
 
 4. Click **Add** for each variable
 5. Click **Redeploy** to apply changes
@@ -47,7 +47,7 @@ RESEND_FROM_NAME=Camiprint
 For production, Resend recommends verifying your sender email domain:
 
 1. In Resend Dashboard → Domains
-2. Add your domain (e.g., camiprint.com)
+2. Add your domain (e.g., camiart.com)
 3. Follow DNS verification steps
 4. Update `RESEND_FROM_EMAIL` to use your domain (e.g., `noreply@camiprint.com`)
 
