@@ -364,7 +364,6 @@ export function CheckoutForm() {
                   },
                 },
               }}
-              disabled={loading}
             />
           </div>
           {cardError && <p className="mt-2 text-sm text-red-600">{cardError}</p>}
