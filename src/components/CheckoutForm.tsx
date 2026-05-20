@@ -363,7 +363,6 @@ export function CheckoutForm() {
                     color: '#dc2626',
                   },
                 },
-                placeholder: 'Número de tarjeta',
               }}
               disabled={loading}
             />
