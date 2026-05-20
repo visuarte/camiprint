@@ -27,6 +27,9 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report",
+    "seed:demo": "node scripts/seed-demo-order.mjs",
+    "seed:products": "node scripts/seed-products.mjs",
+    "seed:all": "node scripts/seed-products.mjs && node scripts/seed-demo-order.mjs",
     "arch:check": "node architecture-check.hook --staged"
   },
   "dependencies": {

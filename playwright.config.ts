@@ -3,7 +3,8 @@ import { defineConfig, devices } from '@playwright/test';
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://127.0.0.1:3000';
 
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: './e2e-tests.spec.ts',
+  testMatch: ['**/e2e*.spec.ts', '**/tests/e2e/**/*.spec.ts'],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
