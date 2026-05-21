@@ -32,6 +32,15 @@ const DEFAULT_OPEN_WINDOW_MS = 30_000;
 
 const GLOBAL_CIRCUIT_KEY = '__camiprint_quotes_circuit_breaker__';
 
+const createFallbackQuoteId = () => {
+  const uuid =
+    typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+      ? crypto.randomUUID().replace(/-/g, '')
+      : `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
+
+  return `q_${uuid}`;
+};
+
 const getCircuitBreakerState = (): CircuitBreakerSnapshot => {
   const globalScope = globalThis as typeof globalThis & {
     [GLOBAL_CIRCUIT_KEY]?: CircuitBreakerSnapshot;
@@ -150,9 +159,10 @@ export class QuotesService {
   }
 
   async createQuote(input: QuoteRequestInput): Promise<CreateQuoteResult> {
-    this.assertCircuitReady();
+    let persistenceError: unknown;
 
     try {
+      this.assertCircuitReady();
       const record = await withTimeout(this.repository.create(input), this.timeoutMs);
       closeCircuit();
 
@@ -189,14 +199,54 @@ export class QuotesService {
         createdAt: record.createdAt,
       };
     } catch (error) {
+      persistenceError = error;
       this.registerFailure();
 
       if (error instanceof Error && error.name === 'PERSISTENCE_TIMEOUT') {
-        throw toServiceUnavailableError('Timeout al persistir la cotizacion.');
+        logOperationalEvent('warn', 'Quote persistence timed out; attempting email fallback', {
+          errorMessage: error.message,
+        });
+      } else {
+        logOperationalEvent('warn', 'Quote persistence failed; attempting email fallback', {
+          errorMessage: error instanceof Error ? error.message : 'unknown',
+        });
       }
-
-      throw toServiceUnavailableError('No se pudo persistir la cotizacion.');
     }
+
+    const createdAt = new Date().toISOString();
+    const fallbackQuoteId = createFallbackQuoteId();
+    const fallbackEmailData = {
+      quoteId: fallbackQuoteId,
+      name: input.name,
+      email: input.email,
+      phone: input.phone,
+      companyName: input.companyName,
+      quantity: input.quantity,
+      message: input.message,
+      createdAt,
+    };
+
+    const emailResults = await Promise.allSettled([
+      emailService.sendQuoteNotification(fallbackEmailData),
+      emailService.sendQuoteCustomerConfirmation(fallbackEmailData),
+    ]);
+
+    const sentAtLeastOneEmail = emailResults.some((result) => result.status === 'fulfilled' && result.value === true);
+
+    if (sentAtLeastOneEmail) {
+      logOperationalEvent('warn', 'Quote accepted through email fallback after persistence failure', {
+        quoteId: fallbackQuoteId,
+        persistenceError: persistenceError instanceof Error ? persistenceError.message : 'unknown',
+      });
+
+      return {
+        id: fallbackQuoteId,
+        status: 'received',
+        createdAt,
+      };
+    }
+
+    throw toServiceUnavailableError('No se pudo persistir ni notificar la cotizacion.');
   }
 }
 

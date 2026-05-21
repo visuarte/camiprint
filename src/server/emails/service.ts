@@ -44,6 +44,14 @@ export class EmailService {
 
   async sendEmail(payload: EmailPayload): Promise<boolean> {
     if (!this.isConfigured) {
+      if (process.env.NODE_ENV === 'production') {
+        console.error('[EmailService] RESEND_API_KEY is required in production:', {
+          to: payload.to,
+          subject: payload.subject,
+        });
+        return false;
+      }
+
       // Development fallback: log to console
       console.log('[EmailService] [DEV MODE - NO ACTUAL SEND]');
       console.log(`To: ${payload.to}`);
