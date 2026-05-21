@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 
 declare global {
   var prisma: PrismaClient | undefined;
@@ -13,7 +14,11 @@ const getPrismaClient = (): PrismaClient => {
     throw new Error('DATABASE_URL environment variable is not set');
   }
 
-  cachedPrisma = new PrismaClient();
+  const adapter = new PrismaPg({
+    connectionString: process.env.DATABASE_URL,
+  });
+
+  cachedPrisma = new PrismaClient({ adapter });
 
   if (process.env.NODE_ENV !== 'production') {
     global.prisma = cachedPrisma;
