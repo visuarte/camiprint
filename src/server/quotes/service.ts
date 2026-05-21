@@ -3,6 +3,7 @@ import type { QuoteRepository } from '@/server/quotes/contracts';
 import { createQuoteRepository } from '@/server/quotes/repository.factory';
 import { incrementCircuitOpenCount } from '@/server/observability/metrics';
 import { logOperationalEvent } from '@/server/observability/logger';
+import { emailService } from '@/server/emails/service';
 
 export interface CreateQuoteResult {
   id: string;
@@ -154,6 +155,33 @@ export class QuotesService {
     try {
       const record = await withTimeout(this.repository.create(input), this.timeoutMs);
       closeCircuit();
+
+      const quoteEmailData = {
+        quoteId: record.id,
+        name: record.name,
+        email: record.email,
+        phone: record.phone,
+        companyName: record.companyName,
+        quantity: record.quantity,
+        message: record.message,
+        createdAt: record.createdAt,
+      };
+
+      const emailResults = await Promise.allSettled([
+        emailService.sendQuoteNotification(quoteEmailData),
+        emailService.sendQuoteCustomerConfirmation(quoteEmailData),
+      ]);
+
+      const failedEmailCount = emailResults.filter(
+        (result) => result.status === 'rejected' || result.value === false
+      ).length;
+
+      if (failedEmailCount > 0) {
+        logOperationalEvent('warn', 'Quote email delivery failed', {
+          quoteId: record.id,
+          failedCount: failedEmailCount,
+        });
+      }
 
       return {
         id: record.id,

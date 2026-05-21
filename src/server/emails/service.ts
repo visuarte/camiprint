@@ -4,7 +4,13 @@
  */
 
 import { Resend } from 'resend';
-import { orderConfirmationTemplate, OrderConfirmationData } from './templates';
+import {
+  orderConfirmationTemplate,
+  quoteCustomerConfirmationTemplate,
+  quoteNotificationTemplate,
+  OrderConfirmationData,
+  QuoteEmailData,
+} from './templates';
 
 interface EmailPayload {
   to: string;
@@ -110,6 +116,71 @@ export class EmailService {
       const err = error as Error;
       console.error('[EmailService] Error sending order confirmation:', {
         email,
+        error: err.message,
+      });
+      return false;
+    }
+  }
+
+  async sendQuoteNotification(quoteData: QuoteEmailData): Promise<boolean> {
+    const recipient =
+      process.env.QUOTES_NOTIFICATION_EMAIL ||
+      process.env.CONTACT_TO_EMAIL ||
+      process.env.RESEND_TO_EMAIL ||
+      'hola@camiprint.com';
+
+    try {
+      const html = quoteNotificationTemplate(quoteData);
+
+      const result = await this.sendEmail({
+        to: recipient,
+        subject: `Nueva cotizacion: ${quoteData.companyName} (${quoteData.quantity})`,
+        html,
+        replyTo: quoteData.email,
+      });
+
+      if (result) {
+        console.log('[EmailService] Quote notification sent:', {
+          quoteId: quoteData.quoteId,
+          recipient,
+        });
+      }
+
+      return result;
+    } catch (error) {
+      const err = error as Error;
+      console.error('[EmailService] Error sending quote notification:', {
+        quoteId: quoteData.quoteId,
+        error: err.message,
+      });
+      return false;
+    }
+  }
+
+  async sendQuoteCustomerConfirmation(quoteData: QuoteEmailData): Promise<boolean> {
+    try {
+      const html = quoteCustomerConfirmationTemplate(quoteData);
+
+      const result = await this.sendEmail({
+        to: quoteData.email,
+        subject: `Hemos recibido tu solicitud #${quoteData.quoteId}`,
+        html,
+        replyTo: process.env.QUOTES_NOTIFICATION_EMAIL || 'hola@camiprint.com',
+      });
+
+      if (result) {
+        console.log('[EmailService] Quote customer confirmation sent:', {
+          quoteId: quoteData.quoteId,
+          email: quoteData.email,
+        });
+      }
+
+      return result;
+    } catch (error) {
+      const err = error as Error;
+      console.error('[EmailService] Error sending quote customer confirmation:', {
+        quoteId: quoteData.quoteId,
+        email: quoteData.email,
         error: err.message,
       });
       return false;

@@ -18,6 +18,115 @@ export interface OrderConfirmationData {
   email: string;
 }
 
+export interface QuoteEmailData {
+  quoteId: string;
+  name: string;
+  email: string;
+  phone: string;
+  companyName: string;
+  quantity: string;
+  message?: string;
+  createdAt: string;
+}
+
+const escapeHtml = (value: string): string =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+
+const emailBaseStyles = `
+  body { margin: 0; background: #f6f7f9; color: #172033; font-family: Arial, sans-serif; line-height: 1.5; }
+  .container { max-width: 640px; margin: 0 auto; background: #ffffff; padding: 28px; }
+  .header { border-bottom: 1px solid #e5e7eb; padding-bottom: 18px; margin-bottom: 22px; }
+  .brand { color: #2563eb; font-size: 20px; font-weight: 700; }
+  h1 { margin: 8px 0 0; font-size: 24px; color: #111827; }
+  .muted { color: #6b7280; font-size: 14px; }
+  .field { border-bottom: 1px solid #edf0f3; padding: 10px 0; }
+  .label { color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  .value { color: #111827; font-size: 15px; margin-top: 3px; white-space: pre-wrap; }
+  .box { background: #eff6ff; border-left: 4px solid #2563eb; padding: 14px; border-radius: 4px; margin: 18px 0; }
+  .footer { border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 12px; margin-top: 24px; padding-top: 16px; }
+`;
+
+export const quoteNotificationTemplate = (data: QuoteEmailData): string => {
+  const message = data.message ? escapeHtml(data.message) : 'Sin mensaje adicional';
+
+  return `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nueva solicitud de cotizacion - Camiprint</title>
+  <style>${emailBaseStyles}</style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">CAMIPRINT</div>
+      <h1>Nueva solicitud de cotizacion</h1>
+      <p class="muted">Recibida desde el formulario web.</p>
+    </div>
+
+    <div class="box">
+      <div class="label">Referencia</div>
+      <div class="value"><strong>${escapeHtml(data.quoteId)}</strong></div>
+    </div>
+
+    <div class="field"><div class="label">Nombre</div><div class="value">${escapeHtml(data.name)}</div></div>
+    <div class="field"><div class="label">Empresa</div><div class="value">${escapeHtml(data.companyName)}</div></div>
+    <div class="field"><div class="label">Email</div><div class="value"><a href="mailto:${escapeHtml(data.email)}">${escapeHtml(data.email)}</a></div></div>
+    <div class="field"><div class="label">Telefono</div><div class="value">${escapeHtml(data.phone)}</div></div>
+    <div class="field"><div class="label">Cantidad</div><div class="value">${escapeHtml(data.quantity)}</div></div>
+    <div class="field"><div class="label">Mensaje</div><div class="value">${message}</div></div>
+
+    <div class="footer">
+      Solicitud creada el ${escapeHtml(new Date(data.createdAt).toLocaleString('es-ES'))}.
+    </div>
+  </div>
+</body>
+</html>
+`;
+};
+
+export const quoteCustomerConfirmationTemplate = (data: QuoteEmailData): string => `
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitud recibida - Camiprint</title>
+  <style>${emailBaseStyles}</style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">CAMIPRINT</div>
+      <h1>Solicitud recibida</h1>
+      <p class="muted">Hola ${escapeHtml(data.name)}, ya tenemos tu solicitud.</p>
+    </div>
+
+    <p>Gracias por contactar con Camiprint. Revisaremos los datos de tu pedido y te responderemos con una propuesta.</p>
+
+    <div class="box">
+      <div class="label">Referencia</div>
+      <div class="value"><strong>${escapeHtml(data.quoteId)}</strong></div>
+    </div>
+
+    <div class="field"><div class="label">Empresa</div><div class="value">${escapeHtml(data.companyName)}</div></div>
+    <div class="field"><div class="label">Cantidad</div><div class="value">${escapeHtml(data.quantity)}</div></div>
+
+    <div class="footer">
+      Si necesitas completar informacion, responde a este correo indicando la referencia ${escapeHtml(data.quoteId)}.
+    </div>
+  </div>
+</body>
+</html>
+`;
+
 export const orderConfirmationTemplate = (data: OrderConfirmationData): string => {
   const itemsHtml = data.items
     .map(
