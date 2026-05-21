@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
+import { getDatabaseUrlFromEnv } from '@/server/platform/config';
 
 declare global {
   var prisma: PrismaClient | undefined;
@@ -10,12 +11,14 @@ let cachedPrisma: PrismaClient | undefined;
 const getPrismaClient = (): PrismaClient => {
   if (cachedPrisma) return cachedPrisma;
 
-  if (!process.env.DATABASE_URL) {
+  const databaseUrl = getDatabaseUrlFromEnv();
+
+  if (!databaseUrl) {
     throw new Error('DATABASE_URL environment variable is not set');
   }
 
   const adapter = new PrismaPg({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: databaseUrl,
   });
 
   cachedPrisma = new PrismaClient({ adapter });

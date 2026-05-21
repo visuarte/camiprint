@@ -28,9 +28,19 @@ const normalizeRateLimitStoreDriver = (value: string | undefined): RateLimitStor
   throw new Error(`RATE_LIMIT_STORE_DRIVER invalido: ${value}`);
 };
 
+export const getDatabaseUrlFromEnv = (): string | null => {
+  return (
+    process.env.DATABASE_URL?.trim() ||
+    process.env.POSTGRES_PRISMA_URL?.trim() ||
+    process.env.POSTGRES_URL_NON_POOLING?.trim() ||
+    process.env.POSTGRES_URL?.trim() ||
+    null
+  );
+};
+
 export const getPlatformConfig = (): PlatformConfig => {
   const quoteRepositoryDriver = normalizeQuoteRepositoryDriver(process.env.QUOTES_REPOSITORY_DRIVER);
-  const databaseUrl = process.env.DATABASE_URL?.trim() || null;
+  const databaseUrl = getDatabaseUrlFromEnv();
   const rateLimitStoreDriver = normalizeRateLimitStoreDriver(process.env.RATE_LIMIT_STORE_DRIVER);
   const redisUrl = process.env.REDIS_URL?.trim() || null;
   const metricsToken = process.env.METRICS_TOKEN?.trim() || null;

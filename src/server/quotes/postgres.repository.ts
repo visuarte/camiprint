@@ -20,6 +20,30 @@ interface QuoteRow {
   updated_at: string | Date;
 }
 
+const CREATE_QUOTES_TABLE_SQL = `
+CREATE TABLE IF NOT EXISTS quotes (
+  id TEXT PRIMARY KEY,
+  source TEXT NOT NULL,
+  status TEXT NOT NULL,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  company_name TEXT NOT NULL,
+  quantity TEXT NOT NULL,
+  message TEXT,
+  metadata JSONB,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT quotes_source_check CHECK (source = 'landing-contact-form'),
+  CONSTRAINT quotes_status_check CHECK (status = 'received'),
+  CONSTRAINT quotes_quantity_check CHECK (quantity IN ('10-24', '25-49', '50-99', '100+'))
+);
+
+CREATE INDEX IF NOT EXISTS quotes_created_at_idx ON quotes (created_at DESC);
+CREATE INDEX IF NOT EXISTS quotes_email_idx ON quotes (email);
+CREATE INDEX IF NOT EXISTS quotes_status_idx ON quotes (status);
+`;
+
 const mapRowToQuoteLeadRecord = (row: QuoteRow): QuoteLeadRecord => ({
   id: row.id,
   source: row.source,
@@ -45,13 +69,25 @@ const createQuoteId = () => {
 
 export class PostgresQuotesRepository implements QuoteRepository {
   private readonly dbPromise: Promise<Queryable>;
+  private setupPromise: Promise<void> | null = null;
 
   constructor(db: Queryable | Promise<Queryable> = getPostgresPool()) {
     this.dbPromise = Promise.resolve(db);
   }
 
-  async create(input: QuoteRequestInput): Promise<QuoteLeadRecord> {
+  private async ensureSchema(): Promise<Queryable> {
     const db = await this.dbPromise;
+
+    if (!this.setupPromise) {
+      this.setupPromise = db.query(CREATE_QUOTES_TABLE_SQL).then(() => undefined);
+    }
+
+    await this.setupPromise;
+    return db;
+  }
+
+  async create(input: QuoteRequestInput): Promise<QuoteLeadRecord> {
+    const db = await this.ensureSchema();
     const nowIso = new Date().toISOString();
     const record: QuoteLeadRecord = {
       id: createQuoteId(),
@@ -98,7 +134,7 @@ export class PostgresQuotesRepository implements QuoteRepository {
   }
 
   async list(): Promise<QuoteLeadRecord[]> {
-    const db = await this.dbPromise;
+    const db = await this.ensureSchema();
     const { rows } = await db.query<QuoteRow>(
       `SELECT id, source, status, name, email, phone, company_name, quantity, message, created_at, updated_at
        FROM quotes
