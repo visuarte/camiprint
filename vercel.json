@@ -11,6 +11,7 @@
     "TRUSTED_PROXY_COUNT": "1",
     "NEXT_PUBLIC_QUOTES_API_ENABLED": "true",
     "NODE_ENV": "production",
+    "QUOTES_NOTIFICATION_EMAIL": "hola@camiprint.com",
     "RESEND_FROM_EMAIL": "noreply@camiprint.com",
     "RESEND_FROM_NAME": "Camiprint"
   },
