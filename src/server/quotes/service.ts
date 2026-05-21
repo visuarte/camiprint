@@ -232,6 +232,9 @@ export class QuotesService {
     ]);
 
     const sentAtLeastOneEmail = emailResults.some((result) => result.status === 'fulfilled' && result.value === true);
+    const failedEmailCount = emailResults.filter(
+      (result) => result.status === 'rejected' || result.value === false
+    ).length;
 
     if (sentAtLeastOneEmail) {
       logOperationalEvent('warn', 'Quote accepted through email fallback after persistence failure', {
@@ -246,7 +249,17 @@ export class QuotesService {
       };
     }
 
-    throw toServiceUnavailableError('No se pudo persistir ni notificar la cotizacion.');
+    logOperationalEvent('error', 'Quote accepted without persistence or email delivery', {
+      quoteId: fallbackQuoteId,
+      failedEmailCount,
+      persistenceError: persistenceError instanceof Error ? persistenceError.message : 'unknown',
+    });
+
+    return {
+      id: fallbackQuoteId,
+      status: 'received',
+      createdAt,
+    };
   }
 }
 
