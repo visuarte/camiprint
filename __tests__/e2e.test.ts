@@ -14,27 +14,47 @@ vi.mock('@prisma/client');
 vi.mock('@/lib/stripe');
 vi.mock('@/server/emails/service');
 
-// Mock fetch for API calls
-global.fetch = vi.fn();
+
 
 describe('Camiprint E2E - Complete User Journey', () => {
-  const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+  const BASE_URL_RAW = process.env.BASE_URL || 'http://localhost:3000';
   const ADMIN_TOKEN = process.env.ADMIN_AUTH_TOKEN || 'test-admin-token';
+
+  let baseUrlNormalized = BASE_URL_RAW.replace(/\/+$/, '');
+
+  // Si BASE_URL viene como solo host (ej: "localhost:3000") o algo tipo "/",
+  // normalizamos a http://localhost:3000 para evitar URLs inválidas.
+  if (!/^https?:\/\//.test(baseUrlNormalized)) {
+    if (baseUrlNormalized === '' || baseUrlNormalized === '/') {
+      baseUrlNormalized = 'http://localhost:3000';
+    } else {
+      baseUrlNormalized = `http://${baseUrlNormalized.replace(/^\/+/, '')}`;
+    }
+  }
+
+  if (!/^https?:\/\//.test(baseUrlNormalized)) {
+    throw new Error(`BASE_URL must include protocol (http/https). Got: ${BASE_URL_RAW}`);
+  }
+
+  const BASE_URL = baseUrlNormalized;
+  const baseUrlWithProtocol = BASE_URL;
+
+
+
+
 
   beforeEach(() => {
     vi.clearAllMocks();
-    const fetchMock = global.fetch as unknown as {
-      mockClear: () => void;
-    };
-    fetchMock.mockClear();
   });
+
 
   // ============================================================
   // TEST SUITE 1: HOMEPAGE & NAVIGATION (2 tests)
   // ============================================================
   describe('Suite 1: Homepage & Navigation', () => {
     it('should load homepage with 200 status', async () => {
-      const response = await fetch(`${BASE_URL}/`, {
+      const response = await fetch(`${baseUrlWithProtocol}/`, {
+
         method: 'GET',
       });
       expect(response.status).toBe(200);
@@ -44,27 +64,31 @@ describe('Camiprint E2E - Complete User Journey', () => {
 
     it('should have working navigation links', async () => {
       // Verify key navigation links are present
-      const response = await fetch(`${BASE_URL}/`, {
+      const response = await fetch(`${baseUrlWithProtocol}/`, {
         method: 'GET',
       });
+
       const html = await response.text();
       expect(html).toMatch(/\/catalog|\/checkout|\/admin/i);
     });
   });
+
+  const apiFetch = (path: string) => `${baseUrlWithProtocol}${path.startsWith('/') ? '' : '/'}${path}`;
 
   // ============================================================
   // TEST SUITE 2: CATALOG & PRODUCTS (3 tests)
   // ============================================================
   describe('Suite 2: Catalog & Products', () => {
     it('should load catalog page with 200 status', async () => {
-      const response = await fetch(`${BASE_URL}/catalog`, {
+      const response = await fetch(apiFetch('/catalog'), {
         method: 'GET',
       });
       expect(response.status).toBe(200);
     });
 
     it('should fetch products from API endpoint', async () => {
-      const response = await fetch(`${BASE_URL}/api/products`, {
+      const response = await fetch(apiFetch('/api/products'), {
+
         method: 'GET',
       });
       expect(response.status).toBe(200);
@@ -83,7 +107,8 @@ describe('Camiprint E2E - Complete User Journey', () => {
     });
 
     it('should display at least 48 products (8 models × 6 sizes)', async () => {
-      const response = await fetch(`${BASE_URL}/api/products`, {
+      const response = await fetch(apiFetch('/api/products'), {
+
         method: 'GET',
       });
       const products = await response.json();
@@ -153,16 +178,17 @@ describe('Camiprint E2E - Complete User Journey', () => {
     };
 
     it('should load checkout page', async () => {
-      const response = await fetch(`${BASE_URL}/checkout`, {
+      const response = await fetch(apiFetch('/checkout'), {
         method: 'GET',
       });
       expect([200, 307]).toContain(response.status); // 307 = redirect to login
     });
 
+
     it('should validate required checkout fields', async () => {
       const invalidData = { email: '', phone: '', address: '' };
       
-      const response = await fetch(`${BASE_URL}/api/orders`, {
+      const response = await fetch(apiFetch('/api/orders'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(invalidData),
@@ -173,8 +199,9 @@ describe('Camiprint E2E - Complete User Journey', () => {
       expect(error).toHaveProperty('error');
     });
 
+
     it('should accept valid checkout data', async () => {
-      const response = await fetch(`${BASE_URL}/api/orders`, {
+      const response = await fetch(apiFetch('/api/orders'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(validCheckoutData),
@@ -185,6 +212,7 @@ describe('Camiprint E2E - Complete User Journey', () => {
       expect(data).toHaveProperty('clientSecret');
       expect(data).toHaveProperty('orderId');
     });
+
   });
 
   // ============================================================
@@ -214,7 +242,7 @@ describe('Camiprint E2E - Complete User Journey', () => {
     });
 
     it('should handle payment errors gracefully', async () => {
-      const response = await fetch(`${BASE_URL}/api/orders`, {
+      const response = await fetch(apiFetch('/api/orders'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -229,6 +257,7 @@ describe('Camiprint E2E - Complete User Journey', () => {
       // Should handle errors gracefully
       expect([200, 201, 400]).toContain(response.status);
     });
+
   });
 
   // ============================================================
@@ -277,20 +306,22 @@ describe('Camiprint E2E - Complete User Journey', () => {
   // ============================================================
   describe('Suite 7: Success Page & Order Confirmation', () => {
     it('should redirect to success page after payment', async () => {
-      const response = await fetch(`${BASE_URL}/checkout/success?orderId=order_123`, {
+      const response = await fetch(apiFetch('/checkout/success?orderId=order_123'), {
         method: 'GET',
       });
       
       expect([200, 301, 302, 307]).toContain(response.status);
     });
 
+
     it('should display order number on success page', async () => {
-      const response = await fetch(`${BASE_URL}/checkout/success?orderId=order_123`, {
+      const response = await fetch(apiFetch('/checkout/success?orderId=order_123'), {
         method: 'GET',
       });
       const html = await response.text();
       expect(html).toContain('order_123');
     });
+
   });
 
   // ============================================================

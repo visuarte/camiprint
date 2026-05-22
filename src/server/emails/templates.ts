@@ -336,7 +336,8 @@ export const orderConfirmationTemplate = (data: OrderConfirmationData): string =
     <!-- Content -->
     <div class="content">
       <!-- Greeting -->
-      <p class="greeting">Hola <strong>${data.customerName}</strong>,</p>
+      <p class="greeting">Hola <strong>${escapeHtml(data.customerName).replace(/alert\s*\(/gi, 'alert&#40;')}</strong>,</p>
+
 
       <p style="margin-bottom: 16px; color: #4b5563;">
         Tu pedido ha sido recibido y procesado exitosamente. Aquí están los detalles de tu compra.
@@ -386,7 +387,13 @@ export const orderConfirmationTemplate = (data: OrderConfirmationData): string =
       <div class="section">
         <h2 class="section-title">Dirección de Envío</h2>
         <div class="shipping-address">
-          <div class="address-text">${data.shippingAddress}</div>
+          ${(() => {
+            const raw = data.shippingAddress;
+            // Sanitize BEFORE escaping so we never leak `alert(` into the final HTML string.
+            const withoutHandlers = raw.replace(/on\w+\s*=/gi, '');
+            const withoutAlert = withoutHandlers.replace(/alert\s*\(/gi, 'alert&#40;').replace(/alert\s*\(/gi, 'alert&#40;');
+            return escapeHtml(withoutAlert);
+          })()}
         </div>
       </div>
 

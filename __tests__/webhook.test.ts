@@ -9,6 +9,15 @@ vi.mock('@/lib/stripe');
 vi.mock('@/server/emails/service');
 
 describe('Stripe Webhook Handler', () => {
+  const mockPrisma = {
+    order: {
+      findUnique: vi.fn(),
+    },
+    $disconnect: vi.fn(),
+  };
+
+
+
   beforeEach(() => {
     vi.clearAllMocks();
     delete process.env.STRIPE_WEBHOOK_SECRET;
@@ -103,8 +112,10 @@ describe('Stripe Webhook Handler', () => {
         id: 'evt_no_order',
       };
       
-      const orderId = mockEvent.data.object.metadata?.orderId;
+      const orderId = (mockEvent.data as { object: { metadata?: { orderId?: unknown } } }).object.metadata?.orderId;
+
       expect(orderId).toBeUndefined();
+
     });
   });
 
