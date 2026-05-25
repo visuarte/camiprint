@@ -183,7 +183,7 @@ export class QuotesService {
       ]);
 
       const failedEmailCount = emailResults.filter(
-        (result) => result.status === 'rejected' || result.value === false
+        (result) => result.status === 'rejected' || result.value?.success === false
       ).length;
 
       if (failedEmailCount > 0) {
