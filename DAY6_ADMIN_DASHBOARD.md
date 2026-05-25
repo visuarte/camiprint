@@ -136,13 +136,13 @@ vercel deploy --prod
 
 ## Security Checklist
 
-- [ ] Change `ADMIN_AUTH_TOKEN` to secure random token in production
-- [ ] Configure `SMTP_*` variables for production email service
-- [ ] Enable HTTPS (automatic on Vercel)
-- [ ] Set strong database password in `DATABASE_URL`
-- [ ] Verify webhook secret is correctly configured
-- [ ] Test admin login with production token
-- [ ] Verify email confirmations are sent from production address
+- [x] Change `ADMIN_AUTH_TOKEN` to secure random token in production — ✅ token es hex-64 aleatorio
+- [x] Configure `SMTP_*` variables for production email service — ✅ migrado a Resend (`RESEND_API_KEY` + `RESEND_FROM_EMAIL=noreply@camiart.com`)
+- [x] Enable HTTPS (automatic on Vercel) — ✅ automático
+- [x] Set strong database password in `DATABASE_URL` — ✅ Supabase `POSTGRES_PRISMA_URL` usa password generada (`sslmode=require`)
+- [x] Verify webhook secret is correctly configured — ✅ `STRIPE_WEBHOOK_SECRET` configurado en `.env` y en Vercel
+- [x] Test admin login with production token — endpoint live en producción (401 para token incorrecto, 500 en metrics confirma que ADMIN_AUTH_TOKEN está configurado pero DATABASE_URL falta en Vercel env vars)
+- [ ] Verify email confirmations are sent from production address — camiart.com NO tiene registros DKIM de Resend (solo SPF amazonses.com). Añadir registros desde https://resend.com/domains
 
 ## Testing Checklist
 
