@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
 import { getDatabaseUrlFromEnv } from '@/server/platform/config';
 
 declare global {
@@ -17,9 +18,9 @@ const getPrismaClient = (): PrismaClient => {
     throw new Error('DATABASE_URL environment variable is not set');
   }
 
-  const adapter = new PrismaPg({
-    connectionString: databaseUrl,
-  });
+  // ssl.rejectUnauthorized=false required for Supabase pgbouncer pooler in serverless envs
+  const pool = new Pool({ connectionString: databaseUrl, ssl: { rejectUnauthorized: false } });
+  const adapter = new PrismaPg(pool);
 
   cachedPrisma = new PrismaClient({ adapter });
 
