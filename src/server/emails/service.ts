@@ -96,7 +96,7 @@ export class EmailService {
         console.warn(warn, { to: payload.to, subject: payload.subject, data });
 
         // Attempt SMTP fallback if SMTP is configured or RESEND_API_KEY exists
-        const smtpResult = await this.sendViaSmtp(payload).catch((e) => ({ success: false, error: String(e) }));
+        const smtpResult: SendResult = await this.sendViaSmtp(payload).catch((e): SendResult => ({ success: false, error: String(e) }));
         if (smtpResult && smtpResult.success) {
           console.log('[EmailService] Sent via SMTP fallback:', { id: smtpResult.id, to: payload.to });
           return smtpResult;
