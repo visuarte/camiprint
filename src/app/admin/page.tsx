@@ -20,6 +20,18 @@ interface Settings {
   metricsWindowDays: number;
 }
 
+interface QuoteLead {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  companyName: string;
+  quantity: string;
+  message?: string;
+  status: string;
+  createdAt: string;
+}
+
 export default function AdminDashboard() {
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [settings, setSettings] = useState<Settings>({
@@ -28,6 +40,8 @@ export default function AdminDashboard() {
     analyticsEnabled: false,
     metricsWindowDays: 30,
   });
+  const [quotes, setQuotes] = useState<QuoteLead[]>([]);
+  const [quotesLoading, setQuotesLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [error, setError] = useState('');
@@ -49,6 +63,20 @@ export default function AdminDashboard() {
     } catch (err) {
       setError('Error al cargar métricas');
       console.error(err);
+    }
+  };
+
+  const fetchQuotes = async () => {
+    try {
+      setQuotesLoading(true);
+      const response = await adminFetch('/api/admin/quotes');
+      if (!response.ok) throw new Error(`${response.status}`);
+      const body = await response.json();
+      setQuotes(body.data ?? []);
+    } catch (err) {
+      console.error('Error al cargar cotizaciones:', err);
+    } finally {
+      setQuotesLoading(false);
     }
   };
 
@@ -74,6 +102,7 @@ export default function AdminDashboard() {
     };
 
     init();
+    fetchQuotes();
     return () => { cancelled = true; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -186,7 +215,7 @@ export default function AdminDashboard() {
       )}
 
       {/* Quick Links */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <Link
           href="/admin/orders"
           className="bg-neutral-900 border border-neutral-800 rounded-lg p-6 hover:border-blue-500 hover:shadow-lg transition group"
@@ -216,6 +245,83 @@ export default function AdminDashboard() {
               </li>
               <li>• Últimos {settings.metricsWindowDays} días</li>
             </ul>
+          </div>
+        )}
+      </div>
+
+      {/* Solicitudes de Cotización */}
+      <div className="bg-neutral-900 border border-neutral-800 rounded-lg overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-800">
+          <div>
+            <h2 className="text-lg font-semibold">Solicitudes de Cotización</h2>
+            <p className="text-xs text-neutral-400 mt-0.5">
+              {quotesLoading ? 'Cargando…' : `${quotes.length} solicitud${quotes.length !== 1 ? 'es' : ''} recibida${quotes.length !== 1 ? 's' : ''}`}
+            </p>
+          </div>
+          <button
+            onClick={fetchQuotes}
+            className="text-xs text-neutral-400 hover:text-white transition px-3 py-1 border border-neutral-700 rounded-lg"
+          >
+            ↻ Recargar
+          </button>
+        </div>
+
+        {quotesLoading ? (
+          <div className="p-6 space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-10 bg-neutral-800 rounded animate-pulse" />
+            ))}
+          </div>
+        ) : quotes.length === 0 ? (
+          <div className="p-8 text-center text-neutral-500 text-sm">
+            No hay solicitudes de cotización aún. Cuando alguien complete el formulario aparecerán aquí.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs text-neutral-500 border-b border-neutral-800">
+                  <th className="px-4 py-3 font-medium">Fecha</th>
+                  <th className="px-4 py-3 font-medium">Nombre</th>
+                  <th className="px-4 py-3 font-medium">Email</th>
+                  <th className="px-4 py-3 font-medium">Empresa</th>
+                  <th className="px-4 py-3 font-medium">Cantidad</th>
+                  <th className="px-4 py-3 font-medium">Mensaje</th>
+                  <th className="px-4 py-3 font-medium">Estado</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-800">
+                {quotes.map((q) => (
+                  <tr key={q.id} className="hover:bg-neutral-800/50 transition">
+                    <td className="px-4 py-3 text-neutral-400 whitespace-nowrap">
+                      {new Date(q.createdAt).toLocaleDateString('es-ES', {
+                        day: '2-digit', month: 'short', year: 'numeric',
+                      })}
+                    </td>
+                    <td className="px-4 py-3 font-medium">{q.name}</td>
+                    <td className="px-4 py-3 text-neutral-300">
+                      <a href={`mailto:${q.email}`} className="hover:text-blue-400 transition">
+                        {q.email}
+                      </a>
+                    </td>
+                    <td className="px-4 py-3 text-neutral-300">{q.companyName}</td>
+                    <td className="px-4 py-3">
+                      <span className="px-2 py-0.5 rounded-full bg-blue-900/60 text-blue-300 text-xs font-medium border border-blue-700/40">
+                        {q.quantity}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-neutral-400 max-w-xs truncate" title={q.message}>
+                      {q.message || '—'}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="px-2 py-0.5 rounded-full bg-green-900/60 text-green-300 text-xs font-medium border border-green-700/40">
+                        {q.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
