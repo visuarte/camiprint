@@ -13,11 +13,35 @@ export async function POST(req: NextRequest) {
 
     const adminToken = process.env.ADMIN_AUTH_TOKEN;
 
-    if (token !== adminToken) {
+    if (!adminToken) {
+      console.error('ADMIN_AUTH_TOKEN not configured on the server');
       return NextResponse.json(
-        { error: 'Invalid admin token' },
-        { status: 401 }
+        { error: 'Server misconfigured' },
+        { status: 500 }
       );
+    }
+
+    const provided = typeof token === 'string' ? token.trim() : '';
+    const expected = typeof adminToken === 'string' ? adminToken.trim() : '';
+
+    // Debugging helper (safe): in dev, log only lengths to avoid leaking token
+    if (process.env.NODE_ENV !== 'production') {
+      try {
+        console.info(`ADMIN_AUTH_TOKEN length: ${expected.length}`);
+        console.info(`Provided token length: ${provided.length}`);
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    if (provided !== expected) {
+      console.warn('Admin login failed: invalid token provided');
+      const body: any = { error: 'Invalid admin token' };
+      if (process.env.NODE_ENV !== 'production') {
+        body.providedLength = provided.length;
+        body.expectedLength = expected.length;
+      }
+      return NextResponse.json(body, { status: 401 });
     }
 
     // Token válido, crear cookie de sesión

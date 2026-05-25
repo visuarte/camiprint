@@ -41,7 +41,13 @@ export function middleware(request: NextRequest) {
   }
 
   // Admin API routes
+  // Admin API routes
   if (pathname.startsWith('/api/admin')) {
+    // Allow the login endpoint to be called without Authorization header
+    if (pathname === '/api/admin/auth/login' && request.method === 'POST') {
+      return NextResponse.next();
+    }
+
     const authHeader = request.headers.get('authorization');
     const token = authHeader?.replace('Bearer ', '');
     const adminToken = process.env.ADMIN_AUTH_TOKEN;
