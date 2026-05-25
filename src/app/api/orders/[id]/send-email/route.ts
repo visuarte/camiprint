@@ -79,7 +79,20 @@ export async function POST(
       email: order.email,
     };
 
-    // Send confirmation email
+    // Feature flag: allow disabling emails in env
+    if (process.env.ENABLE_EMAILS === 'false') {
+      console.log('[send-email] Emails disabled via ENABLE_EMAILS=false; skipping send');
+      return NextResponse.json(
+        {
+          ok: true,
+          message: 'Emails are disabled (ENABLE_EMAILS=false). Skipped sending email.',
+          orderId,
+        },
+        { status: 200 }
+      );
+    }
+
+    // Send confirmation email via emailService
     const emailSent = await emailService.sendOrderConfirmation(
       order.email,
       orderConfirmationData

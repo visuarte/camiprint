@@ -1,17 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/server/db';
-import nodemailer from 'nodemailer';
-
-// Create email transporter
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'localhost',
-  port: parseInt(process.env.SMTP_PORT || '1025', 10),
-  secure: process.env.NODE_ENV === 'production',
-  auth: process.env.SMTP_USER ? {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  } : undefined,
-});
+import { emailService } from '@/server/emails/service';
+import { OrderConfirmationData } from '@/server/emails/templates';
 
 export async function POST(
   req: NextRequest,
@@ -97,13 +87,31 @@ export async function POST(
       </html>
     `;
 
-    // Send email
-    await transporter.sendMail({
-      from: process.env.SMTP_FROM || 'noreply@camiprint.com',
-      to: order.email,
-      subject: `Confirmación de Orden #${order.id.substring(0, 8)}`,
-      html,
-    });
+    // Feature flag: allow disabling emails
+    if (process.env.ENABLE_EMAILS === 'false') {
+      console.log('[admin send-email] Emails disabled via ENABLE_EMAILS=false; skipping send');
+      return NextResponse.json({ success: true, message: 'Emails disabled; skipped sending' });
+    }
+
+    const orderData: OrderConfirmationData = {
+      orderNumber: order.id.substring(0, 8).toUpperCase(),
+      customerName: order.email.split('@')[0],
+      items: order.items.map((item: any) => ({
+        productName: item.product?.name || 'Product',
+        quantity: item.quantity,
+        size: item.product?.size || 'N/A',
+        price: item.price,
+      })),
+      total: order.totalAmount || 0,
+      shippingAddress: order.address || '',
+      email: order.email,
+    };
+
+    const sent = await emailService.sendOrderConfirmation(order.email, orderData);
+
+    if (!sent) {
+      return NextResponse.json({ error: 'Failed to send email' }, { status: 500 });
+    }
 
     return NextResponse.json({ success: true, message: 'Email sent' });
   } catch (error) {
