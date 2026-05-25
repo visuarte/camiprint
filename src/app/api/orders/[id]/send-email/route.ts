@@ -93,25 +93,27 @@ export async function POST(
     }
 
     // Send confirmation email via emailService
-    const emailSent = await emailService.sendOrderConfirmation(
+    const emailResult = await emailService.sendOrderConfirmation(
       order.email,
       orderConfirmationData
     );
 
-    if (!emailSent) {
+    if (!emailResult || !emailResult.success) {
+      console.error('[send-email] send failed:', emailResult?.error);
       return NextResponse.json(
-        { error: 'Failed to send email' },
+        { error: 'Failed to send email', details: emailResult?.error },
         { status: 500 }
       );
     }
 
-    console.log(`Confirmation email resent for order ${orderId} (admin action)`);
+    console.log(`Confirmation email resent for order ${orderId} (admin action), messageId=${emailResult.id}`);
 
     return NextResponse.json(
       {
         ok: true,
         message: `Email resent to ${order.email}`,
         orderId,
+        messageId: emailResult.id,
       },
       { status: 200 }
     );

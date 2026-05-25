@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/server/db';
+import { getPlatformConfig } from '@/server/platform/config';
 import { verifyAdminToken, unauthorized, serverError, successResponse } from '../auth-utils';
 
 export async function GET(req: NextRequest) {
@@ -9,6 +9,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    const platformConfig = getPlatformConfig();
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status');
     const page = parseInt(searchParams.get('page') || '1', 10);
@@ -42,25 +43,32 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Get total count
-    const total = await prisma.order.count({ where });
-
-    // Get orders with pagination
-    const orders = await prisma.order.findMany({
-      where,
-      skip: (page - 1) * limit,
-      take: limit,
-      orderBy: { [sortBy]: 'desc' },
-      select: {
-        id: true,
-        customerId: true,
-        email: true,
-        phone: true,
-        totalAmount: true,
-        status: true,
-        createdAt: true,
-      },
-    });
+    // If running with Postgres driver, query Prisma. Otherwise return empty dataset (JSON driver or demo).
+    let orders: Array<Record<string, any>> = [];
+    let total = 0;
+    if (platformConfig.quoteRepositoryDriver === 'postgres') {
+      const { prisma } = await import('@/server/db');
+      total = await prisma.order.count({ where });
+      orders = await prisma.order.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { [sortBy]: 'desc' },
+        select: {
+          id: true,
+          customerId: true,
+          email: true,
+          phone: true,
+          totalAmount: true,
+          status: true,
+          createdAt: true,
+        },
+      });
+    } else {
+      // No DB configured — return empty list to avoid 500s in local/dev
+      orders = [];
+      total = 0;
+    }
 
     const totalPages = Math.ceil(total / limit);
 

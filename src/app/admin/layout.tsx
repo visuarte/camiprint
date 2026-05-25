@@ -28,6 +28,7 @@ export default function AdminLayout({
 
   const navItems = [
     { name: 'Dashboard', href: '/admin', icon: '📊' },
+    { name: 'Ajustes', href: '/admin/settings', icon: '⚙️' },
     { name: 'Órdenes', href: '/admin/orders', icon: '📦' },
   ];
 
@@ -39,11 +40,8 @@ export default function AdminLayout({
   };
 
   return (
-    <html lang="es">
-      <head>
-        <title>Admin - CamiPrint</title>
-      </head>
-      <body className="bg-neutral-950 text-neutral-100">
+    <>
+      <div className="min-h-screen bg-neutral-950 text-neutral-100">
         <div className="flex h-screen overflow-hidden">
           {/* Sidebar */}
           <aside className="hidden md:flex w-64 flex-col bg-neutral-900 border-r border-neutral-800">
@@ -130,7 +128,7 @@ export default function AdminLayout({
             {children}
           </main>
         </div>
-      </body>
-    </html>
+      </div>
+    </>
   );
 }

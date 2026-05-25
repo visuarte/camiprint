@@ -6,7 +6,7 @@ const securityHeaders = [
   { key: 'X-XSS-Protection', value: '1; mode=block' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
-  { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://unpkg.com; script-src-elem 'self' 'unsafe-inline' https://vercel.live https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; frame-src 'self' https://vercel.live; connect-src 'self' https://api.stripe.com https://js.stripe.com https://vercel.live https://unpkg.com" },
+  { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://unpkg.com https://va.vercel-scripts.com; script-src-elem 'self' 'unsafe-inline' https://vercel.live https://unpkg.com https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; frame-src 'self' https://vercel.live; connect-src 'self' https://api.stripe.com https://js.stripe.com https://vercel.live https://unpkg.com" },
 ];
 
 const nextConfig: NextConfig = {

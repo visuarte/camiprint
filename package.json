@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "postinstall": "prisma generate",
-    "dev": "next dev --webpack",
+    "dev": "node scripts/start-dev.js",
     "dev:turbopack": "next dev",
     "build": "next build",
     "build:webpack": "next build --webpack",

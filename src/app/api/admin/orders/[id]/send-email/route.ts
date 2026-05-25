@@ -107,13 +107,14 @@ export async function POST(
       email: order.email,
     };
 
-    const sent = await emailService.sendOrderConfirmation(order.email, orderData);
+    const sendResult = await emailService.sendOrderConfirmation(order.email, orderData);
 
-    if (!sent) {
-      return NextResponse.json({ error: 'Failed to send email' }, { status: 500 });
+    if (!sendResult || !sendResult.success) {
+      console.error('[admin send-email] send failed:', sendResult?.error);
+      return NextResponse.json({ error: 'Failed to send email', details: sendResult?.error }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, message: 'Email sent' });
+    return NextResponse.json({ success: true, message: 'Email sent', messageId: sendResult.id });
   } catch (error) {
     console.error('Error sending email:', error);
     return NextResponse.json(

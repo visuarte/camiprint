@@ -19,6 +19,12 @@ interface EmailPayload {
   replyTo?: string;
 }
 
+interface SendResult {
+  success: boolean;
+  id?: string;
+  error?: string;
+}
+
 export class EmailService {
   private resend: Resend;
   private isConfigured: boolean = false;
@@ -42,24 +48,22 @@ export class EmailService {
     }
   }
 
-  async sendEmail(payload: EmailPayload): Promise<boolean> {
+  async sendEmail(payload: EmailPayload): Promise<SendResult> {
     if (!this.isConfigured) {
       if (process.env.NODE_ENV === 'production') {
-        console.error('[EmailService] RESEND_API_KEY is required in production:', {
-          to: payload.to,
-          subject: payload.subject,
-        });
-        return false;
+        const msg = '[EmailService] RESEND_API_KEY is required in production';
+        console.error(msg, { to: payload.to, subject: payload.subject });
+        return { success: false, error: msg };
       }
 
-      // Development fallback: log to console
+      // Development fallback: log to console and return fake id
       console.log('[EmailService] [DEV MODE - NO ACTUAL SEND]');
       console.log(`To: ${payload.to}`);
       console.log(`Subject: ${payload.subject}`);
       console.log(`From: ${this.fromName} <${this.fromEmail}>`);
       console.log(`Reply-To: ${payload.replyTo || 'support@camiprint.com'}`);
       console.log(`HTML Preview: ${payload.html.substring(0, 200)}...`);
-      return true;
+      return { success: true, id: `dev-${Date.now()}` };
     }
 
     try {
@@ -71,37 +75,110 @@ export class EmailService {
         replyTo: payload.replyTo || 'support@camiprint.com',
       });
 
-      if (data.error) {
-        console.error('[EmailService] Resend error:', {
-          to: payload.to,
-          subject: payload.subject,
-          error: data.error,
-        });
-        return false;
+      // Log full response for debugging
+      console.log('[EmailService] Resend response:', data);
+
+      // Resend SDK may return id in different shapes; try common locations
+      const msgId = (data && (data.id || data.data?.id || data.messageId)) as string | undefined;
+
+      if (data && data.error) {
+        console.warn('[EmailService] Resend returned error:', data.error);
       }
 
-      console.log('[EmailService] Email sent successfully:', {
-        id: data.data?.id,
-        to: payload.to,
-        subject: payload.subject,
+      if (!msgId) {
+        const warn = '[EmailService] No message id returned by Resend, attempting SMTP fallback if configured';
+        console.warn(warn, { to: payload.to, subject: payload.subject, data });
+
+        // Attempt SMTP fallback if SMTP is configured or RESEND_API_KEY exists
+        const smtpResult = await this.sendViaSmtp(payload).catch((e) => ({ success: false, error: String(e) }));
+        if (smtpResult && smtpResult.success) {
+          console.log('[EmailService] Sent via SMTP fallback:', { id: smtpResult.id, to: payload.to });
+          return smtpResult;
+        }
+
+        const errMsg = smtpResult?.error || 'No message id returned by Resend and SMTP fallback failed';
+        return { success: false, error: errMsg };
+      }
+
+      console.log('[EmailService] Email sent successfully via Resend:', { id: msgId, to: payload.to, subject: payload.subject });
+      return { success: true, id: msgId };
+    } catch (error) {
+      const err = error as any;
+      const errMsg = err?.message || String(err);
+      console.error('[EmailService] Failed to send email via Resend:', { to: payload.to, subject: payload.subject, error: errMsg, stack: err?.stack });
+
+      // Try SMTP fallback before giving up
+      try {
+        const smtpResult = await this.sendViaSmtp(payload);
+        if (smtpResult && smtpResult.success) {
+          console.log('[EmailService] Sent via SMTP fallback after Resend error:', { id: smtpResult.id, to: payload.to });
+          return smtpResult;
+        }
+        return { success: false, error: smtpResult?.error || errMsg };
+      } catch (smtpErr) {
+        const smtpMsg = (smtpErr as any)?.message || String(smtpErr);
+        console.error('[EmailService] SMTP fallback also failed:', smtpMsg);
+        return { success: false, error: `${errMsg}; SMTP fallback: ${smtpMsg}` };
+      }
+    }
+  }
+
+  private async sendViaSmtp(payload: EmailPayload): Promise<SendResult> {
+    // Determine SMTP config from env or default to Resend SMTP
+    const host = process.env.SMTP_HOST || 'smtp.resend.com';
+    const port = Number(process.env.SMTP_PORT || 465);
+    const secure = (process.env.SMTP_SECURE ?? 'true') === 'true';
+    const user = process.env.SMTP_USER || 'resend';
+    const pass = process.env.SMTP_PASS || process.env.RESEND_API_KEY;
+
+    if (!pass) {
+      const msg = '[EmailService] SMTP credentials not configured (SMTP_PASS or RESEND_API_KEY required)';
+      console.warn(msg);
+      return { success: false, error: msg };
+    }
+
+    let nodemailer: any;
+    try {
+      nodemailer = await import('nodemailer');
+    } catch (e) {
+      console.error('[EmailService] nodemailer not installed:', e);
+      return { success: false, error: 'nodemailer not installed' };
+    }
+
+    try {
+      const transporter = nodemailer.createTransport({
+        host,
+        port,
+        secure,
+        auth: {
+          user,
+          pass,
+        },
       });
 
-      return true;
-    } catch (error) {
-      const err = error as Error;
-      console.error('[EmailService] Failed to send email:', {
+      const info = await transporter.sendMail({
+        from: `${this.fromName} <${this.fromEmail}>`,
         to: payload.to,
         subject: payload.subject,
-        error: err.message,
+        html: payload.html,
+        replyTo: payload.replyTo || 'support@camiprint.com',
       });
-      return false;
+
+      console.log('[EmailService] nodemailer sendMail info:', info);
+
+      const messageId = info?.messageId || (info?.response && String(info.response));
+      return { success: true, id: messageId };
+    } catch (err) {
+      const e = err as any;
+      console.error('[EmailService] nodemailer send failed:', e?.message || e);
+      return { success: false, error: e?.message || String(e) };
     }
   }
 
   async sendOrderConfirmation(
     email: string,
     orderData: OrderConfirmationData
-  ): Promise<boolean> {
+  ): Promise<SendResult> {
     try {
       const html = orderConfirmationTemplate(orderData);
 
@@ -112,25 +189,23 @@ export class EmailService {
         replyTo: 'support@camiprint.com',
       });
 
-      if (result) {
+      if (result.success) {
         console.log('[EmailService] Order confirmation sent:', {
           orderNumber: orderData.orderNumber,
           email,
+          messageId: result.id,
         });
       }
 
       return result;
     } catch (error) {
       const err = error as Error;
-      console.error('[EmailService] Error sending order confirmation:', {
-        email,
-        error: err.message,
-      });
-      return false;
+      console.error('[EmailService] Error sending order confirmation:', { email, error: err.message });
+      return { success: false, error: err.message };
     }
   }
 
-  async sendQuoteNotification(quoteData: QuoteEmailData): Promise<boolean> {
+  async sendQuoteNotification(quoteData: QuoteEmailData): Promise<SendResult> {
     const recipient =
       process.env.QUOTES_NOTIFICATION_EMAIL ||
       process.env.CONTACT_TO_EMAIL ||
@@ -147,10 +222,11 @@ export class EmailService {
         replyTo: quoteData.email,
       });
 
-      if (result) {
+      if (result.success) {
         console.log('[EmailService] Quote notification sent:', {
           quoteId: quoteData.quoteId,
           recipient,
+          messageId: result.id,
         });
       }
 
@@ -161,11 +237,11 @@ export class EmailService {
         quoteId: quoteData.quoteId,
         error: err.message,
       });
-      return false;
+      return { success: false, error: err.message };
     }
   }
 
-  async sendQuoteCustomerConfirmation(quoteData: QuoteEmailData): Promise<boolean> {
+  async sendQuoteCustomerConfirmation(quoteData: QuoteEmailData): Promise<SendResult> {
     try {
       const html = quoteCustomerConfirmationTemplate(quoteData);
 
@@ -176,10 +252,11 @@ export class EmailService {
         replyTo: process.env.QUOTES_NOTIFICATION_EMAIL || 'hola@camiprint.com',
       });
 
-      if (result) {
+      if (result.success) {
         console.log('[EmailService] Quote customer confirmation sent:', {
           quoteId: quoteData.quoteId,
           email: quoteData.email,
+          messageId: result.id,
         });
       }
 
@@ -191,7 +268,7 @@ export class EmailService {
         email: quoteData.email,
         error: err.message,
       });
-      return false;
+      return { success: false, error: err.message };
     }
   }
 }

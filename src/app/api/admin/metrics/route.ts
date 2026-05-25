@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/server/db';
+import { getPlatformConfig } from '@/server/platform/config';
 import { verifyAdminToken, unauthorized, serverError, successResponse } from '../auth-utils';
 
 export async function GET(req: NextRequest) {
@@ -9,6 +9,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    const platformConfig = getPlatformConfig();
     const { searchParams } = new URL(req.url);
     const days = parseInt(searchParams.get('days') || '30', 10);
 
@@ -17,20 +18,27 @@ export async function GET(req: NextRequest) {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
-    // Get orders in date range
-    const orders = await prisma.order.findMany({
-      where: {
-        createdAt: {
-          gte: startDate,
-          lte: endDate,
+    // Get orders in date range. Only query Prisma when running with Postgres configured.
+    let orders: Array<{ id: string; status: string; totalAmount: number }> = [];
+    if (platformConfig.quoteRepositoryDriver === 'postgres') {
+      const { prisma } = await import('@/server/db');
+      orders = await prisma.order.findMany({
+        where: {
+          createdAt: {
+            gte: startDate,
+            lte: endDate,
+          },
         },
-      },
-      select: {
-        id: true,
-        status: true,
-        totalAmount: true,
-      },
-    });
+        select: {
+          id: true,
+          status: true,
+          totalAmount: true,
+        },
+      });
+    } else {
+      // When running with JSON driver (development), return empty set instead of failing.
+      orders = [];
+    }
 
     // Calculate metrics
     const totalOrders = orders.length;
