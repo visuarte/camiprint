@@ -231,9 +231,9 @@ export class QuotesService {
       emailService.sendQuoteCustomerConfirmation(fallbackEmailData),
     ]);
 
-    const sentAtLeastOneEmail = emailResults.some((result) => result.status === 'fulfilled' && result.value === true);
+    const sentAtLeastOneEmail = emailResults.some((result) => result.status === 'fulfilled' && result.value?.success === true);
     const failedEmailCount = emailResults.filter(
-      (result) => result.status === 'rejected' || result.value === false
+      (result) => result.status === 'rejected' || result.value?.success === false
     ).length;
 
     if (sentAtLeastOneEmail) {
