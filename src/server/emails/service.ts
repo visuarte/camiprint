@@ -78,11 +78,17 @@ export class EmailService {
       // Log full response for debugging
       console.log('[EmailService] Resend response:', data);
 
-      // Resend SDK may return id in different shapes; try common locations
-      const msgId = (data && (data.id || data.data?.id || data.messageId)) as string | undefined;
+      // Resend SDK returns { data: { id } } on success, { error: ... } on failure
+      const resendData = data as Record<string, unknown>;
+      const msgId = (
+        resendData &&
+        ((resendData['data'] as Record<string, unknown>)?.['id'] ||
+          resendData['id'] ||
+          (resendData['messageId'] as string))
+      ) as string | undefined;
 
-      if (data && data.error) {
-        console.warn('[EmailService] Resend returned error:', data.error);
+      if (resendData && resendData['error']) {
+        console.warn('[EmailService] Resend returned error:', resendData['error']);
       }
 
       if (!msgId) {
