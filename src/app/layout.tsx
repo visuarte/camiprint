@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { Manrope, Space_Grotesk } from "next/font/google";
 import { brandConfig } from "@/config/brand";
 import CookieBanner from "@/app/components/CookieBanner";
+import WhatsAppFloating from '@/app/components/WhatsAppFloating';
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -124,6 +125,7 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col overflow-x-hidden bg-neutral-950 text-neutral-100">
         <a href="#main-content" className="skip-link">Saltar al contenido principal</a>
         <main id="main-content" className="flex flex-1 flex-col">{children}</main>
+        <WhatsAppFloating />
         <Analytics />
         <CookieBanner />
       </body>
