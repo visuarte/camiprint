@@ -11,6 +11,7 @@ const Navigation = () => {
 
   const navigationLinks = [
     { href: '#inicio', label: 'Inicio' },
+    { href: '/portfolio', label: 'Portafolio' },
     { href: '#ofertas', label: 'Ofertas' },
     { href: '#proceso', label: 'Proceso' },
     { href: '#testimonios', label: 'Testimonios' },
