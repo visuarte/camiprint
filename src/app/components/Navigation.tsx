@@ -1,6 +1,7 @@
-'use client';
+ 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { brandConfig } from '@/config/brand';
 
 const MOBILE_HEADER_HEIGHT = 73;
@@ -92,9 +93,7 @@ const Navigation = () => {
         {/* Logo */}
         <div className="flex-shrink-0">
           <a href="#inicio" className="inline-flex items-center gap-3 text-white transition-colors hover:text-cami-100">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/12 bg-white/6 text-sm font-semibold text-accent-200 shadow-glow">
-              CP
-            </span>
+            <Image src="/icons/logo.svg" alt={brandConfig.displayName} width={44} height={44} className="rounded-2xl bg-white/6 p-1" />
             <span>
               <span className="block font-display text-xl font-bold uppercase tracking-[0.18em] text-white">{brandConfig.displayName}</span>
               <span className="block text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-cami-300">Uniformidad textil B2B</span>
