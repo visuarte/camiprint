@@ -16,6 +16,11 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 7,
+    // En algunos entornos (export estático / ciertas configuraciones en Vercel)
+    // la API de optimización de imágenes puede devolver 400 al procesar rutas
+    // locales. Para evitar ese problema en producción mientras mantenemos
+    // soporte de imágenes estáticas en `public/`, desactivamos la optimización.
+    unoptimized: true,
   },
   async headers() {
     return [
