@@ -5,29 +5,34 @@ import CartSummary from './CartSummary';
 
 export default function Header() {
   return (
-    <header className="bg-white shadow sticky top-0 z-50">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-cami-950/78 shadow-[0_10px_40px_rgba(0,0,0,0.22)] backdrop-blur-xl">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent-300/70 to-transparent" aria-hidden="true" />
+      <nav className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           {/* Logo/Brand */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="text-2xl font-bold text-blue-600">
-              Camiprint
-            </div>
+          <Link href="/" className="inline-flex items-center gap-3 text-white transition-colors hover:text-cami-100">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/12 bg-white/6 text-sm font-semibold text-accent-200 shadow-glow">
+              CP
+            </span>
+            <span>
+              <span className="block font-display text-xl font-bold uppercase tracking-[0.18em] text-white">Camiprint</span>
+              <span className="block text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-cami-300">Catalogo y checkout</span>
+            </span>
           </Link>
 
           {/* Navigation Links */}
-          <div className="hidden sm:flex gap-6 items-center">
+          <div className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 shadow-glow sm:flex">
             <Link
               href="/"
-              className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
+              className="rounded-full px-4 py-2 text-sm font-semibold uppercase tracking-[0.12em] text-cami-200 transition-all hover:bg-white/8 hover:text-white"
             >
-              Home
+              Inicio
             </Link>
             <Link
               href="/catalog"
-              className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
+              className="rounded-full px-4 py-2 text-sm font-semibold uppercase tracking-[0.12em] text-cami-200 transition-all hover:bg-white/8 hover:text-white"
             >
-              Catalog
+              Catalogo
             </Link>
           </div>
 
@@ -36,18 +41,18 @@ export default function Header() {
         </div>
 
         {/* Mobile Navigation */}
-        <div className="sm:hidden flex gap-4 mt-4 justify-between">
+        <div className="mt-4 flex justify-between gap-4 sm:hidden">
           <Link
             href="/"
-            className="text-sm text-gray-700 hover:text-blue-600 transition-colors"
+            className="text-sm font-semibold uppercase tracking-[0.12em] text-cami-200 hover:text-white transition-colors"
           >
-            Home
+            Inicio
           </Link>
           <Link
             href="/catalog"
-            className="text-sm text-gray-700 hover:text-blue-600 transition-colors"
+            className="text-sm font-semibold uppercase tracking-[0.12em] text-cami-200 hover:text-white transition-colors"
           >
-            Catalog
+            Catalogo
           </Link>
         </div>
       </nav>

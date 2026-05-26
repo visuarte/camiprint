@@ -387,15 +387,16 @@ const ContactSection = () => {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.45, ease: 'easeOut' }}
         >
+          <span className="section-eyebrow">Equipo comercial</span>
           <h2 className="text-3xl font-bold text-white md:text-4xl lg:text-5xl">Hablemos de tu pedido</h2>
           <p className="mt-4 max-w-xl text-base text-cami-300 md:text-lg">
-            Completa el formulario y te enviaremos una propuesta en minutos con precio y tiempos estimados.
+            Completa el briefing y te devolvemos una propuesta clara con precio, tecnica recomendada y ventana de entrega.
           </p>
 
           <div className="mt-8 rounded-2xl border border-white/10 bg-cami-800/50 p-6 shadow-glow">
             <p className="text-sm text-cami-200">Respuesta promedio</p>
             <p className="mt-1 text-4xl font-bold text-white">15 min</p>
-            <p className="mt-4 text-sm text-cami-300">Soporte para ropa laboral, campañas publicitarias y series corporativas.</p>
+            <p className="mt-4 text-sm text-cami-300">Soporte para uniformidad, activaciones de marca, reposicion de stock y eventos corporativos.</p>
           </div>
         </motion.div>
 
@@ -409,7 +410,7 @@ const ContactSection = () => {
         >
           <div className="grid grid-cols-1 gap-4">
             <p className="rounded-lg border border-accent-400/30 bg-accent-400/10 px-3 py-2 text-xs font-medium text-cami-100">
-              Cupos de produccion de esta semana limitados. Te confirmamos disponibilidad y precio en la primera respuesta.
+              Cuanto mejor nos describas el pedido, mas afinada saldra la primera propuesta comercial.
             </p>
 
             <div>
@@ -498,10 +499,10 @@ const ContactSection = () => {
             </div>
 
             <p className="text-xs text-cami-300">
-              Tus datos estan protegidos y no seran compartidos con terceros.
+              Tus datos se usan solo para preparar y gestionar esta solicitud.
             </p>
             <p className="text-xs text-cami-300">
-              Solo pedimos 5 campos obligatorios para darte una cotizacion precisa.
+              Pedimos lo minimo necesario para darte una propuesta util desde el primer correo.
             </p>
 
             <button
@@ -509,7 +510,7 @@ const ContactSection = () => {
               disabled={isDisabled}
               className="mt-2 inline-flex items-center justify-center rounded-lg border border-white/20 bg-metal-button px-6 py-3 font-semibold text-cami-100 shadow-metal transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {isSubmitting ? 'Enviando...' : 'Solicitar propuesta'}
+              {isSubmitting ? 'Preparando propuesta...' : 'Solicitar propuesta'}
             </button>
 
             {isSuccess && (

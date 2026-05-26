@@ -2,14 +2,49 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
-import { Inter } from "next/font/google";
+import { Manrope, Space_Grotesk } from "next/font/google";
 import { brandConfig } from "@/config/brand";
 
-const inter = Inter({
+const manrope = Manrope({
   subsets: ["latin"],
   display: "optional",
-  variable: "--font-inter",
+  variable: "--font-sans",
 });
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  display: "optional",
+  variable: "--font-display",
+});
+
+const addressParts = brandConfig.postalAddress.split(",").map((part) => part.trim()).filter(Boolean);
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: brandConfig.displayName,
+  url: brandConfig.siteUrl,
+  logo: `${brandConfig.siteUrl}/icon-512.svg`,
+  description: brandConfig.seo.description,
+  email: brandConfig.supportEmail,
+  telephone: brandConfig.phoneDisplay,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: addressParts[0],
+    ...(addressParts[1] ? { addressLocality: addressParts[1] } : {}),
+    addressCountry: "ES",
+  },
+  sameAs: Object.values(brandConfig.socialLinks),
+};
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: brandConfig.displayName,
+  url: brandConfig.siteUrl,
+  inLanguage: "es-ES",
+  description: brandConfig.seo.description,
+};
 
 export const metadata: Metadata = {
   title: brandConfig.seo.defaultTitle,
@@ -73,9 +108,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`h-full antialiased ${inter.variable}`}>
+    <html lang="es" className={`h-full antialiased ${manrope.variable} ${spaceGrotesk.variable}`}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
       </head>
       <body className="flex min-h-full flex-col overflow-x-hidden bg-neutral-950 text-neutral-100">
         <a href="#main-content" className="skip-link">Saltar al contenido principal</a>

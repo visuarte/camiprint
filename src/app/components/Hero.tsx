@@ -23,37 +23,45 @@ const Hero = () => {
   }, []);
 
   return (
-    <section id="inicio" data-reveal data-reveal-delay="0" className="scroll-mt-20 bg-cami-hero px-4 pb-10 pt-12 md:px-6 md:pb-14 md:pt-20">
+    <section id="inicio" data-reveal data-reveal-delay="0" className="scroll-mt-20 bg-cami-hero px-4 pb-12 pt-20 md:px-6 md:pb-16 md:pt-28">
       <Script
         type="module"
         src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
         strategy="afterInteractive"
       />
 
-      <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-5 lg:gap-6">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 lg:grid-cols-5 lg:gap-8">
         <div className="lg:col-span-3">
-          <h1 className="max-w-2xl text-4xl font-bold leading-tight text-white md:text-5xl">
-            Tu marca, puesta en cada camiseta.
+          <span className="section-eyebrow">Produccion textil para empresas</span>
+
+          <h1 className="mt-6 max-w-3xl font-display text-5xl font-bold leading-none text-white md:text-6xl lg:text-[4.75rem]">
+            Camisetas personalizadas para empresas con tu logo.
           </h1>
 
-          <p className="mt-5 max-w-xl text-lg text-cami-200">
-            Produccion personalizada, calidad profesional y entrega agil.
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-cami-200 md:text-xl">
+            Fabricamos camisetas corporativas, polos con logo y uniformes personalizados para empresas desde 10 unidades, con calidad premium y envio rapido en toda Espana.
           </p>
 
-          <div className="mt-7 inline-flex items-center overflow-hidden rounded-xl border border-white/20 bg-white/10 shadow-glow backdrop-blur-sm">
+          <div className="mt-6 flex flex-wrap gap-3 text-sm text-cami-200">
+            <span className="rounded-full border border-white/12 bg-white/[0.05] px-4 py-2 font-semibold">Presupuesto en 24h</span>
+            <span className="rounded-full border border-white/12 bg-white/[0.05] px-4 py-2 font-semibold">Series cortas y grandes tiradas</span>
+            <span className="rounded-full border border-white/12 bg-white/[0.05] px-4 py-2 font-semibold">Soporte de arte final incluido</span>
+          </div>
+
+          <div className="mt-8 inline-flex items-center overflow-hidden rounded-2xl border border-white/15 bg-white/[0.07] shadow-glow backdrop-blur-sm">
             <input
               value={units}
               onChange={(e) => setUnits(Math.max(1, Number(e.target.value) || 1))}
               type="number"
               min={1}
-              className="h-12 w-16 border-r border-white/15 bg-transparent text-center text-2xl font-medium text-white outline-none"
+              className="h-14 w-20 border-r border-white/12 bg-transparent text-center text-2xl font-semibold text-white outline-none"
               aria-label="Cantidad de camisetas"
             />
             <div className="flex flex-col">
               <button
                 type="button"
                 onClick={handleIncrease}
-                className="h-6 w-10 border-b border-white/15 text-white/90 transition-colors hover:bg-white/10"
+                className="h-7 w-12 border-b border-white/12 text-white/90 transition-colors hover:bg-white/10"
                 aria-label="Incrementar cantidad"
               >
                 +
@@ -61,7 +69,7 @@ const Hero = () => {
               <button
                 type="button"
                 onClick={handleDecrease}
-                className="h-6 w-10 text-white/90 transition-colors hover:bg-white/10"
+                className="h-7 w-12 text-white/90 transition-colors hover:bg-white/10"
                 aria-label="Reducir cantidad"
               >
                 -
@@ -69,44 +77,45 @@ const Hero = () => {
             </div>
           </div>
 
-          <div className="mt-5 flex w-full max-w-xl flex-col gap-3 sm:flex-row">
+          <div className="mt-6 flex w-full max-w-2xl flex-col gap-3 sm:flex-row">
             <a
               href="#contacto"
               onClick={handleRequestQuote}
-              className="inline-flex w-full items-center justify-center rounded-xl border border-white/35 bg-metal-button px-6 py-3 text-lg font-semibold text-cami-100 shadow-metal transition-all hover:brightness-110"
+              className="inline-flex w-full items-center justify-center rounded-full border border-accent-300/35 bg-metal-button px-7 py-4 text-sm font-semibold uppercase tracking-[0.14em] text-cami-100 shadow-metal transition-all hover:-translate-y-0.5 hover:brightness-110"
             >
               Recibir propuesta en minutos
             </a>
             <a
               href="#ofertas"
-              className="inline-flex w-full items-center justify-center rounded-xl border border-white/20 bg-white/10 px-6 py-3 text-lg font-semibold text-cami-100 shadow-glow transition-all hover:brightness-110"
+              className="inline-flex w-full items-center justify-center rounded-full border border-white/18 bg-white/[0.06] px-7 py-4 text-sm font-semibold uppercase tracking-[0.14em] text-cami-100 shadow-glow transition-all hover:-translate-y-0.5 hover:bg-white/[0.1]"
             >
               Ver ofertas por volumen
             </a>
           </div>
 
-          <div className="mt-5 flex flex-wrap gap-2">
+          <div className="mt-6 flex flex-wrap gap-2.5">
             {trustSignals.map((signal) => (
               <span
                 key={signal}
-                className="inline-flex items-center rounded-full border border-white/18 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-cami-200"
+                className="inline-flex items-center rounded-full border border-white/14 bg-white/[0.05] px-3 py-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-cami-200"
               >
                 {signal}
               </span>
             ))}
           </div>
 
-          <div className="mt-5 grid max-w-lg grid-cols-2 gap-3 text-sm text-cami-200 sm:grid-cols-3">
-            <p className="rounded-lg border border-white/12 bg-cami-900/60 px-3 py-2"><span className="font-bold text-white">1200+</span> pedidos entregados</p>
-            <p className="rounded-lg border border-white/12 bg-cami-900/60 px-3 py-2"><span className="font-bold text-white">4.9/5</span> valoracion media</p>
-            <p className="rounded-lg border border-white/12 bg-cami-900/60 px-3 py-2 sm:col-span-1 col-span-2"><span className="font-bold text-white">72h</span> primera propuesta</p>
+          <div className="mt-8 grid max-w-2xl grid-cols-2 gap-3 text-sm text-cami-200 sm:grid-cols-3">
+            <p className="rounded-2xl border border-white/10 bg-cami-900/55 px-4 py-3 shadow-glow"><span className="block font-display text-2xl text-white">1200+</span> pedidos entregados</p>
+            <p className="rounded-2xl border border-white/10 bg-cami-900/55 px-4 py-3 shadow-glow"><span className="block font-display text-2xl text-white">4.9/5</span> valoracion media</p>
+            <p className="col-span-2 rounded-2xl border border-white/10 bg-cami-900/55 px-4 py-3 shadow-glow sm:col-span-1"><span className="block font-display text-2xl text-white">72h</span> primera propuesta</p>
           </div>
         </div>
 
-        <div className="relative mx-auto h-[360px] w-full max-w-[430px] lg:col-span-2 lg:h-[460px] lg:max-w-[520px]">
-          <div className="absolute inset-0 rounded-3xl border border-white/15 bg-gradient-to-b from-white/10 to-white/0 shadow-glow backdrop-blur-sm" />
+        <div className="relative mx-auto h-[400px] w-full max-w-[430px] lg:col-span-2 lg:h-[520px] lg:max-w-[520px]">
+          <div className="absolute inset-0 rounded-[2rem] border border-white/12 bg-gradient-to-b from-white/10 via-white/[0.03] to-transparent shadow-glow backdrop-blur-sm" />
+          <div className="absolute inset-4 rounded-[1.75rem] border border-accent-300/10" aria-hidden="true" />
           <div
-            className={`absolute inset-6 flex items-center justify-center rounded-2xl border border-white/10 bg-cami-900/70 transition-all duration-700 ease-out ${
+            className={`absolute inset-6 flex items-center justify-center rounded-[1.5rem] border border-white/10 bg-cami-900/70 transition-all duration-700 ease-out ${
               modelReady ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
             }`}
           >
@@ -120,15 +129,23 @@ const Hero = () => {
               field-of-view="32deg"
               shadow-intensity="1"
               exposure="0.9"
-              className="h-full w-full rounded-2xl bg-transparent pointer-events-none select-none"
+              className="h-full w-full rounded-[1.5rem] bg-transparent pointer-events-none select-none"
               style={{ ['--poster-color' as string]: 'transparent' }}
             />
           </div>
 
-          <span className="absolute left-8 top-16 h-28 w-28 rounded-full border border-white/20 opacity-50" aria-hidden="true" />
-          <span className="absolute bottom-20 right-10 h-24 w-24 rounded-full border border-accent-400/40 opacity-60" aria-hidden="true" />
-          <span className="absolute left-1/3 top-8 h-px w-28 rotate-12 bg-white/35" aria-hidden="true" />
-          <span className="absolute bottom-14 left-10 h-px w-32 -rotate-12 bg-white/35" aria-hidden="true" />
+          <div className="absolute -left-3 top-14 rounded-2xl border border-white/10 bg-cami-950/90 px-4 py-3 shadow-glow backdrop-blur-sm" aria-hidden="true">
+            <p className="text-[0.68rem] uppercase tracking-[0.2em] text-cami-300">Aprobacion media</p>
+            <p className="mt-1 font-display text-2xl text-white">24h</p>
+          </div>
+          <div className="absolute -bottom-3 right-4 rounded-2xl border border-accent-300/15 bg-cami-900/90 px-4 py-3 shadow-metal backdrop-blur-sm" aria-hidden="true">
+            <p className="text-[0.68rem] uppercase tracking-[0.2em] text-cami-300">Pedidos desde</p>
+            <p className="mt-1 font-display text-2xl text-white">10 uds</p>
+          </div>
+          <span className="absolute left-8 top-16 h-28 w-28 rounded-full border border-white/20 opacity-40" aria-hidden="true" />
+          <span className="absolute bottom-20 right-10 h-24 w-24 rounded-full border border-accent-400/40 opacity-50" aria-hidden="true" />
+          <span className="absolute left-1/3 top-8 h-px w-28 rotate-12 bg-white/30" aria-hidden="true" />
+          <span className="absolute bottom-14 left-10 h-px w-32 -rotate-12 bg-white/30" aria-hidden="true" />
         </div>
       </div>
     </section>

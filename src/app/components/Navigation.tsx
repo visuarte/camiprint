@@ -82,23 +82,30 @@ const Navigation = () => {
   };
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-cami-950/78 backdrop-blur-md">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+    <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-cami-950/70 shadow-[0_10px_40px_rgba(0,0,0,0.22)] backdrop-blur-xl">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent-300/70 to-transparent" aria-hidden="true" />
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <div className="flex-shrink-0">
-          <a href="#inicio" className="text-2xl font-bold tracking-tight text-white transition-colors hover:text-cami-200">
-            {brandConfig.displayName}
+          <a href="#inicio" className="inline-flex items-center gap-3 text-white transition-colors hover:text-cami-100">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/12 bg-white/6 text-sm font-semibold text-accent-200 shadow-glow">
+              CP
+            </span>
+            <span>
+              <span className="block font-display text-xl font-bold uppercase tracking-[0.18em] text-white">{brandConfig.displayName}</span>
+              <span className="block text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-cami-300">Uniformidad textil B2B</span>
+            </span>
           </a>
         </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden items-center space-x-8 md:flex">
+        <div className="hidden items-center rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 shadow-glow md:flex md:space-x-1">
           {navigationLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
               onClick={(e) => handleNavigate(e, link.href)}
-              className="font-medium text-cami-200 transition-colors hover:text-white"
+              className="rounded-full px-4 py-2 text-sm font-semibold tracking-[0.08em] text-cami-200 transition-all hover:bg-white/8 hover:text-white"
             >
               {link.label}
             </a>
@@ -110,7 +117,7 @@ const Navigation = () => {
           <a
             href="#contacto"
             onClick={(e) => handleNavigate(e, '#contacto')}
-            className="rounded-lg border border-white/25 bg-metal-button px-6 py-2 font-semibold text-cami-100 shadow-metal transition-all hover:brightness-110"
+            className="rounded-full border border-accent-300/30 bg-metal-button px-6 py-2.5 text-sm font-semibold uppercase tracking-[0.12em] text-cami-100 shadow-metal transition-all hover:-translate-y-0.5 hover:brightness-110"
           >
             Solicitar Cotización
           </a>
@@ -120,7 +127,7 @@ const Navigation = () => {
         <button
           type="button"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="rounded-lg border border-white/15 bg-white/5 p-2 text-cami-100 transition-colors hover:bg-white/10 md:hidden"
+          className="rounded-2xl border border-white/15 bg-white/5 p-2 text-cami-100 transition-colors hover:bg-white/10 md:hidden"
           aria-label="Toggle navigation menu"
           aria-expanded={isMobileMenuOpen}
           aria-controls="mobile-main-menu"
@@ -170,7 +177,7 @@ const Navigation = () => {
                     handleNavigate(e, link.href);
                     handleLinkClick();
                   }}
-                  className="touch-target block rounded-lg border border-transparent bg-white/[0.03] px-4 py-3 font-medium text-cami-100 transition-all hover:border-white/15 hover:bg-white/10 hover:text-white"
+                  className="touch-target block rounded-2xl border border-transparent bg-white/[0.03] px-4 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-cami-100 transition-all hover:border-white/15 hover:bg-white/10 hover:text-white"
                 >
                   {link.label}
                 </a>
@@ -181,7 +188,7 @@ const Navigation = () => {
                   handleNavigate(e, '#contacto');
                   handleLinkClick();
                 }}
-                className="touch-target block w-full rounded-lg border border-white/25 bg-metal-button px-4 py-3 text-center font-semibold text-cami-100 shadow-metal transition-all hover:brightness-110"
+                className="touch-target block w-full rounded-2xl border border-accent-300/30 bg-metal-button px-4 py-3 text-center text-sm font-semibold uppercase tracking-[0.12em] text-cami-100 shadow-metal transition-all hover:brightness-110"
               >
                 Solicitar Cotización
               </a>

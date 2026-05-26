@@ -4,35 +4,35 @@ import Link from 'next/link';
 import { useCart } from '@/lib/store';
 import { StripeWrapper } from '@/components/StripeWrapper';
 import { CheckoutForm } from '@/components/CheckoutForm';
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 
 export default function CheckoutPage() {
   const { items, getTotal } = useCart();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="min-h-screen bg-transparent pt-24 pb-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="animate-pulse">
-            <div className="h-8 bg-gray-300 rounded w-1/4 mb-8"></div>
+            <div className="mb-8 h-8 w-1/4 rounded bg-cami-800"></div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-4">
-                <div className="bg-white rounded-lg p-6">
-                  <div className="h-6 bg-gray-300 rounded w-1/2 mb-4"></div>
+                <div className="rounded-[1.5rem] bg-cami-900/60 p-6">
+                  <div className="mb-4 h-6 w-1/2 rounded bg-cami-800"></div>
                   <div className="space-y-4">
                     {[1, 2, 3].map((i) => (
-                      <div key={i} className="h-12 bg-gray-200 rounded"></div>
+                      <div key={i} className="h-12 rounded bg-cami-800"></div>
                     ))}
                   </div>
                 </div>
               </div>
               <div className="lg:col-span-1">
-                <div className="bg-white rounded-lg p-6 h-64 bg-gray-100"></div>
+                <div className="h-64 rounded-[1.5rem] bg-cami-900/60 p-6"></div>
               </div>
             </div>
           </div>
@@ -44,13 +44,13 @@ export default function CheckoutPage() {
   // Si el carrito está vacío
   if (items.length === 0) {
     return (
-      <main className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
+      <main className="min-h-screen bg-transparent pt-24 pb-16 text-cami-100">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <h1 className="mb-8 font-display text-4xl font-bold text-white">Checkout seguro</h1>
 
-          <div className="bg-white rounded-lg shadow p-8 text-center">
+          <div className="rounded-[1.75rem] border border-white/10 bg-cami-900/60 p-8 text-center shadow-glow">
             <svg
-              className="w-16 h-16 mx-auto text-gray-400 mb-4"
+              className="mx-auto mb-4 h-16 w-16 text-cami-300"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -62,13 +62,13 @@ export default function CheckoutPage() {
                 d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
               />
             </svg>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Tu carrito está vacío</h2>
-            <p className="text-gray-600 mb-6">Agrega artículos a tu carrito antes de realizar el checkout.</p>
+            <h2 className="mb-2 text-2xl font-semibold text-white">Tu carrito esta vacio</h2>
+            <p className="mb-6 text-cami-300">Agrega prendas al pedido antes de pasar al pago seguro.</p>
             <Link
               href="/catalog"
-              className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+              className="inline-flex rounded-full border border-accent-300/30 bg-metal-button px-6 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-cami-100 shadow-metal transition-all hover:-translate-y-0.5 hover:brightness-110"
             >
-              Continuar comprando
+              Ir al catalogo
             </Link>
           </div>
         </div>
@@ -79,13 +79,13 @@ export default function CheckoutPage() {
   const total = getTotal();
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <main className="min-h-screen bg-transparent pt-24 pb-16 text-cami-100">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header con navegación */}
         <div className="mb-12">
           <Link
             href="/cart"
-            className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium mb-8"
+            className="mb-8 inline-flex items-center font-medium text-cami-200 hover:text-white"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -93,8 +93,9 @@ export default function CheckoutPage() {
             Volver al Carrito
           </Link>
 
-          <h1 className="text-3xl font-bold text-gray-900">Checkout Seguro</h1>
-          <p className="text-gray-600 mt-2">Completa tu pedido de forma segura</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.14em] text-cami-300">Pago corporativo</p>
+          <h1 className="mt-2 font-display text-4xl font-bold text-white">Checkout seguro</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-cami-300">Completa tu pedido con un flujo claro, pago protegido por Stripe y resumen detallado antes de confirmar.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -107,64 +108,64 @@ export default function CheckoutPage() {
 
           {/* Resumen del Pedido */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow p-6 sticky top-24 h-fit">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">Resumen del Pedido</h2>
+            <div className="sticky top-24 h-fit rounded-[1.5rem] border border-white/10 bg-cami-900/60 p-6 shadow-glow">
+              <h2 className="mb-6 font-display text-2xl text-white">Resumen del pedido</h2>
 
               {/* Items */}
-              <div className="space-y-4 mb-6 border-b pb-6 max-h-64 overflow-y-auto">
+              <div className="mb-6 max-h-64 space-y-4 overflow-y-auto border-b border-white/10 pb-6">
                 {items.map((item) => (
                   <div key={item.id} className="flex justify-between text-sm">
                     <div>
-                      <p className="font-medium text-gray-900">{item.productName}</p>
-                      <p className="text-gray-600 text-xs">
+                      <p className="font-medium text-white">{item.productName}</p>
+                      <p className="text-xs text-cami-300">
                         {item.size} x {item.quantity}
                       </p>
                     </div>
-                    <p className="font-medium text-gray-900">${(item.price * item.quantity).toFixed(2)}</p>
+                    <p className="font-medium text-white">${(item.price * item.quantity).toFixed(2)}</p>
                   </div>
                 ))}
               </div>
 
               {/* Detalles de envío */}
-              <div className="space-y-3 mb-6">
-                <div className="flex justify-between text-gray-600">
+              <div className="mb-6 space-y-3">
+                <div className="flex justify-between text-cami-300">
                   <span>Subtotal ({items.reduce((sum, i) => sum + i.quantity, 0)} artículos)</span>
                   <span>${total.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-cami-300">
                   <span>Envío</span>
-                  <span className="text-green-600 font-medium">Gratis</span>
+                  <span className="font-medium text-emerald-300">Gratis</span>
                 </div>
-                <div className="flex justify-between text-gray-600">
+                <div className="flex justify-between text-cami-300">
                   <span>Impuesto estimado</span>
                   <span>${(total * 0.08).toFixed(2)}</span>
                 </div>
               </div>
 
               {/* Total */}
-              <div className="border-t pt-4">
-                <div className="flex justify-between text-lg font-bold text-gray-900">
+              <div className="border-t border-white/10 pt-4">
+                <div className="flex justify-between text-lg font-bold text-white">
                   <span>Total</span>
                   <span>${(total * 1.08).toFixed(2)}</span>
                 </div>
               </div>
 
               {/* Garantía */}
-              <div className="mt-6 pt-6 border-t space-y-3 text-xs text-gray-600">
+              <div className="mt-6 space-y-3 border-t border-white/10 pt-6 text-xs text-cami-300">
                 <div className="flex items-start">
-                  <svg className="w-4 h-4 mr-2 text-green-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="mt-0.5 mr-2 h-4 w-4 shrink-0 text-emerald-300" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                   <span>Pago seguro con Stripe</span>
                 </div>
                 <div className="flex items-start">
-                  <svg className="w-4 h-4 mr-2 text-green-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="mt-0.5 mr-2 h-4 w-4 shrink-0 text-emerald-300" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                   <span>Encriptación SSL 256-bit</span>
                 </div>
                 <div className="flex items-start">
-                  <svg className="w-4 h-4 mr-2 text-green-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="mt-0.5 mr-2 h-4 w-4 shrink-0 text-emerald-300" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                   <span>Garantía de comprador protegida</span>

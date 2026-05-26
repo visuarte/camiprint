@@ -6,11 +6,12 @@ const Process = () => {
     <section id="proceso" data-reveal data-reveal-delay="70" className="scroll-mt-20 bg-cami-950 px-4 py-16 md:px-6 md:py-24">
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 text-center md:mb-16">
+          <span className="section-eyebrow">Metodo de trabajo</span>
           <h2 className="mb-4 text-3xl font-bold text-white md:text-4xl lg:text-5xl">
             Tu pedido en 4 pasos
           </h2>
           <p className="mx-auto max-w-2xl text-base text-cami-300 md:text-lg">
-            Un proceso simple, transparente y rápido para que tengas tus camisetas listas cuanto antes.
+            Un flujo claro para validar diseno, coste y produccion sin friccion operativa.
           </p>
         </div>
 
@@ -44,7 +45,7 @@ const Process = () => {
             href="#contacto"
             className="inline-flex items-center justify-center rounded-lg border border-white/25 bg-metal-button px-8 py-3 text-base font-semibold text-cami-100 shadow-metal transition-all hover:scale-105 hover:brightness-110"
           >
-            Comenzar Ahora
+            Solicitar propuesta
           </Link>
         </div>
       </div>

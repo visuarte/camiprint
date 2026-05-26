@@ -45,11 +45,12 @@ const Pricing = () => {
       <div className="max-w-6xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
+          <span className="section-eyebrow">Escalado por volumen</span>
           <h2 className="mb-4 text-3xl font-bold text-white md:text-4xl lg:text-5xl">
             Ofertas por cantidad
           </h2>
           <p className="mx-auto max-w-2xl text-base text-cami-300 md:text-lg">
-            Cuantas más camisetas, mayor descuento. Precios competitivos para tu negocio.
+            Cuanto mayor es la serie, mejor optimizamos coste, tecnica y plazo para tu equipo.
           </p>
           <div className="mx-auto mt-6 grid max-w-4xl grid-cols-1 gap-3 text-sm text-cami-200 sm:grid-cols-3">
             <p className="rounded-lg border border-white/12 bg-cami-900/60 px-3 py-2"><span className="font-bold text-white">+300 empresas</span> activas este ano</p>
@@ -114,7 +115,7 @@ const Pricing = () => {
         {/* Disclaimer */}
         <div className="mt-12 md:mt-16 text-center">
           <p className="mx-auto max-w-3xl text-xs text-cami-300 md:text-sm">
-            💡 <strong>Precios orientativos.</strong> La cotización final dependerá del diseño, técnica de impresión, tejido seleccionado y especificaciones del pedido. Contacta con nuestro equipo para una propuesta personalizada.
+            Precios orientativos. La propuesta final se ajusta al arte, la tecnica de marcaje, el tejido y la urgencia real del pedido.
           </p>
         </div>
       </div>

@@ -4,15 +4,15 @@ import { useCart } from '@/lib/store';
 import Link from 'next/link';
 
 export default function CartSummary() {
-  const { items, getTotal, getItemCount } = useCart();
+  const { getTotal, getItemCount } = useCart();
   const itemCount = getItemCount();
   const total = getTotal();
 
   return (
     <Link href="/cart">
-      <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer">
+      <div className="flex cursor-pointer items-center gap-3 rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 shadow-glow transition-all hover:bg-white/[0.1]">
         <svg
-          className="w-5 h-5 text-gray-700"
+          className="h-5 w-5 text-cami-200"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -26,10 +26,10 @@ export default function CartSummary() {
         </svg>
         
         <div className="flex flex-col">
-          <span className="text-sm font-semibold text-gray-900">
-            {itemCount} {itemCount === 1 ? 'item' : 'items'}
+          <span className="text-sm font-semibold text-white">
+            {itemCount} {itemCount === 1 ? 'prenda' : 'prendas'}
           </span>
-          <span className="text-xs text-gray-600">
+          <span className="text-xs text-cami-300">
             ${total.toFixed(2)}
           </span>
         </div>

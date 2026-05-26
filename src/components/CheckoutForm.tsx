@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useCart } from '@/lib/store';
 import { useRouter } from 'next/navigation';
-import { Stripe, StripeElements } from '@stripe/stripe-js';
+import type { StripeCardElementChangeEvent } from '@stripe/stripe-js';
 
 interface FormData {
   name: string;
@@ -95,7 +95,7 @@ export function CheckoutForm() {
   };
 
   // Manejar cambios en CardElement
-  const handleCardChange = (event: any) => {
+  const handleCardChange = (event: StripeCardElementChangeEvent) => {
     if (event.error) {
       setCardError(event.error.message);
     } else {
@@ -230,17 +230,17 @@ export function CheckoutForm() {
   // Mostrar mensaje de éxito
   if (success) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 text-center">
-          <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+        <div className="w-full max-w-md rounded-[1.75rem] border border-white/10 bg-cami-900 p-6 text-center shadow-glow">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-400/10">
+            <svg className="h-6 w-6 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">¡Pago exitoso!</h3>
-          <p className="text-gray-600 mb-4">Tu orden ha sido procesada correctamente.</p>
-          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div className="h-full bg-green-600 animate-pulse"></div>
+          <h3 className="mb-2 text-lg font-semibold text-white">Pago confirmado</h3>
+          <p className="mb-4 text-cami-300">Estamos redirigiendo a la confirmacion de pedido.</p>
+          <div className="h-2 overflow-hidden rounded-full bg-cami-800">
+            <div className="h-full animate-pulse bg-emerald-300"></div>
           </div>
         </div>
       </div>
@@ -252,13 +252,13 @@ export function CheckoutForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Información Personal */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-6">Información Personal</h3>
+      <div className="rounded-[1.5rem] border border-white/10 bg-cami-900/60 p-6 shadow-glow">
+        <h3 className="mb-6 font-display text-2xl text-white">Datos de facturacion</h3>
 
         <div className="space-y-4">
           {/* Nombre */}
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-900 mb-2">
+            <label htmlFor="name" className="mb-2 block text-sm font-medium text-cami-200">
               Nombre completo *
             </label>
             <input
@@ -269,16 +269,16 @@ export function CheckoutForm() {
               onChange={handleInputChange}
               placeholder="Tu nombre"
               disabled={loading}
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.name ? 'border-red-500' : 'border-gray-300'
-              } disabled:bg-gray-100 disabled:cursor-not-allowed`}
+              className={`w-full rounded-xl border bg-cami-950/70 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-accent-400 ${
+                errors.name ? 'border-red-400' : 'border-white/12'
+              } disabled:cursor-not-allowed disabled:bg-cami-800`}
             />
-            {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+            {errors.name && <p className="mt-1 text-sm text-red-300">{errors.name}</p>}
           </div>
 
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-2">
+            <label htmlFor="email" className="mb-2 block text-sm font-medium text-cami-200">
               Correo electrónico *
             </label>
             <input
@@ -289,16 +289,16 @@ export function CheckoutForm() {
               onChange={handleInputChange}
               placeholder="tu@email.com"
               disabled={loading}
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.email ? 'border-red-500' : 'border-gray-300'
-              } disabled:bg-gray-100 disabled:cursor-not-allowed`}
+              className={`w-full rounded-xl border bg-cami-950/70 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-accent-400 ${
+                errors.email ? 'border-red-400' : 'border-white/12'
+              } disabled:cursor-not-allowed disabled:bg-cami-800`}
             />
-            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+            {errors.email && <p className="mt-1 text-sm text-red-300">{errors.email}</p>}
           </div>
 
           {/* Teléfono */}
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-900 mb-2">
+            <label htmlFor="phone" className="mb-2 block text-sm font-medium text-cami-200">
               Teléfono *
             </label>
             <input
@@ -307,18 +307,18 @@ export function CheckoutForm() {
               name="phone"
               value={formData.phone}
               onChange={handleInputChange}
-              placeholder="+1 (555) 123-4567"
+              placeholder="+34 600 000 000"
               disabled={loading}
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.phone ? 'border-red-500' : 'border-gray-300'
-              } disabled:bg-gray-100 disabled:cursor-not-allowed`}
+              className={`w-full rounded-xl border bg-cami-950/70 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-accent-400 ${
+                errors.phone ? 'border-red-400' : 'border-white/12'
+              } disabled:cursor-not-allowed disabled:bg-cami-800`}
             />
-            {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
+            {errors.phone && <p className="mt-1 text-sm text-red-300">{errors.phone}</p>}
           </div>
 
           {/* Dirección */}
           <div>
-            <label htmlFor="address" className="block text-sm font-medium text-gray-900 mb-2">
+            <label htmlFor="address" className="mb-2 block text-sm font-medium text-cami-200">
               Dirección de envío (Opcional)
             </label>
             <textarea
@@ -326,26 +326,26 @@ export function CheckoutForm() {
               name="address"
               value={formData.address}
               onChange={handleInputChange}
-              placeholder="Calle, número, ciudad, estado, código postal"
+              placeholder="Calle, numero, ciudad y codigo postal"
               rows={3}
               disabled={loading}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed resize-none"
+              className="w-full resize-none rounded-xl border border-white/12 bg-cami-950/70 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-accent-400 disabled:cursor-not-allowed disabled:bg-cami-800"
             />
           </div>
         </div>
       </div>
 
       {/* Información de Pago */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-6">Información de Pago</h3>
+      <div className="rounded-[1.5rem] border border-white/10 bg-cami-900/60 p-6 shadow-glow">
+        <h3 className="mb-6 font-display text-2xl text-white">Datos de pago</h3>
 
         <div>
-          <label className="block text-sm font-medium text-gray-900 mb-2">
+          <label className="mb-2 block text-sm font-medium text-cami-200">
             Tarjeta de Crédito *
           </label>
           <div
-            className={`p-4 border-2 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 ${
-              cardError ? 'border-red-500' : 'border-gray-300'
+            className={`rounded-xl border-2 p-4 focus-within:ring-2 focus-within:ring-accent-400 ${
+              cardError ? 'border-red-400' : 'border-white/12'
             }`}
           >
             <CardElement
@@ -354,42 +354,42 @@ export function CheckoutForm() {
                 style: {
                   base: {
                     fontSize: '16px',
-                    color: '#424242',
+                    color: '#f4f7fb',
                     '::placeholder': {
-                      color: '#9ca3af',
+                      color: '#8ea1b8',
                     },
                   },
                   invalid: {
-                    color: '#dc2626',
+                    color: '#fca5a5',
                   },
                 },
               }}
             />
           </div>
-          {cardError && <p className="mt-2 text-sm text-red-600">{cardError}</p>}
+          {cardError && <p className="mt-2 text-sm text-red-300">{cardError}</p>}
         </div>
       </div>
 
       {/* Errores generales */}
       {errors.submit && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="rounded-xl border border-red-400/20 bg-red-950/30 p-4">
           <div className="flex">
-            <svg className="w-5 h-5 text-red-600 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="mt-0.5 mr-3 h-5 w-5 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <p className="text-sm text-red-700">{errors.submit}</p>
+            <p className="text-sm text-red-200">{errors.submit}</p>
           </div>
         </div>
       )}
 
       {/* Resumen y Botón de Pago */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="rounded-[1.5rem] border border-white/10 bg-cami-900/60 p-6 shadow-glow">
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Resumen de la Orden</h3>
+          <h3 className="mb-4 font-display text-2xl text-white">Resumen de la orden</h3>
 
           <div className="space-y-2 mb-4">
             {items.map((item) => (
-              <div key={item.id} className="flex justify-between text-sm text-gray-600">
+              <div key={item.id} className="flex justify-between text-sm text-cami-300">
                 <span>
                   {item.productName} ({item.size}) x {item.quantity}
                 </span>
@@ -398,8 +398,8 @@ export function CheckoutForm() {
             ))}
           </div>
 
-          <div className="border-t pt-4 mt-4">
-            <div className="flex justify-between text-lg font-bold text-gray-900">
+          <div className="mt-4 border-t border-white/10 pt-4">
+            <div className="flex justify-between text-lg font-bold text-white">
               <span>Total</span>
               <span>${total.toFixed(2)}</span>
             </div>
@@ -409,10 +409,10 @@ export function CheckoutForm() {
         <button
           type="submit"
           disabled={loading || !stripe || !elements}
-          className={`w-full py-3 rounded-lg font-semibold text-white transition-colors ${
+          className={`w-full rounded-full py-3 text-sm font-semibold uppercase tracking-[0.12em] transition-all ${
             loading || !stripe || !elements
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-700'
+              ? 'cursor-not-allowed border border-white/12 bg-cami-800 text-cami-300'
+              : 'border border-accent-300/30 bg-metal-button text-cami-100 shadow-metal hover:-translate-y-0.5 hover:brightness-110'
           }`}
         >
           {loading ? (
@@ -429,8 +429,8 @@ export function CheckoutForm() {
       </div>
 
       {/* Información de tarjetas de prueba */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-700">
-        <p className="font-semibold mb-2">Tarjetas de prueba:</p>
+      <div className="rounded-xl border border-white/10 bg-cami-900/45 p-4 text-sm text-cami-300">
+        <p className="mb-2 font-semibold text-cami-100">Tarjetas de prueba:</p>
         <ul className="space-y-1 text-xs">
           <li>✓ Éxito: 4242 4242 4242 4242</li>
           <li>✗ Rechazada: 4000 0000 0000 0002</li>

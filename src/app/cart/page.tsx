@@ -9,21 +9,21 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <main className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
+      <main className="min-h-screen bg-transparent pt-24 pb-16 text-cami-100">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <h1 className="mb-8 font-display text-4xl font-bold text-white">Tu seleccion corporativa</h1>
           
-          <div className="bg-white rounded-lg shadow p-8 text-center">
-            <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="rounded-[1.75rem] border border-white/10 bg-cami-900/60 p-8 text-center shadow-glow">
+            <svg className="mx-auto mb-4 h-16 w-16 text-cami-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Your cart is empty</h2>
-            <p className="text-gray-600 mb-6">Start shopping to add items to your cart</p>
+            <h2 className="mb-2 text-2xl font-semibold text-white">Aun no has anadido prendas</h2>
+            <p className="mb-6 text-cami-300">Selecciona modelos del catalogo para preparar tu pedido y pasar al checkout.</p>
             <Link
               href="/catalog"
-              className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+              className="inline-flex rounded-full border border-accent-300/30 bg-metal-button px-6 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-cami-100 shadow-metal transition-all hover:-translate-y-0.5 hover:brightness-110"
             >
-              Continue Shopping
+              Ir al catalogo
             </Link>
           </div>
         </div>
@@ -32,31 +32,39 @@ export default function CartPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
+    <main className="min-h-screen bg-transparent pt-24 pb-16 text-cami-100">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.14em] text-cami-300">Revision del pedido</p>
+            <h1 className="mt-2 font-display text-4xl font-bold text-white">Carrito de compra</h1>
+          </div>
+          <p className="max-w-xl text-sm leading-7 text-cami-300">
+            Ajusta cantidades, revisa tallas y confirma el importe antes de pasar al checkout seguro.
+          </p>
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Cart Items */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="overflow-hidden rounded-[1.5rem] border border-white/10 bg-cami-900/60 shadow-glow">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b">
+                  <thead className="border-b border-white/10 bg-cami-950/55">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Size</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-[0.14em] text-cami-300">Producto</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-[0.14em] text-cami-300">Talla</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-[0.14em] text-cami-300">Cantidad</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-[0.14em] text-cami-300">Precio</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-[0.14em] text-cami-300">Total</th>
                       <th className="px-6 py-3"></th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y">
+                  <tbody className="divide-y divide-white/10">
                     {items.map((item) => (
-                      <tr key={item.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-900">{item.productName}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">{item.size}</td>
+                      <tr key={item.id} className="hover:bg-white/[0.03]">
+                        <td className="px-6 py-4 text-sm font-medium text-white">{item.productName}</td>
+                        <td className="px-6 py-4 text-sm text-cami-300">{item.size}</td>
                         <td className="px-6 py-4">
                           <input
                             type="number"
@@ -64,19 +72,19 @@ export default function CartPage() {
                             max="99"
                             value={item.quantity}
                             onChange={(e) => updateQuantity(item.id, Math.max(1, parseInt(e.target.value) || 1))}
-                            className="w-16 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-20 rounded-xl border border-white/12 bg-cami-950/60 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-accent-400"
                           />
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">${item.price.toFixed(2)}</td>
-                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                        <td className="px-6 py-4 text-sm text-cami-200">${item.price.toFixed(2)}</td>
+                        <td className="px-6 py-4 text-sm font-medium text-white">
                           ${(item.price * item.quantity).toFixed(2)}
                         </td>
                         <td className="px-6 py-4 text-sm">
                           <button
                             onClick={() => removeFromCart(item.id)}
-                            className="text-red-600 hover:text-red-800 transition-colors font-medium"
+                            className="font-medium text-red-300 transition-colors hover:text-red-200"
                           >
-                            Remove
+                            Quitar
                           </button>
                         </td>
                       </tr>
@@ -90,34 +98,34 @@ export default function CartPage() {
             <div className="mt-6">
               <Link
                 href="/catalog"
-                className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium"
+                className="inline-flex items-center font-medium text-cami-200 hover:text-white"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
-                Continue Shopping
+                Volver al catalogo
               </Link>
             </div>
           </div>
 
           {/* Cart Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow p-6 sticky top-24">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">Order Summary</h2>
+            <div className="sticky top-24 rounded-[1.5rem] border border-white/10 bg-cami-900/60 p-6 shadow-glow">
+              <h2 className="mb-6 font-display text-2xl text-white">Resumen del pedido</h2>
               
               <div className="space-y-4 mb-6">
-                <div className="flex justify-between text-gray-600">
-                  <span>Subtotal ({items.reduce((sum, item) => sum + item.quantity, 0)} items)</span>
+                <div className="flex justify-between text-cami-300">
+                  <span>Subtotal ({items.reduce((sum, item) => sum + item.quantity, 0)} prendas)</span>
                   <span>${total.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-gray-600">
-                  <span>Shipping</span>
-                  <span className="text-green-600 font-medium">Free</span>
+                <div className="flex justify-between text-cami-300">
+                  <span>Envio</span>
+                  <span className="font-medium text-emerald-300">Incluido</span>
                 </div>
               </div>
 
-              <div className="border-t pt-4 mb-6">
-                <div className="flex justify-between text-lg font-bold text-gray-900">
+              <div className="mb-6 border-t border-white/10 pt-4">
+                <div className="flex justify-between text-lg font-bold text-white">
                   <span>Total</span>
                   <span>${total.toFixed(2)}</span>
                 </div>
@@ -125,16 +133,16 @@ export default function CartPage() {
 
               <Link
                 href="/checkout"
-                className="block w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors mb-3 text-center"
+                className="mb-3 block w-full rounded-full border border-accent-300/30 bg-metal-button py-3 text-center text-sm font-semibold uppercase tracking-[0.12em] text-cami-100 shadow-metal transition-all hover:-translate-y-0.5 hover:brightness-110"
               >
-                Proceed to Checkout
+                Ir al checkout
               </Link>
 
               <button
                 onClick={clearCart}
-                className="w-full bg-gray-200 text-gray-900 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                className="w-full rounded-full border border-white/15 bg-white/[0.05] py-3 text-sm font-semibold uppercase tracking-[0.12em] text-cami-100 transition-all hover:bg-white/[0.1]"
               >
-                Clear Cart
+                Vaciar carrito
               </button>
             </div>
           </div>
