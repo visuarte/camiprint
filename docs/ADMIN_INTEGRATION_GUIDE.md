@@ -62,9 +62,9 @@ Si recibes errores de validación, revisa que el dominio esté verificado en Res
 path\to\stripe.exe login
 path\to\stripe.exe listen --forward-to http://localhost:3000/api/webhook/stripe
 ```
-  - Stripe CLI mostrará un `webhook signing secret` (ej. `whsec_e199...`). Para pruebas locales, copia ese valor en tu `.env` como `STRIPE_WEBHOOK_SECRET` o exportalo en la sesión antes de arrancar el server:
+  - Stripe CLI mostrará un `webhook signing secret`. Para pruebas locales, copia ese valor en tu `.env` como `STRIPE_WEBHOOK_SECRET` o exportalo en la sesión antes de arrancar el server. No pegues secrets reales en documentación, tickets ni commits:
 ```powershell
-$env:STRIPE_WEBHOOK_SECRET="whsec_e199188ead0f464b19301b731d60825..."
+$env:STRIPE_WEBHOOK_SECRET="REPLACE_WITH_LOCAL_STRIPE_WEBHOOK_SECRET"
 npm run dev
 ```
   - Generar evento de prueba:
@@ -76,11 +76,17 @@ path\to\stripe.exe trigger payment_intent.succeeded
 - Producción (Vercel):
   1. En Vercel Dashboard → Project → Settings → Environment Variables añade:
      - Name: `STRIPE_WEBHOOK_SECRET`
-     - Value: (el signing secret real de producción, `whsec_nndVv...`)
+     - Value: (el signing secret real de producción; no lo documentes ni lo compartas por chat)
      - Environment: `Production`
   2. Redeploy o usar `vercel --prod` para forzar deploy.
-  3. En Stripe Dashboard → Developers → Webhooks → añade/edita endpoint `https://camiprint.vercel.app/api/webhooks/stripe` y comprueba que el secret coincide.
+  3. En Stripe Dashboard → Developers → Webhooks → añade/edita endpoint `https://camiprint.vercel.app/api/webhook/stripe` y comprueba que el secret coincide.
   4. Envía test webhook desde Stripe Dashboard y revisa logs (`vercel logs --since 1h --prod`).
+
+Incidente y rotación
+- Si GitHub o tu proveedor detecta exposición de `STRIPE_WEBHOOK_SECRET`, rota primero el endpoint afectado en Stripe para no romper el flujo actual antes de actualizar entornos.
+- Actualiza después `STRIPE_WEBHOOK_SECRET` en Vercel y en tus `.env` locales.
+- Verifica en logs de Stripe y Vercel si hubo entregas sospechosas o firmas fallidas fuera de ventanas esperadas.
+- Cierra la alerta solo cuando el secret anterior haya quedado revocado.
 
 Prácticas y notas finales
 - Mantén distinto secret para test vs prod. No subas secrets a Git.
