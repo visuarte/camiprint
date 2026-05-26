@@ -73,11 +73,15 @@ const Navigation = () => {
 
   // Scroll suave con offset para navegación
   const handleNavigate = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    const targetId = href.replace('#', '');
-    const element = document.getElementById(targetId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+    // Only intercept hash navigation (in-page). External links and full paths should follow the default behavior.
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      const targetId = href.replace('#', '');
+      const element = document.getElementById(targetId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+      return;
     }
   };
 

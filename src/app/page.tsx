@@ -3,6 +3,7 @@ import { brandConfig } from '@/config/brand';
 import { faqItems } from './data/faqs';
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
+import ServicesSection from './components/ServicesSection';
 import Pricing from './components/Pricing';
 import Process from './components/Process';
 import TestimonialsSection from './components/TestimonialsSection';
