@@ -90,14 +90,10 @@ const Navigation = () => {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent-300/70 to-transparent" aria-hidden="true" />
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <div className="flex-shrink-0 flex items-center gap-3">
+        <div className="flex-shrink-0">
           <a href="#inicio" aria-label={brandConfig.displayName} className="inline-flex items-center text-white transition-colors hover:text-cami-100">
-            <img src="/icons/logo.svg" alt="" role="presentation" width={44} height={44} className="h-11 w-11 flex-shrink-0 rounded-2xl bg-white/6 p-1 object-contain" />
+            <img src="/icons/logo.svg" alt={brandConfig.displayName} width={44} height={44} className="h-11 w-11 rounded-2xl bg-white/6 p-1 object-contain" />
           </a>
-          <div className="leading-tight">
-            <span className="block font-display text-xl font-bold uppercase tracking-[0.18em] text-white">{brandConfig.displayName}</span>
-            <span className="block text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-cami-300">Uniformidad textil B2B</span>
-          </div>
         </div>
 
         {/* Desktop Navigation */}
