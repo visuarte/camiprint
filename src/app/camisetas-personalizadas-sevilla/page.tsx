@@ -18,10 +18,22 @@ const serviceSchema = {
   description: 'Camisetas personalizadas para empresas y eventos en Sevilla. Diseño y producción local con control de calidad.',
 };
 
+const offers = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: 'Camisetas corporativas personalizadas',
+  description: 'Pack de camisetas personalizadas — desde 10 unidades. Diseño y producción en Sevilla.',
+  offers: [
+    { '@type': 'Offer', name: 'Pack 10+', price: '12.90', priceCurrency: 'EUR', url: `${brandConfig.siteUrl}/camisetas-personalizadas-sevilla` },
+    { '@type': 'Offer', name: 'Pack 25+', price: '10.90', priceCurrency: 'EUR', url: `${brandConfig.siteUrl}/camisetas-personalizadas-sevilla` },
+  ],
+};
+
 export default function Page() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(offers) }} />
       <section className="prose mx-auto max-w-4xl py-12 px-4 text-cami-200">
         <h1 className="text-3xl font-bold text-white">Camisetas personalizadas en Sevilla</h1>
         <p>

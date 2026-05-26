@@ -17,10 +17,21 @@ const serviceSchema = {
   description: 'Impresión DTF (Direct To Film) para camisetas y textil promocional; colores vivos y excelente durabilidad.',
 };
 
+const offers = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: 'Impresión DTF — Camiart',
+  description: 'Impresión DTF para camisetas y merchandising. Packs desde 10 unidades.',
+  offers: [
+    { '@type': 'Offer', name: 'DTF 10+', price: '14.50', priceCurrency: 'EUR', url: `${brandConfig.siteUrl}/impresion-dtf-sevilla` },
+  ],
+};
+
 export default function Page() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(offers) }} />
       <section className="prose mx-auto max-w-4xl py-12 px-4 text-cami-200">
         <h1 className="text-3xl font-bold text-white">Impresión DTF en Sevilla</h1>
         <p>
