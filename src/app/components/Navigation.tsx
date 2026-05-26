@@ -92,7 +92,7 @@ const Navigation = () => {
         {/* Logo */}
         <div className="flex-shrink-0">
           <a href="#inicio" aria-label={brandConfig.displayName} className="inline-flex items-center text-white transition-colors hover:text-cami-100">
-            <img src="/icons/logo.svg" alt={brandConfig.displayName} width={44} height={44} className="h-11 w-11 rounded-2xl bg-white/6 p-1 object-contain" />
+            <img src="/icons/logo.svg" alt={brandConfig.displayName} height={36} className="h-9 w-auto object-contain" />
           </a>
         </div>
 
