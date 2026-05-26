@@ -26,6 +26,7 @@ export const getPostgresPool = async (): Promise<Pool> => {
     globalScope[GLOBAL_PG_POOL_KEY] = new Pool({
       connectionString: databaseUrl,
       max: 10,
+      ssl: { rejectUnauthorized: false },
     });
   }
 

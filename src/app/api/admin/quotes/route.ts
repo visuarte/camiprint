@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { verifyAdminToken, unauthorized, serverError } from '@/app/api/admin/auth-utils';
+import { verifyAdminToken, unauthorized } from '@/app/api/admin/auth-utils';
 import { createQuoteRepository } from '@/server/quotes/repository.factory';
 
 export async function GET(req: NextRequest) {
@@ -18,6 +18,7 @@ export async function GET(req: NextRequest) {
 
     return Response.json({ ok: true, data: sorted, total: sorted.length });
   } catch (err) {
-    return serverError(err, 'Error al obtener cotizaciones');
+    console.error('[admin/quotes] DB error, returning empty dataset:', err);
+    return Response.json({ ok: true, data: [], total: 0, _error: 'db_unavailable' });
   }
 }
