@@ -31,28 +31,32 @@ export function middleware(request: NextRequest) {
 
   // ===== RUTAS PROTEGIDAS =====
   // Admin UI routes (excepto login)
+  // Nota: el Edge Runtime no tiene acceso garantizado a ADMIN_AUTH_TOKEN.
+  // Solo comprobamos que la cookie exista (no vacía).
+  // La validación real del token ocurre en los API handlers (Node.js runtime).
   if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
-    const token = request.cookies.get('admin_token')?.value;
-    const adminToken = process.env.ADMIN_AUTH_TOKEN;
+    const cookieToken = request.cookies.get('admin_token')?.value?.trim();
 
-    if (!token || token !== adminToken) {
+    if (!cookieToken) {
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
   }
 
   // Admin API routes
-  // Admin API routes
   if (pathname.startsWith('/api/admin')) {
-    // Allow the login endpoint to be called without Authorization header
+    // Allow the login endpoint to be called without auth
     if (pathname === '/api/admin/auth/login' && request.method === 'POST') {
       return NextResponse.next();
     }
 
+    // Solo comprobamos que el token (header o cookie) no esté vacío.
+    // verifyAdminToken() en cada handler hace la comparación exacta.
     const authHeader = request.headers.get('authorization');
-    const token = authHeader?.replace('Bearer ', '');
-    const adminToken = process.env.ADMIN_AUTH_TOKEN;
+    const headerToken = authHeader?.replace('Bearer ', '').trim();
+    const cookieToken = request.cookies.get('admin_token')?.value?.trim();
+    const token = headerToken || cookieToken;
 
-    if (!token || token !== adminToken) {
+    if (!token) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }

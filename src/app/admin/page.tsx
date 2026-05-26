@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { adminFetch, getAdminToken } from './auth-client';
+import { adminFetch } from './auth-client';
 
 interface Metrics {
   totalOrders: number;
@@ -49,12 +49,11 @@ export default function AdminDashboard() {
 
   const fetchMetrics = async (days: number) => {
     try {
-      const token = getAdminToken();
-      if (!token) {
-        setError('No autorizado. Por favor inicia sesión.');
+      const response = await adminFetch(`/api/admin/metrics?days=${days}`);
+      if (response.status === 401) {
+        window.location.href = '/admin/login';
         return;
       }
-      const response = await adminFetch(`/api/admin/metrics?days=${days}`);
       if (!response.ok) throw new Error(`${response.status}`);
       const data = await response.json();
       setMetrics(data);

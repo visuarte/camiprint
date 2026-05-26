@@ -21,24 +21,28 @@ export async function GET(req: NextRequest) {
     // Get orders in date range. Only query Prisma when running with Postgres configured.
     let orders: Array<{ id: string; status: string; totalAmount: number }> = [];
     if (platformConfig.quoteRepositoryDriver === 'postgres') {
-      const { prisma } = await import('@/server/db');
-      orders = await prisma.order.findMany({
-        where: {
-          createdAt: {
-            gte: startDate,
-            lte: endDate,
+      try {
+        const { prisma } = await import('@/server/db');
+        orders = await prisma.order.findMany({
+          where: {
+            createdAt: {
+              gte: startDate,
+              lte: endDate,
+            },
           },
-        },
-        select: {
-          id: true,
-          status: true,
-          totalAmount: true,
-        },
-      });
-    } else {
-      // When running with JSON driver (development), return empty set instead of failing.
-      orders = [];
+          select: {
+            id: true,
+            status: true,
+            totalAmount: true,
+          },
+        });
+      } catch (dbError) {
+        // DB not reachable — return empty metrics instead of 500
+        console.error('[metrics] DB error, returning empty metrics:', dbError);
+        orders = [];
+      }
     }
+    // JSON driver → orders already empty []
 
     // Calculate metrics
     const totalOrders = orders.length;

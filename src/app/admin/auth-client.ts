@@ -45,23 +45,25 @@ export function clearAdminToken(): void {
 }
 
 /**
- * Fetch wrapper that automatically includes auth header
+ * Fetch wrapper that automatically includes auth.
+ * Sends Authorization header if token is in localStorage;
+ * otherwise relies on the httpOnly admin_token cookie sent automatically
+ * by the browser on same-origin requests.
  */
 export async function adminFetch(
   url: string,
   options: RequestInit = {}
 ): Promise<Response> {
   const token = getAdminToken();
-
-  if (!token) {
-    throw new Error('No admin token found. Please login first.');
-  }
-
   const headers = new Headers(options.headers || {});
-  headers.set('Authorization', `Bearer ${token}`);
+
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
 
   return fetch(url, {
     ...options,
+    credentials: 'same-origin', // ensures httpOnly cookies are always sent
     headers,
   });
 }

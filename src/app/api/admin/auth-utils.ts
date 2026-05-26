@@ -1,20 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
- * Verify admin authentication from request headers
- * Expects: Authorization: Bearer <ADMIN_AUTH_TOKEN>
+ * Verify admin authentication from request headers or cookie.
+ * Accepts: Authorization: Bearer <token>  OR  admin_token cookie (set by login route).
  */
 export function verifyAdminToken(req: NextRequest): boolean {
-  const authHeader = req.headers.get('authorization');
-  
-  if (!authHeader) {
+  const adminToken = process.env.ADMIN_AUTH_TOKEN?.trim();
+
+  if (!adminToken) {
     return false;
   }
 
-  const token = authHeader.replace('Bearer ', '').trim();
-  const adminToken = process.env.ADMIN_AUTH_TOKEN || 'default-test-token';
+  // 1. Authorization header
+  const authHeader = req.headers.get('authorization');
+  if (authHeader) {
+    const headerToken = authHeader.replace('Bearer ', '').trim();
+    if (headerToken === adminToken) return true;
+  }
 
-  return token === adminToken;
+  // 2. HttpOnly cookie (set after successful login)
+  const cookieToken = req.cookies.get('admin_token')?.value?.trim();
+  if (cookieToken && cookieToken === adminToken) return true;
+
+  return false;
 }
 
 /**

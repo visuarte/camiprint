@@ -4,6 +4,7 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { Manrope, Space_Grotesk } from "next/font/google";
 import { brandConfig } from "@/config/brand";
+import CookieBanner from "@/app/components/CookieBanner";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -124,6 +125,7 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link">Saltar al contenido principal</a>
         <main id="main-content" className="flex flex-1 flex-col">{children}</main>
         <Analytics />
+        <CookieBanner />
       </body>
     </html>
   );

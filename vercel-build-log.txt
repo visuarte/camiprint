@@ -1,0 +1,108 @@
+﻿node.exe : Retrieving projectÔÇª
+En línea: 1 Carácter: 1
++ & "C:\Program Files\nodejs/node.exe" "C:\Users\DIEGO\AppData\Roaming\ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Retrieving projectÔÇª:String) [], 
+    RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Deploying visuarte/camiprint
+  Inspect     
+https://vercel.com/visuarte/camiprint/6Q7kbUQPsxsLqAczAg3yk66UWiCo
+Ôû▓ Production  https://camiprint-p77pa2xfw-visuarte.vercel.app
+BuildingÔÇª
+BuildingÔÇª
+Running build in Washington, D.C., USA (East) ÔÇô iad1
+Build machine configuration: 2 cores, 8 GB
+Retrieving list of deployment files...
+VERCEL_FORCE_NO_BUILD_CACHE is set so skipping build cache step.
+Downloading 539 deployment files...
+Running "vercel build"
+Vercel CLI 54.4.1
+Running "install" command: `npm install --legacy-peer-deps`...
+(node:73) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment 
+variable to '0' makes TLS connections and HTTPS requests insecure by disabling 
+certificate verification.
+(Use `node --trace-warnings ...` to show where the warning was created)
+> camiart@0.1.1 postinstall
+> prisma generate
+Loaded Prisma config from prisma.config.ts.
+Prisma schema loaded from prisma/schema.prisma.
+Ô£ö Generated Prisma Client (v7.8.0) to ./node_modules/@prisma/client in 125ms
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+added 614 packages, and audited 616 packages in 27s
+188 packages are looking for funding
+run `npm fund` for details
+6 vulnerabilities (5 moderate, 1 high)
+To address all issues (including breaking changes), run:
+npm audit fix --force
+Run `npm audit` for details.
+Detected Next.js version: 16.2.6
+Running "npm run build"
+> camiart@0.1.1 build
+> next build
+Applying modifyConfig from Vercel
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate 
+in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+Ôû▓ Next.js 16.2.6 (Turbopack)
+- Environments: .env
+ÔÜá The "middleware" file convention is deprecated. Please use "proxy" 
+instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+Creating an optimized production build ...
+Ô£ô Compiled successfully in 9.3s
+Running TypeScript ...
+Finished TypeScript in 7.2s ...
+Collecting page data using 1 worker ...
+[EmailService] Resend configured successfully
+Generating static pages using 1 worker (0/25) ...
+Generating static pages using 1 worker (6/25)
+Generating static pages using 1 worker (12/25)
+Generating static pages using 1 worker (18/25)
+Ô£ô Generating static pages using 1 worker (25/25) in 312ms
+Finalizing page optimization ...
+Running onBuildComplete from Vercel
+Detected .env file, it is strongly recommended to use Vercel's env handling 
+instead
+Route (app)
+Ôöî Ôùï /
+Ôö£ Ôùï /_not-found
+Ôö£ Ôùï /admin
+Ôö£ Ôùï /admin/login
+Ôö£ Ôùï /admin/orders
+Ôö£ ãÆ /admin/orders/[id]
+Ôö£ Ôùï /admin/settings
+Ôö£ ãÆ /api/admin/auth/login
+Ôö£ ãÆ /api/admin/metrics
+Ôö£ ãÆ /api/admin/orders
+Ôö£ ãÆ /api/admin/orders/[id]
+Ôö£ ãÆ /api/admin/orders/[id]/send-email
+Ôö£ ãÆ /api/admin/quotes
+Ôö£ ãÆ /api/admin/settings
+Ôö£ ãÆ /api/debug/admin-token
+Ôö£ ãÆ /api/debug/send-email-test
+Ôö£ ãÆ /api/orders
+Ôö£ ãÆ /api/orders/[id]
+Ôö£ ãÆ /api/orders/[id]/send-email
+Ôö£ ãÆ /api/products
+Ôö£ ãÆ /api/v1/health
+Ôö£ ãÆ /api/v1/metrics
+Ôö£ ãÆ /api/v1/quotes
+Ôö£ ãÆ /api/webhook/stripe
+Ôö£ Ôùï /cart
+Ôö£ Ôùï /catalog
+Ôö£ Ôùï /checkout
+Ôöö Ôùï /checkout/success
+ãÆ Proxy (Middleware)
+Ôùï  (Static)   prerendered as static content
+ãÆ  (Dynamic)  server-rendered on demand
+Build Completed in /vercel/output [46s]
+Deploying outputs...
+[2K[1A[2K[GÔû▓ Production  https://camiprint-p77pa2xfw-visuarte.vercel.app
+CompletingÔÇª
+Ôû▓ Aliased     https://camiart.com
+
+Ô£ô Ready in 1m
+https://camiprint-p77pa2xfw-visuarte.vercel.app
