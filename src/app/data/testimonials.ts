@@ -11,11 +11,11 @@ export interface Testimonial {
 export const testimonials: Testimonial[] = [
   {
     id: 't-01',
-    customerName: 'Marina Gomez',
+    customerName: 'Marina Gómez',
     companyName: 'Brasa Norte',
     role: 'Gerente de operaciones',
     testimonialText:
-      'Pedimos uniformes para todo el equipo y la calidad supero nuestras expectativas. El proceso fue rapido y claro de principio a fin.',
+      'Pedimos uniformes para todo el equipo —120 camisetas con 3 tallas distintas— y la calidad superó nuestras expectativas. El proceso fue rápido y sin sorpresas.',
   },
   {
     id: 't-02',
@@ -23,14 +23,38 @@ export const testimonials: Testimonial[] = [
     companyName: 'Nexo Logistics',
     role: 'Director comercial',
     testimonialText:
-      `Necesitabamos camisetas para una campana corporativa y ${brandConfig.displayName} entrego a tiempo, con excelente acabado y soporte constante.`,
+      `Necesitábamos 200 camisetas para una campaña corporativa con plazo de 8 días. ${brandConfig.displayName} entregó a tiempo, con acabado excelente y soporte constante.`,
   },
   {
     id: 't-03',
-    customerName: 'Lucia Herrera',
+    customerName: 'Lucía Herrera',
     companyName: 'Studio 88',
     role: 'Fundadora',
     testimonialText:
-      'La experiencia fue premium: propuesta en minutos, ajustes rapidos de diseno y resultado final impecable para nuestro lanzamiento.',
+      'La propuesta llegó en minutos, ajustes de diseño rápidos y el resultado final fue impecable para nuestro lanzamiento. Repetiremos sin duda.',
+  },
+  {
+    id: 't-04',
+    customerName: 'Carlos Mendoza',
+    companyName: 'Grupo Vértice',
+    role: 'Responsable de RRHH',
+    testimonialText:
+      'Llevamos 3 pedidos con ellos para distintos departamentos. El precio por volumen es muy competitivo y la atención personalizada marca la diferencia.',
+  },
+  {
+    id: 't-05',
+    customerName: 'Sofía Ramos',
+    companyName: 'TasteLab',
+    role: 'CEO',
+    testimonialText:
+      'Necesitaba camisetas para un evento en 10 días. Validación del diseño en 2 horas, entrega en 9 días. Exactamente lo que necesitaba, cuando lo necesitaba.',
+  },
+  {
+    id: 't-06',
+    customerName: 'Andrés Villar',
+    companyName: 'Constructora Ibérica',
+    role: 'Jefe de compras',
+    testimonialText:
+      'Pedimos polos técnicos con bordado para todo el personal de obra. La calidad es muy buena para el precio y el proceso de aprobación fue muy cómodo.',
   },
 ];

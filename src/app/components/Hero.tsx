@@ -7,7 +7,7 @@ import { brandConfig } from '@/config/brand';
 const Hero = () => {
   const [units, setUnits] = useState(1);
   const [modelReady, setModelReady] = useState(false);
-  const trustSignals = ['Entrega estimada 7-10 dias', 'Diseño tecnico incluido', 'Produccion para empresas'];
+  const trustSignals = ['Entrega garantizada en plazo', 'Diseño técnico incluido', 'Desde 10 unidades'];
 
   const handleDecrease = () => setUnits((prev) => Math.max(1, prev - 1));
   const handleIncrease = () => setUnits((prev) => prev + 1);
@@ -32,14 +32,18 @@ const Hero = () => {
 
       <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 lg:grid-cols-5 lg:gap-8">
         <div className="lg:col-span-3">
-          <span className="section-eyebrow">Produccion textil para empresas</span>
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-green-400/30 bg-green-400/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-green-300">
+            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-green-400" />
+            Aceptando pedidos — propuestas en menos de 24h
+          </div>
+          <span className="section-eyebrow">Producción textil para empresas</span>
 
           <h1 className="mt-6 max-w-3xl font-display text-5xl font-bold leading-none text-white md:text-6xl lg:text-[4.75rem]">
-            Camisetas personalizadas para empresas con tu logo.
+            Camisetas personalizadas para tu empresa. Desde 10 uds.
           </h1>
 
           <p className="mt-6 max-w-2xl text-lg leading-8 text-cami-200 md:text-xl">
-            Fabricamos camisetas corporativas, polos con logo y uniformes personalizados para empresas desde 10 unidades, con calidad premium y envio rapido en toda Espana.
+            Fabricamos camisetas corporativas, polos con logo y uniformes personalizados con <strong className="text-white">calidad premium garantizada</strong>, diseño incluido y envío a toda España.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3 text-sm text-cami-200">
@@ -77,21 +81,22 @@ const Hero = () => {
             </div>
           </div>
 
-          <div className="mt-6 flex w-full max-w-2xl flex-col gap-3 sm:flex-row">
+          <div className="mt-8 flex w-full max-w-2xl flex-col gap-3 sm:flex-row">
             <a
               href="#contacto"
               onClick={handleRequestQuote}
               className="inline-flex w-full items-center justify-center rounded-full border border-accent-300/35 bg-metal-button px-7 py-4 text-sm font-semibold uppercase tracking-[0.14em] text-cami-100 shadow-metal transition-all hover:-translate-y-0.5 hover:brightness-110"
             >
-              Recibir propuesta en minutos
+              Obtener presupuesto gratis →
             </a>
             <a
               href="#ofertas"
               className="inline-flex w-full items-center justify-center rounded-full border border-white/18 bg-white/[0.06] px-7 py-4 text-sm font-semibold uppercase tracking-[0.14em] text-cami-100 shadow-glow transition-all hover:-translate-y-0.5 hover:bg-white/[0.1]"
             >
-              Ver ofertas por volumen
+              Ver precios por volumen
             </a>
           </div>
+          <p className="mt-2 text-xs text-cami-400">Sin registro · Propuesta en &lt; 24h · Cancela cuando quieras</p>
 
           <div className="mt-6 flex flex-wrap gap-2.5">
             {trustSignals.map((signal) => (
@@ -105,9 +110,9 @@ const Hero = () => {
           </div>
 
           <div className="mt-8 grid max-w-2xl grid-cols-2 gap-3 text-sm text-cami-200 sm:grid-cols-3">
-            <p className="rounded-2xl border border-white/10 bg-cami-900/55 px-4 py-3 shadow-glow"><span className="block font-display text-2xl text-white">1200+</span> pedidos entregados</p>
-            <p className="rounded-2xl border border-white/10 bg-cami-900/55 px-4 py-3 shadow-glow"><span className="block font-display text-2xl text-white">4.9/5</span> valoracion media</p>
-            <p className="col-span-2 rounded-2xl border border-white/10 bg-cami-900/55 px-4 py-3 shadow-glow sm:col-span-1"><span className="block font-display text-2xl text-white">72h</span> primera propuesta</p>
+            <p className="rounded-2xl border border-white/10 bg-cami-900/55 px-4 py-3 shadow-glow"><span className="block font-display text-2xl text-white">1.200+</span> pedidos entregados</p>
+            <p className="rounded-2xl border border-white/10 bg-cami-900/55 px-4 py-3 shadow-glow"><span className="block font-display text-2xl text-white">4,9★</span> valoración media</p>
+            <p className="col-span-2 rounded-2xl border border-white/10 bg-cami-900/55 px-4 py-3 shadow-glow sm:col-span-1"><span className="block font-display text-2xl text-white">&lt;24h</span> primera propuesta</p>
           </div>
         </div>
 

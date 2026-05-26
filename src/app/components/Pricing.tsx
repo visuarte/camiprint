@@ -1,9 +1,12 @@
 interface PricingTier {
   id: string;
   quantity: string;
-  pricePerUnit: string;
+  minUnits: number;
+  defaultUnits: number;
+  pricePerUnit: number;
   savings: number;
   isPopular: boolean;
+  idealFor: string;
   features: string[];
 }
 
@@ -11,26 +14,35 @@ const pricingTiers: PricingTier[] = [
   {
     id: 'tier-10',
     quantity: '10+ camisetas',
-    pricePerUnit: '12.9 €',
+    minUnits: 10,
+    defaultUnits: 10,
+    pricePerUnit: 12.9,
     savings: 8,
     isPopular: false,
-    features: ['Impresión 1 color', 'Plazo: 10 días', 'Shipping incluido'],
+    idealFor: 'Equipos pequeños y prueba de servicio',
+    features: ['Impresión 1 color', 'Plazo: 10 días', 'Envío incluido', 'Soporte de arte final'],
   },
   {
     id: 'tier-25',
     quantity: '25+ camisetas',
-    pricePerUnit: '10.9 €',
+    minUnits: 25,
+    defaultUnits: 25,
+    pricePerUnit: 10.9,
     savings: 18,
     isPopular: true,
-    features: ['Impresión 2 colores', 'Plazo: 7-10 días', 'Shipping + Tracking', 'Diseño gratuito'],
+    idealFor: 'Empresas con equipo de 25-50 personas',
+    features: ['Impresión 2 colores', 'Plazo: 7-10 días', 'Envío + Tracking', 'Diseño gratuito', 'Muestra digital incluida'],
   },
   {
     id: 'tier-50',
     quantity: '50+ camisetas',
-    pricePerUnit: '8.9 €',
+    minUnits: 50,
+    defaultUnits: 50,
+    pricePerUnit: 8.9,
     savings: 30,
     isPopular: false,
-    features: ['Impresión multicolor', 'Plazo: 5-7 días', 'Shipping prioritario', 'Diseño + Muestras gratis'],
+    idealFor: 'Grandes empresas y eventos corporativos',
+    features: ['Impresión multicolor', 'Plazo: 5-7 días', 'Envío prioritario', 'Diseño + Muestras gratis', 'Precio negociable +100 uds'],
   },
 ];
 
@@ -45,23 +57,25 @@ const Pricing = () => {
       <div className="max-w-6xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
-          <span className="section-eyebrow">Escalado por volumen</span>
+          <span className="section-eyebrow">Precios transparentes sin sorpresas</span>
           <h2 className="mb-4 text-3xl font-bold text-white md:text-4xl lg:text-5xl">
-            Ofertas por cantidad
+            Cuánto cuesta tu pedido
           </h2>
           <p className="mx-auto max-w-2xl text-base text-cami-300 md:text-lg">
-            Cuanto mayor es la serie, mejor optimizamos coste, tecnica y plazo para tu equipo.
+            El precio baja cuanto mayor es la serie. Envío, arte final y gestión incluidos en todos los packs.
           </p>
           <div className="mx-auto mt-6 grid max-w-4xl grid-cols-1 gap-3 text-sm text-cami-200 sm:grid-cols-3">
-            <p className="rounded-lg border border-white/12 bg-cami-900/60 px-3 py-2"><span className="font-bold text-white">+300 empresas</span> activas este ano</p>
+            <p className="rounded-lg border border-white/12 bg-cami-900/60 px-3 py-2"><span className="font-bold text-white">+300 empresas</span> activas este año</p>
             <p className="rounded-lg border border-white/12 bg-cami-900/60 px-3 py-2"><span className="font-bold text-white">98%</span> de entregas en plazo</p>
-            <p className="rounded-lg border border-white/12 bg-cami-900/60 px-3 py-2"><span className="font-bold text-white">Garantia</span> de reimpresion si hay fallo</p>
+            <p className="rounded-lg border border-white/12 bg-cami-900/60 px-3 py-2"><span className="font-bold text-white">Garantía</span> de reimpresión si hay fallo</p>
           </div>
         </div>
 
         {/* Pricing Cards Grid */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
-          {pricingTiers.map((tier) => (
+          {pricingTiers.map((tier) => {
+            const total = (tier.defaultUnits * tier.pricePerUnit).toFixed(0);
+            return (
             <article
               key={tier.id}
               className={`relative overflow-hidden rounded-2xl border transition-all hover:-translate-y-1 ${
@@ -77,15 +91,23 @@ const Pricing = () => {
               )}
 
               <div className="p-6 md:p-8">
-                <h3 className="mb-2 text-xl font-bold text-white md:text-2xl">{tier.quantity}</h3>
+                <h3 className="mb-1 text-xl font-bold text-white md:text-2xl">{tier.quantity}</h3>
+                <p className="mb-4 text-xs text-cami-400">{tier.idealFor}</p>
 
-                <div className="mb-4">
-                  <span className="text-4xl font-bold text-accent-300 md:text-5xl">{tier.pricePerUnit}</span>
-                  <span className="block text-sm text-cami-300">por unidad</span>
+                <div className="mb-2">
+                  <span className="text-4xl font-bold text-accent-300 md:text-5xl">{tier.pricePerUnit.toFixed(2).replace('.', ',')} €</span>
+                  <span className="block text-sm text-cami-300">por unidad · IVA no incluido</span>
+                </div>
+
+                {/* Total estimado */}
+                <div className="mb-4 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm">
+                  <span className="text-cami-300">Total {tier.defaultUnits} uds: </span>
+                  <span className="font-bold text-white">{total} €</span>
+                  <span className="ml-2 text-xs text-green-400">+ IVA</span>
                 </div>
 
                 <div className="mb-6 inline-block rounded-full border border-white/20 bg-white/10 px-3 py-1 text-sm font-semibold text-cami-100">
-                  ↓ Ahorra {tier.savings}%
+                  ↓ Ahorras {tier.savings}% vs precio unitario
                 </div>
 
                 <ul className="space-y-3 mb-8">
@@ -105,17 +127,34 @@ const Pricing = () => {
                       : 'border-white/15 bg-white/10 text-cami-100 shadow-metal'
                   }`}
                 >
-                  Solicitar Cotización
+                  Pedir presupuesto →
                 </a>
               </div>
             </article>
-          ))}
+            );
+          })}
+        </div>
+
+        {/* Guarantee strip */}
+        <div className="mt-10 flex flex-col items-center justify-center gap-4 rounded-xl border border-white/10 bg-white/5 px-6 py-5 text-center md:flex-row md:gap-10 md:text-left">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl" aria-hidden="true">🔒</span>
+            <span className="text-sm text-cami-200"><strong className="text-white">Pago seguro</strong> — Stripe cifrado</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-2xl" aria-hidden="true">✅</span>
+            <span className="text-sm text-cami-200"><strong className="text-white">Garantía de reimpresión</strong> si hay error de producción</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-2xl" aria-hidden="true">📦</span>
+            <span className="text-sm text-cami-200"><strong className="text-white">Envío incluido</strong> a toda España</span>
+          </div>
         </div>
 
         {/* Disclaimer */}
-        <div className="mt-12 md:mt-16 text-center">
-          <p className="mx-auto max-w-3xl text-xs text-cami-300 md:text-sm">
-            Precios orientativos. La propuesta final se ajusta al arte, la tecnica de marcaje, el tejido y la urgencia real del pedido.
+        <div className="mt-6 text-center">
+          <p className="mx-auto max-w-3xl text-xs text-cami-400">
+            Precios orientativos. La propuesta final se ajusta al arte, la técnica de marcaje, el tejido y la urgencia real del pedido. Solicita tu presupuesto sin compromiso.
           </p>
         </div>
       </div>
