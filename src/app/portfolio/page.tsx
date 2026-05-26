@@ -1,4 +1,5 @@
 import { brandConfig } from '@/config/brand';
+import Image from 'next/image';
 
 export const metadata = {
   title: 'Portfolio — Trabajos reales | Camiart',
@@ -15,7 +16,15 @@ export default function Portfolio() {
       <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {[1, 2, 3, 4, 5, 6].map((n) => (
           <figure key={n} className="overflow-hidden rounded-2xl border border-white/8 bg-cami-900 p-2">
-            <img src={`/portfolio/real-${n}.jpg`} alt={`Foto real de producción ${n}`} className="h-48 w-full object-cover" />
+            <div className="relative h-48 w-full">
+              <Image
+                src={`/portfolio/real-${n}.jpg`}
+                alt={`Foto real de producción ${n}`}
+                fill
+                sizes="(max-width: 1024px) 50vw, 33vw"
+                className="object-cover"
+              />
+            </div>
             <figcaption className="mt-2 text-sm text-cami-300">Producción real — control de calidad y acabado #{n}</figcaption>
           </figure>
         ))}
