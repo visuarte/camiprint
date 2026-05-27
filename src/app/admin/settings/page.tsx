@@ -89,7 +89,15 @@ export default function AdminSettingsPage() {
 
         <label className="block">
           <span>Teléfono WhatsApp (mostrar en widget)</span>
-          <input type="text" value={settings.whatsappPhone ?? ''} onChange={(e) => setSettings({ ...settings, whatsappPhone: e.target.value })} className="w-full mt-1" />
+          <input
+            type="text"
+            value={settings.whatsappPhone ?? ''}
+            onChange={(e) => setSettings({ ...settings, whatsappPhone: e.target.value })}
+            className="w-full mt-1"
+            placeholder="+34616996306"
+            aria-describedby="whatsapp-help"
+          />
+          <p id="whatsapp-help" className="text-xs text-neutral-500 mt-1">Formato E.164 obligatorio, por ejemplo <span className="font-mono">+34616996306</span></p>
         </label>
 
         <label className="block">
