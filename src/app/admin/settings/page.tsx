@@ -160,11 +160,34 @@ export default function AdminSettingsPage() {
                   </svg>
                   <span>{copySuccess ? 'Copiado' : 'Copiar'}</span>
                 </button>
+                <button
+                  onClick={() => {
+                    if (!scriptContent) return;
+                    const blob = new Blob([scriptContent], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'setup-stripe-secrets.ps1';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    URL.revokeObjectURL(url);
+                  }}
+                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm"
+                >Descargar</button>
                 <button onClick={() => setScriptOpen(false)} className="px-3 py-1 bg-gray-200 rounded text-sm">Cerrar</button>
               </div>
             </div>
             {scriptError && <div className="text-red-600 mb-2">{scriptError}</div>}
             <pre className="whitespace-pre-wrap max-h-80 overflow-auto bg-neutral-100 p-3 rounded text-sm">{scriptContent}</pre>
+            {/* Accessible toast for copy feedback */}
+            <div aria-live="polite" aria-atomic="true">
+              {copySuccess && (
+                <div className="fixed bottom-6 right-6 bg-black text-white px-4 py-2 rounded shadow" role="status">
+                  Script copiado al portapapeles
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
