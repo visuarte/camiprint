@@ -16,6 +16,10 @@ export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [message, setMessage] = useState('');
+  const [scriptOpen, setScriptOpen] = useState(false);
+  const [scriptLoading, setScriptLoading] = useState(false);
+  const [scriptContent, setScriptContent] = useState<string | null>(null);
+  const [scriptError, setScriptError] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -107,9 +111,51 @@ export default function AdminSettingsPage() {
 
         <div className="flex items-center gap-3">
           <button onClick={handleSave} className="px-4 py-2 bg-blue-600 rounded">Guardar</button>
+          <button
+            onClick={async () => {
+              setScriptError(null);
+              setScriptLoading(true);
+              try {
+                const res = await adminFetch('/api/admin/settings/vercel-script');
+                if (!res.ok) throw new Error(String(res.status));
+                const data = await res.json();
+                setScriptContent(data.script ?? null);
+                setScriptOpen(true);
+              } catch (e) {
+                console.error(e);
+                setScriptError('No se pudo obtener el script');
+              } finally {
+                setScriptLoading(false);
+              }
+            }}
+            className="px-4 py-2 bg-gray-700 text-white rounded"
+          >
+            {scriptLoading ? 'Cargando...' : 'Obtener script Vercel'}
+          </button>
           {message && <span className="text-sm text-neutral-400">{message}</span>}
         </div>
       </div>
+      {scriptOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="bg-white rounded shadow-lg max-w-3xl w-full p-4">
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="font-semibold">Script Vercel (Stripe secrets)</h2>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={async () => {
+                    if (!scriptContent) return;
+                    try { await navigator.clipboard.writeText(scriptContent); } catch { /* ignore */ }
+                  }}
+                  className="px-3 py-1 bg-green-600 text-white rounded text-sm"
+                >Copiar</button>
+                <button onClick={() => setScriptOpen(false)} className="px-3 py-1 bg-gray-200 rounded text-sm">Cerrar</button>
+              </div>
+            </div>
+            {scriptError && <div className="text-red-600 mb-2">{scriptError}</div>}
+            <pre className="whitespace-pre-wrap max-h-80 overflow-auto bg-neutral-100 p-3 rounded text-sm">{scriptContent}</pre>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
