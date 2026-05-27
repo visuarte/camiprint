@@ -9,9 +9,29 @@ export default function WhatsAppFloating() {
   // Hide WhatsApp floating button in admin area — only show on public site.
   if (pathname && pathname.startsWith('/admin')) return null;
 
-  const raw = brandConfig.phoneDisplay || '+34 600 000 000';
+  const [phone, setPhone] = React.useState<string | null>(null);
+  const [message, setMessage] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    fetch('/api/site-settings')
+      .then((r) => r.json())
+      .then((data) => {
+        if (cancelled) return;
+        setPhone(data.whatsappPhone ?? null);
+        setMessage(data.whatsappMessage ?? null);
+      })
+      .catch(() => {
+        // ignore, fall back to brandConfig
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const raw = phone ?? brandConfig.phoneDisplay ?? '+34 600 000 000';
   const digits = raw.replace(/[^0-9]/g, '');
-  const defaultText = encodeURIComponent('Hola, quiero un presupuesto para camisetas corporativas. Nombre, empresa y cantidad:');
+  const defaultText = encodeURIComponent(message ?? 'Hola, quiero un presupuesto para camisetas corporativas. Nombre, empresa y cantidad:');
   const href = `https://wa.me/${digits}?text=${defaultText}`;
 
   return (

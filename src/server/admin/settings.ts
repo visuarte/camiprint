@@ -3,6 +3,9 @@ export interface DashboardSettings {
   refreshIntervalSeconds: number;
   analyticsEnabled: boolean;
   metricsWindowDays: number;
+  // WhatsApp configuration for public widget (editable in admin)
+  whatsappPhone?: string | null;
+  whatsappMessage?: string | null;
 }
 
 const GLOBAL_SETTINGS_KEY = '__camiprint_dashboard_settings__';
@@ -12,6 +15,8 @@ const defaultSettings: DashboardSettings = {
   refreshIntervalSeconds: 30,
   analyticsEnabled: false,
   metricsWindowDays: 30,
+  whatsappPhone: null,
+  whatsappMessage: 'Hola, quiero un presupuesto para camisetas corporativas. Nombre, empresa y cantidad:',
 };
 
 const getSettingsStore = (): DashboardSettings => {

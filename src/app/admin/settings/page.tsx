@@ -8,6 +8,8 @@ interface Settings {
   refreshIntervalSeconds: number;
   analyticsEnabled: boolean;
   metricsWindowDays: number;
+  whatsappPhone?: string | null;
+  whatsappMessage?: string | null;
 }
 
 export default function AdminSettingsPage() {
@@ -74,6 +76,16 @@ export default function AdminSettingsPage() {
         <label className="block">
           <span>Ventana de métricas (días)</span>
           <input type="number" value={settings.metricsWindowDays} min={1} onChange={(e) => setSettings({ ...settings, metricsWindowDays: Number(e.target.value) })} className="w-40 mt-1" />
+        </label>
+
+        <label className="block">
+          <span>Teléfono WhatsApp (mostrar en widget)</span>
+          <input type="text" value={settings.whatsappPhone ?? ''} onChange={(e) => setSettings({ ...settings, whatsappPhone: e.target.value })} className="w-full mt-1" />
+        </label>
+
+        <label className="block">
+          <span>Mensaje por defecto WhatsApp</span>
+          <textarea value={settings.whatsappMessage ?? ''} onChange={(e) => setSettings({ ...settings, whatsappMessage: e.target.value })} className="w-full mt-1 h-24" />
         </label>
 
         <div className="flex items-center gap-3">

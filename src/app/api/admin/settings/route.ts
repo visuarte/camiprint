@@ -24,6 +24,8 @@ export async function POST(req: NextRequest) {
     if (typeof body.refreshIntervalSeconds === 'number') patch.refreshIntervalSeconds = Math.max(5, Math.floor(body.refreshIntervalSeconds));
     if (typeof body.analyticsEnabled === 'boolean') patch.analyticsEnabled = body.analyticsEnabled;
     if (typeof body.metricsWindowDays === 'number') patch.metricsWindowDays = Math.max(1, Math.floor(body.metricsWindowDays));
+    if (typeof body.whatsappPhone === 'string') patch.whatsappPhone = body.whatsappPhone.trim() || null;
+    if (typeof body.whatsappMessage === 'string') patch.whatsappMessage = body.whatsappMessage.trim() || null;
 
     const updated = updateDashboardSettings(patch);
     return successResponse(updated);
