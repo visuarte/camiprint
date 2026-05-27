@@ -20,6 +20,7 @@ export default function AdminSettingsPage() {
   const [scriptLoading, setScriptLoading] = useState(false);
   const [scriptContent, setScriptContent] = useState<string | null>(null);
   const [scriptError, setScriptError] = useState<string | null>(null);
+  const [copySuccess, setCopySuccess] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -144,10 +145,21 @@ export default function AdminSettingsPage() {
                 <button
                   onClick={async () => {
                     if (!scriptContent) return;
-                    try { await navigator.clipboard.writeText(scriptContent); } catch { /* ignore */ }
+                    try {
+                      await navigator.clipboard.writeText(scriptContent);
+                      setCopySuccess(true);
+                      setTimeout(() => setCopySuccess(false), 2000);
+                    } catch {
+                      setCopySuccess(false);
+                    }
                   }}
-                  className="px-3 py-1 bg-green-600 text-white rounded text-sm"
-                >Copiar</button>
+                  className="px-3 py-1 bg-green-600 text-white rounded text-sm flex items-center gap-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
+                  </svg>
+                  <span>{copySuccess ? 'Copiado' : 'Copiar'}</span>
+                </button>
                 <button onClick={() => setScriptOpen(false)} className="px-3 py-1 bg-gray-200 rounded text-sm">Cerrar</button>
               </div>
             </div>
