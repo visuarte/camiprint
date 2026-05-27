@@ -1,9 +1,14 @@
-'use client';
+"use client";
 
 import React from 'react';
+import { usePathname } from 'next/navigation';
 import { brandConfig } from '@/config/brand';
 
 export default function WhatsAppFloating() {
+  const pathname = usePathname();
+  // Hide WhatsApp floating button in admin area — only show on public site.
+  if (pathname && pathname.startsWith('/admin')) return null;
+
   const raw = brandConfig.phoneDisplay || '+34 600 000 000';
   const digits = raw.replace(/[^0-9]/g, '');
   const defaultText = encodeURIComponent('Hola, quiero un presupuesto para camisetas corporativas. Nombre, empresa y cantidad:');
