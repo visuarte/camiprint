@@ -7,6 +7,33 @@ declare global {
   var prisma: PrismaClient | undefined;
 }
 
+/**
+ * Builds the SSL config for pg Pool.
+ *
+ * Priority order:
+ * 1. SUPABASE_CA_CERT env var (base64-encoded PEM) — used in production (Vercel).
+ * 2. NODE_ENV !== 'production' — disable cert verification for local dev only.
+ * 3. Default: strict verification (safest fallback).
+ *
+ * To obtain the Supabase CA cert:
+ *   Dashboard → Project Settings → Database → SSL Certificate → Download
+ * Then encode it: `base64 -w0 prod-ca-2021.crt`
+ * Set SUPABASE_CA_CERT in Vercel Dashboard and remove NODE_TLS_REJECT_UNAUTHORIZED.
+ */
+function buildSslConfig(): { rejectUnauthorized: boolean; ca?: string } {
+  const caCertB64 = process.env.SUPABASE_CA_CERT?.trim();
+  if (caCertB64) {
+    return {
+      rejectUnauthorized: true,
+      ca: Buffer.from(caCertB64, 'base64').toString('utf8'),
+    };
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    return { rejectUnauthorized: false };
+  }
+  return { rejectUnauthorized: true };
+}
+
 let cachedPrisma: PrismaClient | undefined;
 
 const getPrismaClient = (): PrismaClient => {
@@ -18,8 +45,7 @@ const getPrismaClient = (): PrismaClient => {
     throw new Error('DATABASE_URL environment variable is not set');
   }
 
-  // ssl.rejectUnauthorized=false required for Supabase pgbouncer pooler in serverless envs
-  const pool = new Pool({ connectionString: databaseUrl, ssl: { rejectUnauthorized: false } });
+  const pool = new Pool({ connectionString: databaseUrl, ssl: buildSslConfig() });
   const adapter = new PrismaPg(pool);
 
   cachedPrisma = new PrismaClient({ adapter });

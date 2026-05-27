@@ -3,6 +3,24 @@ import { getPlatformConfig } from '@/server/platform/config';
 
 const GLOBAL_PG_POOL_KEY = '__camiart_pg_pool__';
 
+/**
+ * Builds the SSL config for pg Pool.
+ * See src/server/db.ts for full documentation.
+ */
+function buildSslConfig(): { rejectUnauthorized: boolean; ca?: string } {
+  const caCertB64 = process.env.SUPABASE_CA_CERT?.trim();
+  if (caCertB64) {
+    return {
+      rejectUnauthorized: true,
+      ca: Buffer.from(caCertB64, 'base64').toString('utf8'),
+    };
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    return { rejectUnauthorized: false };
+  }
+  return { rejectUnauthorized: true };
+}
+
 const loadPgPoolConstructor = async (): Promise<typeof import('pg').Pool> => {
   // pg está en serverExternalPackages — ambos bundlers (webpack y Turbopack) lo tratan como externo
   const pgModule = await import('pg');
@@ -26,7 +44,7 @@ export const getPostgresPool = async (): Promise<Pool> => {
     globalScope[GLOBAL_PG_POOL_KEY] = new Pool({
       connectionString: databaseUrl,
       max: 10,
-      ssl: { rejectUnauthorized: false },
+      ssl: buildSslConfig(),
     });
   }
 
