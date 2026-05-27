@@ -13,7 +13,7 @@ import { randomUUID } from 'crypto';
 import { ProductionEngine } from '@/engine/production/production-engine';
 import { ALLOWED_EXTENSIONS, type AllowedExtension } from '@/engine/production/types';
 import { validateAssetExtension } from '@/engine/production/validators';
-import { getProductionRepository } from '@/engine/production/repository';
+import { getProductionRepository } from '@/server/production/factory';
 
 const UploadPayloadSchema = z.object({
   productionOrderId: z.string().min(1),

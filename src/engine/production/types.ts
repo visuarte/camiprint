@@ -122,4 +122,6 @@ export interface IProductionRepository {
   saveQueueItem(item: WorkQueueItem): Promise<void>;
   getQueueItems(filter: QueueFilter): Promise<{ items: WorkQueueItem[]; nextCursor: string | null }>;
   countQueueItemsByDepartment(department: Department): Promise<number>;
+  // Returns the next sequence number for ticket numbering. Simple increment.
+  nextTicketSequence(): Promise<number>;
 }

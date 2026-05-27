@@ -11,7 +11,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { randomUUID } from 'crypto';
 import { ProductionEngine } from '@/engine/production/production-engine';
-import { getProductionRepository } from '@/engine/production/repository';
+import { getProductionRepository } from '@/server/production/factory';
 import { type Department, type QueueStatus } from '@/engine/production/types';
 
 const QueueQuerySchema = z.object({

@@ -113,3 +113,67 @@ model OrderItem {
   @@index([orderId])
   @@index([productId])
 }
+
+// Production engine models
+model ProductionOrder {
+  id           String   @id @default(cuid())
+  externalId   String?  @db.VarChar(255) // e.g., quote or order reference
+  customerId   String?  @db.VarChar(255)
+  status       String   @default("pending")
+  priority     Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  assets       DesignAsset[]
+  tickets      JobTicket[]
+
+  @@index([externalId])
+  @@index([status])
+}
+
+model DesignAsset {
+  id             String   @id @default(cuid())
+  productionOrderId String?
+  filename       String   @db.Text
+  storageKey     String   @db.Text
+  mimeType       String?  @db.VarChar(255)
+  size           Int?
+  checksumSha256 String?  @db.VarChar(128)
+  createdAt      DateTime @default(now())
+
+  productionOrder ProductionOrder? @relation(fields: [productionOrderId], references: [id], onDelete: Cascade)
+
+  @@index([productionOrderId])
+}
+
+model JobTicket {
+  id               String   @id @default(cuid())
+  productionOrderId String?
+  ticketNumber     Int
+  department       String   @db.VarChar(100)
+  status           String   @default("open")
+  payload          String?  @db.Text
+  createdAt        DateTime @default(now())
+
+  productionOrder  ProductionOrder? @relation(fields: [productionOrderId], references: [id], onDelete: Cascade)
+  queueItems       WorkQueueItem[]
+
+  @@index([productionOrderId])
+  @@index([ticketNumber])
+  @@index([department])
+}
+
+model WorkQueueItem {
+  id         String   @id @default(cuid())
+  jobTicketId String
+  department String   @db.VarChar(100)
+  status     String   @default("queued")
+  position   Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  jobTicket  JobTicket @relation(fields: [jobTicketId], references: [id], onDelete: Cascade)
+
+  @@index([jobTicketId])
+  @@index([department])
+  @@index([status])
+}
