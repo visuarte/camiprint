@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import RespondModal from './RespondModal';
 import Link from 'next/link';
 import { adminFetch, getAdminToken } from '../auth-client';
 
@@ -22,6 +23,7 @@ export default function AdminOrdersPage() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [respondingOrder, setRespondingOrder] = useState<string | null>(null);
   const limit = 10;
 
   useEffect(() => {
@@ -192,12 +194,20 @@ export default function AdminOrdersPage() {
                       {new Date(order.createdAt).toLocaleDateString('es-ES')}
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <Link
-                        href={`/admin/orders/${order.id}`}
-                        className="text-blue-400 hover:text-blue-300 transition text-xs font-medium"
-                      >
-                        Ver
-                      </Link>
+                      <div className="flex items-center justify-center gap-2">
+                        <Link
+                          href={`/admin/orders/${order.id}`}
+                          className="text-blue-400 hover:text-blue-300 transition text-xs font-medium"
+                        >
+                          Ver
+                        </Link>
+                        <button
+                          onClick={() => setRespondingOrder(order.id)}
+                          className="text-xs px-2 py-1 bg-neutral-800 border border-neutral-700 rounded hover:bg-neutral-700 transition"
+                        >
+                          Responder
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -214,6 +224,9 @@ export default function AdminOrdersPage() {
               >
                 <div className="flex justify-between items-start mb-2">
                   <div>
+                  <button onClick={() => setRespondingOrder(order.id)} className="ml-2 px-3 py-1 bg-neutral-800 hover:bg-neutral-700 rounded text-xs transition">
+                    Responder
+                  </button>
                     <p className="font-mono text-xs text-neutral-400 mb-1">
                       {order.id.substring(0, 8)}
                     </p>
@@ -253,6 +266,17 @@ export default function AdminOrdersPage() {
             ))}
           </div>
         </div>
+      )}
+
+      {respondingOrder && (
+        <RespondModal
+          orderId={respondingOrder}
+          onClose={() => setRespondingOrder(null)}
+          onSuccess={() => {
+            // refresh list after successful response
+            setPage(1);
+          }}
+        />
       )}
 
       {/* Pagination */}
