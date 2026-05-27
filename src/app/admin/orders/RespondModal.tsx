@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { adminFetch } from './auth-client';
+import { adminFetch } from '../auth-client';
 
 export default function RespondModal({ orderId, onClose, onSuccess }: { orderId: string; onClose: () => void; onSuccess?: () => void; }) {
   const [message, setMessage] = useState('');
