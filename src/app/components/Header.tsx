@@ -1,3 +1,8 @@
+/**
+ * Landing page header — anchor links only, no Next.js routing.
+ * Usado en la página de inicio (/) para navegar entre secciones de la landing.
+ * No incluye carrito ni navegación de catálogo.
+ */
 'use client';
 
 import { useState } from 'react';

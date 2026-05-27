@@ -1,3 +1,8 @@
+/**
+ * Ecommerce header — Next.js Link routing, CartSummary, catalog navigation.
+ * Usado en las páginas de tienda (/catalog, /cart, /checkout, /products/*).
+ * No usar en la landing page — ver src/app/components/Header.tsx.
+ */
 'use client';
 
 import Link from 'next/link';
