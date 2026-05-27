@@ -107,10 +107,10 @@ export default function PoliticaPrivacidadPage() {
               'Correo electrónico',
               <a
                 key="email"
-                href="mailto:privacy@camiart.com"
+                href="mailto:privacy@CamiPrint.com"
                 className="text-cami-200 underline underline-offset-2 hover:text-white"
               >
-                privacy@camiart.com
+                privacy@CamiPrint.com
               </a>,
             ],
             ['Teléfono', brandConfig.phoneDisplay],
@@ -343,10 +343,10 @@ export default function PoliticaPrivacidadPage() {
         <p>
           Puedes solicitar una copia de las garantías aplicables escribiéndonos a{' '}
           <a
-            href="mailto:privacy@camiart.com"
+            href="mailto:privacy@CamiPrint.com"
             className="text-cami-200 underline underline-offset-2 hover:text-white"
           >
-            privacy@camiart.com
+            privacy@CamiPrint.com
           </a>
           .
         </p>
@@ -419,10 +419,10 @@ export default function PoliticaPrivacidadPage() {
           <p>
             Envía un correo a{' '}
             <a
-              href="mailto:privacy@camiart.com"
+              href="mailto:privacy@CamiPrint.com"
               className="text-cami-200 underline underline-offset-2 hover:text-white"
             >
-              privacy@camiart.com
+              privacy@CamiPrint.com
             </a>{' '}
             indicando el derecho que deseas ejercer e incluyendo copia de tu DNI/NIE u otro documento
             identificativo. Responderemos en el plazo máximo de <strong className="text-white">1 mes</strong>{' '}
@@ -452,10 +452,10 @@ export default function PoliticaPrivacidadPage() {
           menor sin el consentimiento de sus padres o tutores, procederemos a eliminarlos de inmediato.
           Si eres padre/madre o tutor y crees que tu hijo ha facilitado datos, contacta con nosotros en{' '}
           <a
-            href="mailto:privacy@camiart.com"
+            href="mailto:privacy@CamiPrint.com"
             className="text-cami-200 underline underline-offset-2 hover:text-white"
           >
-            privacy@camiart.com
+            privacy@CamiPrint.com
           </a>
           .
         </p>

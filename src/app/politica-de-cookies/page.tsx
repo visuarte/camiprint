@@ -3,7 +3,7 @@ import { brandConfig } from '@/config/brand';
 
 export const metadata: Metadata = {
   title: `Política de Cookies — ${brandConfig.displayName}`,
-  description: 'Información sobre el uso de cookies en el sitio web de Camiart, conforme al RGPD y la LSSI.',
+  description: 'Información sobre el uso de cookies en el sitio web de CamiPrint, conforme al RGPD y la LSSI.',
   robots: { index: true, follow: true },
 };
 
@@ -42,8 +42,8 @@ export default function PoliticaDeCookiesPage() {
         <p>
           <strong className="text-white">Razón social:</strong> {brandConfig.displayName}<br />
           <strong className="text-white">Email de contacto:</strong>{' '}
-          <a href={`mailto:privacy@camiart.com`} className="text-cami-200 underline underline-offset-2 hover:text-white">
-            privacy@camiart.com
+          <a href={`mailto:privacy@CamiPrint.com`} className="text-cami-200 underline underline-offset-2 hover:text-white">
+            privacy@CamiPrint.com
           </a><br />
           <strong className="text-white">Dirección:</strong> {brandConfig.postalAddress}
         </p>
@@ -66,7 +66,7 @@ export default function PoliticaDeCookiesPage() {
               {/* Técnicas */}
               <tr>
                 <td className="px-4 py-3 font-mono text-xs text-white">admin_token</td>
-                <td className="px-4 py-3">Camiart</td>
+                <td className="px-4 py-3">CamiPrint</td>
                 <td className="px-4 py-3">
                   <span className="rounded-full bg-blue-900/40 px-2 py-0.5 text-xs text-blue-300">Técnica</span>
                 </td>
@@ -174,8 +174,8 @@ export default function PoliticaDeCookiesPage() {
       <Section title="8. Tus derechos">
         <p>
           Tienes derecho a acceder, rectificar, suprimir, limitar el tratamiento, oponerte y solicitar la portabilidad de tus datos relacionados con el uso de cookies. Puedes ejercer estos derechos escribiendo a{' '}
-          <a href="mailto:privacy@camiart.com" className="text-cami-200 underline underline-offset-2 hover:text-white">
-            privacy@camiart.com
+          <a href="mailto:privacy@CamiPrint.com" className="text-cami-200 underline underline-offset-2 hover:text-white">
+            privacy@CamiPrint.com
           </a>{' '}
           adjuntando copia de tu DNI/NIE. También puedes presentar una reclamación ante la{' '}
           <a href="https://www.aepd.es" target="_blank" rel="noreferrer" className="text-cami-200 underline underline-offset-2 hover:text-white">

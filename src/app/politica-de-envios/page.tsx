@@ -1,7 +1,7 @@
 import { brandConfig } from '@/config/brand';
 
 export const metadata = {
-  title: 'Política de Envíos — Camiart',
+  title: 'Política de Envíos — CamiPrint',
   description: 'Información sobre plazos y condiciones de envío para pedidos de camisetas y merchandising.',
   alternates: { canonical: `${brandConfig.siteUrl}/politica-de-envios` },
 };
@@ -14,7 +14,7 @@ export default function Shipping() {
 
       <section className="mt-8">
         <h2 className="text-xl font-semibold text-white">1. Ámbito</h2>
-        <p className="text-sm text-cami-300">Esta política regula los plazos, costes y condiciones de envío aplicables a los pedidos realizados en Camiart. Se aplica a envíos dentro de España peninsular y, cuando proceda, a envíos internacionales según se indique en la ficha del producto.</p>
+        <p className="text-sm text-cami-300">Esta política regula los plazos, costes y condiciones de envío aplicables a los pedidos realizados en CamiPrint. Se aplica a envíos dentro de España peninsular y, cuando proceda, a envíos internacionales según se indique en la ficha del producto.</p>
       </section>
 
       <section className="mt-6">
@@ -38,7 +38,7 @@ export default function Shipping() {
 
       <section className="mt-6">
         <h2 className="text-xl font-semibold text-white">5. Seguimiento</h2>
-        <p className="text-sm text-cami-300">Recibirás un email con el número de seguimiento una vez el pedido salga del almacén. Si no recibes este email en el plazo indicado, contacta con nosotros en <a href="mailto:help@camiart.com" className="text-cami-200 underline">help@camiart.com</a>.</p>
+        <p className="text-sm text-cami-300">Recibirás un email con el número de seguimiento una vez el pedido salga del almacén. Si no recibes este email en el plazo indicado, contacta con nosotros en <a href="mailto:help@CamiPrint.com" className="text-cami-200 underline">help@CamiPrint.com</a>.</p>
       </section>
 
       <section className="mt-6">

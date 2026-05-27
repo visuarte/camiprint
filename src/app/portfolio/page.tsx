@@ -1,7 +1,7 @@
 import { brandConfig } from '@/config/brand';
 
 export const metadata = {
-  title: 'Portfolio — Trabajos reales | Camiart',
+  title: 'Portfolio — Trabajos reales | CamiPrint',
   description: 'Portfolio de trabajos reales: fotos de producción, acabados y entregas reales para empresas.',
   alternates: { canonical: `${brandConfig.siteUrl}/portfolio` },
 };

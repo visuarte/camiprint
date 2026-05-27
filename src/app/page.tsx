@@ -13,7 +13,7 @@ import Footer from './components/Footer';
 import ViewportAnimator from './components/ViewportAnimator';
 
 export const metadata: Metadata = {
-  title: 'Camisetas Personalizadas para Empresas | Ropa Corporativa con Logo | Camiart',
+  title: 'Camisetas Personalizadas para Empresas | Ropa Corporativa con Logo | CamiPrint',
   description:
     'Fabricamos camisetas personalizadas para empresas con tu logo. Calidad premium, mínimo desde 10 unidades, diseño incluido y envío a toda España. Presupuesto gratuito en menos de 24h.',
   keywords: [

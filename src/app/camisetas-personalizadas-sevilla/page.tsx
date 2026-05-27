@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { brandConfig } from '@/config/brand';
 
 export const metadata: Metadata = {
-  title: 'Camisetas personalizadas en Sevilla — Camiart',
+  title: 'Camisetas personalizadas en Sevilla — CamiPrint',
   description:
     'Impresión textil profesional en Sevilla: camisetas personalizadas desde 10 unidades. DTF, serigrafía, bordado y envío en toda Sevilla.',
   keywords: ['camisetas personalizadas Sevilla', 'impresión textil Sevilla', 'camisetas con logo Sevilla'],

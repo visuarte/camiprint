@@ -1,4 +1,4 @@
-const displayName = 'Camiart';
+const displayName = 'CamiPrint';
 const seoTitle = `${displayName} - Camisetas Personalizadas para Empresas`;
 
 export const brandConfig = {
@@ -8,7 +8,7 @@ export const brandConfig = {
   supportEmail: 'hola@camiprint.com',
   phoneDisplay: '+34 900 111 222',
   phoneHref: 'tel:+34900111222',
-  postalAddress: 'Av. de la Industria 18, Madrid',
+  postalAddress: 'Sevilla, España',
   assets: {
     heroModelSrc: '/models/camiseta-camiprint.glb',
   },

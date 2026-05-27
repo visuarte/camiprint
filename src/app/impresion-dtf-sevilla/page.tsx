@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { brandConfig } from '@/config/brand';
 
 export const metadata: Metadata = {
-  title: 'Impresión DTF en Sevilla — Camiart',
+  title: 'Impresión DTF en Sevilla — CamiPrint',
   description:
     'Servicio profesional de impresión DTF en Sevilla para camisetas y merchandising. Ideal para tiradas pequeñas y acabados de alta calidad.',
   keywords: ['impresión DTF Sevilla', 'DTF camisetas Sevilla', 'impresion textil DTF'],
@@ -20,7 +20,7 @@ const serviceSchema = {
 const offers = {
   '@context': 'https://schema.org',
   '@type': 'Product',
-  name: 'Impresión DTF — Camiart',
+  name: 'Impresión DTF — CamiPrint',
   description: 'Impresión DTF para camisetas y merchandising. Packs desde 10 unidades.',
   offers: [
     { '@type': 'Offer', name: 'DTF 10+', price: '14.50', priceCurrency: 'EUR', url: `${brandConfig.siteUrl}/impresion-dtf-sevilla` },

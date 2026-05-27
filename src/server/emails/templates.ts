@@ -40,12 +40,12 @@ const escapeHtml = (value: string): string =>
 const dataProtectionBlock = `
 <div style="margin-top:28px;padding:14px 16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;font-size:11px;color:#64748b;line-height:1.6;">
   <p style="margin:0 0 6px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em;font-size:10px;">Información sobre protección de datos</p>
-  <p style="margin:0 0 4px;"><strong>Responsable:</strong> Camiart, S.L. &mdash; noreply@camiart.com</p>
+  <p style="margin:0 0 4px;"><strong>Responsable:</strong> CamiPrint, S.L. &mdash; noreply@CamiPrint.com</p>
   <p style="margin:0 0 4px;"><strong>Finalidad:</strong> Gestión de tu solicitud o pedido y comunicaciones relacionadas con el mismo.</p>
   <p style="margin:0 0 4px;"><strong>Legitimación:</strong> Ejecución del contrato o relación precontractual y, en su caso, tu consentimiento.</p>
   <p style="margin:0 0 4px;"><strong>Destinatarios:</strong> No se ceden datos a terceros salvo obligación legal. Usamos proveedores de pago y envío estrictamente necesarios para ejecutar el pedido.</p>
   <p style="margin:0 0 4px;"><strong>Conservación:</strong> Los datos se conservarán mientras exista relación comercial y, posteriormente, durante los plazos legales exigidos (máximo 10 años para datos contables/fiscales).</p>
-  <p style="margin:0 0 4px;"><strong>Derechos:</strong> Puedes ejercer tus derechos de acceso, rectificación, supresión, limitación, portabilidad u oposición enviando un email a <a href="mailto:privacy@camiart.com" style="color:#2563eb;text-decoration:none;">privacy@camiart.com</a> con copia de tu DNI/NIE.</p>
+  <p style="margin:0 0 4px;"><strong>Derechos:</strong> Puedes ejercer tus derechos de acceso, rectificación, supresión, limitación, portabilidad u oposición enviando un email a <a href="mailto:privacy@CamiPrint.com" style="color:#2563eb;text-decoration:none;">privacy@CamiPrint.com</a> con copia de tu DNI/NIE.</p>
   <p style="margin:0;"><strong>Reclamaciones:</strong> Si consideras que el tratamiento no es conforme puedes presentar una reclamación ante la Agencia Española de Protección de Datos (<a href="https://www.aepd.es" style="color:#2563eb;text-decoration:none;">www.aepd.es</a>).</p>
 </div>`;
 
