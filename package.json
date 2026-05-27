@@ -32,7 +32,9 @@
     "seed:all": "node scripts/seed-products.mjs && node scripts/seed-demo-order.mjs",
     "arch:check": "node architecture-check.hook --staged",
     "check:env": "node scripts/check-vercel-env.mjs",
-    "predeploy": "node scripts/check-vercel-env.mjs"
+    "predeploy": "node scripts/check-vercel-env.mjs",
+    "db:orders": "node scripts/list-orders.mjs",
+    "db:order": "node scripts/query-order.mjs"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
