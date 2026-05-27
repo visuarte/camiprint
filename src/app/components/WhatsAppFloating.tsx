@@ -36,6 +36,15 @@ export default function WhatsAppFloating() {
 
   return (
     <div aria-hidden="false">
+      {/* Badge shown above the floating button when a WhatsApp number is configured */}
+      {phone && digits && (
+        <div className="fixed bottom-20 right-6 z-50">
+          <div className="bg-emerald-600 text-white text-xs px-2 py-1 rounded-full shadow-sm">
+            Contacto por WhatsApp
+          </div>
+        </div>
+      )}
+
       <a
         href={href}
         target="_blank"
