@@ -85,6 +85,10 @@ model Order {
   phone         String   @db.VarChar(20)
   address       String   @db.Text
   stripePaymentIntentId String? @db.VarChar(255) // Stripe payment intent ID
+  // Fields to support admin responses to quotes
+  responseMessage String? @db.Text
+  respondedBy     String? @db.VarChar(255)
+  respondedAt     DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
