@@ -6,6 +6,8 @@
  * Requiere DATABASE_URL en .env o en el entorno.
  */
 import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
 import { readFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
 
@@ -29,7 +31,8 @@ if (!orderId || orderId === '<orderId>') {
   process.exit(1);
 }
 
-const prisma = new PrismaClient();
+const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+const prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
 
 try {
   const order = await prisma.order.findUnique({

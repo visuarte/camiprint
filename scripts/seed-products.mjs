@@ -1,10 +1,33 @@
 #!/usr/bin/env node
 
 import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
+import { readFileSync, existsSync } from 'fs';
+import { resolve } from 'path';
 
+// Cargar .env manualmente
+const envPath = resolve(process.cwd(), '.env');
+if (existsSync(envPath)) {
+  for (const line of readFileSync(envPath, 'utf8').split('\n')) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+    const eqIdx = trimmed.indexOf('=');
+    if (eqIdx < 0) continue;
+    const key = trimmed.slice(0, eqIdx).trim();
+    const val = trimmed.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, '');
+    if (!process.env[key]) process.env[key] = val;
+  }
+}
+
+const dbUrl = process.env.DATABASE_URL ?? '';
+// Strip sslmode from URL so pg doesn't override the ssl option below
+const connectionString = dbUrl.replace(/[?&]sslmode=[^&]*/g, '').replace(/[?&]pgbouncer=[^&]*/g, '');
+const pool = new Pool({ connectionString, ssl: { rejectUnauthorized: false } });
+const adapter = new PrismaPg(pool);
 let prisma;
 try {
-  prisma = new PrismaClient();
+  prisma = new PrismaClient({ adapter });
 } catch (error) {
   console.error('Error initializing Prisma:', error);
   process.exit(1);

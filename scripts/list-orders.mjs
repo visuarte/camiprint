@@ -5,6 +5,8 @@
  *   node scripts/list-orders.mjs [limit=10]
  */
 import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
 import { readFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
 
@@ -22,7 +24,8 @@ if (existsSync(envPath)) {
 }
 
 const limit = parseInt(process.argv[2] ?? '10', 10);
-const prisma = new PrismaClient();
+const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+const prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
 
 try {
   const orders = await prisma.order.findMany({
