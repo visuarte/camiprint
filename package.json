@@ -43,7 +43,7 @@
     "ioredis": "^5.10.1",
     "lightningcss-wasm": "^1.32.0",
     "next": "16.2.6",
-    "nodemailer": "^6.10.1",
+    "nodemailer": "^8.0.7",
     "pg": "^8.20.0",
     "pino": "^10.3.1",
     "react": "19.2.4",

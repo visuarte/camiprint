@@ -11,8 +11,9 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   // pg permanece externo (usa dynamic require opaco para Turbopack compat)
-  // ioredis y pino son pure-JS y pueden ser bundleados por Turbopack
-  serverExternalPackages: ['pg'],
+  // pino externo en Windows: Turbopack falla al crear junction points para pino
+  // en sistemas con permisos de symlinks restringidos (OS error 1)
+  serverExternalPackages: ['pg', 'pino', 'pino-pretty'],
   images: {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 7,
@@ -22,6 +23,27 @@ const nextConfig: NextConfig = {
     // soporte de imágenes estáticas en `public/`, desactivamos la optimización.
     unoptimized: true,
   },
+  async redirects() {
+    return [
+      // Rutas legacy → actuales (permanentes, se ejecutan en el borde)
+      {
+        source: '/legacy-catalog',
+        destination: '/catalog',
+        permanent: true,
+      },
+    ];
+  },
+
+  async rewrites() {
+    return [
+      // El Puente: todo tráfico admin pasa por el proxy validador
+      {
+        source: '/api/admin/:path*',
+        destination: '/api/admin/:path*',
+      },
+    ];
+  },
+
   async headers() {
     return [
       {

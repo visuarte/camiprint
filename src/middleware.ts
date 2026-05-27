@@ -1,66 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+/**
+ * Middleware: protección server-side de rutas de UI Admin.
+ *
+ * Las rutas /api/admin/* son protegidas de forma independiente por:
+ *   1. verifyAdminToken() en cada route handler (validación exacta del token)
+ *   2. El Puente (app/api/admin/proxy/route.ts) como punto de entrada centralizado
+ *
+ * Este middleware solo actúa como guardia server-side para páginas HTML admin,
+ * garantizando el redirect antes de que cualquier JS cargue en el cliente.
+ */
 export function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
+  const { pathname } = request.nextUrl;
 
-  // ===== RUTAS PÚBLICAS (sin protección) =====
-  // Webhooks de Stripe
-  if (pathname.startsWith('/api/webhook')) {
-    return NextResponse.next();
-  }
-
-  // POST de órdenes (crear órdenes nuevas es público)
-  if (pathname === '/api/orders' && request.method === 'POST') {
-    return NextResponse.next();
-  }
-
-  // API pública
-  if (pathname.startsWith('/api/v1') || pathname.startsWith('/api/products')) {
-    return NextResponse.next();
-  }
-
-  // Rutas públicas del frontend
-  if (
-    pathname === '/' ||
-    pathname.startsWith('/catalog') ||
-    pathname.startsWith('/cart') ||
-    pathname.startsWith('/checkout')
-  ) {
-    return NextResponse.next();
-  }
-
-  // ===== RUTAS PROTEGIDAS =====
-  // Admin UI routes (excepto login)
-  // Nota: el Edge Runtime no tiene acceso garantizado a ADMIN_AUTH_TOKEN.
-  // Solo comprobamos que la cookie exista (no vacía).
-  // La validación real del token ocurre en los API handlers (Node.js runtime).
+  // Admin UI page protection (excepto /admin/login)
+  // Edge Runtime: solo verifica presencia del cookie, no el valor exacto.
+  // La validación real del token ocurre en verifyAdminToken() (Node.js runtime).
   if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
     const cookieToken = request.cookies.get('admin_token')?.value?.trim();
-
     if (!cookieToken) {
       return NextResponse.redirect(new URL('/admin/login', request.url));
-    }
-  }
-
-  // Admin API routes
-  if (pathname.startsWith('/api/admin')) {
-    // Allow the login endpoint to be called without auth
-    if (pathname === '/api/admin/auth/login' && request.method === 'POST') {
-      return NextResponse.next();
-    }
-
-    // Solo comprobamos que el token (header o cookie) no esté vacío.
-    // verifyAdminToken() en cada handler hace la comparación exacta.
-    const authHeader = request.headers.get('authorization');
-    const headerToken = authHeader?.replace('Bearer ', '').trim();
-    const cookieToken = request.cookies.get('admin_token')?.value?.trim();
-    const token = headerToken || cookieToken;
-
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
     }
   }
 
@@ -68,12 +27,6 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/admin/:path*',
-    '/api/admin/:path*',
-    '/api/webhook/:path*',
-    '/api/v1/:path*',
-    '/api/products/:path*',
-    '/api/orders/:path*'
-  ],
+  // Solo páginas admin — las rutas API se protegen en sus propios handlers
+  matcher: ['/admin/:path*'],
 };
