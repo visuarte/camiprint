@@ -126,7 +126,7 @@ function importsEngineOrCore(specifier) {
 
 function isAllowedBridgeFile(relPath) {
   const n = normalize(relPath);
-  const isApiRoute = n.includes('/src/app/api/');
+  const isApiRoute = n.includes('src/app/api/');
   const isServerAction = /\.action\.[cm]?[jt]sx?$/i.test(n);
   return isApiRoute || isServerAction;
 }
