@@ -18,6 +18,14 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
+    // Validate whatsapp phone if provided: require E.164 format (leading + and up to 15 digits)
+    if (typeof body.whatsappPhone === 'string' && body.whatsappPhone.trim()) {
+      const phone = body.whatsappPhone.trim();
+      const e164 = /^\+[1-9]\d{1,14}$/;
+      if (!e164.test(phone)) {
+        return new Response(JSON.stringify({ error: 'INVALID_WHATSAPP_PHONE', message: 'El teléfono WhatsApp debe estar en formato E.164, por ejemplo +34616996306' }), { status: 422, headers: { 'content-type': 'application/json' } });
+      }
+    }
     // Basic validation
     const patch: any = {};
     if (typeof body.showMetrics === 'boolean') patch.showMetrics = body.showMetrics;

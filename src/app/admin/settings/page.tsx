@@ -38,6 +38,15 @@ export default function AdminSettingsPage() {
 
   const handleSave = async () => {
     setMessage('');
+    // client-side validation for E.164 phone format if provided
+    const phone = settings.whatsappPhone?.trim();
+    if (phone) {
+      const e164 = /^\+[1-9]\d{1,14}$/;
+      if (!e164.test(phone)) {
+        setMessage('El teléfono WhatsApp debe estar en formato E.164, por ejemplo +34616996306');
+        return;
+      }
+    }
     try {
       const res = await adminFetch('/api/admin/settings', {
         method: 'POST',
