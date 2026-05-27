@@ -1,66 +1,12 @@
-// NOTE: Define local, minimal types here to avoid importing from `engine/`.
-// This preserves the architectural layering: API (bridge) is the only layer
-// that may import engine/core. Server persistence implements the same
-// shape locally.
-type Department = 'PREPRESS' | 'PRINTING' | 'QA' | 'SHIPPING';
-
-type ProductionOrder = {
-  id: string;
-  externalId?: string;
-  customerId?: string;
-  status: string;
-  priority: number;
-  createdAt?: string | Date;
-  updatedAt?: string | Date;
-};
-
-type DesignAsset = {
-  id: string;
-  productionOrderId?: string;
-  filename: string;
-  storageKey: string;
-  mimeType?: string;
-  size?: number;
-  checksumSha256?: string;
-  createdAt?: string | Date;
-};
-
-type JobTicket = {
-  id: string;
-  productionOrderId?: string;
-  ticketNumber: number;
-  department: string;
-  status: string;
-  payload?: any;
-  createdAt?: string | Date;
-};
-
-type WorkQueueItem = {
-  id: string;
-  jobTicketId: string;
-  department: string;
-  status: string;
-  position?: number;
-  createdAt?: string | Date;
-};
-
-type QueueFilter = {
-  department?: Department;
-  status?: string;
-  limit?: number;
-  cursor?: string | null;
-};
-
-interface IProductionRepository {
-  findOrder(id: string): Promise<ProductionOrder | null>;
-  saveOrder(order: ProductionOrder): Promise<void>;
-  saveAsset(asset: DesignAsset): Promise<void>;
-  saveTicket(ticket: JobTicket): Promise<void>;
-  saveQueueItem(item: WorkQueueItem): Promise<void>;
-  getQueueItems(filter: QueueFilter): Promise<{ items: WorkQueueItem[]; nextCursor: string | null }>;
-  countQueueItemsByDepartment(department: Department): Promise<number>;
-  nextTicketSequence(): Promise<number>;
-}
+import type {
+  IProductionRepository,
+  ProductionOrder,
+  DesignAsset,
+  JobTicket,
+  WorkQueueItem,
+  QueueFilter,
+  Department,
+} from '@/engine/production/types';
 
 export class InMemoryProductionRepository implements IProductionRepository {
   private orders = new Map<string, ProductionOrder>();

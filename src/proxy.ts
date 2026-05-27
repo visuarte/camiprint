@@ -1,24 +1,26 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { updateSession } from '@/utils/supabase/middleware'
 
 /**
  * Proxy: protección server-side de rutas de UI Admin y API admin.
  * - UI pages (/admin/*): exige cookie `admin_token` o redirect a /admin/login
  * - API routes (/api/admin/*): exige header `Authorization: Bearer <ADMIN_AUTH_TOKEN>`
  */
-export function proxy(req: NextRequest) {
+export async function proxy(req: NextRequest) {
+  const sessionResponse = await updateSession(req)
   const { pathname } = req.nextUrl
 
   // No nos ocupamos de otras rutas
   if (!pathname.startsWith('/admin') && !pathname.startsWith('/api/admin')) {
-    return NextResponse.next()
+    return sessionResponse
   }
 
   // API admin: validar header Bearer
   if (pathname.startsWith('/api/admin')) {
     const authHeader = req.headers.get('authorization') || ''
     const expected = process.env.ADMIN_AUTH_TOKEN || ''
-    if (authHeader === `Bearer ${expected}`) return NextResponse.next()
+    if (authHeader === `Bearer ${expected}`) return sessionResponse
     return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
       headers: { 'content-type': 'application/json' },
@@ -31,7 +33,7 @@ export function proxy(req: NextRequest) {
     const expected = process.env.ADMIN_AUTH_TOKEN || ''
     const authHeader = req.headers.get('authorization') || ''
     // permitir si existe cookie válida o header Authorization válido
-    if (cookieToken || authHeader === `Bearer ${expected}`) return NextResponse.next()
+    if (cookieToken || authHeader === `Bearer ${expected}`) return sessionResponse
 
     const loginUrl = req.nextUrl.clone()
     loginUrl.pathname = '/admin/login'
@@ -39,9 +41,9 @@ export function proxy(req: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  return NextResponse.next()
+  return sessionResponse
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/admin/:path*'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
 }

@@ -41,6 +41,8 @@
     "@prisma/client": "^7.8.0",
     "@stripe/react-stripe-js": "^2.4.0",
     "@stripe/stripe-js": "^3.4.0",
+    "@supabase/ssr": "^0.10.3",
+    "@supabase/supabase-js": "^2.106.2",
     "@swc/helpers": "^0.5.21",
     "@vercel/analytics": "^2.0.1",
     "framer-motion": "^12.38.0",

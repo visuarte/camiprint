@@ -16,7 +16,7 @@ import { type Department, type QueueStatus } from '@/engine/production/types';
 
 const QueueQuerySchema = z.object({
   department: z.enum(['PREPRESS', 'PRINTING', 'QA', 'SHIPPING']).optional(),
-  queueStatus: z.enum(['WAITING', 'ACTIVE', 'BLOCKED', 'DONE']).optional(),
+  status: z.enum(['WAITING', 'ACTIVE', 'BLOCKED', 'DONE']).optional(),
   limit: z.coerce.number().int().positive().max(100).default(20),
   cursor: z.string().optional(),
 });
@@ -43,14 +43,14 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const { department, queueStatus, limit, cursor } = parsed.data;
+  const { department, status, limit, cursor } = parsed.data;
 
   const repo = getProductionRepository();
   const engine = new ProductionEngine(repo);
 
   const result = await engine.getDepartmentQueue({
     department: department as Department | undefined,
-    queueStatus: queueStatus as QueueStatus | undefined,
+    status: status as QueueStatus | undefined,
     limit,
     cursor,
   });

@@ -25,9 +25,9 @@ export function buildTicketNumber(sequence: number): string {
  */
 export function createJobTicket(
   id: string,
-  ticketNumber: string,
+  ticketNumber: number,
   input: CreateTicketInput,
-  assignedDepartment: Department,
+  department: Department,
 ): JobTicket {
   const now = new Date();
   return {
@@ -41,7 +41,7 @@ export function createJobTicket(
     dueDate: input.dueDate,
     notes: input.notes ?? '',
     status: 'OPEN',
-    assignedDepartment,
+    department,
     createdAt: now,
     updatedAt: now,
   };

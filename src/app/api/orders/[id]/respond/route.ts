@@ -14,8 +14,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   // simple admin auth using ADMIN_AUTH_TOKEN
   const authHeader = req.headers.get('authorization');
-  const token = authHeader?.replace('Bearer ', '');
-  if (!token || token !== process.env.ADMIN_AUTH_TOKEN) {
+  const token = authHeader?.match(/^Bearer\s+(.+)$/i)?.[1]?.trim();
+  const expectedToken = process.env.ADMIN_AUTH_TOKEN?.trim();
+  if (!token || !expectedToken || token !== expectedToken) {
     return jsonError(401, requestId, 'UNAUTHORIZED', 'Token de autorización inválido o ausente.');
   }
 
@@ -42,18 +43,23 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     await prisma.order.update({
       where: { id },
-      data: {
+      data: ({
         responseMessage: message,
         respondedBy: process.env.ADMIN_RESPONDER_NAME ?? 'admin',
         respondedAt: new Date(),
         ...(status ? { status } : {}),
-      },
+      } as any),
     });
 
     // Optionally enqueue or trigger side effects here (emails, notifications)
 
     return jsonSuccess(200, requestId, { ok: true });
   } catch (error) {
+    console.error('[orders/respond] failed', {
+      requestId,
+      orderId: id,
+      error: error instanceof Error ? error.message : String(error),
+    });
     return jsonError(500, requestId, 'INTERNAL_ERROR', 'Error al actualizar la orden.');
   }
 }

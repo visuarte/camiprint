@@ -56,8 +56,8 @@ export class InMemoryProductionRepository implements IProductionRepository {
     if (filter.department) {
       items = items.filter((i) => i.department === filter.department);
     }
-    if (filter.queueStatus) {
-      items = items.filter((i) => i.queueStatus === filter.queueStatus);
+    if (filter.status) {
+      items = items.filter((i) => i.status === filter.status);
     }
 
     // Cursor-based pagination: cursor = último id visto

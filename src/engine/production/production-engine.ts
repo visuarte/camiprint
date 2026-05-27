@@ -83,7 +83,7 @@ export class ProductionEngine {
   async createJobTicket(
     input: CreateTicketInput,
     sequenceProvider: () => Promise<number>,
-  ): Promise<EngineResult<{ ticketId: string; ticketNumber: string; assignedDepartment: string }>> {
+  ): Promise<EngineResult<{ ticketId: string; ticketNumber: number; department: string }>> {
     const validation = validateCreateTicketInput(input);
     if (!validation.ok) {
       return { ok: false, errors: validation.errors };
@@ -96,7 +96,7 @@ export class ProductionEngine {
 
     const department = routeTicketToDepartment(input);
     const sequence = await sequenceProvider();
-    const ticketNumber = buildTicketNumber(sequence);
+    const ticketNumber = sequence;
     const ticket = createJobTicket(randomUUID(), ticketNumber, input, department);
 
     await this.repo.saveTicket(ticket);
@@ -108,7 +108,7 @@ export class ProductionEngine {
       department,
       jobTicketId: ticket.id,
       position,
-      queueStatus: 'WAITING',
+      status: 'WAITING',
       startedAt: null,
       finishedAt: null,
     };
@@ -126,7 +126,7 @@ export class ProductionEngine {
       data: {
         ticketId: ticket.id,
         ticketNumber: ticket.ticketNumber,
-        assignedDepartment: ticket.assignedDepartment,
+        department: ticket.department,
       },
     };
   }
@@ -155,7 +155,7 @@ export class ProductionEngine {
           queueItemId: i.id,
           jobTicketId: i.jobTicketId,
           department: i.department,
-          queueStatus: i.queueStatus,
+          queueStatus: i.status,
           position: i.position,
         })),
         nextCursor,

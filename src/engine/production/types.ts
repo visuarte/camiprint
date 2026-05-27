@@ -35,12 +35,12 @@ export const MAX_ASSET_SIZE_BYTES = 50 * 1024 * 1024; // 50 MB
 
 export interface ProductionOrder {
   id: string;
-  quoteId: string;
-  customerId: string;
+  quoteId?: string;
+  customerId?: string;
   status: ProductionOrderStatus;
   priority: ProductionOrderPriority;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface DesignAsset {
@@ -59,7 +59,7 @@ export interface DesignAsset {
 export interface JobTicket {
   id: string;
   productionOrderId: string;
-  ticketNumber: string;
+  ticketNumber: number;
   garmentType: string;
   printTechnique: string;
   colorCount: number;
@@ -67,7 +67,7 @@ export interface JobTicket {
   dueDate: Date;
   notes: string;
   status: JobTicketStatus;
-  assignedDepartment: Department;
+  department: Department;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -77,7 +77,7 @@ export interface WorkQueueItem {
   department: Department;
   jobTicketId: string;
   position: number;
-  queueStatus: QueueStatus;
+  status: QueueStatus;
   startedAt: Date | null;
   finishedAt: Date | null;
 }
@@ -107,7 +107,7 @@ export interface CreateTicketInput {
 
 export interface QueueFilter {
   department?: Department;
-  queueStatus?: QueueStatus;
+  status?: QueueStatus;
   limit?: number;
   cursor?: string;
 }
