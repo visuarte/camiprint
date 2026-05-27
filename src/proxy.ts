@@ -1,32 +1,47 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
 /**
- * Proxy: protección server-side de rutas de UI Admin.
- *
- * Las rutas /api/admin/* son protegidas de forma independiente por:
- *   1. verifyAdminToken() en cada route handler (validación exacta del token)
- *   2. El Puente (app/api/admin/proxy/route.ts) como punto de entrada centralizado
- *
- * Este proxy solo actúa como guardia server-side para páginas HTML admin,
- * garantizando el redirect antes de que cualquier JS cargue en el cliente.
+ * Proxy: protección server-side de rutas de UI Admin y API admin.
+ * - UI pages (/admin/*): exige cookie `admin_token` o redirect a /admin/login
+ * - API routes (/api/admin/*): exige header `Authorization: Bearer <ADMIN_AUTH_TOKEN>`
  */
-export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+export function proxy(req: NextRequest) {
+  const { pathname } = req.nextUrl
 
-  // Admin UI page protection (excepto /admin/login)
-  // Edge Runtime: solo verifica presencia del cookie, no el valor exacto.
-  // La validación real del token ocurre en verifyAdminToken() (Node.js runtime).
-  if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
-    const cookieToken = request.cookies.get('admin_token')?.value?.trim();
-    if (!cookieToken) {
-      return NextResponse.redirect(new URL('/admin/login', request.url));
-    }
+  // No nos ocupamos de otras rutas
+  if (!pathname.startsWith('/admin') && !pathname.startsWith('/api/admin')) {
+    return NextResponse.next()
   }
 
-  return NextResponse.next();
+  // API admin: validar header Bearer
+  if (pathname.startsWith('/api/admin')) {
+    const authHeader = req.headers.get('authorization') || ''
+    const expected = process.env.ADMIN_AUTH_TOKEN || ''
+    if (authHeader === `Bearer ${expected}`) return NextResponse.next()
+    return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: { 'content-type': 'application/json' },
+    })
+  }
+
+  // UI admin pages (except login): permitir si existe cookie admin_token
+  if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
+    const cookieToken = req.cookies.get('admin_token')?.value?.trim()
+    const expected = process.env.ADMIN_AUTH_TOKEN || ''
+    const authHeader = req.headers.get('authorization') || ''
+    // permitir si existe cookie válida o header Authorization válido
+    if (cookieToken || authHeader === `Bearer ${expected}`) return NextResponse.next()
+
+    const loginUrl = req.nextUrl.clone()
+    loginUrl.pathname = '/admin/login'
+    loginUrl.searchParams.set('redirect', pathname)
+    return NextResponse.redirect(loginUrl)
+  }
+
+  return NextResponse.next()
 }
 
 export const config = {
-  // Solo páginas admin — las rutas API se protegen en sus propios handlers
-  matcher: ['/admin/:path*'],
-};
+  matcher: ['/admin/:path*', '/api/admin/:path*'],
+}
