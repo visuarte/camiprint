@@ -53,19 +53,19 @@ if ($StripePublishableKey) { $vars += @{ key = 'STRIPE_PUBLISHABLE_KEY'; value =
 $targets = @('production','preview')
 foreach ($target in $targets) {
   foreach ($v in $vars) {
-    $body = @{ key = $v.key; value = $v.value; type = $v.type; target = @($target) }
+    $body = @{ key = $v['key']; value = $v['value']; type = $v['type']; target = @($target) }
     try {
       Invoke-Vercel -Method POST -Path $envPath -Body $body | Out-Null
-      Write-Host "  ✅ Creada: $($v.key) for $target"
+      Write-Host "  ✅ Creada: $($v['key']) for $target"
     } catch {
       # try update
       $envVars = Invoke-Vercel -Method GET -Path $envPath
-      $existing = $envVars.envs | Where-Object { $_.key -eq $v.key -and $_.target -contains $target }
+      $existing = $envVars.envs | Where-Object { $_.key -eq $v['key'] -and $_.target -contains $target }
       if ($existing) {
         Invoke-Vercel -Method PATCH -Path "$envPath/$($existing[0].id)" -Body $body | Out-Null
-        Write-Host "  ✅ Actualizada: $($v.key) for $target"
+        Write-Host "  ✅ Actualizada: $($v['key']) for $target"
       } else {
-        Write-Warning "No se pudo crear/actualizar $($v.key) for $target: $_"
+        Write-Warning "No se pudo crear/actualizar $($v['key']) for $target: $_"
       }
     }
   }
