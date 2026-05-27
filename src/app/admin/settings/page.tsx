@@ -93,7 +93,34 @@ export default function AdminSettingsPage() {
         </label>
 
         <label className="block">
-          <span>Teléfono WhatsApp (mostrar en widget)</span>
+          <div className="flex items-center justify-between">
+            <span>Teléfono WhatsApp (mostrar en widget)</span>
+            <button
+              title="Abrir script Vercel"
+              onClick={async () => {
+                setScriptError(null);
+                setScriptLoading(true);
+                try {
+                  const res = await adminFetch('/api/admin/settings/vercel-script');
+                  if (!res.ok) throw new Error(String(res.status));
+                  const data = await res.json();
+                  setScriptContent(data.script ?? null);
+                  setScriptOpen(true);
+                } catch (e) {
+                  console.error(e);
+                  setScriptError('No se pudo obtener el script');
+                } finally {
+                  setScriptLoading(false);
+                }
+              }}
+              className="p-1 rounded hover:bg-neutral-100"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-neutral-600" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M8 3a1 1 0 00-.894.553L3.618 10H2a1 1 0 000 2h3a1 1 0 00.894-.553L9.382 5H11a1 1 0 100-2H8z" />
+                <path d="M12 7a1 1 0 011 1v6a1 1 0 001 1h2v2H4v-2h2a1 1 0 001-1V8a1 1 0 112 0v6h2V8a1 1 0 011-1z" />
+              </svg>
+            </button>
+          </div>
           <input
             type="text"
             value={settings.whatsappPhone ?? ''}
