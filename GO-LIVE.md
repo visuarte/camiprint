@@ -170,22 +170,25 @@ In Stripe Dashboard:
 
 1. Go to: Stripe Dashboard → Developers → Webhooks
 2. Click `+ Add endpoint`
-3. **Endpoint URL:** `https://camiprint.vercel.app/api/webhook/stripe`
-4. **Events to send:**
+3. **Endpoint URL (canónica):** `https://camiart.com/api/webhook/stripe`
+4. **Compatibilidad:** `https://camiprint.vercel.app/api/webhook/stripe` y `https://camiprint.vercel.app/api/webhooks/stripe` siguen funcionando para evitar 404 por rutas antiguas.
+5. **Events to send:**
    - `payment_intent.succeeded`
    - `payment_intent.payment_failed`
-5. Click `Add endpoint`
-6. Copy **Signing Secret** (starts with `whsec_live_`)
-7. Update `STRIPE_WEBHOOK_SECRET` in Vercel
+6. Click `Add endpoint`
+7. Copy **Signing Secret** (starts with `whsec_live_`)
+8. Update `STRIPE_WEBHOOK_SECRET` in Vercel
 
 ### 3. Test Webhook Delivery
 
 ```bash
 # Test sending webhook (from Stripe Dashboard)
 # or use Stripe CLI:
-stripe listen --forward-to https://camiprint.vercel.app/api/webhook/stripe
+stripe listen --forward-to https://camiart.com/api/webhook/stripe
 stripe trigger payment_intent.succeeded
 ```
+
+En Stripe Dashboard, usa `Resend` en eventos fallidos del endpoint para confirmar que ya no hay respuestas 404.
 
 ---
 
