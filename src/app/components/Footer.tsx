@@ -1,4 +1,5 @@
 import { brandConfig } from '@/config/brand';
+import { PublicPhoneLink } from '@/app/components/PublicContactClient';
 
 const legalLinks = [
   { label: 'Politica de Privacidad', href: '/politica-privacidad' },
@@ -81,7 +82,7 @@ const Footer = () => {
               <a href={`mailto:${brandConfig.supportEmail}`} className="transition-colors hover:text-white">{brandConfig.supportEmail}</a>
             </li>
             <li>
-              <a href={brandConfig.phoneHref} className="transition-colors hover:text-white">{brandConfig.phoneDisplay}</a>
+              <PublicPhoneLink className="transition-colors hover:text-white" />
             </li>
             <li>
               <p>{brandConfig.postalAddress}</p>

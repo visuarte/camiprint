@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { brandConfig } from '@/config/brand';
+import { PublicWhatsAppLink } from '@/app/components/PublicContactClient';
 
 export default function NotFound() {
   return (
@@ -16,12 +16,9 @@ export default function NotFound() {
           <Link href="/portfolio" className="rounded-md border border-white/10 px-4 py-2 text-sm font-medium text-cami-100 hover:bg-white/3">
             Ver portfolio
           </Link>
-          <a
-            href={`https://wa.me/${brandConfig.phoneDisplay?.replace(/\D/g, '') || ''}`}
-            className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
-          >
+          <PublicWhatsAppLink className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700">
             Contactar por WhatsApp
-          </a>
+          </PublicWhatsAppLink>
         </div>
 
         <p className="mt-8 text-sm text-cami-400">Si crees que esto es un error, escríbenos y revisamos el enlace.</p>

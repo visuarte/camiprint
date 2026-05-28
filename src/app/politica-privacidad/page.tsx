@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { brandConfig } from '@/config/brand';
+import { PublicPhoneText } from '@/app/components/PublicContactClient';
 
 export const metadata: Metadata = {
   title: `Política de Privacidad y Tratamiento de Datos — ${brandConfig.displayName}`,
@@ -113,7 +114,7 @@ export default function PoliticaPrivacidadPage() {
                 privacy@CamiPrint.com
               </a>,
             ],
-            ['Teléfono', brandConfig.phoneDisplay],
+            ['Teléfono', <PublicPhoneText key="phone" />],
             ['Sitio web', brandConfig.siteUrl],
           ]}
         />

@@ -188,3 +188,26 @@ Sesión cerrada por hoy — dejo los cambios commit/pusheados en `main`. Buen ci
    3. Resolver deuda de arquitectura (imports engine->server fuera del bridge) para volver a commits sin `--no-verify`.
 
 Sesión cerrada con smoke test aprobado. Retomamos mañana desde estos 3 puntos.
+
+---
+
+## CIERRE DE SESION - 28 May 2026
+
+- Hora de cierre: 15:40 UTC+2
+- Estado de despliegues:
+   - Preview listo y build OK (`camiprint-2ce8t5sbu-visuarte.vercel.app`).
+   - Produccion lista y alias activo en `https://camiart.com`.
+- Build checks:
+   - `scripts/check-vercel-env-build.mjs` actualizado para validar por entorno.
+   - Preview ya no exige secretos exclusivos de production.
+   - Production mantiene validacion estricta.
+- Stripe webhooks (resolucion incidente 404):
+   - Endpoint obsoleto eliminado: `https://camiart.com/webhook/stripe`.
+   - Endpoint legacy eliminado: `https://camiprint.vercel.app/api/webhooks/stripe`.
+   - Endpoint final activo: `https://camiart.com/api/webhook/stripe`.
+   - Trigger de prueba (`payment_intent.succeeded`) con entrega correcta (`pending_webhooks=0`).
+   - Fallos recientes en Stripe (ultima ventana de 10 minutos): `0`.
+- Higiene repo:
+   - `public/prod-ca-2021.crt` anadido a `.gitignore` para evitar ruido local.
+
+Incidente de webhook mitigado y verificado por CLI.

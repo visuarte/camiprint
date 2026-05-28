@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
-import { brandConfig } from '@/config/brand';
 
 export default function WhatsAppFloating() {
   const pathname = usePathname();
@@ -22,22 +21,24 @@ export default function WhatsAppFloating() {
         setMessage(data.whatsappMessage ?? null);
       })
       .catch(() => {
-        // ignore, fall back to brandConfig
+        // ignore and hide button if settings cannot be loaded
       });
     return () => {
       cancelled = true;
     };
   }, []);
 
-  const raw = phone ?? brandConfig.phoneDisplay ?? '+34 600 000 000';
+  const raw = phone?.trim() ?? '';
   const digits = raw.replace(/[^0-9]/g, '');
   const defaultText = encodeURIComponent(message ?? 'Hola, quiero un presupuesto para camisetas corporativas. Nombre, empresa y cantidad:');
   const href = `https://wa.me/${digits}?text=${defaultText}`;
 
+  if (!digits) return null;
+
   return (
     <div aria-hidden="false">
       {/* Badge shown above the floating button when a WhatsApp number is configured */}
-      {phone && digits && (
+      {phone && (
         <div className="fixed bottom-20 right-6 z-50">
           <div className="bg-emerald-600 text-white text-xs px-2 py-1 rounded-full shadow-sm">
             Contacto por WhatsApp
