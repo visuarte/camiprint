@@ -3,6 +3,11 @@ import { verifyAdminToken, unauthorized, serverError, successResponse } from '..
 import { getDashboardSettingsAuditFromStore } from '@/server/admin/settings';
 
 const ALLOWED_SORTS = ['newest', 'oldest', 'user_asc', 'user_desc'] as const;
+type AuditSort = (typeof ALLOWED_SORTS)[number];
+
+function isAuditSort(value: string): value is AuditSort {
+  return (ALLOWED_SORTS as readonly string[]).includes(value);
+}
 
 export async function GET(req: NextRequest) {
   if (!verifyAdminToken(req)) return unauthorized();
@@ -15,7 +20,7 @@ export async function GET(req: NextRequest) {
     const from = searchParams.get('from') ?? '';
     const to = searchParams.get('to') ?? '';
     const sortByParam = searchParams.get('sortBy') ?? 'newest';
-    const sortBy = ALLOWED_SORTS.includes(sortByParam as any) ? sortByParam : 'newest';
+    const sortBy: AuditSort = isAuditSort(sortByParam) ? sortByParam : 'newest';
     const result = await getDashboardSettingsAuditFromStore({
       page,
       pageSize,
