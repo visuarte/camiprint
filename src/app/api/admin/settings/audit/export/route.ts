@@ -7,7 +7,12 @@ import {
 } from '@/server/admin/settings';
 
 const ALLOWED_SORTS = ['newest', 'oldest', 'user_asc', 'user_desc'] as const;
+type AuditSort = (typeof ALLOWED_SORTS)[number];
 const EXCLUDED_DIFF_FIELDS = new Set(['updatedAt', 'updatedBy']);
+
+function isAuditSort(value: string): value is AuditSort {
+  return (ALLOWED_SORTS as readonly string[]).includes(value);
+}
 
 function normalizeValue(value: unknown): string {
   if (value === null || value === undefined) return 'N/D';
@@ -57,7 +62,7 @@ export async function GET(req: NextRequest) {
     const from = searchParams.get('from') ?? '';
     const to = searchParams.get('to') ?? '';
     const sortByParam = searchParams.get('sortBy') ?? 'newest';
-    const sortBy = ALLOWED_SORTS.includes(sortByParam as any) ? sortByParam : 'newest';
+    const sortBy: AuditSort = isAuditSort(sortByParam) ? sortByParam : 'newest';
 
     // Fetch all filtered pages in chunks.
     let page = 1;
