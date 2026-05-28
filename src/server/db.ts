@@ -34,6 +34,13 @@ function buildSslConfig(): { rejectUnauthorized: boolean; ca?: string } {
   return { rejectUnauthorized: true };
 }
 
+function sanitizeConnectionString(connectionString: string): string {
+  return connectionString
+    .replace(/[?&]sslmode=[^&]*/g, '')
+    .replace(/[?&]pgbouncer=[^&]*/g, '')
+    .replace(/[?&]application_name=[^&]*/g, '');
+}
+
 let cachedPrisma: PrismaClient | undefined;
 
 const getPrismaClient = (): PrismaClient => {
@@ -45,7 +52,7 @@ const getPrismaClient = (): PrismaClient => {
     throw new Error('DATABASE_URL environment variable is not set');
   }
 
-  const pool = new Pool({ connectionString: databaseUrl, ssl: buildSslConfig() });
+  const pool = new Pool({ connectionString: sanitizeConnectionString(databaseUrl), ssl: buildSslConfig() });
   const adapter = new PrismaPg(pool);
 
   cachedPrisma = new PrismaClient({ adapter });

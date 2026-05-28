@@ -43,10 +43,10 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // If running with Postgres driver, query Prisma. Otherwise return empty dataset (JSON driver or demo).
+    // Query Prisma whenever a DB URL is configured.
     let orders: Array<Record<string, any>> = [];
     let total = 0;
-    if (platformConfig.quoteRepositoryDriver === 'postgres') {
+    if (platformConfig.databaseUrl) {
       const { prisma } = await import('@/server/db');
       total = await prisma.order.count({ where });
       orders = await prisma.order.findMany({

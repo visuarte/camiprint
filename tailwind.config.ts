@@ -9,6 +9,17 @@ export default {
   theme: {
     extend: {
       colors: {
+        // ─── Admin Operations Design System ────────────────────────────────
+        'hazard-orange': '#FF4F00',
+        'surface-charcoal': '#0A0A0A',
+        'muted-steel': '#CBD5E1',
+        'surface-container-lowest': '#0e0e0e',
+        'surface-container-low': '#1b1b1b',
+        'surface-container': '#1f1f1f',
+        'surface-container-high': '#2a2a2a',
+        'surface-container-highest': '#353535',
+        'surface-bright': '#393939',
+        // ───────────────────────────────────────────────────────────────────
         cami: {
           950: '#071018',
           900: '#0d1724',
@@ -35,6 +46,26 @@ export default {
         sans: ['var(--font-sans)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         display: ['var(--font-display)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         mono: ['"Courier New"', 'Courier', 'monospace'],
+        // Admin Operations Design System
+        'headline-md': ['var(--font-montserrat)', 'Montserrat', 'ui-sans-serif'],
+        'headline-lg': ['var(--font-montserrat)', 'Montserrat', 'ui-sans-serif'],
+        'display-lg': ['var(--font-montserrat)', 'Montserrat', 'ui-sans-serif'],
+        'label-caps': ['var(--font-display)', 'Space Grotesk', 'ui-sans-serif'],
+        'body-md': ['var(--font-sans)', 'Manrope', 'ui-sans-serif'],
+        'body-lg': ['var(--font-sans)', 'Manrope', 'ui-sans-serif'],
+      },
+      spacing: {
+        'gutter': '24px',
+        'margin-desktop': '64px',
+        'margin-mobile': '20px',
+      },
+      fontSize: {
+        'headline-md': ['24px', { lineHeight: '1.3', fontWeight: '700' }],
+        'headline-lg': ['48px', { lineHeight: '1.1', letterSpacing: '-0.02em', fontWeight: '800' }],
+        'display-lg': ['80px', { lineHeight: '1.0', letterSpacing: '-0.04em', fontWeight: '900' }],
+        'label-caps': ['14px', { lineHeight: '1.0', letterSpacing: '0.1em', fontWeight: '700' }],
+        'body-md': ['16px', { lineHeight: '1.6', fontWeight: '400' }],
+        'body-lg': ['18px', { lineHeight: '1.6', fontWeight: '400' }],
       },
       backgroundImage: {
         'cami-hero': 'radial-gradient(circle at top left, rgba(199, 155, 99, 0.18), transparent 24%), radial-gradient(circle at 85% 12%, rgba(134, 162, 209, 0.18), transparent 28%), linear-gradient(180deg, #071018 0%, #0d1724 52%, #08111a 100%)',

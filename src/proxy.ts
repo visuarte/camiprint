@@ -16,11 +16,17 @@ export async function proxy(req: NextRequest) {
     return sessionResponse
   }
 
+  // Allow the login endpoint so users can obtain the admin cookie/token.
+  if (pathname === '/api/admin/auth/login') {
+    return sessionResponse
+  }
+
   // API admin: validar header Bearer
   if (pathname.startsWith('/api/admin')) {
     const authHeader = req.headers.get('authorization') || ''
+    const cookieToken = req.cookies.get('admin_token')?.value?.trim()
     const expected = process.env.ADMIN_AUTH_TOKEN || ''
-    if (authHeader === `Bearer ${expected}`) return sessionResponse
+    if (authHeader === `Bearer ${expected}` || cookieToken === expected) return sessionResponse
     return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
       headers: { 'content-type': 'application/json' },

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { adminFetch } from '../auth-client';
 
@@ -8,6 +9,23 @@ interface Settings {
   refreshIntervalSeconds: number;
   analyticsEnabled: boolean;
   metricsWindowDays: number;
+  language: 'es-ES' | 'en-US';
+  currency: 'EUR' | 'USD';
+  timezone:
+    | 'Europe/Madrid'
+    | 'UTC'
+    | 'Europe/London'
+    | 'Europe/Berlin'
+    | 'America/New_York'
+    | 'America/Chicago'
+    | 'America/Mexico_City'
+    | 'America/Bogota'
+    | 'America/Lima'
+    | 'America/Santiago'
+    | 'America/Argentina/Buenos_Aires';
+  adminEmail: string | null;
+  updatedAt?: string;
+  updatedBy?: string | null;
   whatsappPhone?: string | null;
   whatsappMessage?: string | null;
 }
@@ -21,6 +39,7 @@ export default function AdminSettingsPage() {
   const [scriptContent, setScriptContent] = useState<string | null>(null);
   const [scriptError, setScriptError] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [adminEmailError, setAdminEmailError] = useState('');
 
   useEffect(() => {
     const load = async () => {
@@ -43,12 +62,21 @@ export default function AdminSettingsPage() {
 
   const handleSave = async () => {
     setMessage('');
+    setAdminEmailError('');
     // client-side validation for E.164 phone format if provided
     const phone = settings.whatsappPhone?.trim();
     if (phone) {
       const e164 = /^\+[1-9]\d{1,14}$/;
       if (!e164.test(phone)) {
         setMessage('El teléfono WhatsApp debe estar en formato E.164, por ejemplo +34616996306');
+        return;
+      }
+    }
+    const email = settings.adminEmail?.trim();
+    if (email) {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        setAdminEmailError('El email no tiene un formato válido.');
         return;
       }
     }
@@ -70,7 +98,12 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="p-6 md:p-8">
-      <h1 className="text-2xl font-bold mb-4">Ajustes del Dashboard</h1>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold">Ajustes del Dashboard</h1>
+        <Link href="/admin/settings/history" className="px-3 py-2 bg-neutral-700 text-white rounded text-sm">
+          Ver historial
+        </Link>
+      </div>
       <div className="space-y-4 max-w-lg">
         <label className="flex items-center gap-3">
           <input type="checkbox" checked={settings.showMetrics} onChange={(e) => setSettings({ ...settings, showMetrics: e.target.checked })} />
@@ -91,6 +124,73 @@ export default function AdminSettingsPage() {
           <span>Ventana de métricas (días)</span>
           <input type="number" value={settings.metricsWindowDays} min={1} onChange={(e) => setSettings({ ...settings, metricsWindowDays: Number(e.target.value) })} className="w-40 mt-1" />
         </label>
+
+        <label className="block">
+          <span>Idioma del dashboard</span>
+          <select
+            value={settings.language}
+            onChange={(e) => setSettings({ ...settings, language: e.target.value as Settings['language'] })}
+            className="w-full mt-1"
+          >
+            <option value="es-ES">Español (España)</option>
+            <option value="en-US">English (US)</option>
+          </select>
+        </label>
+
+        <label className="block">
+          <span>Divisa</span>
+          <select
+            value={settings.currency}
+            onChange={(e) => setSettings({ ...settings, currency: e.target.value as Settings['currency'] })}
+            className="w-full mt-1"
+          >
+            <option value="EUR">EUR (€)</option>
+            <option value="USD">USD ($)</option>
+          </select>
+        </label>
+
+        <label className="block">
+          <span>Zona horaria</span>
+          <select
+            value={settings.timezone}
+            onChange={(e) => setSettings({ ...settings, timezone: e.target.value as Settings['timezone'] })}
+            className="w-full mt-1"
+          >
+            <option value="Europe/Madrid">Europe/Madrid</option>
+            <option value="UTC">UTC</option>
+            <option value="Europe/London">Europe/London</option>
+            <option value="Europe/Berlin">Europe/Berlin</option>
+            <option value="America/New_York">America/New_York</option>
+            <option value="America/Chicago">America/Chicago</option>
+            <option value="America/Mexico_City">America/Mexico_City</option>
+            <option value="America/Bogota">America/Bogota</option>
+            <option value="America/Lima">America/Lima</option>
+            <option value="America/Santiago">America/Santiago</option>
+            <option value="America/Argentina/Buenos_Aires">America/Argentina/Buenos_Aires</option>
+          </select>
+        </label>
+
+        <label className="block">
+          <span>Email del administrador</span>
+          <input
+            type="email"
+            value={settings.adminEmail ?? ''}
+            onChange={(e) => {
+              setSettings({ ...settings, adminEmail: e.target.value });
+              if (adminEmailError) setAdminEmailError('');
+            }}
+            className="w-full mt-1"
+            placeholder="admin@tu-dominio.com"
+          />
+          {adminEmailError && <p className="text-xs text-red-500 mt-1">{adminEmailError}</p>}
+        </label>
+
+        {(settings.updatedAt || settings.updatedBy) && (
+          <div className="rounded border border-neutral-800 bg-neutral-900/40 p-3 text-xs text-neutral-400">
+            <div>Última actualización: {settings.updatedAt ? new Date(settings.updatedAt).toLocaleString('es-ES') : 'N/D'}</div>
+            <div>Actualizado por: {settings.updatedBy ?? 'N/D'}</div>
+          </div>
+        )}
 
         <label className="block">
           <div className="flex items-center justify-between">

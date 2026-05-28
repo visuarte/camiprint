@@ -21,6 +21,13 @@ function buildSslConfig(): { rejectUnauthorized: boolean; ca?: string } {
   return { rejectUnauthorized: true };
 }
 
+function sanitizeConnectionString(connectionString: string): string {
+  return connectionString
+    .replace(/[?&]sslmode=[^&]*/g, '')
+    .replace(/[?&]pgbouncer=[^&]*/g, '')
+    .replace(/[?&]application_name=[^&]*/g, '');
+}
+
 const loadPgPoolConstructor = async (): Promise<typeof import('pg').Pool> => {
   // pg está en serverExternalPackages — ambos bundlers (webpack y Turbopack) lo tratan como externo
   const pgModule = await import('pg');
@@ -42,7 +49,7 @@ export const getPostgresPool = async (): Promise<Pool> => {
     const Pool = await loadPgPoolConstructor();
 
     globalScope[GLOBAL_PG_POOL_KEY] = new Pool({
-      connectionString: databaseUrl,
+      connectionString: sanitizeConnectionString(databaseUrl),
       max: 10,
       ssl: buildSslConfig(),
     });

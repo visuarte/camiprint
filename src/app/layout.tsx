@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
-import { Manrope, Space_Grotesk } from "next/font/google";
+import { Manrope, Space_Grotesk, Montserrat } from "next/font/google";
 import { brandConfig } from "@/config/brand";
 import CookieBanner from "@/app/components/CookieBanner";
 import WhatsAppFloating from '@/app/components/WhatsAppFloating';
@@ -17,6 +17,13 @@ const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   display: "optional",
   variable: "--font-display",
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  display: "optional",
+  weight: ["700", "800", "900"],
+  variable: "--font-montserrat",
 });
 
 const addressParts = brandConfig.postalAddress.split(",").map((part) => part.trim()).filter(Boolean);
@@ -110,9 +117,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" data-scroll-behavior="smooth" className={`h-full antialiased ${manrope.variable} ${spaceGrotesk.variable}`}>
+    <html lang="es" data-scroll-behavior="smooth" className={`h-full antialiased ${manrope.variable} ${spaceGrotesk.variable} ${montserrat.variable}`}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}

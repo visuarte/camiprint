@@ -18,9 +18,9 @@ export async function GET(req: NextRequest) {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
-    // Get orders in date range. Only query Prisma when running with Postgres configured.
+    // Get orders in date range. Query Prisma whenever a DB URL is configured.
     let orders: Array<{ id: string; status: string; totalAmount: number }> = [];
-    if (platformConfig.quoteRepositoryDriver === 'postgres') {
+    if (platformConfig.databaseUrl) {
       try {
         const { prisma } = await import('@/server/db');
         orders = await prisma.order.findMany({
@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
         orders = [];
       }
     }
-    // JSON driver → orders already empty []
+    // No DB URL configured -> keep orders empty []
 
     // Calculate metrics
     const totalOrders = orders.length;
