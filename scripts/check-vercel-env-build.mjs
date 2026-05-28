@@ -6,21 +6,35 @@
  * Sale con código 1 si falta alguna variable crítica para abortar el build.
  */
 
-const REQUIRED = [
-  'DATABASE_URL',
-  'ADMIN_AUTH_TOKEN',
-  'STRIPE_SECRET_KEY',
-  'STRIPE_WEBHOOK_SECRET',
-  'RESEND_API_KEY',
-];
+const REQUIRED_BY_ENV = {
+  production: [
+    'DATABASE_URL',
+    'ADMIN_AUTH_TOKEN',
+    'STRIPE_SECRET_KEY',
+    'STRIPE_WEBHOOK_SECRET',
+    'RESEND_API_KEY',
+  ],
+  preview: [
+    'STRIPE_SECRET_KEY',
+    'STRIPE_WEBHOOK_SECRET',
+  ],
+};
 
-const missing = REQUIRED.filter((k) => !process.env[k]?.trim());
+const vercelEnv = (process.env.VERCEL_ENV || '').toLowerCase();
+const isProductionBuild = vercelEnv === 'production';
+const required = isProductionBuild
+  ? REQUIRED_BY_ENV.production
+  : REQUIRED_BY_ENV.preview;
+
+const missing = required.filter((k) => !process.env[k]?.trim());
 
 if (missing.length > 0) {
-  console.error('\n❌ BUILD ABORTADO — Faltan variables de entorno críticas:');
+  const envLabel = isProductionBuild ? 'production' : (vercelEnv || 'preview/dev');
+  console.error(`\n❌ BUILD ABORTADO (${envLabel}) — Faltan variables de entorno críticas:`);
   missing.forEach((k) => console.error(`   • ${k}`));
   console.error('\nAñádelas en Vercel Dashboard → Settings → Environment Variables.\n');
   process.exit(1);
 }
 
-console.log('✅ Todas las variables críticas están presentes — continuando build...');
+const envLabel = isProductionBuild ? 'production' : (vercelEnv || 'preview/dev');
+console.log(`✅ Todas las variables críticas para ${envLabel} están presentes — continuando build...`);
