@@ -29,5 +29,11 @@
     "deploymentEnabled": {
       "main": true
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/products-image-cleanup",
+      "schedule": "0 * * * *"
+    }
+  ]
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { adminFetch } from '../auth-client';
 
@@ -15,58 +15,121 @@ interface Product {
   createdAt: string;
 }
 
+interface ProductsResponse {
+  data: Product[];
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+  summary?: {
+    totalProducts: number;
+    totalUnits: number;
+    lowStock: number;
+    outOfStock: number;
+  };
+}
+
+type ProductFormState = {
+  name: string;
+  description: string;
+  price: string;
+  imageUrl: string;
+  size: string;
+  quantity: string;
+};
+
+const defaultFormState: ProductFormState = {
+  name: '',
+  description: '',
+  price: '',
+  imageUrl: '',
+  size: 'M',
+  quantity: '0',
+};
+
+function toFormState(product?: Product | null): ProductFormState {
+  if (!product) return { ...defaultFormState };
+  return {
+    name: product.name,
+    description: product.description ?? '',
+    price: String(product.price),
+    imageUrl: product.imageUrl ?? '',
+    size: product.size,
+    quantity: String(product.quantity),
+  };
+}
+
 export default function AdminInventoryPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [quantityInput, setQuantityInput] = useState('');
+  const [formState, setFormState] = useState<ProductFormState>(defaultFormState);
   const [savingId, setSavingId] = useState<string | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [imageUploadError, setImageUploadError] = useState('');
+  const [metrics, setMetrics] = useState({
+    totalProducts: 0,
+    totalUnits: 0,
+    lowStock: 0,
+    outOfStock: 0,
+  });
+  const pageSize = 12;
+
+  useEffect(() => {
+    setPage(1);
+  }, [search]);
 
   useEffect(() => {
     const load = async () => {
       try {
         setIsLoading(true);
-        const res = await fetch('/api/products', { cache: 'no-store' });
+        setError('');
+        const params = new URLSearchParams({
+          page: String(page),
+          limit: String(pageSize),
+        });
+        const query = search.trim();
+        if (query) params.set('q', query);
+        const res = await adminFetch(`/api/admin/products?${params.toString()}`, { cache: 'no-store' });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = (await res.json()) as Product[];
-        setProducts(data);
+        const data = (await res.json()) as ProductsResponse;
+        setProducts(Array.isArray(data.data) ? data.data : []);
+        setTotalPages(Math.max(1, data.pagination?.totalPages ?? 1));
+        setTotalProducts(data.pagination?.total ?? data.summary?.totalProducts ?? 0);
+        setMetrics({
+          totalProducts: data.summary?.totalProducts ?? data.pagination?.total ?? 0,
+          totalUnits: data.summary?.totalUnits ?? 0,
+          lowStock: data.summary?.lowStock ?? 0,
+          outOfStock: data.summary?.outOfStock ?? 0,
+        });
       } catch (err) {
         console.error(err);
-        setError('No se pudo cargar el inventario');
+        setError('No se pudo cargar el inventario admin');
       } finally {
         setIsLoading(false);
       }
     };
 
     load();
-  }, []);
+  }, [search, page]);
 
-  const metrics = useMemo(() => {
-    const totalProducts = products.length;
-    const totalUnits = products.reduce((sum, product) => sum + product.quantity, 0);
-    const lowStock = products.filter((product) => product.quantity <= 100).length;
-    const outOfStock = products.filter((product) => product.quantity === 0).length;
-
-    return { totalProducts, totalUnits, lowStock, outOfStock };
-  }, [products]);
-
-  const filteredProducts = useMemo(() => {
-    const query = search.trim().toLowerCase();
-    if (!query) return products;
-    return products.filter((product) =>
-      [product.name, product.description ?? '', product.size].join(' ').toLowerCase().includes(query),
-    );
-  }, [products, search]);
+  const filteredProducts = useMemo(() => products, [products]);
 
   const priorityProducts = useMemo(() => {
     return [...products]
       .sort((a, b) => a.quantity - b.quantity)
       .slice(0, 5);
   }, [products]);
-
-  const criticalProducts = useMemo(() => products.filter((product) => product.quantity <= 25), [products]);
 
   const stockTone = (quantity: number) => {
     if (quantity === 0) return 'text-red-400 border-red-500/40 bg-red-500/10';
@@ -82,14 +145,14 @@ export default function AdminInventoryPage() {
     return 'IN STOCK';
   };
 
-  const saveQuantity = async (productId: string, nextQuantity: number) => {
+  const patchProduct = async (productId: string, payload: Record<string, unknown>) => {
     setSavingId(productId);
     setError('');
     try {
-      const res = await adminFetch(`/api/admin/inventory/${productId}`, {
+      const res = await adminFetch(`/api/admin/products/${productId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ quantity: nextQuantity }),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -98,12 +161,142 @@ export default function AdminInventoryPage() {
       const updated: Product = data.product;
       setProducts((current) => current.map((product) => (product.id === updated.id ? updated : product)));
       setSelectedProduct((current) => (current?.id === updated.id ? updated : current));
-      setQuantityInput(String(updated.quantity));
     } catch (err) {
       console.error(err);
-      setError('No se pudo actualizar el stock');
+      setError('No se pudo actualizar el producto');
     } finally {
       setSavingId(null);
+    }
+  };
+
+  const handleOpenCreate = () => {
+    setSelectedProduct(null);
+    setFormState({ ...defaultFormState });
+    setImageUploadError('');
+    setIsFormOpen(true);
+  };
+
+  const handleOpenEdit = (product: Product) => {
+    setSelectedProduct(product);
+    setFormState(toFormState(product));
+    setImageUploadError('');
+    setIsFormOpen(true);
+  };
+
+  const handleImageFileChange = async (file: File | null) => {
+    if (!file) return;
+    setImageUploadError('');
+    setIsUploadingImage(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await adminFetch('/api/admin/products/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const payload = await res.json();
+      if (!res.ok || !payload?.image?.url) {
+        throw new Error(payload?.error || `HTTP ${res.status}`);
+      }
+
+      setFormState((current) => ({ ...current, imageUrl: payload.image.url }));
+    } catch (err) {
+      console.error(err);
+      setImageUploadError('No se pudo subir la imagen. Formatos: jpg, png, webp, gif, avif. Max 6MB.');
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError('');
+
+    const payload = {
+      name: formState.name.trim(),
+      description: formState.description.trim() || null,
+      price: Number(formState.price),
+      imageUrl: formState.imageUrl.trim() || null,
+      size: formState.size.trim() || 'M',
+      quantity: Number(formState.quantity),
+    };
+
+    if (!payload.name || !Number.isFinite(payload.price) || payload.price <= 0 || !Number.isFinite(payload.quantity) || payload.quantity < 0) {
+      setError('Valida nombre, precio y cantidad antes de guardar');
+      return;
+    }
+
+    try {
+      if (selectedProduct) {
+        setSavingId(selectedProduct.id);
+        const res = await adminFetch(`/api/admin/products/${selectedProduct.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const data = await res.json();
+        const updated: Product = data.product;
+        setProducts((current) => current.map((product) => (product.id === updated.id ? updated : product)));
+      } else {
+        setIsCreating(true);
+        const res = await adminFetch('/api/admin/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const data = await res.json();
+        const created: Product = data.product;
+        setPage(1);
+        setProducts((current) => [created, ...current]);
+      }
+
+      setIsFormOpen(false);
+      setSelectedProduct(null);
+      setFormState({ ...defaultFormState });
+    } catch (err) {
+      console.error(err);
+      setError('No se pudo guardar el producto');
+    } finally {
+      setSavingId(null);
+      setIsCreating(false);
+    }
+  };
+
+  const handleDelete = async (product: Product) => {
+    const confirmed = window.confirm(`Eliminar producto "${product.name}" (${product.size})?`);
+    if (!confirmed) return;
+
+    setIsDeletingId(product.id);
+    setError('');
+    try {
+      const res = await adminFetch(`/api/admin/products/${product.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setProducts((current) => current.filter((item) => item.id !== product.id));
+      setTotalProducts((current) => Math.max(0, current - 1));
+      if (selectedProduct?.id === product.id) {
+        setSelectedProduct(null);
+        setIsFormOpen(false);
+      }
+      if (products.length === 1 && page > 1) {
+        setPage((current) => Math.max(1, current - 1));
+      }
+    } catch (err) {
+      console.error(err);
+      setError('No se pudo eliminar el producto');
+    } finally {
+      setIsDeletingId(null);
     }
   };
 
@@ -156,16 +349,27 @@ export default function AdminInventoryPage() {
       <section className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
         <div className="xl:col-span-8 border border-muted-steel/10 bg-surface-charcoal p-6 md:p-7">
           <div className="flex items-end justify-between gap-4 mb-5">
-            <h2 className="font-headline-md text-[22px] md:text-[26px] leading-none text-white">
-              STOCK LIST
-            </h2>
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar producto..."
-              className="h-10 w-full max-w-xs border border-muted-steel/20 bg-surface-container-lowest px-3 text-sm text-white placeholder:text-[#D8DEE8]/60 focus:outline-none focus:border-hazard-orange"
-            />
+            <div>
+              <h2 className="font-headline-md text-[22px] md:text-[26px] leading-none text-white">
+                PRODUCT TABLE
+              </h2>
+              <p className="mt-2 text-xs text-[#D8DEE8]">{totalProducts} productos en total</p>
+            </div>
+            <div className="flex gap-2 w-full max-w-lg">
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Buscar producto..."
+                className="h-10 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 text-sm text-white placeholder:text-[#D8DEE8]/60 focus:outline-none focus:border-hazard-orange"
+              />
+              <button
+                onClick={handleOpenCreate}
+                className="h-10 px-4 border border-hazard-orange bg-hazard-orange text-black font-label-caps text-[11px] tracking-[0.08em] hover:brightness-110 transition-colors"
+              >
+                NEW PRODUCT
+              </button>
+            </div>
           </div>
 
           {isLoading ? (
@@ -187,7 +391,20 @@ export default function AdminInventoryPage() {
               {filteredProducts.map((product) => (
                 <article key={product.id} className="border border-muted-steel/10 bg-surface-container-lowest p-4 md:p-5">
                   <div className="flex items-start justify-between gap-4">
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex gap-3 items-start">
+                        {product.imageUrl ? (
+                          <img
+                            src={product.imageUrl}
+                            alt={product.name}
+                            className="w-14 h-14 object-cover border border-muted-steel/20 bg-surface-charcoal"
+                          />
+                        ) : (
+                          <div className="w-14 h-14 border border-muted-steel/20 bg-surface-charcoal flex items-center justify-center text-[9px] text-[#D8DEE8]/70 font-label-caps tracking-[0.08em]">
+                            NO IMG
+                          </div>
+                        )}
+                        <div className="min-w-0">
                       <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">
                         {product.size} · {product.id.slice(0, 8).toUpperCase()}
                       </p>
@@ -202,6 +419,8 @@ export default function AdminInventoryPage() {
                           REPOSICIÓN CRÍTICA
                         </p>
                       )}
+                        </div>
+                      </div>
                     </div>
 
                     <div className="flex flex-col items-end gap-2 shrink-0">
@@ -228,31 +447,57 @@ export default function AdminInventoryPage() {
 
                   <div className="mt-4 flex flex-wrap gap-2">
                     <button
-                      onClick={() => saveQuantity(product.id, product.quantity + 10)}
+                      onClick={() => patchProduct(product.id, { quantity: product.quantity + 10 })}
                       disabled={savingId === product.id}
                       className="h-8 px-3 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[10px] tracking-[0.08em] hover:bg-surface-container-high transition-colors disabled:opacity-50"
                     >
                       +10
                     </button>
                     <button
-                      onClick={() => saveQuantity(product.id, Math.max(0, product.quantity - 10))}
+                      onClick={() => patchProduct(product.id, { quantity: Math.max(0, product.quantity - 10) })}
                       disabled={savingId === product.id}
                       className="h-8 px-3 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[10px] tracking-[0.08em] hover:bg-surface-container-high transition-colors disabled:opacity-50"
                     >
                       -10
                     </button>
                     <button
-                      onClick={() => {
-                        setSelectedProduct(product);
-                        setQuantityInput(String(product.quantity));
-                      }}
+                      onClick={() => handleOpenEdit(product)}
                       className="h-8 px-3 border border-hazard-orange/40 text-hazard-orange font-label-caps text-[10px] tracking-[0.08em] hover:bg-hazard-orange hover:text-black transition-colors"
                     >
-                      EDIT STOCK
+                      EDIT
+                    </button>
+                    <button
+                      onClick={() => handleDelete(product)}
+                      disabled={isDeletingId === product.id}
+                      className="h-8 px-3 border border-red-500/40 text-red-300 font-label-caps text-[10px] tracking-[0.08em] hover:bg-red-500 hover:text-black transition-colors disabled:opacity-50"
+                    >
+                      DELETE
                     </button>
                   </div>
                 </article>
               ))}
+
+              {totalPages > 1 && (
+                <div className="mt-4 flex items-center justify-between border border-muted-steel/10 bg-surface-charcoal p-3">
+                  <button
+                    onClick={() => setPage((current) => Math.max(1, current - 1))}
+                    disabled={page <= 1 || isLoading}
+                    className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 disabled:bg-neutral-900 disabled:cursor-not-allowed border border-neutral-700 rounded-lg transition text-sm"
+                  >
+                    ← Anterior
+                  </button>
+                  <p className="text-sm text-neutral-400">
+                    Página {page} de {totalPages}
+                  </p>
+                  <button
+                    onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+                    disabled={page >= totalPages || isLoading}
+                    className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 disabled:bg-neutral-900 disabled:cursor-not-allowed border border-neutral-700 rounded-lg transition text-sm"
+                  >
+                    Siguiente →
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -280,7 +525,7 @@ export default function AdminInventoryPage() {
           <div className="mt-2 border-t border-muted-steel/10 pt-4">
             <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">ACTION</p>
             <p className="text-[#D8DEE8] text-[13px] leading-5">
-              Si quieres, el siguiente paso es permitir ajuste de stock desde aquí y enlazarlo con los movimientos de producción.
+              Gestiona catálogo completo desde esta pantalla: alta, edición y borrado, además de ajustes rápidos de stock.
             </p>
           </div>
 
@@ -290,10 +535,7 @@ export default function AdminInventoryPage() {
               {priorityProducts.map((product, index) => (
                 <button
                   key={product.id}
-                  onClick={() => {
-                    setSelectedProduct(product);
-                    setQuantityInput(String(product.quantity));
-                  }}
+                  onClick={() => handleOpenEdit(product)}
                   className="w-full text-left border border-muted-steel/10 bg-surface-container-lowest p-3 hover:border-hazard-orange/40 transition-colors"
                 >
                   <div className="flex items-center justify-between gap-3">
@@ -314,51 +556,139 @@ export default function AdminInventoryPage() {
         </div>
       </section>
 
-      {selectedProduct && (
+      {isFormOpen && (
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/70 p-4">
           <div className="w-full max-w-lg border border-muted-steel/20 bg-surface-charcoal p-6 md:p-7 shadow-2xl">
             <div className="flex items-start justify-between gap-4 mb-5">
               <div>
-                <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">EDIT STOCK</p>
+                <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">
+                  {selectedProduct ? 'EDIT PRODUCT' : 'CREATE PRODUCT'}
+                </p>
                 <h3 className="text-white text-[18px] md:text-[20px] font-semibold leading-snug">
-                  {selectedProduct.name}
+                  {selectedProduct ? selectedProduct.name : 'Nuevo producto'}
                 </h3>
-                <p className="text-[#D8DEE8] text-[12px] mt-1">Talla {selectedProduct.size} · stock actual {selectedProduct.quantity}</p>
+                <p className="text-[#D8DEE8] text-[12px] mt-1">
+                  {selectedProduct
+                    ? `Talla ${selectedProduct.size} · stock actual ${selectedProduct.quantity}`
+                    : 'Completa los campos para publicar una nueva referencia'}
+                </p>
               </div>
               <button
-                onClick={() => setSelectedProduct(null)}
+                onClick={() => setIsFormOpen(false)}
                 className="text-[#D8DEE8] text-sm hover:text-white"
               >
                 Cerrar
               </button>
             </div>
 
-            <label className="block">
-              <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">NEW QUANTITY</span>
-              <input
-                type="number"
-                min="0"
-                value={quantityInput}
-                onChange={(e) => setQuantityInput(e.target.value)}
-                className="mt-2 h-11 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 text-white focus:outline-none focus:border-hazard-orange"
-              />
-            </label>
+            <form className="grid grid-cols-1 md:grid-cols-2 gap-3" onSubmit={handleSubmit}>
+              <label className="block md:col-span-2">
+                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">NAME</span>
+                <input
+                  type="text"
+                  required
+                  value={formState.name}
+                  onChange={(e) => setFormState((current) => ({ ...current, name: e.target.value }))}
+                  className="mt-2 h-11 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 text-white focus:outline-none focus:border-hazard-orange"
+                />
+              </label>
 
-            <div className="mt-5 flex flex-wrap gap-2">
-              <button
-                onClick={() => saveQuantity(selectedProduct.id, Number(quantityInput))}
-                disabled={savingId === selectedProduct.id}
-                className="h-10 px-4 border border-hazard-orange bg-hazard-orange text-black font-label-caps text-[11px] tracking-[0.08em] hover:brightness-110 transition-colors disabled:opacity-50"
-              >
-                SAVE STOCK
-              </button>
-              <button
-                onClick={() => setSelectedProduct(null)}
-                className="h-10 px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] tracking-[0.08em] hover:bg-surface-container-high transition-colors"
-              >
-                CANCEL
-              </button>
-            </div>
+              <label className="block">
+                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">PRICE</span>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  required
+                  value={formState.price}
+                  onChange={(e) => setFormState((current) => ({ ...current, price: e.target.value }))}
+                  className="mt-2 h-11 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 text-white focus:outline-none focus:border-hazard-orange"
+                />
+              </label>
+
+              <label className="block">
+                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">QUANTITY</span>
+                <input
+                  type="number"
+                  min="0"
+                  required
+                  value={formState.quantity}
+                  onChange={(e) => setFormState((current) => ({ ...current, quantity: e.target.value }))}
+                  className="mt-2 h-11 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 text-white focus:outline-none focus:border-hazard-orange"
+                />
+              </label>
+
+              <label className="block">
+                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">SIZE</span>
+                <input
+                  type="text"
+                  value={formState.size}
+                  onChange={(e) => setFormState((current) => ({ ...current, size: e.target.value }))}
+                  className="mt-2 h-11 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 text-white focus:outline-none focus:border-hazard-orange"
+                />
+              </label>
+
+              <label className="block">
+                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">IMAGE URL</span>
+                <input
+                  type="text"
+                  value={formState.imageUrl}
+                  onChange={(e) => setFormState((current) => ({ ...current, imageUrl: e.target.value }))}
+                  className="mt-2 h-11 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 text-white focus:outline-none focus:border-hazard-orange"
+                />
+              </label>
+
+              <label className="block md:col-span-2">
+                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">UPLOAD IMAGE FILE</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageFileChange(e.target.files?.[0] ?? null)}
+                  className="mt-2 block w-full text-sm text-[#D8DEE8] file:mr-4 file:py-2 file:px-4 file:border file:border-muted-steel/20 file:bg-surface-container-lowest file:text-[#D8DEE8] hover:file:bg-surface-container-high"
+                />
+                <p className="mt-2 text-[11px] text-[#D8DEE8]/75">JPG, PNG, WEBP, GIF o AVIF. Máximo 6MB.</p>
+                {isUploadingImage && <p className="mt-1 text-[11px] text-hazard-orange">Subiendo imagen...</p>}
+                {imageUploadError && <p className="mt-1 text-[11px] text-red-300">{imageUploadError}</p>}
+                {formState.imageUrl && !imageUploadError && (
+                  <div className="mt-2 flex items-center gap-3">
+                    <img src={formState.imageUrl} alt="Preview" className="w-16 h-16 object-cover border border-muted-steel/20 bg-surface-container-lowest" />
+                    <div className="min-w-0">
+                      <span className="text-[11px] text-[#D8DEE8]/80 break-all block">{formState.imageUrl}</span>
+                      <span className="text-[10px] text-[#D8DEE8]/60">
+                        {formState.imageUrl.startsWith('http') ? 'Persistida en Blob (producción)' : 'Guardada en public/uploads (local)'}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </label>
+
+              <label className="block md:col-span-2">
+                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">DESCRIPTION</span>
+                <textarea
+                  rows={3}
+                  value={formState.description}
+                  onChange={(e) => setFormState((current) => ({ ...current, description: e.target.value }))}
+                  className="mt-2 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 py-2 text-white focus:outline-none focus:border-hazard-orange"
+                />
+              </label>
+
+              <div className="md:col-span-2 mt-2 flex flex-wrap gap-2">
+                <button
+                  type="submit"
+                  disabled={Boolean(savingId) || isCreating || isUploadingImage}
+                  className="h-10 px-4 border border-hazard-orange bg-hazard-orange text-black font-label-caps text-[11px] tracking-[0.08em] hover:brightness-110 transition-colors disabled:opacity-50"
+                >
+                  {selectedProduct ? 'SAVE PRODUCT' : 'CREATE PRODUCT'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsFormOpen(false)}
+                  className="h-10 px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] tracking-[0.08em] hover:bg-surface-container-high transition-colors"
+                >
+                  CANCEL
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
