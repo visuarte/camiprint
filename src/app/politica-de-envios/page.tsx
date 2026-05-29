@@ -1,4 +1,5 @@
 import { brandConfig } from '@/config/brand';
+import Link from 'next/link';
 
 export const metadata = {
   title: 'Política de Envíos — CamiPrint',
@@ -57,11 +58,11 @@ export default function Shipping() {
       </section>
 
       <div className="mt-12 border-t border-white/10 pt-6 text-sm text-cami-400">
-        <a href="/" className="transition-colors hover:text-white">← Volver al inicio</a>
+        <Link href="/" className="transition-colors hover:text-white">← Volver al inicio</Link>
         <span className="mx-3">·</span>
-        <a href="/politica-privacidad" className="transition-colors hover:text-white">Política de Privacidad</a>
+        <Link href="/politica-privacidad" className="transition-colors hover:text-white">Política de Privacidad</Link>
         <span className="mx-3">·</span>
-        <a href="/politica-de-cookies" className="transition-colors hover:text-white">Política de Cookies</a>
+        <Link href="/politica-de-cookies" className="transition-colors hover:text-white">Política de Cookies</Link>
       </div>
     </main>
   );

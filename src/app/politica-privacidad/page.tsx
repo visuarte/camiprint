@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { brandConfig } from '@/config/brand';
 import { PublicPhoneText } from '@/app/components/PublicContactClient';
 
@@ -42,12 +43,12 @@ export default function PoliticaPrivacidadPage() {
     <main className="mx-auto max-w-3xl px-4 py-16 md:px-6">
       {/* Header */}
       <div className="mb-10">
-        <a
+        <Link
           href="/"
           className="mb-8 inline-block text-sm text-cami-400 transition-colors hover:text-white"
         >
           ← Volver al inicio
-        </a>
+        </Link>
         <h1 className="text-3xl font-extrabold tracking-tight text-white md:text-4xl">
           Política de Privacidad y Tratamiento de Datos
         </h1>
@@ -492,29 +493,29 @@ export default function PoliticaPrivacidadPage() {
         </p>
         <p>
           La versión vigente siempre estará disponible en{' '}
-          <a
+          <Link
             href="/politica-privacidad"
             className="text-cami-200 underline underline-offset-2 hover:text-white"
           >
             {brandConfig.siteUrl}/politica-privacidad
-          </a>
+          </Link>
           .
         </p>
       </Section>
 
       {/* Footer nav */}
       <div className="mt-12 border-t border-white/10 pt-6 text-center text-sm text-cami-400">
-        <a href="/" className="transition-colors hover:text-white">
+        <Link href="/" className="transition-colors hover:text-white">
           ← Volver al inicio
-        </a>
+        </Link>
         <span className="mx-3">·</span>
-        <a href="/politica-de-cookies" className="transition-colors hover:text-white">
+        <Link href="/politica-de-cookies" className="transition-colors hover:text-white">
           Política de Cookies
-        </a>
+        </Link>
         <span className="mx-3">·</span>
-        <a href="/terminos-y-condiciones" className="transition-colors hover:text-white">
+        <Link href="/terminos-y-condiciones" className="transition-colors hover:text-white">
           Términos y Condiciones
-        </a>
+        </Link>
       </div>
     </main>
   );

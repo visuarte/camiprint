@@ -1,4 +1,5 @@
 import { brandConfig } from '@/config/brand';
+import Link from 'next/link';
 
 export const metadata = {
   title: 'Términos y Condiciones — CamiPrint',
@@ -39,7 +40,7 @@ export default function Terms() {
 
       <section className="mt-6">
         <h2 className="text-xl font-semibold text-white">6. Entrega y devoluciones</h2>
-        <p className="text-sm text-cami-300">Los plazos y condiciones de entrega se describen en nuestra <a href="/politica-de-envios" className="text-cami-200 underline">Política de Envíos</a>. Debido a la naturaleza personalizada de muchos productos, las devoluciones solo se aceptan por defectos de fabricación o errores imputables a CamiPrint; para el resto de casos consultar condiciones específicas en la política de devolución incluida en la confirmación del pedido.</p>
+        <p className="text-sm text-cami-300">Los plazos y condiciones de entrega se describen en nuestra <Link href="/politica-de-envios" className="text-cami-200 underline">Política de Envíos</Link>. Debido a la naturaleza personalizada de muchos productos, las devoluciones solo se aceptan por defectos de fabricación o errores imputables a CamiPrint; para el resto de casos consultar condiciones específicas en la política de devolución incluida en la confirmación del pedido.</p>
       </section>
 
       <section className="mt-6">
@@ -63,11 +64,11 @@ export default function Terms() {
       </section>
 
       <div className="mt-12 border-t border-white/10 pt-6 text-sm text-cami-400">
-        <a href="/" className="transition-colors hover:text-white">← Volver al inicio</a>
+        <Link href="/" className="transition-colors hover:text-white">← Volver al inicio</Link>
         <span className="mx-3">·</span>
-        <a href="/politica-privacidad" className="transition-colors hover:text-white">Política de Privacidad</a>
+        <Link href="/politica-privacidad" className="transition-colors hover:text-white">Política de Privacidad</Link>
         <span className="mx-3">·</span>
-        <a href="/politica-de-cookies" className="transition-colors hover:text-white">Política de Cookies</a>
+        <Link href="/politica-de-cookies" className="transition-colors hover:text-white">Política de Cookies</Link>
       </div>
     </main>
   );

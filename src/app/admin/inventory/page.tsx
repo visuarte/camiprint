@@ -86,10 +86,6 @@ export default function AdminInventoryPage() {
   const pageSize = 12;
 
   useEffect(() => {
-    setPage(1);
-  }, [search]);
-
-  useEffect(() => {
     const load = async () => {
       try {
         setIsLoading(true);
@@ -359,7 +355,10 @@ export default function AdminInventoryPage() {
               <input
                 type="text"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
                 placeholder="Buscar producto..."
                 className="h-10 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 text-sm text-white placeholder:text-[#D8DEE8]/60 focus:outline-none focus:border-hazard-orange"
               />

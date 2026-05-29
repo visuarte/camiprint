@@ -5,13 +5,14 @@ import { usePathname } from 'next/navigation';
 
 export default function WhatsAppFloating() {
   const pathname = usePathname();
-  // Hide WhatsApp floating button in admin area — only show on public site.
-  if (pathname && pathname.startsWith('/admin')) return null;
+  const isAdminPath = pathname?.startsWith('/admin') ?? false;
 
   const [phone, setPhone] = React.useState<string | null>(null);
   const [message, setMessage] = React.useState<string | null>(null);
 
   React.useEffect(() => {
+    if (isAdminPath) return;
+
     let cancelled = false;
     fetch('/api/site-settings')
       .then((r) => r.json())
@@ -26,14 +27,15 @@ export default function WhatsAppFloating() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [isAdminPath]);
 
   const raw = phone?.trim() ?? '';
   const digits = raw.replace(/[^0-9]/g, '');
   const defaultText = encodeURIComponent(message ?? 'Hola, quiero un presupuesto para camisetas corporativas. Nombre, empresa y cantidad:');
   const href = `https://wa.me/${digits}?text=${defaultText}`;
 
-  if (!digits) return null;
+  // Hide WhatsApp floating button in admin area — only show on public site.
+  if (isAdminPath || !digits) return null;
 
   return (
     <div aria-hidden="false">

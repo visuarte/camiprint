@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 interface OrderStatus {
   id: string;
@@ -13,26 +13,11 @@ interface OrderStatus {
 export default function SuccessContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams?.get('orderId');
-  const [mounted, setMounted] = useState(false);
   const [orderStatus, setOrderStatus] = useState<OrderStatus | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    setMounted(true);
-
-    // Fetch order status
-    if (orderId) {
-      fetchOrderStatus();
-      // Poll for order status updates (webhook may take a moment)
-      const interval = setInterval(fetchOrderStatus, 3000); // Poll every 3 seconds
-      return () => clearInterval(interval);
-    }
-  }, [orderId]);
-
-  const fetchOrderStatus = async () => {
+  const fetchOrderStatus = useCallback(async () => {
     if (!orderId) return;
     try {
-      // Note: This endpoint doesn't exist yet, we'll create a GET endpoint
       const response = await fetch(`/api/orders/${orderId}`);
       if (response.ok) {
         const data = await response.json();
@@ -40,21 +25,26 @@ export default function SuccessContent() {
       }
     } catch (error) {
       console.error('Failed to fetch order status:', error);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [orderId]);
 
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="animate-pulse text-center">
-          <div className="w-16 h-16 bg-gray-300 rounded-full mx-auto mb-4"></div>
-          <div className="h-6 bg-gray-300 rounded w-48 mx-auto mb-4"></div>
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (!orderId) return;
+
+    const firstTick = setTimeout(() => {
+      void fetchOrderStatus();
+    }, 0);
+
+    // Poll for order status updates (webhook may take a moment)
+    const interval = setInterval(() => {
+      void fetchOrderStatus();
+    }, 3000);
+
+    return () => {
+      clearTimeout(firstTick);
+      clearInterval(interval);
+    };
+  }, [orderId, fetchOrderStatus]);
 
   // Generar fecha de entrega estimada (5-7 días hábiles)
   const estimatedDelivery = new Date();
@@ -137,6 +127,7 @@ export default function SuccessContent() {
                 <p className="text-sm text-gray-600">
                   {isPaid && 'Recibirás un email con los detalles de tu pedido.'}
                   {isPending && 'El email de confirmación será enviado en breve.'}
+                  {isCancelled && 'Tu pedido figura como cancelado. Contacta con soporte para revisarlo.'}
                   {!isPaid && !isPending && 'Procesando...'}
                 </p>
               </div>

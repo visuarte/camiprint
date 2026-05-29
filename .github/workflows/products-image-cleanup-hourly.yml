@@ -1,0 +1,43 @@
+name: products-image-cleanup-hourly
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  trigger-cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger cleanup endpoint
+        env:
+          CLEANUP_BASE_URL: ${{ secrets.CLEANUP_BASE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "CRON_SECRET is not configured in GitHub secrets"
+            exit 1
+          fi
+
+          BASE_URL="$CLEANUP_BASE_URL"
+          if [ -z "$BASE_URL" ]; then
+            BASE_URL="https://camiart.com"
+          fi
+
+          ENDPOINT="$BASE_URL/api/cron/products-image-cleanup"
+          echo "Calling $ENDPOINT"
+
+          HTTP_CODE=$(curl --silent --show-error --location \
+            --header "Authorization: Bearer $CRON_SECRET" \
+            --write-out "%{http_code}" \
+            --output response.json \
+            "$ENDPOINT")
+
+          cat response.json
+
+          if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 300 ]; then
+            echo "Cleanup request failed with HTTP $HTTP_CODE"
+            exit 1
+          fi
+
+          echo "Cleanup request completed with HTTP $HTTP_CODE"
