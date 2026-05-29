@@ -254,3 +254,27 @@ Incidente de webhook mitigado y verificado por CLI.
 - Alerta de fallo incorporada en workflow por Slack (pendiente solo de definir `SLACK_WEBHOOK_URL` para activar notificacion externa).
 
 Sesion cerrada con constancia de implementacion, validacion y monitoreo basico.
+
+---
+
+## PROXIMOS PASOS - PROXIMA SESION
+
+1. Stripe en produccion (bloqueante go-live):
+   - Confirmar en Stripe Dashboard que el endpoint activo es `https://camiart.com/api/webhook/stripe`.
+   - Verificar `STRIPE_WEBHOOK_SECRET` de produccion en Vercel.
+   - Ejecutar prueba E2E de pago y confirmar recepcion de `payment_intent.succeeded`.
+
+2. Catalogo real en Supabase:
+   - Cargar 3-5 productos reales con precio, stock, descripcion e imagen.
+   - Validar que `/catalog` muestra productos y que el carrito/checkout cierra flujo completo.
+
+3. Cierre de alertas ops:
+   - Crear secret `SLACK_WEBHOOK_URL` en GitHub Actions.
+   - Disparar manualmente `products-image-cleanup-hourly` y comprobar notificacion en caso de fallo controlado.
+
+4. Hardening tecnico corto:
+   - Resolver warnings residuales `no-img-element` en admin inventory.
+   - Dejar gate de lint focalizado estable para admin + checkout + legales en CI.
+
+5. Deuda de plataforma Next 16:
+   - Completar migracion `middleware` -> `proxy` y validar build sin deprecations nuevas.
