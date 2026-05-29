@@ -211,3 +211,46 @@ Sesión cerrada con smoke test aprobado. Retomamos mañana desde estos 3 puntos.
    - `public/prod-ca-2021.crt` anadido a `.gitignore` para evitar ruido local.
 
 Incidente de webhook mitigado y verificado por CLI.
+
+---
+
+## ACTUALIZACION OPERATIVA - 29 May 2026
+
+- Cron de limpieza de imagenes de productos:
+   - Vercel Hobby mantiene cron diario como fallback (`0 3 * * *`).
+   - Scheduler hourly real activo por GitHub Actions en `.github/workflows/products-image-cleanup-hourly.yml` (`0 * * * *`).
+   - Secrets sincronizados y verificados: `CRON_SECRET` + `CLEANUP_BASE_URL`.
+   - Verificacion manual completada: run `26636977406` en GitHub Actions => `success` y endpoint `/api/cron/products-image-cleanup` devolviendo `HTTP 200`.
+
+- Alerta de fallo configurada:
+   - Se anadio notificacion simple a Slack cuando falle `products-image-cleanup-hourly`.
+   - Requiere secret de Actions: `SLACK_WEBHOOK_URL`.
+   - Si no existe ese secret, el workflow deja advertencia explicita en logs.
+
+## Lista de tareas pendientes actualizada
+
+### Prioridad ALTA
+1. Stripe webhook produccion: confirmar `STRIPE_WEBHOOK_SECRET` final y test E2E completo de pago en prod.
+2. Seed de catalogo real en Supabase: cargar 3-5 productos reales con imagen.
+3. Deprecation Next.js: migrar completamente de `middleware` a `proxy` segun guia de Next 16.
+
+### Prioridad MEDIA
+4. Endurecer auth admin: evaluar migracion de token estatico a JWT con expiracion.
+5. Productos en catalogo: validar flujo compra real desde `/catalog` hasta checkout con datos reales.
+6. Lint hardening incremental: resolver warnings residuales en admin inventory (`no-img-element`) y consolidar gate CI.
+
+### Prioridad BAJA
+7. Tracking de Resend: confirmar estado final en dashboard.
+8. E2E en CI: integrar Playwright en workflow de PR.
+9. Performance/SEO: ejecutar pendientes de checkpoints 17 y 19.
+10. Rotacion de secretos operativos (admin y claves auxiliares).
+
+---
+
+## CIERRE DE SESION - 29 May 2026
+
+- Workflow hourly de cleanup operativo y verificado manualmente en GitHub Actions.
+- Secrets de operacion sincronizados (`CRON_SECRET`, `CLEANUP_BASE_URL`) y endpoint cron validado con `HTTP 200`.
+- Alerta de fallo incorporada en workflow por Slack (pendiente solo de definir `SLACK_WEBHOOK_URL` para activar notificacion externa).
+
+Sesion cerrada con constancia de implementacion, validacion y monitoreo basico.

@@ -41,3 +41,22 @@ jobs:
           fi
 
           echo "Cleanup request completed with HTTP $HTTP_CODE"
+
+      - name: Notify Slack on failure
+        if: ${{ failure() && secrets.SLACK_WEBHOOK_URL != '' }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          MESSAGE="[ALERTA] products-image-cleanup-hourly fallo en ${GITHUB_REPOSITORY} (branch: ${GITHUB_REF_NAME}). Run: ${RUN_URL}"
+          curl --silent --show-error --fail \
+            -X POST \
+            -H "Content-type: application/json" \
+            --data "{\"text\":\"${MESSAGE}\"}" \
+            "$SLACK_WEBHOOK_URL"
+
+      - name: Warn when Slack webhook is missing
+        if: ${{ failure() && secrets.SLACK_WEBHOOK_URL == '' }}
+        run: |
+          echo "Workflow failed but SLACK_WEBHOOK_URL is not configured."
+          echo "Set GitHub Actions secret SLACK_WEBHOOK_URL to enable failure alerts."
