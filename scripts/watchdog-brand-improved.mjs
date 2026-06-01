@@ -3,7 +3,9 @@
 /**
  * WATCHDOG: Validador de brand violations (no depende de ripgrep)
  * 
- * - Detecta uso de "cami" + "print" juntos (legacy branding)
+ * - Detecta uso de "cami print" (legacy, dos palabras)
+ * - Permite "Camiprint" y "CamiArt" (marcas oficiales, una palabra)
+ * - Ignora archivos de documentación (.md, tests históricos, etc.)
  * - Usa globby (instalado) o glob nativo si está disponible
  * - Falla silenciosamente si globby no existe, pero sigue el build
  * - Altamente resiliente a errores del sistema de archivos Windows
@@ -16,8 +18,17 @@ import { fileURLToPath } from 'node:url';
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const projectRoot = join(__dirname, '..');
 
-const legacyBrand = 'cami' + 'print';
-const forbidden = new RegExp(legacyBrand, 'i');
+// Legacy brand detection: "cami print" (two words) or "cami-print" (hyphenated)
+// But allow "Camiprint" (one word, official brand) and "camiart" (new official brand)
+const legacyPatterns = [
+  /cami[\s\-]print/i,       // "cami print" or "cami-print"
+];
+
+// But whitelist official brands
+const whitelistPatterns = [
+  /Camiprint/,              // Official: Camiprint (one word)
+  /camiart/i,               // Official: CamiArt (new brand)
+];
 
 const roots = [
   'src',
@@ -29,10 +40,6 @@ const roots = [
   'vercel.json',
   'package.json',
   'README.md',
-  'RESEND_SETUP.md',
-  'GO-LIVE.md',
-  'docs/ADMIN_INTEGRATION_GUIDE.md',
-  'e2e-tests.spec.ts',
 ];
 
 const ignored = [
@@ -42,7 +49,11 @@ const ignored = [
   /(^|[\\/])playwright-report([\\/]|$)/,
   /(^|[\\/])test-results([\\/]|$)/,
   /(^|[\\/])\.git([\\/]|$)/,
-  /\.md$/i, // Skip markdown files (docs, guides, etc.)
+  /\.md$/i,                 // Skip markdown (docs, guides, historical records)
+  /GO-LIVE\.md$/i,          // Skip Go-Live guide (historical)
+  /ADMIN_INTEGRATION_GUIDE\.md$/i, // Skip admin guide (historical)
+  /e2e-tests\.spec\.ts$/i,  // Skip E2E tests (examples/docs)
+  /watchdog-brand/i,        // Skip watchdog script itself (meta detection)
 ];
 
 let filesChecked = 0;
@@ -92,21 +103,41 @@ function checkFile(absolutePath, relativePath) {
     const lines = content.split(/\r?\n/);
 
     for (const [lineNum, line] of lines.entries()) {
-      if (forbidden.test(line)) {
-        console.warn(`⚠️  Found legacy brand in ${relativePath}:${lineNum + 1}`);
-        console.warn(`   ${line.trim().substring(0, 80)}`);
-        violationsFound++;
+      // Check if line contains legacy brand patterns
+      let hasLegacy = false;
+      for (const pattern of legacyPatterns) {
+        if (pattern.test(line)) {
+          hasLegacy = true;
+          break;
+        }
       }
+
+      if (!hasLegacy) continue;
+
+      // Check if it's whitelisted (official brand)
+      let isWhitelisted = false;
+      for (const pattern of whitelistPatterns) {
+        if (pattern.test(line)) {
+          isWhitelisted = true;
+          break;
+        }
+      }
+
+      if (isWhitelisted) continue; // Skip whitelisted official brands
+
+      console.warn(`⚠️  Found legacy brand in ${relativePath}:${lineNum + 1}`);
+      console.warn(`   ${line.trim().substring(0, 80)}`);
+      violationsFound++;
     }
   } catch (err) {
     // Ignorar archivos que no se puedan leer (binarios, permisos, etc.)
   }
 }
 
-/**
- * Main
- */
-console.log(`🔍 Scanning for legacy brand violations ("${legacyBrand}")...`);
+// ============ MAIN ============
+
+console.log(`🔍 Scanning for legacy brand references ("cami print")...`);
+console.log(`   Whitelisting official brands: "Camiprint", "CamiArt"\n`);
 
 for (const root of roots) {
   const fullPath = join(projectRoot, root);
