@@ -2,10 +2,10 @@ import { brandConfig } from '@/config/brand';
 import { PublicPhoneLink } from '@/app/components/PublicContactClient';
 
 const legalLinks = [
-  { label: 'Politica de Privacidad', href: '/politica-privacidad' },
-  { label: 'Politica de Cookies', href: '/politica-de-cookies' },
-  { label: 'Terminos y Condiciones', href: '/terminos-y-condiciones' },
-  { label: 'Politica de Envios', href: '/politica-de-envios' },
+  { label: 'Política de Privacidad', href: '/politica-privacidad' },
+  { label: 'Política de Cookies', href: '/politica-de-cookies' },
+  { label: 'Términos y Condiciones', href: '/terminos-y-condiciones' },
+  { label: 'Política de Envíos', href: '/politica-de-envios' },
 ];
 
 const quickLinks = [

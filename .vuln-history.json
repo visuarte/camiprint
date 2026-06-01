@@ -1,0 +1,107 @@
+[
+  {
+    "timestamp": "2026-06-01T10:12:38.635Z",
+    "total": 5,
+    "critical": 0,
+    "high": 0,
+    "moderate": 5,
+    "low": 0,
+    "packages": {
+      "@hono/node-server": {
+        "severity": "moderate",
+        "via": 1,
+        "range": "<1.19.13"
+      },
+      "@prisma/dev": {
+        "severity": "moderate",
+        "via": 1,
+        "range": "*"
+      },
+      "next": {
+        "severity": "moderate",
+        "via": 1,
+        "range": "9.3.4-canary.0 - 16.3.0-canary.5"
+      },
+      "postcss": {
+        "severity": "moderate",
+        "via": 1,
+        "range": "<8.5.10"
+      },
+      "prisma": {
+        "severity": "moderate",
+        "via": 1,
+        "range": ">=6.20.0-dev.1"
+      }
+    }
+  },
+  {
+    "timestamp": "2026-06-01T10:44:28.373Z",
+    "total": 5,
+    "critical": 0,
+    "high": 0,
+    "moderate": 5,
+    "low": 0,
+    "packages": {
+      "@hono/node-server": {
+        "severity": "moderate",
+        "via": 1,
+        "range": "<1.19.13"
+      },
+      "@prisma/dev": {
+        "severity": "moderate",
+        "via": 1,
+        "range": "*"
+      },
+      "next": {
+        "severity": "moderate",
+        "via": 1,
+        "range": "9.3.4-canary.0 - 16.3.0-canary.5"
+      },
+      "postcss": {
+        "severity": "moderate",
+        "via": 1,
+        "range": "<8.5.10"
+      },
+      "prisma": {
+        "severity": "moderate",
+        "via": 1,
+        "range": ">=6.20.0-dev.1"
+      }
+    }
+  },
+  {
+    "timestamp": "2026-06-01T10:53:58.093Z",
+    "total": 5,
+    "critical": 0,
+    "high": 0,
+    "moderate": 5,
+    "low": 0,
+    "packages": {
+      "@hono/node-server": {
+        "severity": "moderate",
+        "via": 1,
+        "range": "<1.19.13"
+      },
+      "@prisma/dev": {
+        "severity": "moderate",
+        "via": 1,
+        "range": "*"
+      },
+      "next": {
+        "severity": "moderate",
+        "via": 1,
+        "range": "9.3.4-canary.0 - 16.3.0-canary.5"
+      },
+      "postcss": {
+        "severity": "moderate",
+        "via": 1,
+        "range": "<8.5.10"
+      },
+      "prisma": {
+        "severity": "moderate",
+        "via": 1,
+        "range": ">=6.20.0-dev.1"
+      }
+    }
+  }
+]

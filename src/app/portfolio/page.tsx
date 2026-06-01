@@ -1,4 +1,6 @@
 import { brandConfig } from '@/config/brand';
+import Navigation from '../components/Navigation';
+import Footer from '../components/Footer';
 
 export const metadata = {
   title: 'Portfolio — Trabajos reales | CamiPrint',
@@ -8,7 +10,9 @@ export const metadata = {
 
 export default function Portfolio() {
   return (
-    <section className="mx-auto max-w-6xl py-12 px-4 text-cami-200">
+    <div className="flex flex-col min-h-screen">
+      <Navigation />
+      <section className="mx-auto max-w-6xl py-12 px-4 text-cami-200 flex-1">
       <h1 className="text-3xl font-bold text-white">Portfolio — Trabajos reales</h1>
       <p className="mt-4">A continuación mostramos ejemplos reales de producción, acabados y envíos. Sustituye las imágenes por fotos reales antes de publicar.</p>
 
@@ -43,10 +47,12 @@ export default function Portfolio() {
             href="#contacto"
             className="inline-flex items-center gap-3 rounded-full border border-accent-300/30 bg-metal-button px-5 py-2.5 text-sm font-semibold text-cami-100 shadow-metal transition-all hover:brightness-110"
           >
-            Solicitar presupuesto
+            Solicitar cotización
           </a>
         </div>
       </div>
-    </section>
+      </section>
+      <Footer />
+    </div>
   );
 }

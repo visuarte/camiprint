@@ -33,7 +33,7 @@ export class EmailService {
 
   constructor() {
     const apiKey = process.env.RESEND_API_KEY;
-    this.fromEmail = process.env.RESEND_FROM_EMAIL || 'noreply@camiprint.com';
+    this.fromEmail = process.env.RESEND_FROM_EMAIL || 'noreply@camiart.com';
     this.fromName = process.env.RESEND_FROM_NAME || 'Camiprint';
 
     if (apiKey) {

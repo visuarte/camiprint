@@ -4,8 +4,8 @@ const seoTitle = `${displayName} - Camisetas Personalizadas para Empresas`;
 export const brandConfig = {
   displayName,
   companyExample: `${displayName} SL`,
-  siteUrl: 'https://camiprint.com',
-  supportEmail: 'hola@camiprint.com',
+  siteUrl: 'https://camiart.com',
+  supportEmail: 'hola@camiart.com',
   phoneDisplay: '+34 900 111 222',
   phoneHref: 'tel:+34900111222',
   postalAddress: 'Sevilla, España',

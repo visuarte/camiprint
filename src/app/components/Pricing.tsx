@@ -1,3 +1,5 @@
+'use client';
+
 interface PricingTier {
   id: string;
   quantity: string;
@@ -47,6 +49,17 @@ const pricingTiers: PricingTier[] = [
 ];
 
 const Pricing = () => {
+  const handleQuoteRequest = (tierId: string) => {
+    // Scroll a la sección de contacto con el parámetro de cantidad
+    const contactSection = document.getElementById('contacto');
+    if (contactSection) {
+      // Actualizar URL con el query parameter
+      window.history.replaceState(null, '', `?quantity=${tierId}`);
+      // Scroll suave a la sección
+      contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <section
       id="ofertas"
@@ -119,8 +132,8 @@ const Pricing = () => {
                   ))}
                 </ul>
 
-                <a
-                  href={`#contacto?quantity=${tier.id}`}
+                <button
+                  onClick={() => handleQuoteRequest(tier.id)}
                   className={`block w-full rounded-lg border px-4 py-3 text-center font-semibold transition-all hover:brightness-110 ${
                     tier.isPopular
                       ? 'border-white/25 bg-metal-button text-cami-100 shadow-glow'
@@ -128,7 +141,7 @@ const Pricing = () => {
                   }`}
                 >
                   Pedir presupuesto →
-                </a>
+                </button>
               </div>
             </article>
             );

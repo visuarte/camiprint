@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
       to,
       subject,
       html,
-      replyTo: process.env.RESEND_FROM_EMAIL || 'support@camiprint.com',
+      replyTo: process.env.RESEND_FROM_EMAIL || 'support@camiart.com',
     });
 
     return NextResponse.json({ ok: true, result });

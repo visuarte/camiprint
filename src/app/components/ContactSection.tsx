@@ -410,7 +410,7 @@ const ContactSection = () => {
         >
           <div className="grid grid-cols-1 gap-4">
             <p className="rounded-lg border border-accent-400/30 bg-accent-400/10 px-3 py-2 text-xs font-medium text-cami-100">
-              Cuanto mejor nos describas el pedido, mas afinada saldra la primera propuesta comercial.
+              Cuanto mejor nos describas el pedido, más afinada saldrá la primera propuesta comercial.
             </p>
 
             <div>
