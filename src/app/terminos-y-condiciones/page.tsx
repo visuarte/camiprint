@@ -2,7 +2,7 @@ import { brandConfig } from '@/config/brand';
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Términos y Condiciones — CamiPrint',
+  title: 'Términos y Condiciones — CamiArt',
   description: 'Términos y condiciones de uso y contratación de CamiPrint.',
   alternates: { canonical: `${brandConfig.siteUrl}/terminos-y-condiciones` },
 };

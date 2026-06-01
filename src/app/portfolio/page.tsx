@@ -3,7 +3,7 @@ import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 
 export const metadata = {
-  title: 'Portfolio — Trabajos reales | CamiPrint',
+  title: 'Portfolio — Trabajos reales | CamiArt',
   description: 'Portfolio de trabajos reales: fotos de producción, acabados y entregas reales para empresas.',
   alternates: { canonical: `${brandConfig.siteUrl}/portfolio` },
 };
@@ -47,7 +47,7 @@ export default function Portfolio() {
             href="#contacto"
             className="inline-flex items-center gap-3 rounded-full border border-accent-300/30 bg-metal-button px-5 py-2.5 text-sm font-semibold text-cami-100 shadow-metal transition-all hover:brightness-110"
           >
-            Solicitar cotización
+            Pedir presupuesto
           </a>
         </div>
       </div>

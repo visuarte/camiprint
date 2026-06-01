@@ -34,7 +34,7 @@ export class EmailService {
   constructor() {
     const apiKey = process.env.RESEND_API_KEY;
     this.fromEmail = process.env.RESEND_FROM_EMAIL || 'noreply@camiart.com';
-    this.fromName = process.env.RESEND_FROM_NAME || 'Camiprint';
+    this.fromName = process.env.RESEND_FROM_NAME || 'CamiArt';
 
     if (apiKey) {
       this.resend = new Resend(apiKey);
@@ -223,7 +223,7 @@ export class EmailService {
 
       const result = await this.sendEmail({
         to: recipient,
-        subject: `Nueva cotizacion: ${quoteData.companyName} (${quoteData.quantity})`,
+        subject: `Nueva cotización: ${quoteData.companyName} (${quoteData.quantity})`,
         html,
         replyTo: quoteData.email,
       });

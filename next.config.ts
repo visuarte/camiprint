@@ -25,6 +25,29 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // Redirecciones de dominio camiprint.com → camiart.com (301 permanentes para SEO)
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'camiprint.com',
+          },
+        ],
+        destination: 'https://camiart.com/:path*',
+        permanent: true,
+      },
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'www.camiprint.com',
+          },
+        ],
+        destination: 'https://camiart.com/:path*',
+        permanent: true,
+      },
       // Rutas legacy → actuales (permanentes, se ejecutan en el borde)
       {
         source: '/legacy-catalog',

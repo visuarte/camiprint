@@ -2,7 +2,7 @@ import { brandConfig } from '@/config/brand';
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Política de Envíos — CamiPrint',
+  title: 'Política de Envíos — CamiArt',
   description: 'Información sobre plazos y condiciones de envío para pedidos de camisetas y merchandising.',
   alternates: { canonical: `${brandConfig.siteUrl}/politica-de-envios` },
 };
