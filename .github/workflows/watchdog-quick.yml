@@ -1,0 +1,28 @@
+name: Quick Watchdog Check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'scripts/**'
+      - 'package.json'
+      - '.github/workflows/watchdog-quick.yml'
+
+jobs:
+  watchdog:
+    name: Fast Brand Watchdog
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+      
+      - run: npm install --legacy-peer-deps
+      
+      - name: 🔍 Brand Watchdog
+        run: npm run watchdog:brand
