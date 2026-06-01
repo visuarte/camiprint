@@ -181,3 +181,24 @@ model WorkQueueItem {
   @@index([department])
   @@index([status])
 }
+
+// Quote model - Customer quote requests
+model Quote {
+  id           String   @id @default(cuid())
+  name         String   @db.VarChar(255)
+  email        String   @db.VarChar(255)
+  phone        String   @db.VarChar(20)
+  companyName  String   @db.VarChar(255)
+  quantity     String   @db.Text // e.g., "50 camisetas", "1000 unidades"
+  message      String?  @db.Text // Optional message from client
+  status       String   @default("received") // received, reviewed, quoted, rejected
+  responded    Boolean  @default(false)
+  respondedAt  DateTime?
+  responseNote String?  @db.Text
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+}
