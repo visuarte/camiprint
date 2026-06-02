@@ -1,0 +1,20 @@
+userName: ${BROWSERSTACK_USERNAME}
+accessKey: ${BROWSERSTACK_ACCESS_KEY}
+framework: playwright
+
+projectName: Camiart Web
+buildName: Camiart Optional Safari Smoke
+buildIdentifier: ${GITHUB_RUN_ID}
+
+platforms:
+  - os: OS X
+    osVersion: Sonoma
+    browserName: Safari
+    browserVersion: latest
+
+browserstackLocal: true
+debug: true
+networkLogs: true
+consoleLogs: errors
+
+parallelsPerPlatform: 1

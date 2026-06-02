@@ -1,7 +1,6 @@
 'use client';
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
 
 interface ContactFormData {
   name: string;
@@ -93,6 +92,48 @@ const resolvePrefilledQuantity = (): string | null => {
   return null;
 };
 
+const CONTACT_WATCHDOG_KEY = 'contact-watchdog-reported';
+
+const hasContactWatchdogReported = (): boolean => {
+  try {
+    return typeof window !== 'undefined' && window.sessionStorage.getItem(CONTACT_WATCHDOG_KEY) === '1';
+  } catch {
+    return false;
+  }
+};
+
+const markContactWatchdogReported = () => {
+  try {
+    if (typeof window === 'undefined') return;
+    window.sessionStorage.setItem(CONTACT_WATCHDOG_KEY, '1');
+  } catch {
+    // noop
+  }
+};
+
+const reportContactVisibilityIssue = async (payload: Record<string, unknown>) => {
+  if (typeof window === 'undefined') return;
+
+  try {
+    const body = JSON.stringify(payload);
+
+    if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
+      const blob = new Blob([body], { type: 'application/json' });
+      navigator.sendBeacon('/api/v1/watchdog/contact-form', blob);
+      return;
+    }
+
+    await fetch('/api/v1/watchdog/contact-form', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body,
+      keepalive: true,
+    });
+  } catch {
+    // We never block UX for monitoring failures.
+  }
+};
+
 const ContactSection = () => {
   const isDevelopment = process.env.NODE_ENV === 'development';
   const isApiEnabled = process.env.NEXT_PUBLIC_QUOTES_API_ENABLED !== 'false';
@@ -110,6 +151,7 @@ const ContactSection = () => {
   });
   const [prefilledQuantity, setPrefilledQuantity] = useState<string | null>(null);
   const successMessageRef = useRef<HTMLParagraphElement>(null);
+  const formContainerRef = useRef<HTMLFormElement>(null);
 
   const formData = state.formData;
   const errors = state.errors;
@@ -166,6 +208,55 @@ const ContactSection = () => {
       window.removeEventListener('hashchange', syncPrefilledQuantity);
       window.removeEventListener('popstate', syncPrefilledQuantity);
     };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const timer = window.setTimeout(() => {
+      const formElement = formContainerRef.current;
+      const alreadyReported = hasContactWatchdogReported();
+      if (alreadyReported) return;
+
+      if (!formElement) {
+        void reportContactVisibilityIssue({
+          type: 'contact_form_missing',
+          path: window.location.pathname,
+          userAgent: navigator.userAgent,
+        });
+        markContactWatchdogReported();
+        return;
+      }
+
+      const style = window.getComputedStyle(formElement);
+      const rect = formElement.getBoundingClientRect();
+      const isVisible =
+        style.display !== 'none' &&
+        style.visibility !== 'hidden' &&
+        Number.parseFloat(style.opacity || '1') > 0.02 &&
+        rect.width > 200 &&
+        rect.height > 180;
+
+      if (isVisible) return;
+
+      const payload = {
+        type: 'contact_form_invisible',
+        path: window.location.pathname,
+        hash: window.location.hash,
+        userAgent: navigator.userAgent,
+        width: Math.round(rect.width),
+        height: Math.round(rect.height),
+        display: style.display,
+        visibility: style.visibility,
+        opacity: style.opacity,
+      };
+
+      console.error('[watchdog] contact form visibility issue', payload);
+      void reportContactVisibilityIssue(payload);
+      markContactWatchdogReported();
+    }, 1800);
+
+    return () => window.clearTimeout(timer);
   }, []);
 
   const inputErrorClass = (field: keyof ContactFormData) =>
@@ -379,14 +470,9 @@ const ContactSection = () => {
   };
 
   return (
-    <section id="contacto" data-reveal data-reveal-delay="130" className="scroll-mt-20 bg-gradient-to-b from-cami-900 to-cami-950 px-4 py-16 md:px-6 md:py-24">
+    <section id="contacto" className="scroll-mt-20 bg-gradient-to-b from-cami-900 to-cami-950 px-4 py-16 md:px-6 md:py-24">
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-12">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.45, ease: 'easeOut' }}
-        >
+        <div>
           <span className="section-eyebrow">Equipo comercial</span>
           <h2 className="text-3xl font-bold text-white md:text-4xl lg:text-5xl">Hablemos de tu pedido</h2>
           <p className="mt-4 max-w-xl text-base text-cami-300 md:text-lg">
@@ -398,14 +484,11 @@ const ContactSection = () => {
             <p className="mt-1 text-4xl font-bold text-white">15 min</p>
             <p className="mt-4 text-sm text-cami-300">Soporte para uniformidad, activaciones de marca, reposicion de stock y eventos corporativos.</p>
           </div>
-        </motion.div>
+        </div>
 
-        <motion.form
+        <form
+          ref={formContainerRef}
           onSubmit={handleSubmit}
-          initial={{ opacity: 0, x: 20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.45, ease: 'easeOut' }}
           className="rounded-2xl border border-white/12 bg-gradient-to-b from-cami-800 to-cami-900 p-6 shadow-glow md:p-8"
         >
           <div className="grid grid-cols-1 gap-4">
@@ -549,7 +632,7 @@ const ContactSection = () => {
               </div>
             )}
           </div>
-        </motion.form>
+        </form>
       </div>
     </section>
   );
