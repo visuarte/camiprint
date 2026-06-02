@@ -1,4 +1,4 @@
-import type { QuoteRequestInput } from '@/server/quotes/types';
+import type { QuoteRequestInput, QuoteStatus } from '@/server/quotes/types';
 import type { QuoteRepository } from '@/server/quotes/contracts';
 import { createQuoteRepository } from '@/server/quotes/repository.factory';
 import { incrementCircuitOpenCount } from '@/server/observability/metrics';
@@ -8,7 +8,7 @@ import { appendQuoteCommunicationEvent } from '@/server/quotes/communication-tim
 
 export interface CreateQuoteResult {
   id: string;
-  status: 'received';
+  status: QuoteStatus;
   createdAt: string;
 }
 

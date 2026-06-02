@@ -24,7 +24,7 @@ describe('GET /api/v1/quotes/:id/status', () => {
       headers: { 'x-request-id': 'req_status_ok' },
     });
 
-    const response = await GET(request, { params: { id: 'q_123' } });
+    const response = await GET(request, { params: Promise.resolve({ id: 'q_123' }) });
     const body = (await response.json()) as {
       ok: boolean;
       data: { quoteId: string; status: string };
@@ -45,7 +45,7 @@ describe('GET /api/v1/quotes/:id/status', () => {
       headers: { 'x-request-id': 'req_status_missing' },
     });
 
-    const response = await GET(request, { params: { id: 'q_missing' } });
+    const response = await GET(request, { params: Promise.resolve({ id: 'q_missing' }) });
     const body = (await response.json()) as {
       ok: boolean;
       error: { code: string };

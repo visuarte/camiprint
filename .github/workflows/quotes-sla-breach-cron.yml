@@ -1,0 +1,46 @@
+name: quotes-sla-breach-cron
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  run-sla-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate required secrets
+        env:
+          PROD_URL: https://camiart.com
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$PROD_URL" ]; then
+            echo "Missing PROD_URL secret"
+            exit 1
+          fi
+
+          if [ -z "$CRON_SECRET" ]; then
+            echo "Missing CRON_SECRET secret"
+            exit 1
+          fi
+
+      - name: Trigger SLA breach endpoint
+        env:
+          PROD_URL: https://camiart.com
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          set -euo pipefail
+
+          URL="${PROD_URL%/}/api/cron/quotes-sla-breach"
+
+          echo "Calling $URL"
+          HTTP_CODE=$(curl -sS -o response.json -w "%{http_code}" \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            "$URL")
+
+          cat response.json
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "Unexpected status code: $HTTP_CODE"
+            exit 1
+          fi

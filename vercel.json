@@ -37,7 +37,7 @@
     },
     {
       "path": "/api/cron/quotes-sla-breach",
-      "schedule": "*/15 * * * *"
+      "schedule": "0 4 * * *"
     }
   ]
 }

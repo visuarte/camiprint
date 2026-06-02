@@ -13,6 +13,7 @@ const REQUIRED_BY_ENV = {
     'STRIPE_SECRET_KEY',
     'STRIPE_WEBHOOK_SECRET',
     'RESEND_API_KEY',
+    'CRON_SECRET',
   ],
   preview: [
     'STRIPE_SECRET_KEY',
@@ -38,3 +39,7 @@ if (missing.length > 0) {
 
 const envLabel = isProductionBuild ? 'production' : (vercelEnv || 'preview/dev');
 console.log(`✅ Todas las variables críticas para ${envLabel} están presentes — continuando build...`);
+
+if (isProductionBuild && !process.env.QUOTE_FIRST_RESPONSE_SLA_MINUTES?.trim()) {
+  console.warn('⚠️ QUOTE_FIRST_RESPONSE_SLA_MINUTES no está definida; se usará el valor por defecto de 60 minutos.');
+}

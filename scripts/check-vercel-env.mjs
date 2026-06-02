@@ -18,6 +18,7 @@ const REQUIRED = [
   'STRIPE_SECRET_KEY',
   'STRIPE_WEBHOOK_SECRET',
   'RESEND_API_KEY',
+  'CRON_SECRET',
 ];
 
 const token     = process.env.VERCEL_TOKEN;

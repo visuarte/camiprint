@@ -2,19 +2,17 @@ import { jsonError, jsonSuccess } from '@/server/http/errors';
 import { getOrCreateRequestId } from '@/server/http/request-id';
 import { getQuoteStatusById } from '@/server/quotes/status.service';
 
-const normalizeQuoteId = async (
-  context?: { params?: { id?: string } | Promise<{ id?: string }> }
-): Promise<string | null> => {
-  const rawParams = context?.params;
-  const resolved = rawParams instanceof Promise ? await rawParams : rawParams;
+type QuoteStatusRouteContext = {
+  params: Promise<{ id?: string }>;
+};
+
+const normalizeQuoteId = async (context: QuoteStatusRouteContext): Promise<string | null> => {
+  const resolved = await context.params;
   const id = resolved?.id?.trim();
   return id && id.length > 0 ? id : null;
 };
 
-export async function GET(
-  request: Request,
-  context?: { params?: { id?: string } | Promise<{ id?: string }> }
-) {
+export async function GET(request: Request, context: QuoteStatusRouteContext) {
   const requestId = getOrCreateRequestId(request);
   const quoteId = await normalizeQuoteId(context);
 
