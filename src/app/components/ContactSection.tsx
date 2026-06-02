@@ -358,7 +358,7 @@ const ContactSection = () => {
           errors: {},
           touched: {},
           submitError: null,
-          supportRequestId: null,
+          supportRequestId: requestId,
           retryCount: 0,
           isServerError: false,
           isSupportIdCopied: false,
@@ -597,9 +597,16 @@ const ContactSection = () => {
             </button>
 
             {isSuccess && (
-              <p ref={successMessageRef} className="text-sm font-medium text-emerald-300">
-                Solicitud enviada. Te contactaremos en breve.
-              </p>
+              <div ref={successMessageRef} className="space-y-1">
+                <p className="text-sm font-medium text-emerald-300">
+                  Solicitud enviada. Te contactaremos en breve.
+                </p>
+                {state.supportRequestId && (
+                  <p className="text-xs text-cami-300">
+                    Codigo de seguimiento: {state.supportRequestId}
+                  </p>
+                )}
+              </div>
             )}
             {submitError && (
               <div>

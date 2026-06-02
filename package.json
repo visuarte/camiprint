@@ -25,6 +25,7 @@
     "test:all": "node node_modules/vitest/vitest.mjs run",
     "test:coverage": "node node_modules/vitest/vitest.mjs run --coverage",
     "test:e2e:playwright": "playwright test",
+    "test:e2e:communication": "playwright test tests/e2e/quote-flow.spec.ts",
     "test:e2e:mobile-smoke": "playwright test --project=iphone-13 tests/e2e/contact-form-mobile.smoke.spec.ts tests/e2e/watchdog-contact.integration.spec.ts",
     "test:e2e:mobile-smoke:pixel": "playwright test --project=pixel-7 tests/e2e/contact-form-mobile.smoke.spec.ts tests/e2e/watchdog-contact.integration.spec.ts",
     "test:e2e:responsive-smoke": "playwright test --project=desktop-chrome --project=iphone-13 --project=pixel-7 tests/e2e/contact-form-mobile.smoke.spec.ts tests/e2e/watchdog-contact.integration.spec.ts",

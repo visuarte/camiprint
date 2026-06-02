@@ -117,7 +117,7 @@ export async function POST(request: Request) {
       return jsonError(422, requestId, 'VALIDATION_ERROR', 'Payload invalido', issues);
     }
 
-    const created = await service.createQuote(data);
+    const created = await service.createQuote(data, { requestId });
     incrementCreatedCount();
     const durationMs = recordOutcome(201);
     logRequestInfo('Quote created', {

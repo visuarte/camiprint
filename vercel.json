@@ -34,6 +34,10 @@
     {
       "path": "/api/cron/products-image-cleanup",
       "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/quotes-sla-breach",
+      "schedule": "*/15 * * * *"
     }
   ]
 }

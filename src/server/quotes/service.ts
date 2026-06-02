@@ -4,6 +4,7 @@ import { createQuoteRepository } from '@/server/quotes/repository.factory';
 import { incrementCircuitOpenCount } from '@/server/observability/metrics';
 import { logOperationalEvent } from '@/server/observability/logger';
 import { emailService } from '@/server/emails/service';
+import { appendQuoteCommunicationEvent } from '@/server/quotes/communication-timeline';
 
 export interface CreateQuoteResult {
   id: string;
@@ -24,6 +25,10 @@ interface QuotesServiceOptions {
   failureThreshold?: number;
   openWindowMs?: number;
   now?: () => number;
+}
+
+interface CreateQuoteMeta {
+  requestId?: string;
 }
 
 const DEFAULT_TIMEOUT_MS = 5_000;
@@ -158,7 +163,7 @@ export class QuotesService {
     }
   }
 
-  async createQuote(input: QuoteRequestInput): Promise<CreateQuoteResult> {
+  async createQuote(input: QuoteRequestInput, meta: CreateQuoteMeta = {}): Promise<CreateQuoteResult> {
     let persistenceError: unknown;
 
     try {
@@ -180,6 +185,27 @@ export class QuotesService {
       const emailResults = await Promise.allSettled([
         emailService.sendQuoteNotification(quoteEmailData),
         emailService.sendQuoteCustomerConfirmation(quoteEmailData),
+      ]);
+
+      await Promise.allSettled([
+        appendQuoteCommunicationEvent({
+          quoteId: record.id,
+          eventType: 'quote.received',
+          channel: 'internal',
+          status: 'sent',
+          templateKey: 'quote.received.internal',
+          message: 'Solicitud registrada correctamente.',
+          requestId: meta.requestId,
+        }),
+        appendQuoteCommunicationEvent({
+          quoteId: record.id,
+          eventType: 'comm.confirmation.customer',
+          channel: 'email',
+          status: emailResults[1]?.status === 'fulfilled' && emailResults[1].value?.success ? 'sent' : 'failed',
+          templateKey: 'quote.customer.confirmation',
+          message: 'Confirmacion enviada al cliente.',
+          requestId: meta.requestId,
+        }),
       ]);
 
       const failedEmailCount = emailResults.filter(
@@ -229,6 +255,27 @@ export class QuotesService {
     const emailResults = await Promise.allSettled([
       emailService.sendQuoteNotification(fallbackEmailData),
       emailService.sendQuoteCustomerConfirmation(fallbackEmailData),
+    ]);
+
+    await Promise.allSettled([
+      appendQuoteCommunicationEvent({
+        quoteId: fallbackQuoteId,
+        eventType: 'quote.received.fallback',
+        channel: 'internal',
+        status: 'sent',
+        templateKey: 'quote.received.fallback',
+        message: 'Solicitud aceptada por fallback sin persistencia primaria.',
+        requestId: meta.requestId,
+      }),
+      appendQuoteCommunicationEvent({
+        quoteId: fallbackQuoteId,
+        eventType: 'comm.confirmation.customer',
+        channel: 'email',
+        status: emailResults[1]?.status === 'fulfilled' && emailResults[1].value?.success ? 'sent' : 'failed',
+        templateKey: 'quote.customer.confirmation',
+        message: 'Intento de confirmacion al cliente en fallback.',
+        requestId: meta.requestId,
+      }),
     ]);
 
     const sentAtLeastOneEmail = emailResults.some((result) => result.status === 'fulfilled' && result.value?.success === true);
