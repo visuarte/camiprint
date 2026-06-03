@@ -100,10 +100,12 @@ export default function TemplateNuevoPage() {
     <main className={`${manrope.className} min-h-screen overflow-x-hidden bg-[#131313] text-[#e2e2e2]`}>
       <header className="fixed left-0 right-0 top-0 z-50 border-b border-[#ff4f00]/35 bg-[#131313]/92 shadow-[0_6px_26px_rgba(255,79,0,0.18)] backdrop-blur-xl">
         <nav className="mx-auto flex h-20 w-full max-w-[1440px] items-center justify-between px-5 md:px-16">
-          <a href="#inicio" className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-3xl text-[#ff4f00]" style={{ fontVariationSettings: "'FILL' 1" }}>
-              precision_manufacturing
-            </span>
+          <a href="#inicio" className="flex items-center gap-3">
+            <img
+              src="/textures/camiart-logo.png"
+              alt="CamiArt Logo"
+              className="h-10 w-10 object-contain"
+            />
             <span className={`${montserrat.className} text-xl font-extrabold tracking-tight text-[#ff4f00]`}>CAMIART</span>
           </a>
 
