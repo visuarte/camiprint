@@ -14,3 +14,9 @@
 
 - [ ] Revisar en 24h el panel de Stripe para confirmar que no se reabren fallos por reintentos historicos.
 
+## Template 3 - mapeo 3D publicado
+
+- [x] Publicar online la version inicial de `template-3` con mapeo de imagen sobre el modelo 3D.
+- [ ] Arreglar el entorno local antes de seguir iterando: la instalacion de `react`, `react-dom` y `next` quedo incompleta y `npm run dev` no arranca de forma fiable.
+- [ ] Revisar y limpiar los procesos `node` colgados / caché npm si vuelve a fallar la instalacion local.
+
