@@ -25,6 +25,11 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      {
+        source: '/',
+        destination: '/template-2',
+        permanent: false,
+      },
       // Redirecciones de dominio camiprint.com → camiart.com (301 permanentes para SEO)
       {
         source: '/:path*',

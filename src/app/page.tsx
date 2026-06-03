@@ -132,8 +132,11 @@ const faqSchema = {
   })),
 };
 
+import { redirect } from 'next/navigation';
+
 export default function Home() {
-  return (
+  redirect('/template-2');
+}
     <>
       <script
         type="application/ld+json"
