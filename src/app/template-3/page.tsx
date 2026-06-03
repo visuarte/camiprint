@@ -128,9 +128,9 @@ const Template3Page = () => {
     if (!runtime || !camera || !shirtMesh) return;
 
     const THREE = runtime.THREE;
-    let rayPosition: any;
-    let descriptionText: string;
-    let cameraPos = [0, 1.1, 5.2];
+    let rayPosition = new THREE.Vector2(0, 0.15);
+    let descriptionText: string = 'Posición personalizada';
+    let cameraPos: [number, number, number] = [0, 1.1, 5.2];
 
     if (zone === 'chest-large') {
       rayPosition = new THREE.Vector2(0, 0.15);
