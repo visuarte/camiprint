@@ -1,9 +1,9 @@
 {
-  "name": "Camiprint",
-  "short_name": "Camiprint",
+  "name": "CamiArt",
+  "short_name": "CamiArt",
   "description": "Camisetas personalizadas para empresas con diseno gratuito y entrega rapida.",
   "start_url": "/",
-  "display": "standalone",
+  "display": "browser",
   "background_color": "#0f172a",
   "theme_color": "#0f172a",
   "icons": [

@@ -1,16 +1,12 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { brandConfig } from '@/config/brand';
 
 const MOBILE_HEADER_HEIGHT = 73;
 
 const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [headerHeight, setHeaderHeight] = useState(MOBILE_HEADER_HEIGHT);
-  const headerRef = useRef<HTMLElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   const navigationLinks = [
     { href: '#inicio', label: 'Inicio' },
@@ -22,18 +18,8 @@ const Navigation = () => {
     { href: '#contacto', label: 'Contacto' },
   ];
 
-  // Cerrar menú al hacer click fuera
+  // Cerrar menú con tecla Escape.
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-      const target = event.target as Node;
-      const clickedInsideMenu = menuRef.current?.contains(target);
-      const clickedMenuButton = menuButtonRef.current?.contains(target);
-
-      if (!clickedInsideMenu && !clickedMenuButton) {
-        setIsMobileMenuOpen(false);
-      }
-    };
-
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setIsMobileMenuOpen(false);
@@ -41,30 +27,12 @@ const Navigation = () => {
     };
 
     if (isMobileMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('touchstart', handleClickOutside);
       document.addEventListener('keydown', handleEscape);
       return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-        document.removeEventListener('touchstart', handleClickOutside);
         document.removeEventListener('keydown', handleEscape);
       };
     }
   }, [isMobileMenuOpen]);
-
-  useEffect(() => {
-    const syncHeaderHeight = () => {
-      const nextHeight = headerRef.current?.offsetHeight ?? MOBILE_HEADER_HEIGHT;
-      setHeaderHeight(nextHeight);
-    };
-
-    syncHeaderHeight();
-    window.addEventListener('resize', syncHeaderHeight);
-
-    return () => {
-      window.removeEventListener('resize', syncHeaderHeight);
-    };
-  }, []);
 
   // Evitar scroll de fondo y cerrar menú al pasar a desktop.
   useEffect(() => {
@@ -111,7 +79,7 @@ const Navigation = () => {
   };
 
   return (
-    <header ref={headerRef} className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-cami-950/75 shadow-[0_14px_48px_rgba(0,0,0,0.3)] backdrop-blur-xl">
+    <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-cami-950/75 shadow-[0_14px_48px_rgba(0,0,0,0.3)] backdrop-blur-xl">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent-300/70 to-transparent" aria-hidden="true" />
       <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
         {/* Logo */}
@@ -149,7 +117,6 @@ const Navigation = () => {
 
         {/* Mobile Menu Button */}
         <button
-          ref={menuButtonRef}
           type="button"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="relative z-[60] rounded-2xl border border-white/15 bg-white/5 p-2 text-cami-100 transition-colors hover:bg-white/10 lg:hidden"
@@ -185,23 +152,27 @@ const Navigation = () => {
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-x-0 bottom-0 z-40 lg:hidden"
-          style={{ top: `${headerHeight}px` }}
+          className="fixed inset-0 z-40 bg-black/55 backdrop-blur-[1px] lg:hidden"
         >
           <button
             type="button"
-            className="absolute inset-0 bg-black/55 backdrop-blur-[1px]"
+            className="absolute inset-0"
             onClick={handleLinkClick}
             aria-label="Cerrar menú móvil"
           />
 
           <div
             id="mobile-main-menu"
-            ref={menuRef}
-            className="mobile-nav-panel animate-slideDown relative z-10 w-full border-b border-white/12 bg-cami-950/96 shadow-glow md:mx-auto md:mt-3 md:max-w-md md:rounded-2xl md:border"
-            style={{ '--mobile-header-height': `${headerHeight}px` } as React.CSSProperties}
+            className="mobile-nav-panel animate-slideDown relative z-10 mx-auto mt-[73px] w-full border-y border-white/12 bg-cami-950/96 shadow-glow md:mt-[73px] md:max-w-md md:rounded-2xl md:border"
           >
             <div className="space-y-3 px-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+              <button
+                type="button"
+                onClick={handleLinkClick}
+                className="touch-target mb-1 flex w-full items-center justify-center rounded-2xl border border-white/20 bg-white/[0.04] px-4 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-cami-100 transition-all hover:bg-white/12"
+              >
+                Cerrar
+              </button>
               {navigationLinks.map((link) => (
                 <a
                   key={link.href}
