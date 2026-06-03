@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { PointerEvent, useEffect, useRef, useState } from 'react';
 import Script from 'next/script';
 
 const MODEL_SRC = '/models/camiseta-camiart.glb';
@@ -41,6 +41,11 @@ const buildFabricTexture = async (modelViewer: any) => {
 
 const Template3Page = () => {
   const modelRef = useRef<any>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [decalPosition, setDecalPosition] = useState({ x: 50, y: 39 });
+  const [decalScale, setDecalScale] = useState(0.42);
+  const [decalOpacity, setDecalOpacity] = useState(0.92);
+  const dragStateRef = useRef<{ offsetX: number; offsetY: number } | null>(null);
 
   useEffect(() => {
     const modelViewer = modelRef.current;
@@ -88,6 +93,68 @@ const Template3Page = () => {
     };
   }, []);
 
+  const updateDecalFromPointer = (event: PointerEvent<HTMLDivElement>) => {
+    const stage = stageRef.current;
+    if (!stage) {
+      return;
+    }
+
+    const rect = stage.getBoundingClientRect();
+    const nextX = ((event.clientX - rect.left) / rect.width) * 100;
+    const nextY = ((event.clientY - rect.top) / rect.height) * 100;
+
+    setDecalPosition({
+      x: Math.min(80, Math.max(20, nextX)),
+      y: Math.min(62, Math.max(18, nextY)),
+    });
+  };
+
+  const handleDecalPointerDown = (event: PointerEvent<HTMLButtonElement>) => {
+    const stage = stageRef.current;
+    if (!stage) {
+      return;
+    }
+
+    const rect = stage.getBoundingClientRect();
+    dragStateRef.current = {
+      offsetX: event.clientX - rect.left - (decalPosition.x / 100) * rect.width,
+      offsetY: event.clientY - rect.top - (decalPosition.y / 100) * rect.height,
+    };
+
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handleDecalPointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    if (!dragStateRef.current) {
+      return;
+    }
+
+    const stage = stageRef.current;
+    if (!stage) {
+      return;
+    }
+
+    const rect = stage.getBoundingClientRect();
+    const nextX = ((event.clientX - rect.left - dragStateRef.current.offsetX) / rect.width) * 100;
+    const nextY = ((event.clientY - rect.top - dragStateRef.current.offsetY) / rect.height) * 100;
+
+    setDecalPosition({
+      x: Math.min(82, Math.max(18, nextX)),
+      y: Math.min(68, Math.max(16, nextY)),
+    });
+  };
+
+  const handleDecalPointerUp = (event: PointerEvent<HTMLDivElement>) => {
+    dragStateRef.current = null;
+    if ('releasePointerCapture' in event.currentTarget) {
+      try {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      } catch {
+        // noop
+      }
+    }
+  };
+
   return (
     <main className="min-h-screen bg-[#0c0e11] px-4 py-10 text-white md:px-8">
       <Script
@@ -99,16 +166,54 @@ const Template3Page = () => {
       <section className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-8 md:grid-cols-2">
         <div className="rounded-3xl border border-orange-400/20 bg-gradient-to-b from-orange-500/10 to-transparent p-6 md:p-8">
           <p className="text-xs uppercase tracking-[0.2em] text-orange-300">Template 3 · Prueba de mapeo</p>
-          <h1 className="mt-3 text-3xl font-semibold md:text-4xl">Camiseta 3D con imagen aplicada</h1>
+          <h1 className="mt-3 text-3xl font-semibold md:text-4xl">Editor de estampado sobre camiseta 3D</h1>
           <p className="mt-4 text-sm leading-7 text-orange-100/85 md:text-base">
-            Mapeo activo sobre el GLB anterior usando una textura compuesta estilo mockup: base negra + logo CamiArt.
+            Arrastra el logo sobre el pecho y ajusta su tamaño para simular una serigrafia o estampado frontal.
           </p>
           <p className="mt-3 text-sm leading-7 text-white/70">
-            Si te convence, el siguiente paso es usar la foto exacta como textura final refinando UVs por zona frontal.
+            Esto es un editor visual rapido: no tapa la prenda, pero te deja previsualizar el logo donde iria estampado.
           </p>
+
+          <div className="mt-6 grid grid-cols-1 gap-4 rounded-2xl border border-white/10 bg-[#11141a] p-4">
+            <label className="text-xs uppercase tracking-[0.16em] text-orange-200">
+              Tamaño del logo
+              <input
+                type="range"
+                min="0.22"
+                max="0.7"
+                step="0.01"
+                value={decalScale}
+                onChange={(event) => setDecalScale(Number(event.target.value))}
+                className="mt-3 w-full accent-orange-400"
+              />
+            </label>
+
+            <label className="text-xs uppercase tracking-[0.16em] text-orange-200">
+              Opacidad del estampado
+              <input
+                type="range"
+                min="0.35"
+                max="1"
+                step="0.01"
+                value={decalOpacity}
+                onChange={(event) => setDecalOpacity(Number(event.target.value))}
+                className="mt-3 w-full accent-orange-400"
+              />
+            </label>
+
+            <p className="text-[0.72rem] leading-6 text-white/60">
+              Tip: toca y arrastra el logo en la vista para colocarlo justo en el pecho.
+            </p>
+          </div>
         </div>
 
-        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-4 md:p-6">
+        <div
+          ref={stageRef}
+          className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-4 md:p-6"
+          onPointerMove={handleDecalPointerMove}
+          onPointerUp={handleDecalPointerUp}
+          onPointerLeave={handleDecalPointerUp}
+        >
           <model-viewer
             ref={modelRef}
             src={MODEL_SRC}
@@ -125,16 +230,30 @@ const Template3Page = () => {
             style={{ ['--poster-color' as string]: 'transparent' }}
           />
 
-          <div className="pointer-events-none absolute left-1/2 top-6 z-20 w-[78%] max-w-[360px] -translate-x-1/2 rounded-[1.75rem] border border-orange-400/30 bg-[#0c0e11]/86 p-3 shadow-[0_24px_60px_rgba(0,0,0,0.45)] backdrop-blur-md md:left-auto md:right-6 md:top-6 md:w-[320px] md:translate-x-0">
-            <p className="text-[0.7rem] uppercase tracking-[0.24em] text-orange-300">Imagen encima del 3D</p>
+          <button
+            type="button"
+            aria-label="Logo arrastrable sobre la camiseta"
+            title="Arrastra para recolocar el estampado"
+            onPointerDown={handleDecalPointerDown}
+            className="absolute z-20 cursor-grab active:cursor-grabbing"
+            style={{
+              left: `${decalPosition.x}%`,
+              top: `${decalPosition.y}%`,
+              width: `${decalScale * 42}%`,
+              opacity: decalOpacity,
+              transform: 'translate(-50%, -50%)',
+            }}
+          >
             <img
               src="/textures/camiart-logo.png"
-              alt="Logo CamiArt superpuesto sobre el modelo 3D"
-              className="mt-3 w-full rounded-2xl bg-white/5 p-4"
+              alt="Logo CamiArt para estampado sobre la camiseta"
+              className="w-full select-none rounded-xl bg-transparent drop-shadow-[0_12px_18px_rgba(0,0,0,0.35)]"
+              draggable={false}
             />
-            <p className="mt-2 text-xs leading-6 text-white/70">
-              Esta capa queda por encima del modelo para que veas la imagen visible sobre la camiseta 3D.
-            </p>
+          </button>
+
+          <div className="pointer-events-none absolute inset-x-4 bottom-4 z-10 rounded-2xl border border-white/10 bg-[#0c0e11]/72 px-4 py-3 text-xs text-white/75 backdrop-blur-md md:inset-x-6">
+            <span className="text-orange-300">Editor activo:</span> el logo queda posicionado como estampado sobre el pecho y se puede mover sin interferir con la prenda.
           </div>
         </div>
       </section>
