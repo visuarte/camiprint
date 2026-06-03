@@ -135,17 +135,25 @@ const Template3Page = () => {
     };
 
     const initialize = async () => {
-      // Load Three.js modules as global scripts (no webpack processing)
-      await loadScript('https://cdn.jsdelivr.net/npm/three@0.178.0/build/three.min.js');
-      await loadScript('https://cdn.jsdelivr.net/npm/three@0.178.0/examples/jsm/loaders/GLTFLoader.js');
-      await loadScript('https://cdn.jsdelivr.net/npm/three@0.178.0/examples/jsm/controls/OrbitControls.js');
-      await loadScript('https://cdn.jsdelivr.net/npm/three@0.178.0/examples/jsm/geometries/DecalGeometry.js');
+      // Load Three.js modules via helper script (exposes to window)
+      await loadScript('/three-loader.js');
 
-      // Access from global scope (scripts expose to window)
+      // Wait for Three.js to be ready
+      let attempts = 0;
+      while (!((window as any).THREE_READY) && attempts < 100) {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        attempts++;
+      }
+
+      // Access from global scope
       const THREE = (window as any).THREE;
       const GLTFLoader = (window as any).GLTFLoader;
       const OrbitControls = (window as any).OrbitControls;
       const DecalGeometry = (window as any).DecalGeometry;
+
+      if (!THREE || !GLTFLoader || !OrbitControls || !DecalGeometry) {
+        throw new Error('Three.js modules failed to load');
+      }
 
       if (cancelled) return;
 
