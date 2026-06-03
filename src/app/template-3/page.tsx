@@ -360,6 +360,8 @@ const Template3Page = () => {
       });
 
       shirtMeshRef.current = shirtMesh;
+
+      const runtime: RuntimeState = {
         THREE,
         DecalGeometry,
         scene,
