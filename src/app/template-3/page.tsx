@@ -365,38 +365,6 @@ const Template3Page = () => {
       });
     };
 
-    const rebuildDecal = (runtime: RuntimeState, point: any, normal: any, sizeValue: number, opacityValue: number) => {
-      const { THREE, DecalGeometry, scene, targetMesh, logoTexture } = runtime;
-      if (!targetMesh || !logoTexture) return;
-
-      if (runtime.decalMesh) {
-        scene.remove(runtime.decalMesh);
-        runtime.decalMesh.geometry.dispose();
-        disposeMaterial(runtime.decalMesh.material, THREE);
-      }
-
-      const projectorDirection = normal.clone().normalize();
-      const quaternion = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), projectorDirection);
-      const orientation = new THREE.Euler().setFromQuaternion(quaternion);
-      const size = new THREE.Vector3(sizeValue, sizeValue, sizeValue);
-      const geometry = new DecalGeometry(targetMesh, point, orientation, size);
-      const material = new THREE.MeshPhongMaterial({
-        map: logoTexture,
-        transparent: true,
-        opacity: opacityValue,
-        depthTest: true,
-        depthWrite: false,
-        polygonOffset: true,
-        polygonOffsetFactor: -4,
-        polygonOffsetUnits: -4,
-        side: THREE.DoubleSide,
-      });
-
-      runtime.decalMesh = new THREE.Mesh(geometry, material);
-      scene.add(runtime.decalMesh);
-      runtime.decalState = { point: point.clone(), normal: normal.clone() };
-    };
-
     void initialize().catch((error) => {
       if (!cancelled) {
         setStatus(error instanceof Error ? error.message : 'No se pudo inicializar el editor 3D.');
