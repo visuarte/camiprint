@@ -108,7 +108,7 @@ const Template3Page = () => {
           </p>
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-4 md:p-6">
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-4 md:p-6">
           <model-viewer
             ref={modelRef}
             src={MODEL_SRC}
@@ -124,6 +124,18 @@ const Template3Page = () => {
             className="h-[520px] w-full rounded-2xl bg-transparent"
             style={{ ['--poster-color' as string]: 'transparent' }}
           />
+
+          <div className="pointer-events-none absolute left-1/2 top-6 z-20 w-[78%] max-w-[360px] -translate-x-1/2 rounded-[1.75rem] border border-orange-400/30 bg-[#0c0e11]/86 p-3 shadow-[0_24px_60px_rgba(0,0,0,0.45)] backdrop-blur-md md:left-auto md:right-6 md:top-6 md:w-[320px] md:translate-x-0">
+            <p className="text-[0.7rem] uppercase tracking-[0.24em] text-orange-300">Imagen encima del 3D</p>
+            <img
+              src="/textures/camiart-logo.png"
+              alt="Logo CamiArt superpuesto sobre el modelo 3D"
+              className="mt-3 w-full rounded-2xl bg-white/5 p-4"
+            />
+            <p className="mt-2 text-xs leading-6 text-white/70">
+              Esta capa queda por encima del modelo para que veas la imagen visible sobre la camiseta 3D.
+            </p>
+          </div>
         </div>
       </section>
     </main>
