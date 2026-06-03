@@ -47,10 +47,13 @@ const rebuildDecal = (runtime: RuntimeState, point: any, normal: any, sizeValue:
     disposeMaterial(runtime.decalMesh.material);
   }
 
+  // Scale up the decal size for better visibility
+  const scaleFactor = 1.0;
   const projectorDirection = normal.clone().normalize();
   const quaternion = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), projectorDirection);
   const orientation = new THREE.Euler().setFromQuaternion(quaternion);
-  const size = new THREE.Vector3(sizeValue, sizeValue, sizeValue);
+  const size = new THREE.Vector3(sizeValue * scaleFactor, sizeValue * scaleFactor, 2.0);
+  
   const geometry = new DecalGeometry(targetMesh, point, orientation, size);
   const material = new THREE.MeshPhongMaterial({
     map: logoTexture,
@@ -62,9 +65,11 @@ const rebuildDecal = (runtime: RuntimeState, point: any, normal: any, sizeValue:
     polygonOffsetFactor: -4,
     polygonOffsetUnits: -4,
     side: THREE.DoubleSide,
+    flatShading: false,
   });
 
   runtime.decalMesh = new THREE.Mesh(geometry, material);
+  runtime.decalMesh.position.copy(point);
   scene.add(runtime.decalMesh);
   runtime.decalState = { point: point.clone(), normal: normal.clone() };
 };
@@ -73,9 +78,9 @@ const Template3Page = () => {
   const canvasHostRef = useRef<HTMLDivElement>(null);
   const runtimeRef = useRef<RuntimeState | null>(null);
   const draggingRef = useRef(false);
-  const decalScaleRef = useRef(0.55);
+  const decalScaleRef = useRef(0.65);
   const decalOpacityRef = useRef(0.95);
-  const [decalScale, setDecalScale] = useState(0.55);
+  const [decalScale, setDecalScale] = useState(0.65);
   const [decalOpacity, setDecalOpacity] = useState(0.95);
   const [status, setStatus] = useState('Cargando Three.js...');
   const [isReady, setIsReady] = useState(false);
@@ -83,17 +88,16 @@ const Template3Page = () => {
   useEffect(() => {
     decalScaleRef.current = decalScale;
     const runtime = runtimeRef.current;
-    if (runtime?.decalState) {
-      rebuildDecal(runtime, runtime.decalState.point, runtime.decalState.normal, decalScaleRef.current, decalOpacityRef.current);
+    if (runtime?.decalState && runtime?.THREE) {
+      rebuildDecal(runtime, runtime.decalState.point, runtime.decalState.normal, decalScale, decalOpacityRef.current);
     }
   }, [decalScale]);
 
   useEffect(() => {
     decalOpacityRef.current = decalOpacity;
     const runtime = runtimeRef.current;
-    if (runtime?.decalMesh?.material) {
-      runtime.decalMesh.material.opacity = decalOpacityRef.current;
-      runtime.decalMesh.material.needsUpdate = true;
+    if (runtime?.decalState && runtime?.THREE) {
+      rebuildDecal(runtime, runtime.decalState.point, runtime.decalState.normal, decalScaleRef.current, decalOpacity);
     }
   }, [decalOpacity]);
 
@@ -109,14 +113,32 @@ const Template3Page = () => {
       runtime.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       runtime.mouse.y = -(((event.clientY - rect.top) / rect.height) * 2 - 1);
       runtime.raycaster.setFromCamera(runtime.mouse, runtime.camera);
+      
+      // Raycast against all children to find intersection
       const hits = runtime.raycaster.intersectObject(runtime.targetMesh, true);
-      if (!hits.length) return;
+      if (!hits.length) {
+        console.warn('No mesh hit');
+        return;
+      }
 
       const hit = hits[0];
-      const worldNormal = hit.face?.normal
-        ? hit.face.normal.clone().transformDirection(hit.object.matrixWorld).normalize()
-        : runtime.camera.getWorldDirection(new runtime.THREE.Vector3()).negate();
+      
+      // Ensure we have a valid normal
+      let worldNormal;
+      if (hit.face && hit.face.normal) {
+        worldNormal = hit.face.normal.clone();
+        // Transform to world space
+        if (hit.object.parent) {
+          worldNormal.transformDirection(hit.object.matrixWorld).normalize();
+        } else {
+          worldNormal.normalize();
+        }
+      } else {
+        // Fallback: use camera direction
+        worldNormal = runtime.camera.getWorldDirection(new runtime.THREE.Vector3()).negate();
+      }
 
+      // Place/update decal
       rebuildDecal(runtime, hit.point, worldNormal, decalScaleRef.current, decalOpacityRef.current);
       if (shouldDrag) {
         draggingRef.current = true;
@@ -299,7 +321,16 @@ const Template3Page = () => {
         return fallbackBox.getCenter(new THREE.Vector3()).add(new THREE.Vector3(0, 0.25, 0.42));
       })();
 
-      const initialNormal = camera.getWorldDirection(new THREE.Vector3()).negate();
+      let initialNormal = camera.getWorldDirection(new THREE.Vector3()).negate();
+      if (shirtMesh) {
+        const centerRay = new THREE.Vector2(0, 0);
+        runtime.raycaster.setFromCamera(centerRay, camera);
+        const centerHits = runtime.raycaster.intersectObject(shirtMesh, true);
+        if (centerHits.length && centerHits[0].face) {
+          initialNormal = centerHits[0].face.normal.clone().transformDirection(centerHits[0].object.matrixWorld).normalize();
+        }
+      }
+
       rebuildDecal(runtime, initialPoint, initialNormal, decalScaleRef.current, decalOpacityRef.current);
 
       const updateSize = () => {
@@ -419,7 +450,7 @@ const Template3Page = () => {
               <input
                 type="range"
                 min="0.18"
-                max="0.85"
+                max="0.95"
                 step="0.01"
                 value={decalScale}
                 onChange={(event) => setDecalScale(Number(event.target.value))}
