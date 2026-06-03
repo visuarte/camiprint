@@ -80,9 +80,20 @@ export default function TemplateNuevoPage() {
     return () => document.removeEventListener('keydown', onEsc);
   }, [isMenuOpen]);
 
+  useEffect(() => {
+    if (!isMenuOpen) {
+      document.body.style.overflow = '';
+      return;
+    }
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMenuOpen]);
+
   return (
     <main className={`${manrope.className} min-h-screen overflow-x-hidden bg-[#131313] text-[#e2e2e2]`}>
-      <header className="fixed left-0 right-0 top-0 z-50 border-b border-[#5c4037]/35 bg-[#131313]/90 backdrop-blur-xl">
+      <header className="fixed left-0 right-0 top-0 z-50 border-b border-[#ff4f00]/35 bg-[#131313]/92 shadow-[0_6px_26px_rgba(255,79,0,0.18)] backdrop-blur-xl">
         <nav className="mx-auto flex h-20 w-full max-w-[1440px] items-center justify-between px-5 md:px-16">
           <a href="#inicio" className="flex items-center gap-2">
             <span className="material-symbols-outlined text-3xl text-[#ff4f00]" style={{ fontVariationSettings: "'FILL' 1" }}>
@@ -109,7 +120,7 @@ export default function TemplateNuevoPage() {
           <button
             type="button"
             onClick={() => setIsMenuOpen((prev) => !prev)}
-            className="text-[#e2e2e2] md:hidden"
+            className="rounded-md border border-[#ff4f00]/45 bg-[#ff4f00]/10 p-1.5 text-[#ff4f00] md:hidden"
             aria-label="Abrir menu"
             aria-expanded={isMenuOpen}
             aria-controls="template-v2-mobile-menu"
@@ -121,27 +132,37 @@ export default function TemplateNuevoPage() {
         {isMenuOpen && (
           <div
             id="template-v2-mobile-menu"
-            className={`${spaceGrotesk.className} border-t border-[#5c4037]/35 bg-[#131313] p-6 md:hidden`}
+            className={`${spaceGrotesk.className} fixed inset-0 z-[120] bg-[#0b0b0b] px-5 pb-8 pt-24 md:hidden`}
             role="dialog"
             aria-modal="true"
             aria-label="Menu movil"
           >
-            <div className="mb-4 flex justify-end">
+            <div className="mb-6 flex items-center justify-between border-b border-[#ff4f00]/35 pb-4">
+              <p className="text-xs font-bold tracking-[0.14em] text-[#ff4f00]">NAVEGACION</p>
               <button
                 type="button"
                 onClick={() => setIsMenuOpen(false)}
-                className="border border-[#ff4f00]/40 px-4 py-2 text-xs font-bold tracking-[0.1em] text-[#ff4f00]"
+                className="rounded-md border border-[#ff4f00]/45 bg-[#ff4f00]/10 px-4 py-2 text-xs font-bold tracking-[0.1em] text-[#ff4f00]"
               >
                 CERRAR
               </button>
             </div>
-            <div className="flex flex-col gap-5 text-sm tracking-[0.1em]">
+            <div className="flex flex-col gap-3 text-sm tracking-[0.1em]">
               {navItems.map((item) => (
-                <a key={item.href} href={item.href} onClick={() => setIsMenuOpen(false)} className="text-[#e2e2e2]/85">
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="rounded-md border border-[#ff4f00]/30 bg-[#1a1a1a] px-4 py-4 text-[#e2e2e2]"
+                >
                   {item.label}
                 </a>
               ))}
-              <a href="#contacto" onClick={() => setIsMenuOpen(false)} className="text-[#ff4f00]">
+              <a
+                href="#contacto"
+                onClick={() => setIsMenuOpen(false)}
+                className="mt-2 rounded-md bg-[#ff4f00] px-4 py-4 text-center font-bold text-[#0A0A0A]"
+              >
                 CONTACTO
               </a>
             </div>
