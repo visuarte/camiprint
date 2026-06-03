@@ -61,6 +61,14 @@ const Navigation = () => {
     setIsMobileMenuOpen(false);
   };
 
+  const closeMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
+  const toggleMenu = () => {
+    setIsMobileMenuOpen((prev) => !prev);
+  };
+
   // Scroll suave con offset para navegación
   const handleNavigate = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     // Only intercept hash navigation (in-page). External links and full paths should follow the default behavior.
@@ -115,7 +123,11 @@ const Navigation = () => {
         {/* Mobile Menu Button */}
         <button
           type="button"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          onClick={toggleMenu}
+          onTouchEnd={(event) => {
+            event.preventDefault();
+            toggleMenu();
+          }}
           className="relative z-[60] rounded-2xl border border-white/15 bg-white/5 p-2 text-cami-100 transition-colors hover:bg-white/10 lg:hidden"
           aria-label="Toggle navigation menu"
           aria-expanded={isMobileMenuOpen}
@@ -155,7 +167,13 @@ const Navigation = () => {
           aria-label="Menú móvil"
           onClick={(event) => {
             if (event.target === event.currentTarget) {
-              handleLinkClick();
+              closeMenu();
+            }
+          }}
+          onTouchEnd={(event) => {
+            if (event.target === event.currentTarget) {
+              event.preventDefault();
+              closeMenu();
             }
           }}
         >
@@ -167,7 +185,11 @@ const Navigation = () => {
             <div className="space-y-3 px-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
               <button
                 type="button"
-                onClick={handleLinkClick}
+                onClick={closeMenu}
+                onTouchEnd={(event) => {
+                  event.preventDefault();
+                  closeMenu();
+                }}
                 className="touch-target mb-1 flex w-full items-center justify-center rounded-2xl border border-white/20 bg-white/[0.04] px-4 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-cami-100 transition-all hover:bg-white/12"
               >
                 Cerrar
