@@ -1,7 +1,8 @@
+> Nota de migracion (2026-06-03): este documento fue normalizado a marca CamiArt y dominio canónico camiart.com. Se mantienen identificadores tecnicos historicos cuando aportan trazabilidad.
 # Auditoria de Cierre de Implementacion Frontend
 
 Fecha: 2026-05-12
-Proyecto: Camiprint ecommerce landing page
+Proyecto: CAMIART ecommerce landing page
 Estado general: Implementacion frontend cerrada para pausa y transicion a backend.
 
 ## 1. Resultado ejecutivo

@@ -15,7 +15,7 @@ Receiving:  ❌ Disabled
 
 1. Abre: **https://vercel.com/dashboard**
 2. Login con tu cuenta
-3. Selecciona el proyecto **camiprint**
+3. Selecciona el proyecto de **CamiArt**
 
 ---
 

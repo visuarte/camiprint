@@ -1,20 +1,20 @@
-# Requirements Document
+﻿# Requirements Document
 
 ## Introduction
 
-Esta especificación define el backend de producción para Camiprint: captura de cotizaciones desde la landing con persistencia durable, observabilidad completa, resiliencia y seguridad robusta.
+Esta especificaciÃ³n define el backend de producciÃ³n para CAMIART: captura de cotizaciones desde la landing con persistencia durable, observabilidad completa, resiliencia y seguridad robusta.
 
 ## Glossary
 
-- **Quote_API**: API de backend para registrar solicitudes de cotización
+- **Quote_API**: API de backend para registrar solicitudes de cotizaciÃ³n
 - **Quote_Lead**: registro de datos enviado desde el formulario de contacto
-- **Request_Id**: identificador único por request para trazabilidad distribuida
-- **Validation_Error**: error de payload inválido con detalle por campo
+- **Request_Id**: identificador Ãºnico por request para trazabilidad distribuida
+- **Validation_Error**: error de payload invÃ¡lido con detalle por campo
 - **Rate_Limiter**: componente que protege contra abuso por exceso de solicitudes
-- **Structured_Logger**: sistema de logging con campos estructurados para análisis
+- **Structured_Logger**: sistema de logging con campos estructurados para anÃ¡lisis
 - **Persistence_Layer**: capa de almacenamiento durable que sobrevive reinicios
 - **Sanitizer**: componente que limpia y normaliza entradas para prevenir inyecciones
-- **Circuit_Breaker**: patrón que previene cascadas de fallos en dependencias
+- **Circuit_Breaker**: patrÃ³n que previene cascadas de fallos en dependencias
 - **Health_Endpoint**: endpoint que reporta estado del sistema para orquestadores
 
 ## Requirements
@@ -27,47 +27,47 @@ Esta especificación define el backend de producción para Camiprint: captura de
 
 1. THE Quote_API SHALL expose `POST /api/v1/quotes`
 2. THE Quote_API SHALL accept JSON body con campos exactos: `name`, `email`, `phone`, `companyName`, `quantity`, `message` (mismo contrato que frontend)
-3. WHEN el payload es válido, THE Quote_API SHALL return `201` con estructura `{ ok: true, data: { id, status, createdAt }, meta: { requestId } }` en menos de 500ms (p95)
-4. WHEN el payload es inválido, THE Quote_API SHALL return `422` con estructura `{ ok: false, error: { code, message, details: [{ field, issue }] }, meta: { requestId } }`
-5. WHEN el sistema está sobrecargado, THE Quote_API SHALL return `503` con `Retry-After` header
+3. WHEN el payload es vÃ¡lido, THE Quote_API SHALL return `201` con estructura `{ ok: true, data: { id, status, createdAt }, meta: { requestId } }` en menos de 500ms (p95)
+4. WHEN el payload es invÃ¡lido, THE Quote_API SHALL return `422` con estructura `{ ok: false, error: { code, message, details: [{ field, issue }] }, meta: { requestId } }`
+5. WHEN el sistema estÃ¡ sobrecargado, THE Quote_API SHALL return `503` con `Retry-After` header
 6. THE Quote_API SHALL set `Content-Type: application/json` en todas las respuestas
 7. THE Quote_API SHALL validate `Content-Type: application/json` en requests
 8. THE Quote_API SHALL incluir `requestId` en `meta.requestId` de todas las respuestas (no solo en header)
 
-### Requirement 2: Validación y sanitización robusta
+### Requirement 2: ValidaciÃ³n y sanitizaciÃ³n robusta
 
 **User Story:** Como sistema, quiero validar y sanitizar entradas rigurosamente, para prevenir inyecciones y datos corruptos.
 
 #### Acceptance Criteria
 
 1. THE Sanitizer SHALL trim espacios en todos los campos de texto
-2. THE Sanitizer SHALL normalizar espacios múltiples a uno solo en campos de texto largo
+2. THE Sanitizer SHALL normalizar espacios mÃºltiples a uno solo en campos de texto largo
 3. THE Sanitizer SHALL remover caracteres de control (excepto newline en `message`)
 4. THE Sanitizer SHALL validar formato email con regex exacto `/^\S+@\S+\.\S+$/` (mismo que frontend)
-5. THE Sanitizer SHALL validar teléfono con regex exacto `/^[+0-9\s()-]{7,}$/` (mínimo 7 caracteres, sin máximo)
-6. THE Sanitizer SHALL validar longitudes: `name` (2-120), `email` (max 254), `phone` (mínimo 7, sin máximo), `companyName` (1-160), `message` (opcional, max 2000)
+5. THE Sanitizer SHALL validar telÃ©fono con regex exacto `/^[+0-9\s()-]{7,}$/` (mÃ­nimo 7 caracteres, sin mÃ¡ximo)
+6. THE Sanitizer SHALL validar longitudes: `name` (2-120), `email` (max 254), `phone` (mÃ­nimo 7, sin mÃ¡ximo), `companyName` (1-160), `message` (opcional, max 2000)
 7. THE Sanitizer SHALL validar enum `quantity` contra valores exactos `['10-24', '25-49', '50-99', '100+']`
-8. WHEN validación falla, THE Quote_API SHALL return `422` con array `details` conteniendo `field` e `issue`
+8. WHEN validaciÃ³n falla, THE Quote_API SHALL return `422` con array `details` conteniendo `field` e `issue`
 9. THE Sanitizer SHALL reject payloads con campos adicionales no especificados
 10. THE Sanitizer SHALL reject payloads que excedan 32KB
 
 ### Requirement 3: Persistencia durable y transaccional
 
-**User Story:** Como equipo comercial, quiero que cada cotización se guarde de forma permanente, para no perder leads valiosos.
+**User Story:** Como equipo comercial, quiero que cada cotizaciÃ³n se guarde de forma permanente, para no perder leads valiosos.
 
 #### Acceptance Criteria
 
 1. THE Persistence_Layer SHALL usar almacenamiento durable que sobreviva reinicios del servidor
-2. THE Persistence_Layer SHALL generar IDs únicos con prefijo `q_` y sufijo alfanumérico
+2. THE Persistence_Layer SHALL generar IDs Ãºnicos con prefijo `q_` y sufijo alfanumÃ©rico
 3. THE Persistence_Layer SHALL almacenar timestamps `createdAt` y `updatedAt` en formato ISO 8601 UTC
 4. THE Persistence_Layer SHALL almacenar `status` inicial como `received`
 5. THE Persistence_Layer SHALL almacenar `source` como `landing-contact-form`
 6. THE Persistence_Layer SHALL garantizar atomicidad en escrituras (todo o nada)
-7. WHEN ocurre fallo de escritura, THE Persistence_Layer SHALL propagar error sin corrupción parcial
+7. WHEN ocurre fallo de escritura, THE Persistence_Layer SHALL propagar error sin corrupciÃ³n parcial
 8. THE Persistence_Layer SHALL soportar escrituras concurrentes sin race conditions
 9. THE Persistence_Layer SHALL indexar por `createdAt` para consultas ordenadas
 
-### Requirement 4: Rate limiting y protección contra abuso
+### Requirement 4: Rate limiting y protecciÃ³n contra abuso
 
 **User Story:** Como sistema, quiero limitar requests por origen, para prevenir abuso y garantizar disponibilidad.
 
@@ -75,29 +75,29 @@ Esta especificación define el backend de producción para Camiprint: captura de
 
 1. THE Rate_Limiter SHALL limitar a 5 requests por IP por ventana de 60 segundos
 2. THE Rate_Limiter SHALL usar algoritmo sliding window o token bucket
-3. WHEN límite es excedido, THE Rate_Limiter SHALL return `429` con estructura `{ ok: false, error: { code: 'RATE_LIMITED', message }, meta: { requestId } }`
-4. WHEN límite es excedido, THE Rate_Limiter SHALL incluir header `Retry-After` en segundos
-5. THE Rate_Limiter SHALL usar almacenamiento en memoria con expiración automática
+3. WHEN lÃ­mite es excedido, THE Rate_Limiter SHALL return `429` con estructura `{ ok: false, error: { code: 'RATE_LIMITED', message }, meta: { requestId } }`
+4. WHEN lÃ­mite es excedido, THE Rate_Limiter SHALL incluir header `Retry-After` en segundos
+5. THE Rate_Limiter SHALL usar almacenamiento en memoria con expiraciÃ³n automÃ¡tica
 6. THE Rate_Limiter SHALL identificar origen por IP del header `x-forwarded-for` o `x-real-ip` (con fallback a socket IP)
-7. THE Rate_Limiter SHALL incrementar contador `quotes.rate_limited.count` en métricas
+7. THE Rate_Limiter SHALL incrementar contador `quotes.rate_limited.count` en mÃ©tricas
 
 ### Requirement 5: Logging estructurado y trazabilidad
 
-**User Story:** Como equipo técnico, quiero logs estructurados con contexto completo, para depurar incidentes rápidamente.
+**User Story:** Como equipo tÃ©cnico, quiero logs estructurados con contexto completo, para depurar incidentes rÃ¡pidamente.
 
 #### Acceptance Criteria
 
 1. THE Structured_Logger SHALL registrar cada request con campos: `requestId`, `method`, `path`, `statusCode`, `durationMs`, `timestamp`
 2. THE Structured_Logger SHALL registrar errores con campos adicionales: `errorCode`, `errorMessage`, `stackTrace` (solo en desarrollo)
-3. THE Structured_Logger SHALL enmascarar PII en logs: mostrar solo primeros 3 caracteres de email y últimos 4 de teléfono
-4. THE Structured_Logger SHALL usar formato JSON en producción para parsing automático
+3. THE Structured_Logger SHALL enmascarar PII en logs: mostrar solo primeros 3 caracteres de email y Ãºltimos 4 de telÃ©fono
+4. THE Structured_Logger SHALL usar formato JSON en producciÃ³n para parsing automÃ¡tico
 5. THE Structured_Logger SHALL incluir `environment` (development/staging/production) en cada log
-6. WHEN validación falla, THE Structured_Logger SHALL registrar campos fallidos sin valores sensibles
+6. WHEN validaciÃ³n falla, THE Structured_Logger SHALL registrar campos fallidos sin valores sensibles
 7. THE Structured_Logger SHALL registrar nivel `info` para requests exitosos, `warn` para 4xx, `error` para 5xx
 
-### Requirement 6: Métricas y monitoreo
+### Requirement 6: MÃ©tricas y monitoreo
 
-**User Story:** Como equipo de operaciones, quiero métricas en tiempo real, para detectar anomalías y degradación.
+**User Story:** Como equipo de operaciones, quiero mÃ©tricas en tiempo real, para detectar anomalÃ­as y degradaciÃ³n.
 
 #### Acceptance Criteria
 
@@ -107,15 +107,15 @@ Esta especificación define el backend de producción para Camiprint: captura de
 4. THE Quote_API SHALL exponer contador `quotes.internal_error.count` incrementado en cada 500
 5. THE Quote_API SHALL exponer histograma `quotes.request_duration_ms` con percentiles p50, p95, p99
 6. THE Quote_API SHALL exponer gauge `quotes.in_flight_requests` con requests activos
-7. THE Quote_API SHALL exponer métricas en formato compatible con Prometheus o similar
+7. THE Quote_API SHALL exponer mÃ©tricas en formato compatible con Prometheus o similar
 
 ### Requirement 7: Health checks y readiness
 
-**User Story:** Como orquestador (Kubernetes/Docker), quiero verificar salud del servicio, para enrutar tráfico correctamente.
+**User Story:** Como orquestador (Kubernetes/Docker), quiero verificar salud del servicio, para enrutar trÃ¡fico correctamente.
 
 #### Acceptance Criteria
 
-1. THE Quote_API SHALL expose `GET /api/v1/health` retornando `200` cuando el sistema está operativo
+1. THE Quote_API SHALL expose `GET /api/v1/health` retornando `200` cuando el sistema estÃ¡ operativo
 2. THE Health_Endpoint SHALL verificar conectividad con Persistence_Layer
 3. WHEN Persistence_Layer no responde en 2 segundos, THE Health_Endpoint SHALL return `503`
 4. THE Health_Endpoint SHALL return JSON con campos: `status` (ok/degraded/down), `timestamp`, `checks` (array de verificaciones)
@@ -123,16 +123,16 @@ Esta especificación define el backend de producción para Camiprint: captura de
 
 ### Requirement 8: Seguridad y headers
 
-**User Story:** Como sistema, quiero aplicar mejores prácticas de seguridad HTTP, para proteger usuarios y datos.
+**User Story:** Como sistema, quiero aplicar mejores prÃ¡cticas de seguridad HTTP, para proteger usuarios y datos.
 
 #### Acceptance Criteria
 
 1. THE Quote_API SHALL set header `X-Content-Type-Options: nosniff`
 2. THE Quote_API SHALL set header `X-Frame-Options: DENY`
-3. THE Quote_API SHALL set header `Strict-Transport-Security: max-age=31536000; includeSubDomains` en producción
-4. THE Quote_API SHALL configurar CORS permitiendo solo orígenes en whitelist por entorno
+3. THE Quote_API SHALL set header `Strict-Transport-Security: max-age=31536000; includeSubDomains` en producciÃ³n
+4. THE Quote_API SHALL configurar CORS permitiendo solo orÃ­genes en whitelist por entorno
 5. THE Quote_API SHALL rechazar requests sin `Content-Type: application/json` con `415 Unsupported Media Type`
-6. THE Quote_API SHALL no exponer stack traces en respuestas de producción
+6. THE Quote_API SHALL no exponer stack traces en respuestas de producciÃ³n
 7. THE Quote_API SHALL no loguear tokens, passwords o secretos completos
 
 ### Requirement 9: Resiliencia y timeouts
@@ -142,11 +142,11 @@ Esta especificación define el backend de producción para Camiprint: captura de
 #### Acceptance Criteria
 
 1. THE Quote_API SHALL aplicar timeout de 5 segundos a operaciones de Persistence_Layer
-2. WHEN Persistence_Layer timeout ocurre, THE Quote_API SHALL return `503` con código `SERVICE_UNAVAILABLE`
+2. WHEN Persistence_Layer timeout ocurre, THE Quote_API SHALL return `503` con cÃ³digo `SERVICE_UNAVAILABLE`
 3. THE Quote_API SHALL implementar Circuit_Breaker para Persistence_Layer con umbral de 5 fallos consecutivos
-4. WHEN Circuit_Breaker está abierto, THE Quote_API SHALL return `503` sin intentar escritura
-5. THE Circuit_Breaker SHALL intentar recuperación después de 30 segundos (half-open state)
-6. THE Quote_API SHALL registrar eventos de circuit breaker en logs y métricas
+4. WHEN Circuit_Breaker estÃ¡ abierto, THE Quote_API SHALL return `503` sin intentar escritura
+5. THE Circuit_Breaker SHALL intentar recuperaciÃ³n despuÃ©s de 30 segundos (half-open state)
+6. THE Quote_API SHALL registrar eventos de circuit breaker en logs y mÃ©tricas
 
 ### Requirement 10: Testing y cobertura
 
@@ -154,25 +154,25 @@ Esta especificación define el backend de producción para Camiprint: captura de
 
 #### Acceptance Criteria
 
-1. THE test suite SHALL incluir unit tests para validación con casos válidos e inválidos
-2. THE test suite SHALL incluir unit tests para sanitización con caracteres especiales y edge cases
+1. THE test suite SHALL incluir unit tests para validaciÃ³n con casos vÃ¡lidos e invÃ¡lidos
+2. THE test suite SHALL incluir unit tests para sanitizaciÃ³n con caracteres especiales y edge cases
 3. THE test suite SHALL incluir integration tests para endpoint con mocks de Persistence_Layer
-4. THE test suite SHALL incluir property-based tests para validación (generar 100 payloads aleatorios)
-5. THE test suite SHALL incluir tests de concurrencia (10 requests simultáneos sin race conditions)
-6. THE test suite SHALL incluir tests de rate limiting (verificar 429 después de límite)
-7. THE test suite SHALL alcanzar mínimo 85% de cobertura de líneas en módulos críticos (validation, service, repository)
-8. THE test suite SHALL incluir tests de regresión para bugs conocidos
+4. THE test suite SHALL incluir property-based tests para validaciÃ³n (generar 100 payloads aleatorios)
+5. THE test suite SHALL incluir tests de concurrencia (10 requests simultÃ¡neos sin race conditions)
+6. THE test suite SHALL incluir tests de rate limiting (verificar 429 despuÃ©s de lÃ­mite)
+7. THE test suite SHALL alcanzar mÃ­nimo 85% de cobertura de lÃ­neas en mÃ³dulos crÃ­ticos (validation, service, repository)
+8. THE test suite SHALL incluir tests de regresiÃ³n para bugs conocidos
 
-### Requirement 11: Parser y serialización de datos
+### Requirement 11: Parser y serializaciÃ³n de datos
 
-**User Story:** Como desarrollador, quiero parsear y serializar datos de forma robusta, para evitar corrupción en transformaciones.
+**User Story:** Como desarrollador, quiero parsear y serializar datos de forma robusta, para evitar corrupciÃ³n en transformaciones.
 
 #### Acceptance Criteria
 
 1. THE Quote_API SHALL parsear JSON request body con manejo de errores de sintaxis
-2. WHEN JSON es inválido, THE Quote_API SHALL return `422` con código `VALIDATION_ERROR` y mensaje descriptivo
-3. THE Quote_API SHALL serializar respuestas a JSON válido con encoding UTF-8
-4. THE Quote_API SHALL preservar tipos de datos en round-trip: parsear request → procesar → serializar response
+2. WHEN JSON es invÃ¡lido, THE Quote_API SHALL return `422` con cÃ³digo `VALIDATION_ERROR` y mensaje descriptivo
+3. THE Quote_API SHALL serializar respuestas a JSON vÃ¡lido con encoding UTF-8
+4. THE Quote_API SHALL preservar tipos de datos en round-trip: parsear request â†’ procesar â†’ serializar response
 5. FOR ALL valid Quote_Lead records, serializar a JSON y parsear SHALL producir objeto equivalente (round-trip property)
 
 ### Requirement 12: Compatibilidad exacta con frontend actual
@@ -181,33 +181,33 @@ Esta especificación define el backend de producción para Camiprint: captura de
 
 #### Acceptance Criteria
 
-1. THE Quote_API contract SHALL aceptar exactamente los campos que envía el frontend: `name`, `email`, `phone`, `companyName`, `quantity`, `message`
-2. THE Quote_API SHALL retornar estructura de éxito exacta: `{ ok: true, data: { id, status, createdAt }, meta: { requestId } }`
+1. THE Quote_API contract SHALL aceptar exactamente los campos que envÃ­a el frontend: `name`, `email`, `phone`, `companyName`, `quantity`, `message`
+2. THE Quote_API SHALL retornar estructura de Ã©xito exacta: `{ ok: true, data: { id, status, createdAt }, meta: { requestId } }`
 3. THE Quote_API SHALL retornar estructura de error exacta: `{ ok: false, error: { code, message, details?: [{ field, issue }] }, meta: { requestId } }`
 4. WHEN response is `201`, THE frontend SHALL mostrar mensaje "Solicitud enviada. Te contactaremos en breve."
 5. WHEN response is `422`, THE frontend SHALL mapear `error.details[]` a campos del formulario usando `field` y `issue`
 6. WHEN response is `429`, THE frontend SHALL mostrar mensaje "Hay alta demanda en este momento. Intentalo nuevamente en unos minutos."
 7. WHEN response is `500` o `503`, THE frontend SHALL mostrar mensaje "No pudimos procesar tu solicitud. Intentalo de nuevo."
 8. THE Quote_API SHALL incluir `requestId` en `meta.requestId` para soporte (frontend lo captura en development)
-9. THE Quote_API validation SHALL usar exactamente las mismas reglas que el frontend: `name` min 2 chars, `email` regex `/^\S+@\S+\.\S+$/`, `phone` regex `/^[+0-9\s()-]{7,}$/`, `companyName` no vacío, `quantity` enum `['10-24', '25-49', '50-99', '100+']`
-10. THE Quote_API error messages SHALL ser claros y en español para experiencia de usuario consistente
+9. THE Quote_API validation SHALL usar exactamente las mismas reglas que el frontend: `name` min 2 chars, `email` regex `/^\S+@\S+\.\S+$/`, `phone` regex `/^[+0-9\s()-]{7,}$/`, `companyName` no vacÃ­o, `quantity` enum `['10-24', '25-49', '50-99', '100+']`
+10. THE Quote_API error messages SHALL ser claros y en espaÃ±ol para experiencia de usuario consistente
 
 ### Requirement 13: Observabilidad de errores
 
-**User Story:** Como equipo de soporte, quiero contexto completo de errores, para resolver incidentes sin reproducción.
+**User Story:** Como equipo de soporte, quiero contexto completo de errores, para resolver incidentes sin reproducciÃ³n.
 
 #### Acceptance Criteria
 
 1. WHEN error 5xx ocurre, THE Structured_Logger SHALL registrar: `requestId`, `errorCode`, `errorMessage`, `timestamp`, `path`, `method`
 2. WHEN error 5xx ocurre, THE Structured_Logger SHALL registrar payload sanitizado (sin PII completa)
-3. WHEN Persistence_Layer falla, THE Structured_Logger SHALL registrar tipo de error y duración del intento
-4. THE Quote_API SHALL incluir `requestId` en header `X-Request-Id` de respuesta para correlación
+3. WHEN Persistence_Layer falla, THE Structured_Logger SHALL registrar tipo de error y duraciÃ³n del intento
+4. THE Quote_API SHALL incluir `requestId` en header `X-Request-Id` de respuesta para correlaciÃ³n
 5. THE Quote_API SHALL incluir `requestId` en `meta.requestId` del body de respuesta (requerido por frontend)
 6. THE Quote_API SHALL propagar `requestId` a Persistence_Layer para trazabilidad end-to-end
 
 ### Requirement 14: Estructura de respuesta exacta para compatibilidad frontend
 
-**User Story:** Como frontend, quiero recibir respuestas en formato exacto esperado, para procesar correctamente éxitos y errores.
+**User Story:** Como frontend, quiero recibir respuestas en formato exacto esperado, para procesar correctamente Ã©xitos y errores.
 
 #### Acceptance Criteria
 
@@ -215,7 +215,7 @@ Esta especificación define el backend de producción para Camiprint: captura de
 2. THE Quote_API validation error response (422) SHALL tener estructura exacta: `{ ok: false, error: { code: string, message: string, details: [{ field: string, issue: string }] }, meta: { requestId: string } }`
 3. THE Quote_API rate limit error response (429) SHALL tener estructura exacta: `{ ok: false, error: { code: string, message: string }, meta: { requestId: string } }`
 4. THE Quote_API server error response (500/503) SHALL tener estructura exacta: `{ ok: false, error: { code: string, message: string }, meta: { requestId: string } }`
-5. THE Quote_API SHALL SIEMPRE incluir campo `ok: boolean` en todas las respuestas para discriminación de tipo en frontend
+5. THE Quote_API SHALL SIEMPRE incluir campo `ok: boolean` en todas las respuestas para discriminaciÃ³n de tipo en frontend
 6. THE Quote_API SHALL SIEMPRE incluir campo `meta.requestId` en todas las respuestas para trazabilidad
 7. THE Quote_API validation errors SHALL mapear nombres de campo exactos del frontend: `name`, `email`, `phone`, `companyName`, `quantity`, `message`
-8. THE Quote_API error messages SHALL estar en español y ser user-friendly (no técnicos)
+8. THE Quote_API error messages SHALL estar en espaÃ±ol y ser user-friendly (no tÃ©cnicos)

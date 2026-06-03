@@ -1,8 +1,9 @@
+> Nota de migracion (2026-06-03): este documento fue normalizado a marca CamiArt y dominio can�nico camiart.com. Se mantienen identificadores tecnicos historicos cuando aportan trazabilidad.
 # Vercel Deployment Issue - Debugging Guide
 
 ## Current Status
 
-**Issue**: All routes on `https://camiprint.vercel.app` return **404 Not Found** except homepage (which loads but shows "Camiart" instead of "Camiprint").
+**Issue**: All routes on `https://camiart.com` return **404 Not Found** except homepage (which loads but shows "Camiart" instead of "CAMIART").
 
 - ❌ `/catalog` → 404
 - ❌ `/checkout` → 404  
@@ -29,7 +30,7 @@
 ## Next Steps to Try (Requires Vercel Dashboard Access)
 
 ### 1. Check Vercel Build Logs
-Go to: https://vercel.com/dashboard → Select camiprint project → Deployments tab
+Go to: https://vercel.com/dashboard → Select CAMIART project → Deployments tab
 - Click on the latest deployment
 - Check "Build" tab for any errors or warnings
 - Look for: "Failed to compile", "Build error", or missing files
@@ -71,8 +72,8 @@ Settings → Advanced → Caching:
 ## If Still Failing
 
 Contact Vercel support with:
-1. Repository: https://github.com/visuarte/camiprint
-2. Deployment URL: https://camiprint.vercel.app
+1. Repository: https://github.com/visuarte/CAMIART
+2. Deployment URL: https://camiart.com
 3. Latest commits: ad7521d (Restore middleware)
 4. Share screenshots of:
    - Vercel build logs

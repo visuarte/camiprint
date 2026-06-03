@@ -17,10 +17,10 @@ export default function Header() {
           {/* Logo/Brand */}
           <Link href="/" className="inline-flex items-center gap-3 text-white transition-colors hover:text-cami-100">
             <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/12 bg-white/6 text-sm font-semibold text-accent-200 shadow-glow">
-              CP
+              CA
             </span>
             <span>
-              <span className="block font-display text-xl font-bold uppercase tracking-[0.18em] text-white">Camiprint</span>
+              <span className="block font-display text-xl font-bold uppercase tracking-[0.18em] text-white">CamiArt</span>
               <span className="block text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-cami-300">Catalogo y checkout</span>
             </span>
           </Link>

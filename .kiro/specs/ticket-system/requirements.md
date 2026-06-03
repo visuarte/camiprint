@@ -1,35 +1,35 @@
-# Requirements Document
+﻿# Requirements Document
 
 ## Introduction
 
-El sistema de tickets de incidencias para Camiprint es una solución integral de gestión de soporte que permite a clientes y usuarios internos reportar problemas, consultas y solicitudes. El sistema facilita la asignación, priorización, seguimiento y resolución de incidencias, con comunicación bidireccional, notificaciones automáticas, seguimiento de SLA, base de conocimientos y reportes de desempeño. Se integrará con el customer-portal existente y soportará múltiples canales de entrada.
+El sistema de tickets de incidencias para CAMIART es una soluciÃ³n integral de gestiÃ³n de soporte que permite a clientes y usuarios internos reportar problemas, consultas y solicitudes. El sistema facilita la asignaciÃ³n, priorizaciÃ³n, seguimiento y resoluciÃ³n de incidencias, con comunicaciÃ³n bidireccional, notificaciones automÃ¡ticas, seguimiento de SLA, base de conocimientos y reportes de desempeÃ±o. Se integrarÃ¡ con el customer-portal existente y soportarÃ¡ mÃºltiples canales de entrada.
 
 ## Glossary
 
-- **Ticket_System**: El sistema completo de gestión de tickets de incidencias de Camiprint
+- **Ticket_System**: El sistema completo de gestiÃ³n de tickets de incidencias de CAMIART
 - **Ticket**: Una incidencia, problema, consulta o solicitud registrada en el sistema
-- **Client**: Usuario externo de Camiprint que puede crear y consultar tickets
+- **Client**: Usuario externo de CAMIART que puede crear y consultar tickets
 - **Support_Agent**: Usuario interno del equipo de soporte que gestiona y resuelve tickets
 - **Admin**: Usuario con permisos administrativos para configurar el sistema
-- **Priority**: Nivel de urgencia de un ticket (Baja, Media, Alta, Crítica)
+- **Priority**: Nivel de urgencia de un ticket (Baja, Media, Alta, CrÃ­tica)
 - **Status**: Estado actual de un ticket (Nuevo, Asignado, En Progreso, Esperando Cliente, Resuelto, Cerrado)
-- **Category**: Clasificación temática del ticket (ej: Técnico, Facturación, Consulta General)
-- **SLA**: Service Level Agreement - Acuerdo de nivel de servicio que define tiempos máximos de respuesta y resolución
-- **Knowledge_Base**: Base de conocimientos con artículos de autoservicio
-- **Message**: Comunicación dentro de un ticket entre Client y Support_Agent
-- **Notification**: Alerta enviada por email o sistema cuando ocurre una actualización
-- **Customer_Portal**: Portal existente de Camiprint donde los clientes acceden a sus servicios
-- **Assignment**: Acción de asignar un ticket a un Support_Agent específico
-- **Response_Time**: Tiempo transcurrido desde la creación del ticket hasta la primera respuesta
-- **Resolution_Time**: Tiempo transcurrido desde la creación del ticket hasta su resolución
+- **Category**: ClasificaciÃ³n temÃ¡tica del ticket (ej: TÃ©cnico, FacturaciÃ³n, Consulta General)
+- **SLA**: Service Level Agreement - Acuerdo de nivel de servicio que define tiempos mÃ¡ximos de respuesta y resoluciÃ³n
+- **Knowledge_Base**: Base de conocimientos con artÃ­culos de autoservicio
+- **Message**: ComunicaciÃ³n dentro de un ticket entre Client y Support_Agent
+- **Notification**: Alerta enviada por email o sistema cuando ocurre una actualizaciÃ³n
+- **Customer_Portal**: Portal existente de CAMIART donde los clientes acceden a sus servicios
+- **Assignment**: AcciÃ³n de asignar un ticket a un Support_Agent especÃ­fico
+- **Response_Time**: Tiempo transcurrido desde la creaciÃ³n del ticket hasta la primera respuesta
+- **Resolution_Time**: Tiempo transcurrido desde la creaciÃ³n del ticket hasta su resoluciÃ³n
 - **Attachment**: Archivo adjunto a un ticket o mensaje
 - **Escalation**: Proceso de elevar la prioridad o visibilidad de un ticket
 
 ## Requirements
 
-### Requirement 1: Creación de Tickets por Clientes
+### Requirement 1: CreaciÃ³n de Tickets por Clientes
 
-**User Story:** Como cliente de Camiprint, quiero crear tickets de incidencias desde el customer-portal, para que pueda reportar problemas, hacer consultas o solicitar ayuda.
+**User Story:** Como cliente de CAMIART, quiero crear tickets de incidencias desde el customer-portal, para que pueda reportar problemas, hacer consultas o solicitar ayuda.
 
 #### Acceptance Criteria
 
@@ -40,9 +40,9 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 5. IF a Client submits a ticket with missing required fields, THEN THE Ticket_System SHALL return a validation error with specific field requirements
 6. WHEN a Client attaches files to a ticket, THE Ticket_System SHALL validate file types and size limits (max 10MB per file, max 5 files)
 
-### Requirement 2: Creación de Tickets por Usuarios Internos
+### Requirement 2: CreaciÃ³n de Tickets por Usuarios Internos
 
-**User Story:** Como Support_Agent, quiero crear tickets en nombre de clientes, para que pueda registrar incidencias reportadas por otros canales como teléfono o email.
+**User Story:** Como Support_Agent, quiero crear tickets en nombre de clientes, para que pueda registrar incidencias reportadas por otros canales como telÃ©fono o email.
 
 #### Acceptance Criteria
 
@@ -51,7 +51,7 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 3. WHEN a Support_Agent creates a ticket for a Client, THE Ticket_System SHALL send a notification to that Client
 4. THE Ticket_System SHALL record which Support_Agent created the ticket
 
-### Requirement 3: Visualización de Tickets
+### Requirement 3: VisualizaciÃ³n de Tickets
 
 **User Story:** Como Client, quiero ver una lista de mis tickets y sus detalles, para que pueda hacer seguimiento de mis incidencias.
 
@@ -63,7 +63,7 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 4. WHEN a Client filters tickets, THE Ticket_System SHALL support filtering by status, priority, and category
 5. WHEN a Client searches tickets, THE Ticket_System SHALL search by ticket ID, title, and description content
 
-### Requirement 4: Gestión de Tickets por Soporte
+### Requirement 4: GestiÃ³n de Tickets por Soporte
 
 **User Story:** Como Support_Agent, quiero ver y gestionar todos los tickets, para que pueda organizar y priorizar mi trabajo de soporte.
 
@@ -75,7 +75,7 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 4. THE Ticket_System SHALL display ticket count by status and priority in the dashboard
 5. WHEN a Support_Agent searches tickets, THE Ticket_System SHALL search across all ticket fields including client name and messages
 
-### Requirement 5: Asignación de Tickets
+### Requirement 5: AsignaciÃ³n de Tickets
 
 **User Story:** Como Support_Agent o Admin, quiero asignar tickets a miembros del equipo, para que las incidencias sean atendidas por la persona adecuada.
 
@@ -87,20 +87,20 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 4. THE Ticket_System SHALL allow a Support_Agent to assign tickets to themselves
 5. WHERE auto-assignment is enabled, WHEN a new ticket is created, THE Ticket_System SHALL assign it to the Support_Agent with the lowest current workload in the relevant category
 
-### Requirement 6: Actualización de Estado y Prioridad
+### Requirement 6: ActualizaciÃ³n de Estado y Prioridad
 
 **User Story:** Como Support_Agent, quiero actualizar el estado y prioridad de tickets, para que reflejen el progreso y urgencia actual.
 
 #### Acceptance Criteria
 
-1. WHEN a Support_Agent updates ticket status, THE Ticket_System SHALL validate the status transition is allowed (Nuevo → Asignado → En Progreso → Resuelto → Cerrado)
+1. WHEN a Support_Agent updates ticket status, THE Ticket_System SHALL validate the status transition is allowed (Nuevo â†’ Asignado â†’ En Progreso â†’ Resuelto â†’ Cerrado)
 2. WHEN a Support_Agent changes ticket priority, THE Ticket_System SHALL record the change with timestamp and reason
 3. WHEN a ticket status changes to "Esperando Cliente", THE Ticket_System SHALL send a notification to the Client
 4. WHEN a ticket status changes to "Resuelto", THE Ticket_System SHALL record the resolution time
 5. IF a ticket in "Esperando Cliente" status receives no response within 72 hours, THEN THE Ticket_System SHALL send a reminder notification to the Client
 6. WHEN a ticket status changes to "Cerrado", THE Ticket_System SHALL prevent further modifications except by Admin
 
-### Requirement 7: Sistema de Mensajería Bidireccional
+### Requirement 7: Sistema de MensajerÃ­a Bidireccional
 
 **User Story:** Como Client o Support_Agent, quiero enviar y recibir mensajes dentro de un ticket, para que pueda comunicarme efectivamente sobre la incidencia.
 
@@ -115,7 +115,7 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 
 ### Requirement 8: Notificaciones por Email
 
-**User Story:** Como usuario del sistema, quiero recibir notificaciones por email de actualizaciones importantes, para que esté informado sin necesidad de revisar constantemente el sistema.
+**User Story:** Como usuario del sistema, quiero recibir notificaciones por email de actualizaciones importantes, para que estÃ© informado sin necesidad de revisar constantemente el sistema.
 
 #### Acceptance Criteria
 
@@ -128,7 +128,7 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 
 ### Requirement 9: Notificaciones en Sistema
 
-**User Story:** Como usuario del sistema, quiero ver notificaciones en tiempo real dentro de la aplicación, para que pueda responder rápidamente a actualizaciones importantes.
+**User Story:** Como usuario del sistema, quiero ver notificaciones en tiempo real dentro de la aplicaciÃ³n, para que pueda responder rÃ¡pidamente a actualizaciones importantes.
 
 #### Acceptance Criteria
 
@@ -141,7 +141,7 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 
 ### Requirement 10: Seguimiento de SLA
 
-**User Story:** Como Admin, quiero definir y hacer seguimiento de SLAs por prioridad, para que el equipo cumpla con los tiempos de respuesta y resolución comprometidos.
+**User Story:** Como Admin, quiero definir y hacer seguimiento de SLAs por prioridad, para que el equipo cumpla con los tiempos de respuesta y resoluciÃ³n comprometidos.
 
 #### Acceptance Criteria
 
@@ -155,7 +155,7 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 
 ### Requirement 11: Base de Conocimientos
 
-**User Story:** Como Client, quiero buscar y consultar artículos de ayuda, para que pueda resolver problemas comunes sin crear un ticket.
+**User Story:** Como Client, quiero buscar y consultar artÃ­culos de ayuda, para que pueda resolver problemas comunes sin crear un ticket.
 
 #### Acceptance Criteria
 
@@ -166,9 +166,9 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 5. WHEN a Client creates a ticket, THE Ticket_System SHALL suggest relevant Knowledge_Base articles based on the ticket title and description
 6. THE Ticket_System SHALL display the most viewed and highest rated articles on the Knowledge_Base home page
 
-### Requirement 12: Gestión de Base de Conocimientos
+### Requirement 12: GestiÃ³n de Base de Conocimientos
 
-**User Story:** Como Support_Agent o Admin, quiero crear y gestionar artículos de la base de conocimientos, para que los clientes tengan acceso a información de autoservicio actualizada.
+**User Story:** Como Support_Agent o Admin, quiero crear y gestionar artÃ­culos de la base de conocimientos, para que los clientes tengan acceso a informaciÃ³n de autoservicio actualizada.
 
 #### Acceptance Criteria
 
@@ -179,9 +179,9 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 5. THE Ticket_System SHALL allow Admin to organize articles into categories and subcategories
 6. WHEN a Support_Agent archives an article, THE Ticket_System SHALL hide it from Client view but retain it for reference
 
-### Requirement 13: Reportes de Desempeño
+### Requirement 13: Reportes de DesempeÃ±o
 
-**User Story:** Como Admin, quiero ver reportes y métricas del equipo de soporte, para que pueda evaluar el desempeño y identificar áreas de mejora.
+**User Story:** Como Admin, quiero ver reportes y mÃ©tricas del equipo de soporte, para que pueda evaluar el desempeÃ±o y identificar Ã¡reas de mejora.
 
 #### Acceptance Criteria
 
@@ -193,7 +193,7 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 6. THE Ticket_System SHALL allow exporting reports to CSV format
 7. THE Ticket_System SHALL display trend charts showing ticket volume and resolution metrics over time
 
-### Requirement 14: Categorización de Tickets
+### Requirement 14: CategorizaciÃ³n de Tickets
 
 **User Story:** Como Support_Agent, quiero categorizar tickets, para que puedan ser enrutados y reportados adecuadamente.
 
@@ -205,7 +205,7 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 4. WHERE auto-categorization is enabled, WHEN a ticket is created, THE Ticket_System SHALL suggest a category based on title and description content
 5. THE Ticket_System SHALL allow Admin to create, edit, and archive categories
 
-### Requirement 15: Integración con Customer Portal
+### Requirement 15: IntegraciÃ³n con Customer Portal
 
 **User Story:** Como Client, quiero acceder al sistema de tickets desde el customer-portal existente, para que tenga una experiencia unificada.
 
@@ -219,7 +219,7 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 
 ### Requirement 16: Soporte Multi-Canal
 
-**User Story:** Como Admin, quiero que el sistema capture tickets de múltiples canales, para que todas las incidencias sean gestionadas centralmente.
+**User Story:** Como Admin, quiero que el sistema capture tickets de mÃºltiples canales, para que todas las incidencias sean gestionadas centralmente.
 
 #### Acceptance Criteria
 
@@ -230,9 +230,9 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 5. THE Ticket_System SHALL record the channel source for each ticket (web, email)
 6. WHEN processing email tickets, THE Ticket_System SHALL extract and attach any email attachments to the ticket
 
-### Requirement 17: Historial y Auditoría
+### Requirement 17: Historial y AuditorÃ­a
 
-**User Story:** Como Admin o Support_Agent, quiero ver el historial completo de cambios en un ticket, para que pueda auditar acciones y entender la evolución de la incidencia.
+**User Story:** Como Admin o Support_Agent, quiero ver el historial completo de cambios en un ticket, para que pueda auditar acciones y entender la evoluciÃ³n de la incidencia.
 
 #### Acceptance Criteria
 
@@ -242,9 +242,9 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 4. THE Ticket_System SHALL record ticket creation, first response, and resolution timestamps
 5. THE Ticket_System SHALL maintain complete message history including deleted messages (marked as deleted but not removed)
 
-### Requirement 18: Gestión de Adjuntos
+### Requirement 18: GestiÃ³n de Adjuntos
 
-**User Story:** Como usuario del sistema, quiero adjuntar archivos a tickets y mensajes, para que pueda proporcionar evidencia visual o documentación relevante.
+**User Story:** Como usuario del sistema, quiero adjuntar archivos a tickets y mensajes, para que pueda proporcionar evidencia visual o documentaciÃ³n relevante.
 
 #### Acceptance Criteria
 
@@ -255,9 +255,9 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 5. WHEN a user clicks an attachment, THE Ticket_System SHALL allow download or preview based on file type
 6. THE Ticket_System SHALL scan uploaded files for malware before accepting them
 
-### Requirement 19: Búsqueda Avanzada
+### Requirement 19: BÃºsqueda Avanzada
 
-**User Story:** Como Support_Agent, quiero realizar búsquedas avanzadas de tickets, para que pueda encontrar rápidamente tickets relacionados o patrones de problemas.
+**User Story:** Como Support_Agent, quiero realizar bÃºsquedas avanzadas de tickets, para que pueda encontrar rÃ¡pidamente tickets relacionados o patrones de problemas.
 
 #### Acceptance Criteria
 
@@ -268,9 +268,9 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 5. THE Ticket_System SHALL highlight search terms in results
 6. THE Ticket_System SHALL save recent searches for quick access
 
-### Requirement 20: Configuración de Permisos
+### Requirement 20: ConfiguraciÃ³n de Permisos
 
-**User Story:** Como Admin, quiero configurar roles y permisos, para que pueda controlar qué usuarios pueden realizar qué acciones en el sistema.
+**User Story:** Como Admin, quiero configurar roles y permisos, para que pueda controlar quÃ© usuarios pueden realizar quÃ© acciones en el sistema.
 
 #### Acceptance Criteria
 
@@ -282,9 +282,9 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 6. THE Ticket_System SHALL allow Supervisors to view all reports and reassign tickets
 7. THE Ticket_System SHALL allow Admin to configure system settings, manage users, and access all features
 
-### Requirement 21: Satisfacción del Cliente
+### Requirement 21: SatisfacciÃ³n del Cliente
 
-**User Story:** Como Admin, quiero recopilar feedback de satisfacción de clientes, para que pueda medir la calidad del servicio de soporte.
+**User Story:** Como Admin, quiero recopilar feedback de satisfacciÃ³n de clientes, para que pueda medir la calidad del servicio de soporte.
 
 #### Acceptance Criteria
 
@@ -295,13 +295,13 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 5. THE Ticket_System SHALL display satisfaction metrics in the performance reports
 6. WHEN a Client provides a rating of 2 stars or lower, THE Ticket_System SHALL send a notification to the Supervisor
 
-### Requirement 22: Escalación Automática
+### Requirement 22: EscalaciÃ³n AutomÃ¡tica
 
-**User Story:** Como Supervisor, quiero que tickets críticos o con SLA vencido se escalen automáticamente, para que reciban atención prioritaria.
+**User Story:** Como Supervisor, quiero que tickets crÃ­ticos o con SLA vencido se escalen automÃ¡ticamente, para que reciban atenciÃ³n prioritaria.
 
 #### Acceptance Criteria
 
-1. WHEN a ticket with priority "Crítica" is created, THE Ticket_System SHALL send immediate notification to all available Support_Agents and Supervisors
+1. WHEN a ticket with priority "CrÃ­tica" is created, THE Ticket_System SHALL send immediate notification to all available Support_Agents and Supervisors
 2. WHEN a ticket exceeds SLA response time, THE Ticket_System SHALL escalate to Supervisor
 3. WHEN a ticket exceeds SLA resolution time, THE Ticket_System SHALL escalate to Admin
 4. WHEN a ticket is escalated, THE Ticket_System SHALL add an escalation flag visible in the ticket list
@@ -309,7 +309,7 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 
 ### Requirement 23: Plantillas de Respuesta
 
-**User Story:** Como Support_Agent, quiero usar plantillas de respuesta predefinidas, para que pueda responder más rápidamente a consultas comunes.
+**User Story:** Como Support_Agent, quiero usar plantillas de respuesta predefinidas, para que pueda responder mÃ¡s rÃ¡pidamente a consultas comunes.
 
 #### Acceptance Criteria
 
@@ -320,9 +320,9 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 5. THE Ticket_System SHALL allow Admin to create organization-wide templates accessible to all Support_Agents
 6. THE Ticket_System SHALL allow Support_Agents to edit template content before sending
 
-### Requirement 24: Cierre Automático de Tickets
+### Requirement 24: Cierre AutomÃ¡tico de Tickets
 
-**User Story:** Como Admin, quiero que tickets resueltos se cierren automáticamente después de un período, para que el sistema mantenga un estado actualizado.
+**User Story:** Como Admin, quiero que tickets resueltos se cierren automÃ¡ticamente despuÃ©s de un perÃ­odo, para que el sistema mantenga un estado actualizado.
 
 #### Acceptance Criteria
 
@@ -353,77 +353,77 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 ### High-Level Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                          Customer Portal                             │
-│  ┌──────────────────────────────────────────────────────────────┐  │
-│  │  Ticket Client UI (React + Framer-Motion)                    │  │
-│  │  - Create/View Tickets, Messages, File Upload                │  │
-│  │  - Real-time Notifications & SLA Tracking                    │  │
-│  └──────────────────────────────────────────────────────────────┘  │
-└──────────────────────┬──────────────────────────────────────────────┘
-                       │
-                       ↓
-┌─────────────────────────────────────────────────────────────────────┐
-│                        API Gateway & Auth                            │
-│  - JWT/OAuth2 Authentication                                         │
-│  - Role-Based Access Control (RBAC)                                  │
-│  - Rate Limiting (100 req/min per API key)                           │
-│  - Request Validation & Error Handling                               │
-└──────────────────────┬──────────────────────────────────────────────┘
-                       │
-        ┌──────────────┼──────────────┐
-        ↓              ↓              ↓
-┌──────────────┐ ┌──────────────┐ ┌──────────────┐
-│   Ticket     │ │  Support     │ │  Knowledge   │
-│   Service    │ │  Service     │ │  Base        │
-│              │ │              │ │  Service     │
-│ - CRUD       │ │ - Assignment │ │              │
-│ - Status     │ │ - Escalation │ │ - Articles   │
-│ - Priority   │ │ - SLA Track  │ │ - Versioning │
-│ - Messages   │ │              │ │              │
-└──────┬───────┘ └──────┬───────┘ └──────┬───────┘
-       │                │                │
-       └────────────────┼────────────────┘
-                        ↓
-        ┌───────────────────────────────┐
-        │  Notification Service         │
-        │  - Email (SMTP)               │
-        │  - In-App (WebSocket)         │
-        │  - Escalation Rules           │
-        └───────────────┬───────────────┘
-                        │
-        ┌───────────────┼───────────────┐
-        ↓               ↓               ↓
-    ┌────────┐    ┌──────────┐    ┌─────────┐
-    │ Email  │    │ In-App   │    │ External│
-    │ Queue  │    │ Notif DB │    │Services │
-    │(RabbitQ)   │          │    │(Webhooks)
-    └────────┘    └──────────┘    └─────────┘
-                        │
-                        ↓
-        ┌────────────────────────────────┐
-        │   PostgreSQL Database          │
-        │                                │
-        │ - Tickets & Messages           │
-        │ - Users & Assignments          │
-        │ - Notifications & History      │
-        │ - Knowledge Base Articles      │
-        │ - Audit Logs                   │
-        └────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                          Customer Portal                             â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚  Ticket Client UI (React + Framer-Motion)                    â”‚  â”‚
+â”‚  â”‚  - Create/View Tickets, Messages, File Upload                â”‚  â”‚
+â”‚  â”‚  - Real-time Notifications & SLA Tracking                    â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                       â”‚
+                       â†“
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                        API Gateway & Auth                            â”‚
+â”‚  - JWT/OAuth2 Authentication                                         â”‚
+â”‚  - Role-Based Access Control (RBAC)                                  â”‚
+â”‚  - Rate Limiting (100 req/min per API key)                           â”‚
+â”‚  - Request Validation & Error Handling                               â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                       â”‚
+        â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+        â†“              â†“              â†“
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚   Ticket     â”‚ â”‚  Support     â”‚ â”‚  Knowledge   â”‚
+â”‚   Service    â”‚ â”‚  Service     â”‚ â”‚  Base        â”‚
+â”‚              â”‚ â”‚              â”‚ â”‚  Service     â”‚
+â”‚ - CRUD       â”‚ â”‚ - Assignment â”‚ â”‚              â”‚
+â”‚ - Status     â”‚ â”‚ - Escalation â”‚ â”‚ - Articles   â”‚
+â”‚ - Priority   â”‚ â”‚ - SLA Track  â”‚ â”‚ - Versioning â”‚
+â”‚ - Messages   â”‚ â”‚              â”‚ â”‚              â”‚
+â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜
+       â”‚                â”‚                â”‚
+       â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                        â†“
+        â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+        â”‚  Notification Service         â”‚
+        â”‚  - Email (SMTP)               â”‚
+        â”‚  - In-App (WebSocket)         â”‚
+        â”‚  - Escalation Rules           â”‚
+        â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                        â”‚
+        â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+        â†“               â†“               â†“
+    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+    â”‚ Email  â”‚    â”‚ In-App   â”‚    â”‚ Externalâ”‚
+    â”‚ Queue  â”‚    â”‚ Notif DB â”‚    â”‚Services â”‚
+    â”‚(RabbitQ)   â”‚          â”‚    â”‚(Webhooks)
+    â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                        â”‚
+                        â†“
+        â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+        â”‚   PostgreSQL Database          â”‚
+        â”‚                                â”‚
+        â”‚ - Tickets & Messages           â”‚
+        â”‚ - Users & Assignments          â”‚
+        â”‚ - Notifications & History      â”‚
+        â”‚ - Knowledge Base Articles      â”‚
+        â”‚ - Audit Logs                   â”‚
+        â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### Data Model (Core Entities)
 
 #### Ticket
 - `id` (UUID)
-- `clientId` (UUID) → References Client
-- `createdBy` (UUID) → References Support_Agent | Client
+- `clientId` (UUID) â†’ References Client
+- `createdBy` (UUID) â†’ References Support_Agent | Client
 - `title` (string)
 - `description` (text)
 - `status` (enum: Nuevo, Asignado, En Progreso, Esperando Cliente, Resuelto, Cerrado)
-- `priority` (enum: Baja, Media, Alta, Crítica)
-- `category` (UUID) → References Category
-- `assignedTo` (UUID) → References Support_Agent (nullable)
+- `priority` (enum: Baja, Media, Alta, CrÃ­tica)
+- `category` (UUID) â†’ References Category
+- `assignedTo` (UUID) â†’ References Support_Agent (nullable)
 - `slaDeadlineResponse` (datetime)
 - `slaDeadlineResolution` (datetime)
 - `slaStatus` (enum: On Track, Warning, Breached)
@@ -435,8 +435,8 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 
 #### Message
 - `id` (UUID)
-- `ticketId` (UUID) → References Ticket
-- `authorId` (UUID) → References User
+- `ticketId` (UUID) â†’ References Ticket
+- `authorId` (UUID) â†’ References User
 - `content` (text)
 - `isInternal` (boolean) - hidden from Client
 - `createdAt` (datetime)
@@ -444,8 +444,8 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 
 #### Notification
 - `id` (UUID)
-- `userId` (UUID) → References User
-- `ticketId` (UUID) → References Ticket (nullable)
+- `userId` (UUID) â†’ References User
+- `ticketId` (UUID) â†’ References Ticket (nullable)
 - `type` (enum: ticket_created, assigned, status_changed, message_added, sla_warning, escalated, survey_requested)
 - `channel` (enum: email, in_app, both)
 - `isRead` (boolean)
@@ -457,17 +457,17 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 - `email` (string, unique)
 - `name` (string)
 - `role` (enum: Client, Support_Agent, Supervisor, Admin)
-- `category` (UUID, nullable) → For Support_Agents, category specialization
-- `workload` (int) → Current open assigned tickets
+- `category` (UUID, nullable) â†’ For Support_Agents, category specialization
+- `workload` (int) â†’ Current open assigned tickets
 - `createdAt` (datetime)
 
 #### KnowledgeBase Article
 - `id` (UUID)
 - `title` (string)
 - `content` (text, rich HTML)
-- `category` (UUID) → References Category
+- `category` (UUID) â†’ References Category
 - `status` (enum: draft, published, archived)
-- `author` (UUID) → References Support_Agent
+- `author` (UUID) â†’ References Support_Agent
 - `viewCount` (int)
 - `helpfulCount` (int)
 - `notHelpfulCount` (int)
@@ -481,7 +481,7 @@ El sistema de tickets de incidencias para Camiprint es una solución integral de
 - `fieldName` (string)
 - `oldValue` (string)
 - `newValue` (string)
-- `changedBy` (UUID) → References User
+- `changedBy` (UUID) â†’ References User
 - `changedAt` (datetime)
 
 ### Technology Stack

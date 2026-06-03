@@ -80,7 +80,7 @@ path\to\stripe.exe trigger payment_intent.succeeded
      - Environment: `Production`
   2. Redeploy o usar `vercel --prod` para forzar deploy.
   3. En Stripe Dashboard → Developers → Webhooks → añade/edita endpoint canónico `https://camiart.com/api/webhook/stripe` y comprueba que el secret coincide.
-  4. Compatibilidad: `https://camiprint.vercel.app/api/webhook/stripe` y `https://camiprint.vercel.app/api/webhooks/stripe` también responden para evitar 404 por configuraciones antiguas.
+  4. Compatibilidad: `https://camiart.com/api/webhook/stripe` y `https://camiart.com/api/webhooks/stripe` también responden para evitar 404 por configuraciones antiguas.
   5. Reenvía eventos fallidos (`Resend`) desde Stripe Dashboard y revisa logs (`vercel logs --since 1h --prod`).
 
 Incidente y rotación

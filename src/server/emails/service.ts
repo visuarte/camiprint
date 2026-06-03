@@ -11,6 +11,7 @@ import {
   OrderConfirmationData,
   QuoteEmailData,
 } from './templates';
+import { brandConfig } from '@/config/brand';
 
 interface EmailPayload {
   to: string;
@@ -61,7 +62,7 @@ export class EmailService {
       console.log(`To: ${payload.to}`);
       console.log(`Subject: ${payload.subject}`);
       console.log(`From: ${this.fromName} <${this.fromEmail}>`);
-      console.log(`Reply-To: ${payload.replyTo || 'support@camiprint.com'}`);
+      console.log(`Reply-To: ${payload.replyTo || brandConfig.supportEmail}`);
       console.log(`HTML Preview: ${payload.html.substring(0, 200)}...`);
       return { success: true, id: `dev-${Date.now()}` };
     }
@@ -72,7 +73,7 @@ export class EmailService {
         to: payload.to,
         subject: payload.subject,
         html: payload.html,
-        replyTo: payload.replyTo || 'support@camiprint.com',
+        replyTo: payload.replyTo || brandConfig.supportEmail,
       });
 
       // Log full response for debugging
@@ -167,7 +168,7 @@ export class EmailService {
         to: payload.to,
         subject: payload.subject,
         html: payload.html,
-        replyTo: payload.replyTo || 'support@camiprint.com',
+        replyTo: payload.replyTo || brandConfig.supportEmail,
       });
 
       console.log('[EmailService] nodemailer sendMail info:', info);
@@ -192,7 +193,7 @@ export class EmailService {
         to: email,
         subject: `Confirmación de Pedido #${orderData.orderNumber}`,
         html,
-        replyTo: 'support@camiprint.com',
+        replyTo: brandConfig.supportEmail,
       });
 
       if (result.success) {
@@ -216,7 +217,7 @@ export class EmailService {
       process.env.QUOTES_NOTIFICATION_EMAIL ||
       process.env.CONTACT_TO_EMAIL ||
       process.env.RESEND_TO_EMAIL ||
-      'hola@camiprint.com';
+      brandConfig.supportEmail;
 
     try {
       const html = quoteNotificationTemplate(quoteData);
@@ -255,7 +256,7 @@ export class EmailService {
         to: quoteData.email,
         subject: `Hemos recibido tu solicitud #${quoteData.quoteId}`,
         html,
-        replyTo: process.env.QUOTES_NOTIFICATION_EMAIL || 'hola@camiprint.com',
+        replyTo: process.env.QUOTES_NOTIFICATION_EMAIL || brandConfig.supportEmail,
       });
 
       if (result.success) {

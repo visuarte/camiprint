@@ -1,34 +1,34 @@
-# Requirements Document
+﻿# Requirements Document
 
 ## Introduction
 
-El panel de administración del sistema (admin-settings) es una interfaz centralizada que permite a los administradores de Camiprint gestionar usuarios, configurar el sistema, definir reglas de negocio, y monitorear el estado de la aplicación. Este panel proporciona control completo sobre todos los aspectos configurables del sistema sin necesidad de desplegar código, aplicando cambios en tiempo real cuando sea posible.
+El panel de administraciÃ³n del sistema (admin-settings) es una interfaz centralizada que permite a los administradores de CAMIART gestionar usuarios, configurar el sistema, definir reglas de negocio, y monitorear el estado de la aplicaciÃ³n. Este panel proporciona control completo sobre todos los aspectos configurables del sistema sin necesidad de desplegar cÃ³digo, aplicando cambios en tiempo real cuando sea posible.
 
 ## Glossary
 
-- **Admin_Panel**: El sistema de panel de administración que proporciona la interfaz de gestión
+- **Admin_Panel**: El sistema de panel de administraciÃ³n que proporciona la interfaz de gestiÃ³n
 - **User_Manager**: El componente responsable de gestionar usuarios y sus propiedades
 - **Role_Manager**: El componente responsable de gestionar roles y permisos
-- **System_Config**: El componente responsable de la configuración global del sistema
-- **Email_Config**: El componente responsable de la configuración de correo electrónico
-- **Notification_Config**: El componente responsable de la configuración de notificaciones
-- **SLA_Config**: El componente responsable de la configuración de acuerdos de nivel de servicio
-- **Category_Manager**: El componente responsable de gestionar categorías del sistema
+- **System_Config**: El componente responsable de la configuraciÃ³n global del sistema
+- **Email_Config**: El componente responsable de la configuraciÃ³n de correo electrÃ³nico
+- **Notification_Config**: El componente responsable de la configuraciÃ³n de notificaciones
+- **SLA_Config**: El componente responsable de la configuraciÃ³n de acuerdos de nivel de servicio
+- **Category_Manager**: El componente responsable de gestionar categorÃ­as del sistema
 - **Integration_Config**: El componente responsable de configurar integraciones externas
-- **Audit_Logger**: El componente responsable de registrar acciones de auditoría
-- **Backup_Manager**: El componente responsable de gestionar backups y restauración
-- **Metrics_Dashboard**: El componente responsable de mostrar métricas del sistema
-- **Security_Config**: El componente responsable de la configuración de seguridad
+- **Audit_Logger**: El componente responsable de registrar acciones de auditorÃ­a
+- **Backup_Manager**: El componente responsable de gestionar backups y restauraciÃ³n
+- **Metrics_Dashboard**: El componente responsable de mostrar mÃ©tricas del sistema
+- **Security_Config**: El componente responsable de la configuraciÃ³n de seguridad
 - **Administrator**: Usuario con rol de administrador que tiene acceso al panel
-- **Configuration_Change**: Cualquier modificación a la configuración del sistema
+- **Configuration_Change**: Cualquier modificaciÃ³n a la configuraciÃ³n del sistema
 - **Critical_Change**: Cambio que puede afectar significativamente el funcionamiento del sistema
-- **Hot_Reload**: Aplicación de cambios sin necesidad de reiniciar el sistema
+- **Hot_Reload**: AplicaciÃ³n de cambios sin necesidad de reiniciar el sistema
 
 ## Requirements
 
 ### Requirement 1: Control de Acceso al Panel
 
-**User Story:** Como administrador del sistema, quiero que solo usuarios autorizados puedan acceder al panel de administración, para que la configuración del sistema esté protegida.
+**User Story:** Como administrador del sistema, quiero que solo usuarios autorizados puedan acceder al panel de administraciÃ³n, para que la configuraciÃ³n del sistema estÃ© protegida.
 
 #### Acceptance Criteria
 
@@ -38,9 +38,9 @@ El panel de administración del sistema (admin-settings) es una interfaz central
 4. WHEN an Administrator session expires, THE Admin_Panel SHALL redirect to login and clear session data
 5. THE Admin_Panel SHALL log all access attempts including user identity, timestamp, and result
 
-### Requirement 2: Gestión de Usuarios
+### Requirement 2: GestiÃ³n de Usuarios
 
-**User Story:** Como administrador, quiero crear, editar y desactivar usuarios, para que pueda controlar quién tiene acceso al sistema.
+**User Story:** Como administrador, quiero crear, editar y desactivar usuarios, para que pueda controlar quiÃ©n tiene acceso al sistema.
 
 #### Acceptance Criteria
 
@@ -52,9 +52,9 @@ El panel de administración del sistema (admin-settings) es una interfaz central
 6. WHEN listing users, THE User_Manager SHALL support filtering by status, role, and creation date
 7. WHEN listing users, THE User_Manager SHALL support pagination with configurable page size between 10 and 100 records
 
-### Requirement 3: Gestión de Roles y Permisos
+### Requirement 3: GestiÃ³n de Roles y Permisos
 
-**User Story:** Como administrador, quiero configurar roles personalizados con permisos granulares, para que pueda definir niveles de acceso específicos.
+**User Story:** Como administrador, quiero configurar roles personalizados con permisos granulares, para que pueda definir niveles de acceso especÃ­ficos.
 
 #### Acceptance Criteria
 
@@ -65,9 +65,9 @@ El panel de administración del sistema (admin-settings) es una interfaz central
 5. THE Role_Manager SHALL prevent deletion of roles currently assigned to active users
 6. THE Role_Manager SHALL maintain a built-in super_admin role that cannot be modified or deleted
 
-### Requirement 4: Configuración Global del Sistema
+### Requirement 4: ConfiguraciÃ³n Global del Sistema
 
-**User Story:** Como administrador, quiero configurar ajustes globales del sistema, para que pueda personalizar la aplicación según las necesidades de la empresa.
+**User Story:** Como administrador, quiero configurar ajustes globales del sistema, para que pueda personalizar la aplicaciÃ³n segÃºn las necesidades de la empresa.
 
 #### Acceptance Criteria
 
@@ -79,9 +79,9 @@ El panel de administración del sistema (admin-settings) es una interfaz central
 6. WHEN configuration changes are saved, THE System_Config SHALL apply changes to new sessions immediately
 7. WHEN configuration changes are saved, THE System_Config SHALL notify active users of pending changes requiring page reload
 
-### Requirement 5: Configuración de Email
+### Requirement 5: ConfiguraciÃ³n de Email
 
-**User Story:** Como administrador, quiero configurar los ajustes de correo electrónico, para que el sistema pueda enviar notificaciones por email.
+**User Story:** Como administrador, quiero configurar los ajustes de correo electrÃ³nico, para que el sistema pueda enviar notificaciones por email.
 
 #### Acceptance Criteria
 
@@ -93,9 +93,9 @@ El panel de administración del sistema (admin-settings) es una interfaz central
 6. WHEN an Administrator configures sender address, THE Email_Config SHALL validate email format and domain ownership
 7. THE Email_Config SHALL support multiple sender addresses with labels for different purposes
 
-### Requirement 6: Configuración de Notificaciones
+### Requirement 6: ConfiguraciÃ³n de Notificaciones
 
-**User Story:** Como administrador, quiero configurar reglas de notificación, para que los usuarios reciban alertas relevantes en los canales apropiados.
+**User Story:** Como administrador, quiero configurar reglas de notificaciÃ³n, para que los usuarios reciban alertas relevantes en los canales apropiados.
 
 #### Acceptance Criteria
 
@@ -107,9 +107,9 @@ El panel de administración del sistema (admin-settings) es una interfaz central
 6. THE Notification_Config SHALL support recipient targeting by: role, user_id, and custom_filter
 7. WHEN multiple rules match an event, THE Notification_Config SHALL deduplicate notifications to the same recipient within 5 minutes
 
-### Requirement 7: Configuración de SLA
+### Requirement 7: ConfiguraciÃ³n de SLA
 
-**User Story:** Como administrador, quiero definir tiempos de respuesta y resolución por prioridad, para que el equipo de soporte tenga objetivos claros.
+**User Story:** Como administrador, quiero definir tiempos de respuesta y resoluciÃ³n por prioridad, para que el equipo de soporte tenga objetivos claros.
 
 #### Acceptance Criteria
 
@@ -121,9 +121,9 @@ El panel de administración del sistema (admin-settings) es una interfaz central
 6. WHEN an Administrator enables business hours mode, THE SLA_Config SHALL calculate SLA deadlines excluding non-business hours
 7. WHEN SLA configuration changes, THE SLA_Config SHALL recalculate deadlines for open tickets within 60 seconds
 
-### Requirement 8: Gestión de Categorías
+### Requirement 8: GestiÃ³n de CategorÃ­as
 
-**User Story:** Como administrador, quiero gestionar categorías del sistema, para que pueda organizar tickets, productos y contenido CMS.
+**User Story:** Como administrador, quiero gestionar categorÃ­as del sistema, para que pueda organizar tickets, productos y contenido CMS.
 
 #### Acceptance Criteria
 
@@ -135,7 +135,7 @@ El panel de administración del sistema (admin-settings) es una interfaz central
 6. THE Category_Manager SHALL support category metadata: name, description, color, icon, and active status
 7. WHEN a category is deactivated, THE Category_Manager SHALL hide it from user-facing interfaces but preserve historical data
 
-### Requirement 9: Configuración de Integraciones
+### Requirement 9: ConfiguraciÃ³n de Integraciones
 
 **User Story:** Como administrador, quiero configurar integraciones con servicios externos, para que el sistema pueda comunicarse con APIs de terceros.
 
@@ -149,7 +149,7 @@ El panel de administración del sistema (admin-settings) es una interfaz central
 6. WHEN an Administrator enables an integration, THE Integration_Config SHALL activate it within 30 seconds
 7. THE Integration_Config SHALL log all integration requests and responses for debugging purposes with 30-day retention
 
-### Requirement 10: Logs y Auditoría
+### Requirement 10: Logs y AuditorÃ­a
 
 **User Story:** Como administrador, quiero visualizar logs del sistema y acciones de usuarios, para que pueda auditar cambios y diagnosticar problemas.
 
@@ -163,9 +163,9 @@ El panel de administración del sistema (admin-settings) es una interfaz central
 6. THE Audit_Logger SHALL retain audit logs for minimum 1 year
 7. WHEN viewing logs, THE Audit_Logger SHALL paginate results with 50 records per page
 
-### Requirement 11: Backup y Restauración
+### Requirement 11: Backup y RestauraciÃ³n
 
-**User Story:** Como administrador, quiero gestionar backups del sistema, para que pueda recuperar datos en caso de pérdida.
+**User Story:** Como administrador, quiero gestionar backups del sistema, para que pueda recuperar datos en caso de pÃ©rdida.
 
 #### Acceptance Criteria
 
@@ -177,9 +177,9 @@ El panel de administración del sistema (admin-settings) es una interfaz central
 6. WHEN restoring from backup, THE Backup_Manager SHALL create an automatic backup of current state before proceeding
 7. THE Backup_Manager SHALL support backup retention policies with configurable retention period between 7 and 365 days
 
-### Requirement 12: Métricas del Sistema
+### Requirement 12: MÃ©tricas del Sistema
 
-**User Story:** Como administrador, quiero visualizar métricas de uso y performance, para que pueda monitorear la salud del sistema.
+**User Story:** Como administrador, quiero visualizar mÃ©tricas de uso y performance, para que pueda monitorear la salud del sistema.
 
 #### Acceptance Criteria
 
@@ -191,9 +191,9 @@ El panel de administración del sistema (admin-settings) es una interfaz central
 6. THE Metrics_Dashboard SHALL highlight metrics exceeding thresholds with visual indicators
 7. WHEN an Administrator exports metrics, THE Metrics_Dashboard SHALL generate a report in PDF or CSV format
 
-### Requirement 13: Configuración de Seguridad
+### Requirement 13: ConfiguraciÃ³n de Seguridad
 
-**User Story:** Como administrador, quiero configurar políticas de seguridad, para que pueda proteger el sistema contra accesos no autorizados.
+**User Story:** Como administrador, quiero configurar polÃ­ticas de seguridad, para que pueda proteger el sistema contra accesos no autorizados.
 
 #### Acceptance Criteria
 
@@ -205,9 +205,9 @@ El panel de administración del sistema (admin-settings) es una interfaz central
 6. WHEN an Administrator enables two-factor authentication, THE Security_Config SHALL require it for all administrator accounts within 24 hours
 7. THE Security_Config SHALL support IP whitelist configuration for administrator access
 
-### Requirement 14: Validación de Cambios Críticos
+### Requirement 14: ValidaciÃ³n de Cambios CrÃ­ticos
 
-**User Story:** Como administrador, quiero que los cambios críticos requieran confirmación, para que pueda evitar errores accidentales.
+**User Story:** Como administrador, quiero que los cambios crÃ­ticos requieran confirmaciÃ³n, para que pueda evitar errores accidentales.
 
 #### Acceptance Criteria
 
@@ -217,7 +217,7 @@ El panel de administración del sistema (admin-settings) es una interfaz central
 4. WHEN a Critical_Change is executed, THE Admin_Panel SHALL create an automatic backup of affected data
 5. THE Admin_Panel SHALL log all Critical_Change attempts including confirmation status
 
-### Requirement 15: Aplicación de Cambios en Tiempo Real
+### Requirement 15: AplicaciÃ³n de Cambios en Tiempo Real
 
 **User Story:** Como administrador, quiero que los cambios se apliquen en tiempo real cuando sea posible, para que no tenga que reiniciar el sistema.
 
@@ -244,9 +244,9 @@ El panel de administración del sistema (admin-settings) es una interfaz central
 6. THE Admin_Panel SHALL support keyboard navigation for all interactive elements
 7. THE Admin_Panel SHALL meet WCAG 2.1 Level AA accessibility standards
 
-### Requirement 17: Búsqueda Global
+### Requirement 17: BÃºsqueda Global
 
-**User Story:** Como administrador, quiero buscar en todo el panel de administración, para que pueda encontrar rápidamente configuraciones y usuarios.
+**User Story:** Como administrador, quiero buscar en todo el panel de administraciÃ³n, para que pueda encontrar rÃ¡pidamente configuraciones y usuarios.
 
 #### Acceptance Criteria
 
@@ -258,7 +258,7 @@ El panel de administración del sistema (admin-settings) es una interfaz central
 
 ### Requirement 18: Historial de Cambios
 
-**User Story:** Como administrador, quiero ver el historial de cambios de configuración, para que pueda entender qué cambió y cuándo.
+**User Story:** Como administrador, quiero ver el historial de cambios de configuraciÃ³n, para que pueda entender quÃ© cambiÃ³ y cuÃ¡ndo.
 
 #### Acceptance Criteria
 
@@ -270,7 +270,7 @@ El panel de administración del sistema (admin-settings) es una interfaz central
 
 ### Requirement 19: Notificaciones en el Panel
 
-**User Story:** Como administrador, quiero recibir notificaciones dentro del panel, para que esté informado de eventos importantes.
+**User Story:** Como administrador, quiero recibir notificaciones dentro del panel, para que estÃ© informado de eventos importantes.
 
 #### Acceptance Criteria
 
@@ -280,9 +280,9 @@ El panel de administración del sistema (admin-settings) es una interfaz central
 4. THE Admin_Panel SHALL display unread notification count in the header
 5. THE Admin_Panel SHALL retain notifications for 7 days or until dismissed
 
-### Requirement 20: Exportación de Configuración
+### Requirement 20: ExportaciÃ³n de ConfiguraciÃ³n
 
-**User Story:** Como administrador, quiero exportar la configuración del sistema, para que pueda documentarla o replicarla en otro entorno.
+**User Story:** Como administrador, quiero exportar la configuraciÃ³n del sistema, para que pueda documentarla o replicarla en otro entorno.
 
 #### Acceptance Criteria
 

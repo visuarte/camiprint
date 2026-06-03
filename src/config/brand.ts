@@ -1,4 +1,4 @@
-const displayName = 'CamiPrint';
+const displayName = 'CamiArt';
 const seoTitle = `${displayName} - Camisetas Personalizadas para Empresas`;
 
 export const brandConfig = {
@@ -6,11 +6,12 @@ export const brandConfig = {
   companyExample: `${displayName} SL`,
   siteUrl: 'https://camiart.com',
   supportEmail: 'hola@camiart.com',
+  privacyEmail: 'privacy@camiart.com',
   phoneDisplay: '+34 900 111 222',
   phoneHref: 'tel:+34900111222',
   postalAddress: 'Sevilla, España',
   assets: {
-    heroModelSrc: '/models/camiseta-camiprint.glb',
+    heroModelSrc: '/models/camiseta-camiart.glb',
   },
   seo: {
     defaultTitle: seoTitle,
@@ -23,8 +24,8 @@ export const brandConfig = {
     testimonialsIntro: `Casos reales de empresas que confiaron en ${displayName} para su ropa laboral y campanas de marca.`,
   },
   socialLinks: {
-    instagram: 'https://www.instagram.com/camiprint',
-    facebook: 'https://www.facebook.com/camiprint',
-    linkedin: 'https://www.linkedin.com/company/camiprint',
+    instagram: 'https://www.instagram.com/camiart',
+    facebook: 'https://www.facebook.com/camiart',
+    linkedin: 'https://www.linkedin.com/company/camiart',
   },
 } as const;

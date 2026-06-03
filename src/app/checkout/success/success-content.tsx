@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import { brandConfig } from '@/config/brand';
 
 interface OrderStatus {
   id: string;
@@ -74,7 +75,7 @@ export default function SuccessContent() {
 
           {/* Title */}
           <h1 className="text-3xl font-bold text-gray-900 mb-2">¡Pedido Confirmado!</h1>
-          <p className="text-gray-600 mb-6">Gracias por tu compra en Camiprint.</p>
+          <p className="text-gray-600 mb-6">Gracias por tu compra en {brandConfig.displayName}.</p>
 
           {/* Order Number */}
           {orderId && (
@@ -177,8 +178,8 @@ export default function SuccessContent() {
           <p>¿Preguntas sobre tu pedido?</p>
           <p className="mt-1">
             Contáctanos en{' '}
-            <a href="mailto:support@camiprint.com" className="text-blue-600 hover:text-blue-700 font-medium">
-              support@camiprint.com
+            <a href={`mailto:${brandConfig.supportEmail}`} className="text-blue-600 hover:text-blue-700 font-medium">
+              {brandConfig.supportEmail}
             </a>
           </p>
         </div>

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Camiprint uses **Resend** for reliable transactional email delivery. Resend is a modern email service optimized for developers and works seamlessly with Vercel.
+CamiArt uses **Resend** for reliable transactional email delivery. Resend is a modern email service optimized for developers and works seamlessly with Vercel.
 
 ## Setup Steps
 
@@ -24,7 +24,7 @@ Camiprint uses **Resend** for reliable transactional email delivery. Resend is a
 ```bash
 RESEND_API_KEY=re_your_api_key_here
 RESEND_FROM_EMAIL=noreply@camiart.com
-RESEND_FROM_NAME=Camiart
+RESEND_FROM_NAME=CamiArt
 ```
 
 #### Vercel Production (Dashboard)
@@ -37,7 +37,7 @@ RESEND_FROM_NAME=Camiart
 |----------|-------|------|
 | `RESEND_API_KEY` | Your API key from Resend | Secret |
 | `RESEND_FROM_EMAIL` | `noreply@camiart.com` | Plain |
-| `RESEND_FROM_NAME` | `Camiart` | Plain |
+| `RESEND_FROM_NAME` | `CamiArt` | Plain |
 
 4. Click **Add** for each variable
 5. Click **Redeploy** to apply changes
@@ -49,7 +49,7 @@ For production, Resend recommends verifying your sender email domain:
 1. In Resend Dashboard → Domains
 2. Add your domain (e.g., camiart.com)
 3. Follow DNS verification steps
-4. Update `RESEND_FROM_EMAIL` to use your domain (e.g., `noreply@camiprint.com`)
+4. Update `RESEND_FROM_EMAIL` to use your domain (e.g., `noreply@camiart.com`)
 
 ## Testing Email Delivery
 

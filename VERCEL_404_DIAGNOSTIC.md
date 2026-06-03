@@ -1,3 +1,4 @@
+> Nota de migracion (2026-06-03): este documento fue normalizado a marca CamiArt y dominio can�nico camiart.com. Se mantienen identificadores tecnicos historicos cuando aportan trazabilidad.
 # Vercel 404 Issue - Diagnostic Steps
 
 ## Current Status
@@ -8,7 +9,7 @@
 ## What You Need to Check
 
 ### 1. Check Latest Vercel Build Status
-Go to: https://vercel.com/dashboard/camiprint → Deployments
+Go to: https://vercel.com/dashboard/CAMIART → Deployments
 
 Look for deployment with commit `be55277` (the latest one)
 
@@ -120,7 +121,7 @@ src/app/
 ### Nuclear Option: Start Fresh Vercel Repo
 
 1. Create new Vercel project
-2. Link to camiprint GitHub repo
+2. Link to CAMIART GitHub repo
 3. Let Vercel autodiscover configuration
 4. Add environment variables
 5. Redeploy
@@ -146,7 +147,7 @@ This resets all Vercel cache and configuration.
 ---
 
 **Next Action**: 
-1. Go to https://vercel.com/dashboard/camiprint/deployments
+1. Go to https://vercel.com/dashboard/CAMIART/deployments
 2. Click latest deployment
 3. Look at Build and Runtime Logs tabs
 4. Share what you see (especially error messages)

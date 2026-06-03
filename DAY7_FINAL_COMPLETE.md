@@ -1,10 +1,11 @@
-# 🎉 CAMIPRINT MVP - DAY 7 COMPLETE & READY FOR PRODUCTION
+> Nota de migracion (2026-06-03): este documento fue normalizado a marca CamiArt y dominio can�nico camiart.com. Se mantienen identificadores tecnicos historicos cuando aportan trazabilidad.
+# 🎉 CAMIART MVP - DAY 7 COMPLETE & READY FOR PRODUCTION
 
 ## ✅ Final Status: LAUNCH READY
 
 ```
 ╔════════════════════════════════════════════════════════════════════════════╗
-║                  CAMIPRINT MVP - 7 DAYS COMPLETE                           ║
+║                  CAMIART MVP - 7 DAYS COMPLETE                           ║
 ║                                                                            ║
 ║  Day 1: ✅ Infrastructure (Next.js + PostgreSQL + Prisma)                  ║
 ║  Day 2: ✅ Backend API (Orders + Stripe integration)                       ║
@@ -222,14 +223,14 @@ git push origin main
 # Vercel will:
 # 1. Run build: npm run build:webpack
 # 2. Install deps: npm install --legacy-peer-deps
-# 3. Deploy to https://camiprint.vercel.app
+# 3. Deploy to https://camiart.com
 # 4. Auto-assign domain
 ```
 
 ### Production Verification
 ```bash
 # Run smoke tests against live
-PROD_URL=https://camiprint.vercel.app npm run smoke:prod:live
+PROD_URL=https://camiart.com npm run smoke:prod:live
 
 # Expected output:
 # ✅ Homepage - Status: 200
@@ -355,7 +356,7 @@ git status
 git push origin main
 
 # Verify deployment
-PROD_URL=https://camiprint.vercel.app npm run smoke:prod:live
+PROD_URL=https://camiart.com npm run smoke:prod:live
 ```
 
 **Expected Result:** All 10 smoke tests passing ✅
@@ -373,7 +374,7 @@ PROD_URL=https://camiprint.vercel.app npm run smoke:prod:live
 
 ## 🎊 SUCCESS! 
 
-**The Camiprint MVP is production-ready and fully tested.**
+**The CAMIART MVP is production-ready and fully tested.**
 
 ✅ 7 Days of Development Complete  
 ✅ 35+ Tests Created and Passing  

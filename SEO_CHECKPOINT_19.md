@@ -7,7 +7,7 @@ Fecha: 2026-05-12
 Se actualizo `src/app/layout.tsx` con:
 
 - Title SEO principal:
-  - `Camiprint - Camisetas Personalizadas para Empresas`
+  - `CamiArt - Camisetas Personalizadas para Empresas`
 - Meta description optimizada para busqueda y conversion.
 - Keywords ampliadas con terminos de negocio relevantes.
 - Open Graph completo para redes sociales:

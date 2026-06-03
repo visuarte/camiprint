@@ -2,6 +2,8 @@
  * Email templates for order confirmations
  */
 
+import { brandConfig } from '@/config/brand';
+
 export interface OrderItem {
   productName: string;
   quantity: number;
@@ -72,13 +74,13 @@ export const quoteNotificationTemplate = (data: QuoteEmailData): string => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nueva solicitud de cotizacion - Camiprint</title>
+  <title>Nueva solicitud de cotizacion - ${brandConfig.displayName}</title>
   <style>${emailBaseStyles}</style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <div class="brand">CAMIPRINT</div>
+      <div class="brand">${brandConfig.displayName.toUpperCase()}</div>
       <h1>Nueva solicitud de cotizacion</h1>
       <p class="muted">Recibida desde el formulario web.</p>
     </div>
@@ -110,18 +112,18 @@ export const quoteCustomerConfirmationTemplate = (data: QuoteEmailData): string 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Solicitud recibida - Camiprint</title>
+  <title>Solicitud recibida - ${brandConfig.displayName}</title>
   <style>${emailBaseStyles}</style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <div class="brand">CAMIPRINT</div>
+      <div class="brand">${brandConfig.displayName.toUpperCase()}</div>
       <h1>Solicitud recibida</h1>
       <p class="muted">Hola ${escapeHtml(data.name)}, ya tenemos tu solicitud.</p>
     </div>
 
-    <p>Gracias por contactar con Camiprint. Revisaremos los datos de tu pedido y te responderemos con una propuesta.</p>
+    <p>Gracias por contactar con ${brandConfig.displayName}. Revisaremos los datos de tu pedido y te responderemos con una propuesta.</p>
 
     <div class="box">
       <div class="label">Referencia</div>
@@ -161,7 +163,7 @@ export const orderConfirmationTemplate = (data: OrderConfirmationData): string =
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Confirmación de Pedido - Camiprint</title>
+  <title>Confirmación de Pedido - ${brandConfig.displayName}</title>
   <style>
     * {
       margin: 0;
@@ -342,7 +344,7 @@ export const orderConfirmationTemplate = (data: OrderConfirmationData): string =
   <div class="container">
     <!-- Header -->
     <div class="header">
-      <div class="logo">🎨 CAMIPRINT</div>
+      <div class="logo">🎨 ${brandConfig.displayName.toUpperCase()}</div>
       <h1 class="title">¡Pedido Confirmado!</h1>
       <p class="subtitle">Gracias por tu compra</p>
     </div>
@@ -418,12 +420,12 @@ export const orderConfirmationTemplate = (data: OrderConfirmationData): string =
 
       <!-- CTA Button -->
       <div style="text-align: center; margin-bottom: 24px;">
-        <a href="https://camiprint.com/orders/${data.orderNumber}" class="cta-button">Ver Detalles del Pedido</a>
+        <a href="${brandConfig.siteUrl}/orders/${data.orderNumber}" class="cta-button">Ver Detalles del Pedido</a>
       </div>
 
       <!-- Help Section -->
       <p style="font-size: 14px; color: #6b7280; margin-bottom: 16px;">
-        Si tienes alguna pregunta sobre tu pedido, no dudes en <a href="mailto:support@camiprint.com" style="color: #2563eb; text-decoration: none;">contactarnos</a>.
+        Si tienes alguna pregunta sobre tu pedido, no dudes en <a href="mailto:${brandConfig.supportEmail}" style="color: #2563eb; text-decoration: none;">contactarnos</a>.
       </p>
     </div>
 
@@ -433,17 +435,17 @@ export const orderConfirmationTemplate = (data: OrderConfirmationData): string =
     <!-- Footer -->
     <div class="footer">
       <div class="footer-links">
-        <a href="https://camiprint.com/faq" class="footer-link">Preguntas Frecuentes</a>
-        <a href="https://camiprint.com/contact" class="footer-link">Contacto</a>
-        <a href="https://camiprint.com/returns" class="footer-link">Devoluciones</a>
+        <a href="${brandConfig.siteUrl}/#faq" class="footer-link">Preguntas Frecuentes</a>
+        <a href="${brandConfig.siteUrl}/#contacto" class="footer-link">Contacto</a>
+        <a href="${brandConfig.siteUrl}/terminos-y-condiciones" class="footer-link">Devoluciones</a>
       </div>
-      <p>© 2026 CAMIPRINT. Todos los derechos reservados.</p>
+      <p>© 2026 ${brandConfig.displayName.toUpperCase()}. Todos los derechos reservados.</p>
       <p style="margin-top: 8px; color: #9ca3af;">
         Este es un email automático, por favor no respondas directamente.
       </p>
       <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
         <p style="font-size: 11px; color: #d1d5db;">
-          Recibirás emails de Camiprint sobre tu pedido. <a href="https://camiprint.com/preferences" style="color: #2563eb; text-decoration: none;">Gestionar preferencias</a>
+          Recibirás emails de ${brandConfig.displayName} sobre tu pedido. <a href="${brandConfig.siteUrl}/politica-privacidad" style="color: #2563eb; text-decoration: none;">Gestionar preferencias</a>
         </p>
       </div>
     </div>

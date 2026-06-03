@@ -20,7 +20,7 @@ Lo que falta es **completar la verificación DNS** agregando 3 records en Vercel
 ## 🚀 Pasos Rápidos (5 minutos)
 
 ### 1. Abre Vercel Dashboard
-https://vercel.com/dashboard → Proyecto camiprint → Settings → Domains
+https://vercel.com/dashboard → Proyecto de CamiArt → Settings → Domains
 
 ### 2. Busca camiart.com
 Click en el dominio para ver opciones

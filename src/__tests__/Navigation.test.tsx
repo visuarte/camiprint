@@ -72,9 +72,9 @@ describe('Tarea 2: Navigation Component', () => {
   });
 
   describe('2.2 - Menú móvil responsive', () => {
-    it('debe tener clase "hidden md:flex" para navegación de escritorio', () => {
+    it('debe tener clase "hidden lg:flex" para navegación de escritorio', () => {
       const content = fs.readFileSync(navigationPath, 'utf-8');
-      expect(content).toContain('hidden md:flex');
+      expect(content).toContain('hidden lg:flex');
     });
 
     it('debe tener icono de hamburguesa con SVG', () => {
@@ -88,9 +88,9 @@ describe('Tarea 2: Navigation Component', () => {
       expect(content).toContain('M6 18L18 6M6 6l12 12');
     });
 
-    it('debe ser visible solo en móvil: md:hidden para hamburguesa', () => {
+    it('debe ser visible hasta tablet: lg:hidden para hamburguesa', () => {
       const content = fs.readFileSync(navigationPath, 'utf-8');
-      expect(content).toContain('md:hidden');
+      expect(content).toContain('lg:hidden');
     });
 
     it('menú móvil debe mostrar todos los enlaces', () => {

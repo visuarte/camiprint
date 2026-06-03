@@ -1,4 +1,4 @@
-# Implementation Plan
+﻿# Implementation Plan
 
 - [x] 1. Write bug condition exploration test
   - **Property 1: Bug Condition** - Dual App Router Directory Conflict
@@ -9,18 +9,18 @@
   - **Scoped PBT Approach**: Verify that when both `/app` and `/src/app` exist, Next.js serves content from the wrong directory
   - Test implementation details from Bug Condition in design:
     - Verify that both `/app/page.tsx` and `/src/app/page.tsx` exist
-    - Verify that their content is different (template vs Camiprint)
+    - Verify that their content is different (template vs CAMIART)
     - Run `npm run build` and examine output to see which directory is being compiled
     - Check that build output references `/app` instead of `/src/app`
   - The test assertions should match the Expected Behavior Properties from design:
     - After fix: Next.js should serve content from `/src/app` only
-    - After fix: Production should show Camiprint content, not template
+    - After fix: Production should show CAMIART content, not template
   - Run test on UNFIXED code
   - **EXPECTED OUTCOME**: Test FAILS (this is correct - it proves the bug exists)
   - Document counterexamples found to understand root cause:
     - Build output shows compilation of `/app` directory
     - Directory structure shows both `/app` and `/src/app` exist
-    - Content served is from template, not Camiprint
+    - Content served is from template, not CAMIART
   - Mark task complete when test is written, run, and failure is documented
   - _Requirements: 1.1, 1.2, 1.3_
 
@@ -109,7 +109,7 @@
 
   - [x] 4.3 Verify metadata is correct
     - Inspect HTML meta tags in the response
-    - Verify title contains "Camiprint | Camisetas laborales y publicitarias"
+    - Verify title contains "CAMIART | Camisetas laborales y publicitarias"
     - Verify meta tags do NOT contain "Create Next App"
     - _Requirements: 2.2_
 
@@ -130,7 +130,7 @@
   - [x] 5.3 Verify production content
     - Access the Vercel production URL
     - Verify page returns status code 200 (not 404)
-    - Verify page shows Camiprint content (same checks as 4.2)
+    - Verify page shows CAMIART content (same checks as 4.2)
     - Verify metadata is correct (same checks as 4.3)
     - Verify static assets load correctly (favicon, images)
     - _Requirements: 2.1, 2.2_

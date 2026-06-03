@@ -65,22 +65,22 @@ const Pricing = () => {
       id="ofertas"
       data-reveal
       data-reveal-delay="40"
-      className="scroll-mt-20 bg-gradient-to-b from-cami-950 to-cami-900 px-4 py-16 md:px-6 md:py-24"
+      className="scroll-mt-20 px-4 py-16 md:px-6 md:py-24"
     >
       <div className="max-w-6xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
           <span className="section-eyebrow">Precios transparentes sin sorpresas</span>
-          <h2 className="mb-4 text-3xl font-bold text-white md:text-4xl lg:text-5xl">
+          <h2 data-v2="headline" className="mb-4 text-3xl font-bold text-white md:text-4xl lg:text-5xl">
             Cuánto cuesta tu pedido
           </h2>
           <p className="mx-auto max-w-2xl text-base text-cami-300 md:text-lg">
             El precio baja cuanto mayor es la serie. Envío, arte final y gestión incluidos en todos los packs.
           </p>
           <div className="mx-auto mt-6 grid max-w-4xl grid-cols-1 gap-3 text-sm text-cami-200 sm:grid-cols-3">
-            <p className="rounded-lg border border-white/12 bg-cami-900/60 px-3 py-2"><span className="font-bold text-white">+300 empresas</span> activas este año</p>
-            <p className="rounded-lg border border-white/12 bg-cami-900/60 px-3 py-2"><span className="font-bold text-white">98%</span> de entregas en plazo</p>
-            <p className="rounded-lg border border-white/12 bg-cami-900/60 px-3 py-2"><span className="font-bold text-white">Garantía</span> de reimpresión si hay fallo</p>
+            <p data-landing-shell="surface" className="rounded-lg px-3 py-2"><span className="font-bold text-white">+300 empresas</span> activas este año</p>
+            <p data-landing-shell="surface" className="rounded-lg px-3 py-2"><span className="font-bold text-white">98%</span> de entregas en plazo</p>
+            <p data-landing-shell="surface" className="rounded-lg px-3 py-2"><span className="font-bold text-white">Garantía</span> de reimpresión si hay fallo</p>
           </div>
         </div>
 
@@ -93,13 +93,13 @@ const Pricing = () => {
               key={tier.id}
               className={`relative overflow-hidden rounded-2xl border transition-all hover:-translate-y-1 ${
                 tier.isPopular
-                  ? 'border-accent-400/55 bg-gradient-to-b from-cami-700 to-cami-800 shadow-glow'
-                  : 'border-white/12 bg-gradient-to-b from-cami-800 to-cami-900 shadow-metal'
+                  ? 'border-accent-300/60 bg-gradient-to-b from-[#182335] to-[#101b29] shadow-glow'
+                  : 'border-white/14 bg-gradient-to-b from-[#131e2b] to-[#0b1421] shadow-metal'
               }`}
             >
               {tier.isPopular && (
-                <div className="absolute right-0 top-0 rounded-bl-lg border border-accent-300/40 bg-accent-400/20 px-4 py-1 text-sm font-semibold text-accent-200">
-                  ⭐ Más Popular
+                <div className="absolute right-0 top-0 rounded-bl-lg border border-accent-300/45 bg-accent-300/20 px-4 py-1 text-sm font-semibold text-accent-100">
+                  Bestseller
                 </div>
               )}
 
@@ -119,7 +119,7 @@ const Pricing = () => {
                   <span className="ml-2 text-xs text-green-400">+ IVA</span>
                 </div>
 
-                <div className="mb-6 inline-block rounded-full border border-white/20 bg-white/10 px-3 py-1 text-sm font-semibold text-cami-100">
+                <div className="mb-6 inline-block rounded-full border border-white/20 bg-white/8 px-3 py-1 text-sm font-semibold text-cami-100">
                   ↓ Ahorras {tier.savings}% vs precio unitario
                 </div>
 
@@ -140,7 +140,7 @@ const Pricing = () => {
                       : 'border-white/15 bg-white/10 text-cami-100 shadow-metal'
                   }`}
                 >
-                  Pedir presupuesto →
+                  Solicitar Cotización →
                 </button>
               </div>
             </article>

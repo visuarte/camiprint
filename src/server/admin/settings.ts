@@ -52,7 +52,7 @@ export interface DashboardSettingsAuditPage {
   totalPages: number;
 }
 
-const GLOBAL_SETTINGS_KEY = '__camiprint_dashboard_settings__';
+const GLOBAL_SETTINGS_KEY = '__camiart_dashboard_settings__';
 
 const defaultSettings: DashboardSettings = {
   showMetrics: true,

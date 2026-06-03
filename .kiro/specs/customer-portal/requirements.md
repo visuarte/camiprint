@@ -1,37 +1,37 @@
-# Requirements Document
+﻿# Requirements Document
 
 ## Introduction
 
-El Customer Portal de Camiprint es una plataforma web integral que proporciona a los clientes un punto de acceso centralizado para gestionar su relación con Camiprint. El portal permite a los clientes visualizar su actividad, gestionar pedidos, solicitar cotizaciones, acceder a tickets de soporte, administrar su perfil y preferencias, y acceder a documentos importantes. El sistema se integra con backend-cotizaciones-v1 y ticket-system existentes, proporcionando una experiencia unificada, segura y personalizada en dispositivos móviles y de escritorio.
+El Customer Portal de CAMIART es una plataforma web integral que proporciona a los clientes un punto de acceso centralizado para gestionar su relaciÃ³n con CAMIART. El portal permite a los clientes visualizar su actividad, gestionar pedidos, solicitar cotizaciones, acceder a tickets de soporte, administrar su perfil y preferencias, y acceder a documentos importantes. El sistema se integra con backend-cotizaciones-v1 y ticket-system existentes, proporcionando una experiencia unificada, segura y personalizada en dispositivos mÃ³viles y de escritorio.
 
 ## Glossary
 
-- **Customer_Portal**: El portal completo de cliente de Camiprint
-- **Client**: Usuario externo de Camiprint con cuenta en el portal
+- **Customer_Portal**: El portal completo de cliente de CAMIART
+- **Client**: Usuario externo de CAMIART con cuenta en el portal
 - **Dashboard**: Vista principal personalizada con resumen de actividad del cliente
 - **Order**: Pedido de productos realizado por el cliente
-- **Quote**: Solicitud de cotización enviada por el cliente
-- **Ticket**: Incidencia de soporte gestionada a través del ticket-system
-- **Profile**: Información personal y de contacto del cliente
+- **Quote**: Solicitud de cotizaciÃ³n enviada por el cliente
+- **Ticket**: Incidencia de soporte gestionada a travÃ©s del ticket-system
+- **Profile**: InformaciÃ³n personal y de contacto del cliente
 - **Document**: Archivo como factura, comprobante o contrato asociado al cliente
-- **Favorite**: Diseño o configuración de producto guardado por el cliente
-- **Session**: Sesión autenticada del cliente en el portal
-- **JWT**: JSON Web Token usado para autenticación segura
-- **Notification_Preferences**: Configuración de cómo el cliente desea recibir notificaciones
-- **Privacy_Settings**: Configuración de privacidad y uso de datos del cliente
-- **Backend_Cotizaciones**: Sistema backend existente para gestión de cotizaciones
-- **Ticket_System**: Sistema existente de gestión de tickets de soporte
+- **Favorite**: DiseÃ±o o configuraciÃ³n de producto guardado por el cliente
+- **Session**: SesiÃ³n autenticada del cliente en el portal
+- **JWT**: JSON Web Token usado para autenticaciÃ³n segura
+- **Notification_Preferences**: ConfiguraciÃ³n de cÃ³mo el cliente desea recibir notificaciones
+- **Privacy_Settings**: ConfiguraciÃ³n de privacidad y uso de datos del cliente
+- **Backend_Cotizaciones**: Sistema backend existente para gestiÃ³n de cotizaciones
+- **Ticket_System**: Sistema existente de gestiÃ³n de tickets de soporte
 - **Activity_Summary**: Resumen de acciones recientes del cliente en el portal
-- **Tracking_Info**: Información de seguimiento de pedidos en tránsito
+- **Tracking_Info**: InformaciÃ³n de seguimiento de pedidos en trÃ¡nsito
 - **Invoice**: Factura generada para un pedido completado
 - **Receipt**: Comprobante de pago de un pedido
 - **Contract**: Documento contractual asociado al cliente
 
 ## Requirements
 
-### Requirement 1: Autenticación Segura
+### Requirement 1: AutenticaciÃ³n Segura
 
-**User Story:** Como cliente, quiero iniciar sesión de forma segura en el portal, para que pueda acceder a mi información personal y transacciones.
+**User Story:** Como cliente, quiero iniciar sesiÃ³n de forma segura en el portal, para que pueda acceder a mi informaciÃ³n personal y transacciones.
 
 #### Acceptance Criteria
 
@@ -47,7 +47,7 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 
 ### Requirement 2: Registro de Nuevos Clientes
 
-**User Story:** Como nuevo cliente, quiero registrarme en el portal, para que pueda acceder a los servicios de Camiprint.
+**User Story:** Como nuevo cliente, quiero registrarme en el portal, para que pueda acceder a los servicios de CAMIART.
 
 #### Acceptance Criteria
 
@@ -60,9 +60,9 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 7. WHEN a Client clicks verification link, THE Customer_Portal SHALL activate account and change status to "active"
 8. IF email already exists, THEN THE Customer_Portal SHALL return error message "Email ya registrado"
 
-### Requirement 3: Recuperación de Contraseña
+### Requirement 3: RecuperaciÃ³n de ContraseÃ±a
 
-**User Story:** Como cliente, quiero recuperar mi contraseña si la olvido, para que pueda volver a acceder a mi cuenta.
+**User Story:** Como cliente, quiero recuperar mi contraseÃ±a si la olvido, para que pueda volver a acceder a mi cuenta.
 
 #### Acceptance Criteria
 
@@ -75,7 +75,7 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 
 ### Requirement 4: Dashboard Personalizado
 
-**User Story:** Como cliente, quiero ver un dashboard con resumen de mi actividad, para que pueda tener una vista general de mi relación con Camiprint.
+**User Story:** Como cliente, quiero ver un dashboard con resumen de mi actividad, para que pueda tener una vista general de mi relaciÃ³n con CAMIART.
 
 #### Acceptance Criteria
 
@@ -83,13 +83,13 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 2. THE Customer_Portal SHALL display count of open Orders, pending Quotes, and active Tickets
 3. THE Customer_Portal SHALL display most recent 3 Orders with status and date
 4. THE Customer_Portal SHALL display most recent 3 Tickets with status and priority
-5. THE Customer_Portal SHALL display quick action buttons for "Nueva Cotización", "Nuevo Ticket", "Ver Pedidos"
+5. THE Customer_Portal SHALL display quick action buttons for "Nueva CotizaciÃ³n", "Nuevo Ticket", "Ver Pedidos"
 6. THE Customer_Portal SHALL display personalized greeting with Client name
 7. THE Customer_Portal SHALL load dashboard data within 2 seconds (p95)
 
-### Requirement 5: Gestión de Perfil Personal
+### Requirement 5: GestiÃ³n de Perfil Personal
 
-**User Story:** Como cliente, quiero editar mi información personal, para que pueda mantener mis datos actualizados.
+**User Story:** Como cliente, quiero editar mi informaciÃ³n personal, para que pueda mantener mis datos actualizados.
 
 #### Acceptance Criteria
 
@@ -100,9 +100,9 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 5. THE Customer_Portal SHALL display profile update success message
 6. THE Customer_Portal SHALL log profile changes with timestamp for audit trail
 
-### Requirement 6: Cambio de Contraseña
+### Requirement 6: Cambio de ContraseÃ±a
 
-**User Story:** Como cliente, quiero cambiar mi contraseña, para que pueda mantener mi cuenta segura.
+**User Story:** Como cliente, quiero cambiar mi contraseÃ±a, para que pueda mantener mi cuenta segura.
 
 #### Acceptance Criteria
 
@@ -129,7 +129,7 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 
 ### Requirement 8: Tracking de Pedidos
 
-**User Story:** Como cliente, quiero ver el estado de seguimiento de mis pedidos en tránsito, para que sepa cuándo llegarán.
+**User Story:** Como cliente, quiero ver el estado de seguimiento de mis pedidos en trÃ¡nsito, para que sepa cuÃ¡ndo llegarÃ¡n.
 
 #### Acceptance Criteria
 
@@ -139,7 +139,7 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 4. WHERE tracking integration is available, THE Customer_Portal SHALL display real-time tracking updates from carrier
 5. THE Customer_Portal SHALL provide direct link to carrier tracking page
 
-### Requirement 9: Gestión de Cotizaciones
+### Requirement 9: GestiÃ³n de Cotizaciones
 
 **User Story:** Como cliente, quiero ver mis cotizaciones solicitadas y sus respuestas, para que pueda hacer seguimiento de mis solicitudes de presupuesto.
 
@@ -153,7 +153,7 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 6. WHEN a Client accepts a Quote, THE Customer_Portal SHALL update status to "Accepted" and send notification to sales team
 7. THE Customer_Portal SHALL support filtering Quotes by status
 
-### Requirement 10: Creación de Nueva Cotización
+### Requirement 10: CreaciÃ³n de Nueva CotizaciÃ³n
 
 **User Story:** Como cliente, quiero solicitar nuevas cotizaciones desde el portal, para que pueda obtener presupuestos sin salir del sistema.
 
@@ -179,7 +179,7 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 6. THE Customer_Portal SHALL allow Client to attach files to ticket messages
 7. THE Customer_Portal SHALL display unread ticket count badge in navigation
 
-### Requirement 12: Creación de Nuevo Ticket
+### Requirement 12: CreaciÃ³n de Nuevo Ticket
 
 **User Story:** Como cliente, quiero crear tickets de soporte desde el portal, para que pueda reportar problemas o hacer consultas.
 
@@ -193,7 +193,7 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 
 ### Requirement 13: Notificaciones en Tiempo Real
 
-**User Story:** Como cliente, quiero recibir notificaciones en tiempo real de actualizaciones importantes, para que esté informado sin necesidad de revisar constantemente.
+**User Story:** Como cliente, quiero recibir notificaciones en tiempo real de actualizaciones importantes, para que estÃ© informado sin necesidad de revisar constantemente.
 
 #### Acceptance Criteria
 
@@ -207,7 +207,7 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 
 ### Requirement 14: Preferencias de Notificaciones
 
-**User Story:** Como cliente, quiero configurar cómo recibo notificaciones, para que pueda controlar la frecuencia y tipo de comunicaciones.
+**User Story:** Como cliente, quiero configurar cÃ³mo recibo notificaciones, para que pueda controlar la frecuencia y tipo de comunicaciones.
 
 #### Acceptance Criteria
 
@@ -230,9 +230,9 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 5. THE Customer_Portal SHALL support searching Documents by order ID or document number
 6. THE Customer_Portal SHALL generate secure temporary download links valid for 1 hour
 
-### Requirement 16: Gestión de Favoritos
+### Requirement 16: GestiÃ³n de Favoritos
 
-**User Story:** Como cliente, quiero guardar diseños o configuraciones de productos favoritos, para que pueda reutilizarlos fácilmente en futuras órdenes.
+**User Story:** Como cliente, quiero guardar diseÃ±os o configuraciones de productos favoritos, para que pueda reutilizarlos fÃ¡cilmente en futuras Ã³rdenes.
 
 #### Acceptance Criteria
 
@@ -244,9 +244,9 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 6. THE Customer_Portal SHALL allow Client to delete Favorites
 7. THE Customer_Portal SHALL limit maximum 50 Favorites per Client
 
-### Requirement 17: Configuración de Privacidad
+### Requirement 17: ConfiguraciÃ³n de Privacidad
 
-**User Story:** Como cliente, quiero controlar la configuración de privacidad de mis datos, para que pueda decidir cómo se usa mi información.
+**User Story:** Como cliente, quiero controlar la configuraciÃ³n de privacidad de mis datos, para que pueda decidir cÃ³mo se usa mi informaciÃ³n.
 
 #### Acceptance Criteria
 
@@ -258,9 +258,9 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 6. THE Customer_Portal SHALL allow Client to request account deletion with confirmation dialog
 7. WHEN account deletion is requested, THE Customer_Portal SHALL send confirmation email and schedule deletion after 30 days
 
-### Requirement 18: Diseño Responsive Mobile-First
+### Requirement 18: DiseÃ±o Responsive Mobile-First
 
-**User Story:** Como cliente, quiero usar el portal desde mi móvil, para que pueda acceder a mi información desde cualquier dispositivo.
+**User Story:** Como cliente, quiero usar el portal desde mi mÃ³vil, para que pueda acceder a mi informaciÃ³n desde cualquier dispositivo.
 
 #### Acceptance Criteria
 
@@ -274,7 +274,7 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 
 ### Requirement 19: Soporte Multi-Idioma
 
-**User Story:** Como cliente, quiero usar el portal en mi idioma preferido, para que pueda entender toda la información claramente.
+**User Story:** Como cliente, quiero usar el portal en mi idioma preferido, para que pueda entender toda la informaciÃ³n claramente.
 
 #### Acceptance Criteria
 
@@ -286,9 +286,9 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 6. THE Customer_Portal SHALL translate all static content including labels, buttons, messages, and help text
 7. THE Customer_Portal SHALL display user-generated content (orders, tickets, messages) in original language
 
-### Requirement 20: Búsqueda Global
+### Requirement 20: BÃºsqueda Global
 
-**User Story:** Como cliente, quiero buscar en todo el portal, para que pueda encontrar rápidamente pedidos, cotizaciones o tickets.
+**User Story:** Como cliente, quiero buscar en todo el portal, para que pueda encontrar rÃ¡pidamente pedidos, cotizaciones o tickets.
 
 #### Acceptance Criteria
 
@@ -300,9 +300,9 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 6. THE Customer_Portal SHALL support search by ID, date, status, or content keywords
 7. WHEN no results are found, THE Customer_Portal SHALL display helpful message with search tips
 
-### Requirement 21: Seguridad de Sesión
+### Requirement 21: Seguridad de SesiÃ³n
 
-**User Story:** Como cliente, quiero que mi sesión sea segura, para que mi información esté protegida contra accesos no autorizados.
+**User Story:** Como cliente, quiero que mi sesiÃ³n sea segura, para que mi informaciÃ³n estÃ© protegida contra accesos no autorizados.
 
 #### Acceptance Criteria
 
@@ -316,7 +316,7 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 
 ### Requirement 22: Accesibilidad WCAG 2.1 AA
 
-**User Story:** Como cliente con discapacidad, quiero usar el portal con tecnologías asistivas, para que pueda acceder a todos los servicios de forma independiente.
+**User Story:** Como cliente con discapacidad, quiero usar el portal con tecnologÃ­as asistivas, para que pueda acceder a todos los servicios de forma independiente.
 
 #### Acceptance Criteria
 
@@ -330,7 +330,7 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 
 ### Requirement 23: Manejo de Errores y Estados de Carga
 
-**User Story:** Como cliente, quiero ver feedback claro cuando el sistema está cargando o hay errores, para que entienda el estado del sistema.
+**User Story:** Como cliente, quiero ver feedback claro cuando el sistema estÃ¡ cargando o hay errores, para que entienda el estado del sistema.
 
 #### Acceptance Criteria
 
@@ -342,7 +342,7 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 6. THE Customer_Portal SHALL display success messages for completed actions with auto-dismiss after 5 seconds
 7. THE Customer_Portal SHALL log client-side errors to monitoring service for debugging
 
-### Requirement 24: Integración con Backend Cotizaciones
+### Requirement 24: IntegraciÃ³n con Backend Cotizaciones
 
 **User Story:** Como sistema, quiero integrarme con Backend_Cotizaciones existente, para que los clientes puedan gestionar cotizaciones desde el portal.
 
@@ -355,7 +355,7 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 5. THE Customer_Portal SHALL respect Backend_Cotizaciones rate limiting and display appropriate messages
 6. THE Customer_Portal SHALL include requestId from Backend_Cotizaciones responses in error logs
 
-### Requirement 25: Integración con Ticket System
+### Requirement 25: IntegraciÃ³n con Ticket System
 
 **User Story:** Como sistema, quiero integrarme con Ticket_System existente, para que los clientes puedan gestionar tickets desde el portal.
 
@@ -368,9 +368,9 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 5. THE Customer_Portal SHALL poll Ticket_System API every 30 seconds for ticket updates when Client is viewing tickets
 6. THE Customer_Portal SHALL handle Ticket_System API errors gracefully with retry logic
 
-### Requirement 26: Rendimiento y Optimización
+### Requirement 26: Rendimiento y OptimizaciÃ³n
 
-**User Story:** Como cliente, quiero que el portal cargue rápidamente, para que pueda acceder a mi información sin esperas.
+**User Story:** Como cliente, quiero que el portal cargue rÃ¡pidamente, para que pueda acceder a mi informaciÃ³n sin esperas.
 
 #### Acceptance Criteria
 
@@ -384,7 +384,7 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 
 ### Requirement 27: Monitoreo y Logging
 
-**User Story:** Como equipo técnico, quiero monitorear el uso del portal y errores, para que pueda mantener la calidad del servicio.
+**User Story:** Como equipo tÃ©cnico, quiero monitorear el uso del portal y errores, para que pueda mantener la calidad del servicio.
 
 #### Acceptance Criteria
 
@@ -396,9 +396,9 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 6. THE Customer_Portal SHALL implement health check endpoint `GET /api/health` returning system status
 7. THE Customer_Portal SHALL mask PII in logs (show only first 3 characters of email)
 
-### Requirement 28: Exportación de Datos
+### Requirement 28: ExportaciÃ³n de Datos
 
-**User Story:** Como cliente, quiero exportar mis datos del portal, para que pueda tener una copia de mi información.
+**User Story:** Como cliente, quiero exportar mis datos del portal, para que pueda tener una copia de mi informaciÃ³n.
 
 #### Acceptance Criteria
 
@@ -411,7 +411,7 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 
 ### Requirement 29: Onboarding de Nuevos Clientes
 
-**User Story:** Como nuevo cliente, quiero recibir orientación al usar el portal por primera vez, para que pueda aprovechar todas las funcionalidades.
+**User Story:** Como nuevo cliente, quiero recibir orientaciÃ³n al usar el portal por primera vez, para que pueda aprovechar todas las funcionalidades.
 
 #### Acceptance Criteria
 
@@ -422,7 +422,7 @@ El Customer Portal de Camiprint es una plataforma web integral que proporciona a
 5. THE Customer_Portal SHALL provide "Help" link in navigation to restart onboarding tour
 6. THE Customer_Portal SHALL display contextual help hints for complex features
 
-### Requirement 30: Validación y Sanitización de Entradas
+### Requirement 30: ValidaciÃ³n y SanitizaciÃ³n de Entradas
 
 **User Story:** Como sistema, quiero validar y sanitizar todas las entradas de usuario, para que pueda prevenir inyecciones y datos corruptos.
 

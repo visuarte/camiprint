@@ -1,4 +1,4 @@
- 'use client';
+'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import { brandConfig } from '@/config/brand';
@@ -7,7 +7,10 @@ const MOBILE_HEADER_HEIGHT = 73;
 
 const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [headerHeight, setHeaderHeight] = useState(MOBILE_HEADER_HEIGHT);
+  const headerRef = useRef<HTMLElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   const navigationLinks = [
     { href: '#inicio', label: 'Inicio' },
@@ -22,7 +25,11 @@ const Navigation = () => {
   // Cerrar menú al hacer click fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      const clickedInsideMenu = menuRef.current?.contains(target);
+      const clickedMenuButton = menuButtonRef.current?.contains(target);
+
+      if (!clickedInsideMenu && !clickedMenuButton) {
         setIsMobileMenuOpen(false);
       }
     };
@@ -45,16 +52,32 @@ const Navigation = () => {
     }
   }, [isMobileMenuOpen]);
 
+  useEffect(() => {
+    const syncHeaderHeight = () => {
+      const nextHeight = headerRef.current?.offsetHeight ?? MOBILE_HEADER_HEIGHT;
+      setHeaderHeight(nextHeight);
+    };
+
+    syncHeaderHeight();
+    window.addEventListener('resize', syncHeaderHeight);
+
+    return () => {
+      window.removeEventListener('resize', syncHeaderHeight);
+    };
+  }, []);
+
   // Evitar scroll de fondo y cerrar menú al pasar a desktop.
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     }
 
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
+      if (window.innerWidth >= 1024) {
         setIsMobileMenuOpen(false);
       }
     };
@@ -63,6 +86,7 @@ const Navigation = () => {
 
     return () => {
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
       window.removeEventListener('resize', handleResize);
     };
   }, [isMobileMenuOpen]);
@@ -87,24 +111,25 @@ const Navigation = () => {
   };
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-cami-950/70 shadow-[0_10px_40px_rgba(0,0,0,0.22)] backdrop-blur-xl">
+    <header ref={headerRef} className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-cami-950/75 shadow-[0_14px_48px_rgba(0,0,0,0.3)] backdrop-blur-xl">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent-300/70 to-transparent" aria-hidden="true" />
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <div className="flex-shrink-0">
-          <a href="#inicio" aria-label={brandConfig.displayName} className="inline-flex items-center text-white transition-colors hover:text-cami-100">
+          <a href="#inicio" aria-label={brandConfig.displayName} className="inline-flex items-center gap-3 text-white transition-colors hover:text-cami-100">
             <img src="/icons/logo.svg" alt={brandConfig.displayName} height={36} className="h-9 w-auto object-contain" />
+            <span className="hidden text-[0.62rem] font-semibold tracking-[0.18em] text-cami-300 lg:inline" data-v2="microcopy">Textil corporativo premium</span>
           </a>
         </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden items-center rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 shadow-glow md:flex md:space-x-1">
+        <div className="hidden items-center rounded-full border border-white/12 bg-white/[0.06] px-4 py-2 shadow-glow lg:flex lg:space-x-1">
           {navigationLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
               onClick={(e) => handleNavigate(e, link.href)}
-              className="rounded-full px-4 py-2 text-sm font-semibold tracking-[0.08em] text-cami-200 transition-all hover:bg-white/8 hover:text-white"
+              className="rounded-full px-4 py-2 text-sm font-semibold tracking-[0.08em] text-cami-200 transition-all hover:bg-white/12 hover:text-white"
             >
               {link.label}
             </a>
@@ -112,7 +137,7 @@ const Navigation = () => {
         </div>
 
         {/* Desktop CTA Button */}
-        <div className="hidden md:flex">
+        <div className="hidden lg:flex">
           <a
             href="#contacto"
             onClick={(e) => handleNavigate(e, '#contacto')}
@@ -124,9 +149,10 @@ const Navigation = () => {
 
         {/* Mobile Menu Button */}
         <button
+          ref={menuButtonRef}
           type="button"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="rounded-2xl border border-white/15 bg-white/5 p-2 text-cami-100 transition-colors hover:bg-white/10 md:hidden"
+          className="relative z-[60] rounded-2xl border border-white/15 bg-white/5 p-2 text-cami-100 transition-colors hover:bg-white/10 lg:hidden"
           aria-label="Toggle navigation menu"
           aria-expanded={isMobileMenuOpen}
           aria-controls="mobile-main-menu"
@@ -158,14 +184,22 @@ const Navigation = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden">
-          <div className="fixed inset-0 top-[73px] bg-black/55 backdrop-blur-[1px]" aria-hidden="true" />
+        <div
+          className="fixed inset-x-0 bottom-0 z-40 lg:hidden"
+          style={{ top: `${headerHeight}px` }}
+        >
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/55 backdrop-blur-[1px]"
+            onClick={handleLinkClick}
+            aria-label="Cerrar menú móvil"
+          />
 
           <div
             id="mobile-main-menu"
             ref={menuRef}
-            className="mobile-nav-panel animate-slideDown fixed left-0 right-0 top-[73px] border-b border-white/10 bg-cami-950/96 shadow-glow"
-            style={{ '--mobile-header-height': `${MOBILE_HEADER_HEIGHT}px` } as React.CSSProperties}
+            className="mobile-nav-panel animate-slideDown relative z-10 w-full border-b border-white/12 bg-cami-950/96 shadow-glow md:mx-auto md:mt-3 md:max-w-md md:rounded-2xl md:border"
+            style={{ '--mobile-header-height': `${headerHeight}px` } as React.CSSProperties}
           >
             <div className="space-y-3 px-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
               {navigationLinks.map((link) => (
@@ -176,7 +210,7 @@ const Navigation = () => {
                     handleNavigate(e, link.href);
                     handleLinkClick();
                   }}
-                  className="touch-target block rounded-2xl border border-transparent bg-white/[0.03] px-4 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-cami-100 transition-all hover:border-white/15 hover:bg-white/10 hover:text-white"
+                  className="touch-target block rounded-2xl border border-transparent bg-white/[0.04] px-4 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-cami-100 transition-all hover:border-white/20 hover:bg-white/12 hover:text-white"
                 >
                   {link.label}
                 </a>

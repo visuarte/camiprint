@@ -21,16 +21,16 @@ const clientLogos = [
 
 const TestimonialsSection = () => {
   return (
-    <section id="testimonios" data-reveal data-reveal-delay="90" className="scroll-mt-20 bg-gradient-to-b from-cami-900 to-cami-950 px-4 py-16 md:px-6 md:py-24">
+    <section id="testimonios" data-reveal data-reveal-delay="90" className="scroll-mt-20 px-4 py-16 md:px-6 md:py-24">
       <div className="mx-auto max-w-6xl">
         <div className="mb-10 text-center md:mb-14">
-          <span className="section-eyebrow">Clientes reales, resultados reales</span>
-          <h2 className="text-3xl font-bold text-white md:text-4xl lg:text-5xl">Lo que dicen nuestros clientes</h2>
+          <span className="section-eyebrow" data-v2="microcopy">Clientes reales, resultados reales</span>
+          <h2 data-v2="headline" className="text-3xl font-bold text-white md:text-4xl lg:text-5xl">Lo que dicen nuestros clientes</h2>
           <p className="mx-auto mt-4 max-w-2xl text-base text-cami-300 md:text-lg">
             {brandConfig.copy.testimonialsIntro}
           </p>
           <p className="mx-auto mt-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-cami-100">
-            <span className="text-yellow-400">★★★★★</span> 4,9/5 — más de 1.200 pedidos entregados
+            <span className="text-yellow-400">★★★★★</span> 4,9/5 — más de 1200 pedidos entregados
           </p>
         </div>
 
@@ -44,7 +44,8 @@ const TestimonialsSection = () => {
             return (
               <article
                 key={item.id}
-                className="group rounded-2xl border border-white/12 bg-gradient-to-b from-cami-800 to-cami-900 p-6 shadow-glow transition-transform duration-300 hover:-translate-y-1"
+                data-landing-shell="surface"
+                className="group rounded-2xl p-6 shadow-glow transition-transform duration-300 hover:-translate-y-1"
               >
                 <div className="mb-4 flex items-center justify-between">
                   <div className="flex items-center gap-1 text-sm text-yellow-400" aria-label="Valoración 5 de 5">
@@ -84,7 +85,7 @@ const TestimonialsSection = () => {
               <div
                 key={logo.name}
                 title={logo.name}
-                className="flex h-12 w-28 items-center justify-center rounded-lg border border-white/12 bg-white/5 text-sm font-bold tracking-wide text-cami-300 transition-all hover:border-white/25 hover:bg-white/10 hover:text-white"
+                className="flex h-12 w-28 items-center justify-center rounded-lg border border-white/15 bg-white/6 text-sm font-bold tracking-wide text-cami-300 transition-all hover:border-white/30 hover:bg-white/12 hover:text-white"
               >
                 {logo.initials} <span className="sr-only">{logo.name}</span>
               </div>

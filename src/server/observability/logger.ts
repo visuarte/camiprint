@@ -48,7 +48,7 @@ export const sanitizeQuotePayloadForLogs = (payload: Record<string, unknown>) =>
   return sanitized;
 };
 
-const GLOBAL_LOGGER_KEY = '__camiprint_pino_logger__';
+const GLOBAL_LOGGER_KEY = '__camiart_pino_logger__';
 
 const makeLogger = (): pino.Logger => {
   const baseOpts: pino.LoggerOptions = {

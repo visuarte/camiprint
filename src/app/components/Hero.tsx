@@ -23,22 +23,22 @@ const Hero = () => {
   }, []);
 
   return (
-    <section id="inicio" data-reveal data-reveal-delay="0" className="scroll-mt-20 bg-cami-hero px-4 pb-12 pt-20 md:px-6 md:pb-16 md:pt-28">
+    <section id="inicio" data-reveal data-reveal-delay="0" className="scroll-mt-20 px-4 pb-14 pt-24 md:px-6 md:pb-20 md:pt-32">
       <Script
         type="module"
         src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
         strategy="afterInteractive"
       />
 
-      <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 lg:grid-cols-5 lg:gap-8">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 lg:grid-cols-5 lg:gap-10">
         <div className="lg:col-span-3">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-green-400/30 bg-green-400/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-green-300">
             <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-green-400" />
             Aceptando pedidos — propuestas en menos de 24h
           </div>
-          <span className="section-eyebrow">Producción textil para empresas</span>
+          <span className="section-eyebrow" data-v2="microcopy">Producción textil para empresas</span>
 
-          <h1 className="mt-6 max-w-3xl font-display text-5xl font-bold leading-none text-white md:text-6xl lg:text-[4.75rem]">
+          <h1 data-v2="headline" className="mt-6 max-w-3xl font-display text-5xl font-bold leading-none text-white md:text-6xl lg:text-[4.85rem]">
             Camisetas personalizadas para tu empresa. Desde 10 uds.
           </h1>
 
@@ -47,12 +47,12 @@ const Hero = () => {
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3 text-sm text-cami-200">
-            <span className="rounded-full border border-white/12 bg-white/[0.05] px-4 py-2 font-semibold">Presupuesto en 24h</span>
-            <span className="rounded-full border border-white/12 bg-white/[0.05] px-4 py-2 font-semibold">Series cortas y grandes tiradas</span>
-            <span className="rounded-full border border-white/12 bg-white/[0.05] px-4 py-2 font-semibold">Soporte de arte final incluido</span>
+            <span className="rounded-full border border-white/14 bg-white/[0.06] px-4 py-2 font-semibold">Presupuesto en 24h</span>
+            <span className="rounded-full border border-white/14 bg-white/[0.06] px-4 py-2 font-semibold">Series cortas y grandes tiradas</span>
+            <span className="rounded-full border border-white/14 bg-white/[0.06] px-4 py-2 font-semibold">Soporte de arte final incluido</span>
           </div>
 
-          <div className="mt-8 inline-flex items-center overflow-hidden rounded-2xl border border-white/15 bg-white/[0.07] shadow-glow backdrop-blur-sm">
+          <div data-landing-shell="surface" className="mt-8 inline-flex items-center overflow-hidden rounded-2xl shadow-glow backdrop-blur-sm">
             <input
               value={units}
               onChange={(e) => setUnits(Math.max(1, Number(e.target.value) || 1))}
@@ -87,7 +87,7 @@ const Hero = () => {
               onClick={handleRequestQuote}
               className="inline-flex w-full items-center justify-center rounded-full border border-accent-300/35 bg-metal-button px-7 py-4 text-sm font-semibold uppercase tracking-[0.14em] text-cami-100 shadow-metal transition-all hover:-translate-y-0.5 hover:brightness-110"
             >
-              Obtener presupuesto gratis →
+              Solicitar Cotización · Recibir propuesta en minutos →
             </a>
             <a
               href="#ofertas"
@@ -110,9 +110,9 @@ const Hero = () => {
           </div>
 
           <div className="mt-8 grid max-w-2xl grid-cols-2 gap-3 text-sm text-cami-200 sm:grid-cols-3">
-            <p className="rounded-2xl border border-white/10 bg-cami-900/55 px-4 py-3 shadow-glow"><span className="block font-display text-2xl text-white">1.200+</span> pedidos entregados</p>
-            <p className="rounded-2xl border border-white/10 bg-cami-900/55 px-4 py-3 shadow-glow"><span className="block font-display text-2xl text-white">4,9★</span> valoración media</p>
-            <p className="col-span-2 rounded-2xl border border-white/10 bg-cami-900/55 px-4 py-3 shadow-glow sm:col-span-1"><span className="block font-display text-2xl text-white">&lt;24h</span> primera propuesta</p>
+            <p data-landing-shell="surface" className="rounded-2xl px-4 py-3 shadow-glow"><span className="block font-display text-2xl text-white">1200+</span> pedidos entregados</p>
+            <p data-landing-shell="surface" className="rounded-2xl px-4 py-3 shadow-glow"><span className="block font-display text-2xl text-white">4,9★</span> valoración media</p>
+            <p data-landing-shell="surface" className="col-span-2 rounded-2xl px-4 py-3 shadow-glow sm:col-span-1"><span className="block font-display text-2xl text-white">&lt;24h</span> primera propuesta</p>
           </div>
         </div>
 

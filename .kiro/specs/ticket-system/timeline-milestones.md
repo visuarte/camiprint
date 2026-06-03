@@ -1,4 +1,4 @@
-# Ticket System - Timeline & Milestones
+﻿# Ticket System - Timeline & Milestones
 
 **Baseline Timeline:** 22 weeks (5-person core team)  
 **Accelerated Timeline:** 18-20 weeks (7-person team)  
@@ -11,17 +11,17 @@
 
 ```
 Week  1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22
-──────────────────────────────────────────────────────────────
-Phase1 ████████   Core Ticket Management
-Phase2      ████████   Messaging & Communication
-Phase3          ████████   Support Operations
-Phase4              ████████   SLA & Escalation
-Phase5                  ████████   Knowledge Base
-Phase6                      ████████   Admin & Reporting
-Phase7                          ████████   Advanced Features
-Phase8                              ████████   Integrations
-Phase9                                  ██████████   Testing & QA
-Phase10                                         ████████   Production
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+Phase1 â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ   Core Ticket Management
+Phase2      â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ   Messaging & Communication
+Phase3          â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ   Support Operations
+Phase4              â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ   SLA & Escalation
+Phase5                  â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ   Knowledge Base
+Phase6                      â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ   Admin & Reporting
+Phase7                          â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ   Advanced Features
+Phase8                              â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ   Integrations
+Phase9                                  â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ   Testing & QA
+Phase10                                         â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ   Production
 ```
 
 ---
@@ -29,7 +29,7 @@ Phase10                                         ████████   Produ
 ## Detailed Phase Timeline
 
 ### Milestone 0: Project Kickoff & Setup (Week 0.5 - 3 days)
-**Status:** ⚪ Planning (before Phase 1 starts)
+**Status:** âšª Planning (before Phase 1 starts)
 
 **Objective:** Foundation & team alignment
 
@@ -49,7 +49,7 @@ Phase10                                         ████████   Produ
 ---
 
 ### Phase 1: Core Ticket Management (Weeks 1-3)
-**Status:** ⚪ Scheduled
+**Status:** âšª Scheduled
 
 **Goal:** Database & API foundation ready for Phase 2
 
@@ -92,13 +92,13 @@ Phase10                                         ████████   Produ
 
 **Dependencies:** None  
 **Risks:**
-- Database schema design mistakes (→ review early with team)
-- Missing validation (→ comprehensive Zod schemas)
+- Database schema design mistakes (â†’ review early with team)
+- Missing validation (â†’ comprehensive Zod schemas)
 
 ---
 
 ### Phase 2: Messaging & Communication (Weeks 4-5)
-**Status:** ⚪ Scheduled
+**Status:** âšª Scheduled
 
 **Goal:** Ticket-to-message communication working, notifications configured
 
@@ -112,7 +112,7 @@ Phase10                                         ████████   Produ
 - [ ] Message model & CRUD operations
 - [ ] Message attachments (file upload/storage)
 - [ ] Internal notes feature (hidden from clients)
-- [ ] Auto-status transitions (Esperando Cliente → En Progreso)
+- [ ] Auto-status transitions (Esperando Cliente â†’ En Progreso)
 - [ ] 80% test coverage
 
 **Epic 2.2: Email Notifications** (Week 4-5)
@@ -138,13 +138,13 @@ Phase10                                         ████████   Produ
 
 **Dependencies:** Phase 1 complete  
 **Risks:**
-- Email delivery failures (→ extensive testing, fallback providers)
-- WebSocket connection stability (→ polling fallback)
+- Email delivery failures (â†’ extensive testing, fallback providers)
+- WebSocket connection stability (â†’ polling fallback)
 
 ---
 
 ### Phase 3: Support Operations (Weeks 6-7)
-**Status:** ⚪ Scheduled
+**Status:** âšª Scheduled
 
 **Goal:** Agent dashboard & advanced search operational
 
@@ -185,13 +185,13 @@ Phase10                                         ████████   Produ
 
 **Dependencies:** Phase 1 complete  
 **Risks:**
-- Search performance degradation (→ query optimization, indexing strategy)
-- State machine bugs (→ comprehensive unit tests)
+- Search performance degradation (â†’ query optimization, indexing strategy)
+- State machine bugs (â†’ comprehensive unit tests)
 
 ---
 
 ### Phase 4: SLA & Escalation (Weeks 8-9)
-**Status:** ⚪ Scheduled
+**Status:** âšª Scheduled
 
 **Goal:** SLA tracking & escalation automation active
 
@@ -228,13 +228,13 @@ Phase10                                         ████████   Produ
 
 **Dependencies:** Phase 1 complete, Phase 4 requires background job infrastructure  
 **Risks:**
-- SLA calculation edge cases (→ extensive unit tests, audit logging)
-- Background job reliability (→ monitoring & alerting)
+- SLA calculation edge cases (â†’ extensive unit tests, audit logging)
+- Background job reliability (â†’ monitoring & alerting)
 
 ---
 
 ### Phase 5: Knowledge Base (Weeks 10-11)
-**Status:** ⚪ Scheduled
+**Status:** âšª Scheduled
 
 **Goal:** Self-service knowledge base operational
 
@@ -271,13 +271,13 @@ Phase10                                         ████████   Produ
 
 **Dependencies:** Phase 1, Phase 2 (messaging)  
 **Risks:**
-- Article search relevance (→ tuning algorithm)
-- Rich text editor complexity (→ use battle-tested library)
+- Article search relevance (â†’ tuning algorithm)
+- Rich text editor complexity (â†’ use battle-tested library)
 
 ---
 
 ### Phase 6: Admin & Reporting (Weeks 12-13)
-**Status:** ⚪ Scheduled
+**Status:** âšª Scheduled
 
 **Goal:** Admin panel & performance dashboards ready
 
@@ -316,13 +316,13 @@ Phase10                                         ████████   Produ
 
 **Dependencies:** Phase 1-5 complete  
 **Risks:**
-- Report performance at scale (→ query optimization, caching)
-- Dashboard complexity (→ component library reuse)
+- Report performance at scale (â†’ query optimization, caching)
+- Dashboard complexity (â†’ component library reuse)
 
 ---
 
 ### Phase 7: Advanced Features (Weeks 14-15)
-**Status:** ⚪ Scheduled
+**Status:** âšª Scheduled
 
 **Goal:** Customer satisfaction, templates, multi-channel working
 
@@ -348,7 +348,7 @@ Phase10                                         ████████   Produ
 - [ ] Template editing before sending
 
 **Epic 7.3: Multi-Channel Support** (Week 15)
-- [ ] Email ingestion service (support@camiprint.com)
+- [ ] Email ingestion service (support@camiart.com)
 - [ ] Email parsing & ticket creation
 - [ ] Email reply detection & message addition
 - [ ] Channel source tracking
@@ -364,13 +364,13 @@ Phase10                                         ████████   Produ
 
 **Dependencies:** Phase 1-6 complete  
 **Risks:**
-- Email parsing complexity (→ use email-parser library, test extensively)
-- Multi-tenant email handling (→ webhook signature validation)
+- Email parsing complexity (â†’ use email-parser library, test extensively)
+- Multi-tenant email handling (â†’ webhook signature validation)
 
 ---
 
 ### Phase 8: Integrations & Deployment (Weeks 16-17)
-**Status:** ⚪ Scheduled
+**Status:** âšª Scheduled
 
 **Goal:** API ready for integrations, deployment infrastructure configured
 
@@ -416,13 +416,13 @@ Phase10                                         ████████   Produ
 
 **Dependencies:** Phase 1-7 complete  
 **Risks:**
-- Deployment complexity (→ use managed services like Vercel)
-- API compatibility issues (→ early SDK testing)
+- Deployment complexity (â†’ use managed services like Vercel)
+- API compatibility issues (â†’ early SDK testing)
 
 ---
 
 ### Phase 9: Testing & QA (Weeks 18-20)
-**Status:** ⚪ Scheduled
+**Status:** âšª Scheduled
 
 **Goal:** Production-ready code quality & security
 
@@ -465,13 +465,13 @@ Phase10                                         ████████   Produ
 
 **Dependencies:** Phase 1-8 complete  
 **Risks:**
-- Test coverage incomplete (→ continuous monitoring throughout project)
-- Performance regression (→ baseline metrics in Phase 1)
+- Test coverage incomplete (â†’ continuous monitoring throughout project)
+- Performance regression (â†’ baseline metrics in Phase 1)
 
 ---
 
 ### Phase 10: Production Rollout (Weeks 21-22)
-**Status:** ⚪ Scheduled
+**Status:** âšª Scheduled
 
 **Goal:** Live in production with monitoring active
 
@@ -509,8 +509,8 @@ Phase10                                         ████████   Produ
 
 **Dependencies:** Phase 1-9 complete  
 **Risks:**
-- Production issues (→ comprehensive testing, monitoring, runbooks)
-- Customer issues (→ support team training, communication plan)
+- Production issues (â†’ comprehensive testing, monitoring, runbooks)
+- Customer issues (â†’ support team training, communication plan)
 
 ---
 
@@ -552,55 +552,55 @@ Phase10                                         ████████   Produ
 ## Success Criteria by Phase
 
 ### Phase 1: Core Ticket Management
-- ✅ Database schema finalized with 0 breaking changes needed
-- ✅ API endpoints 100% functional
-- ✅ Unit test coverage >80%
-- ✅ Zero critical security vulnerabilities
-- ✅ API response time <200ms (p95)
+- âœ… Database schema finalized with 0 breaking changes needed
+- âœ… API endpoints 100% functional
+- âœ… Unit test coverage >80%
+- âœ… Zero critical security vulnerabilities
+- âœ… API response time <200ms (p95)
 
 ### Phase 2: Messaging & Communication
-- ✅ Messages working reliably
-- ✅ Email delivery >99% success rate
-- ✅ WebSocket notifications <500ms latency
-- ✅ 0 critical notification delivery issues
+- âœ… Messages working reliably
+- âœ… Email delivery >99% success rate
+- âœ… WebSocket notifications <500ms latency
+- âœ… 0 critical notification delivery issues
 
 ### Phase 3: Support Operations
-- ✅ Assignment & status working reliably
-- ✅ Search response time <2 sec for 100k tickets
-- ✅ No false positives in auto-assignment
+- âœ… Assignment & status working reliably
+- âœ… Search response time <2 sec for 100k tickets
+- âœ… No false positives in auto-assignment
 
 ### Phase 4: SLA & Escalation
-- ✅ SLA calculations verified (manual spot checks)
-- ✅ Escalation logic working as defined
-- ✅ Background jobs running reliably
+- âœ… SLA calculations verified (manual spot checks)
+- âœ… Escalation logic working as defined
+- âœ… Background jobs running reliably
 
 ### Phase 5: Knowledge Base
-- ✅ Article search working with good relevance
-- ✅ Suggestions helpful (manual review)
+- âœ… Article search working with good relevance
+- âœ… Suggestions helpful (manual review)
 
 ### Phase 6: Admin & Reporting
-- ✅ Admin panel usable by non-technical users
-- ✅ Reports accurate (verified against raw data)
-- ✅ Dashboard loads <2 sec
+- âœ… Admin panel usable by non-technical users
+- âœ… Reports accurate (verified against raw data)
+- âœ… Dashboard loads <2 sec
 
 ### Phase 7: Advanced Features
-- ✅ Satisfaction surveys high completion rate
-- ✅ Templates reduce response time 30%+
-- ✅ Email integration <5 errors/1000 emails
+- âœ… Satisfaction surveys high completion rate
+- âœ… Templates reduce response time 30%+
+- âœ… Email integration <5 errors/1000 emails
 
 ### Phase 8: Integrations & Deployment
-- ✅ API SDKs tested with example apps
-- ✅ Deployment to staging successful
-- ✅ Monitoring alerts working
+- âœ… API SDKs tested with example apps
+- âœ… Deployment to staging successful
+- âœ… Monitoring alerts working
 
 ### Phase 9: Testing & QA
-- ✅ Code coverage >85%
-- ✅ 0 critical bugs in QA
-- ✅ Performance targets met
-- ✅ Security audit clean
+- âœ… Code coverage >85%
+- âœ… 0 critical bugs in QA
+- âœ… Performance targets met
+- âœ… Security audit clean
 
 ### Phase 10: Production Rollout
-- ✅ 0 critical issues in Week 1
-- ✅ User adoption >50% of team in Week 1
-- ✅ Satisfaction >4.0/5.0 after 2 weeks
+- âœ… 0 critical issues in Week 1
+- âœ… User adoption >50% of team in Week 1
+- âœ… Satisfaction >4.0/5.0 after 2 weeks
 

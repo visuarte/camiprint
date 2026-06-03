@@ -1,6 +1,6 @@
 import Redis from 'ioredis';
 
-const GLOBAL_KEY = '__camiprint_redis_client__';
+const GLOBAL_KEY = '__camiart_redis_client__';
 
 export const getRedisClient = (redisUrl: string): Redis => {
   const g = globalThis as typeof globalThis & {

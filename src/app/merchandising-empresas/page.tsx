@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { brandConfig } from '@/config/brand';
 
 export const metadata: Metadata = {
-  title: 'Merchandising para empresas — CamiPrint',
+  title: `Merchandising para empresas — ${brandConfig.displayName}`,
   description:
     'Merchandising corporativo: camisetas, sudaderas, bolsas y regalos personalizados para empresas. Producción por volumen y logística a medida.',
   keywords: ['merchandising empresas', 'regalos corporativos', 'merchandising personalizado'],

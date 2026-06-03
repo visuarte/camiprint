@@ -64,7 +64,7 @@ export const runQuoteFirstResponseSlaCheck = async (): Promise<SlaBreachRunResul
         process.env.QUOTES_NOTIFICATION_EMAIL ||
         process.env.CONTACT_TO_EMAIL ||
         process.env.RESEND_TO_EMAIL ||
-        'hola@camiprint.com';
+        'hola@camiart.com';
 
       const mailResult = await emailService.sendEmail({
         to: recipient,

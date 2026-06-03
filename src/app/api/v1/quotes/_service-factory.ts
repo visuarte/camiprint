@@ -1,6 +1,6 @@
 import { QuotesService } from '@/server/quotes/service';
 
-const GLOBAL_KEY = '__camiprint_quotes_service_factory__';
+const GLOBAL_KEY = '__camiart_quotes_service_factory__';
 
 export type QuotesServiceFactory = () => QuotesService;
 

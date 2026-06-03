@@ -46,7 +46,7 @@ export default function AdminLoginPage() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-8">
-          <h1 className="text-2xl font-bold mb-2 text-center">CamiPrint Admin</h1>
+          <h1 className="text-2xl font-bold mb-2 text-center">CamiArt Admin</h1>
           <p className="text-neutral-400 text-center text-sm mb-6">Ingresa tu token de administrador</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">

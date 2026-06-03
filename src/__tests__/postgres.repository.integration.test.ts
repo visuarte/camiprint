@@ -26,7 +26,7 @@ const TEST_DB_URL =
 
 const baseInput: QuoteRequestInput = {
   name: 'Integracion Test',
-  email: 'integration@camiprint.test',
+  email: 'integration@camiart.test',
   phone: '+34 600 000 001',
   companyName: brandConfig.companyExample,
   quantity: '50-99',
@@ -55,13 +55,13 @@ describe.skipIf(process.env.POSTGRES_INTEGRATION_TEST !== 'true')(
 
       // Limpia datos de ejecuciones anteriores del mismo prefijo
       await pool.query(
-        `DELETE FROM quotes WHERE email = 'integration@camiprint.test'`
+        `DELETE FROM quotes WHERE email = 'integration@camiart.test'`
       );
     });
 
     afterAll(async () => {
       await pool.query(
-        `DELETE FROM quotes WHERE email = 'integration@camiprint.test'`
+        `DELETE FROM quotes WHERE email = 'integration@camiart.test'`
       );
       await pool.end();
     });

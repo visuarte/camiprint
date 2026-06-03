@@ -1,9 +1,9 @@
-# Milestone 0: Project Kickoff & Foundation Setup
+﻿# Milestone 0: Project Kickoff & Foundation Setup
 
 **Duration:** 3 days (Day 1-3 before Phase 1 Week 1 starts)  
 **Owner:** PM + Backend Lead  
 **Effort:** ~30 hours total  
-**Status:** ⚪ Ready to start
+**Status:** âšª Ready to start
 
 ---
 
@@ -132,7 +132,7 @@ Establish the project foundation, align the team, configure all development infr
   - Team risks (availability, skill gaps)
   - Business risks (timeline, scope creep)
   - External risks (vendor dependencies)
-- [ ] Risk matrix created (likelihood × impact)
+- [ ] Risk matrix created (likelihood Ã— impact)
 - [ ] Mitigation strategies assigned
 - [ ] Contingency plans drafted
 - [ ] **Owner:** PM, **Input:** All team
@@ -164,7 +164,7 @@ Establish the project foundation, align the team, configure all development infr
 - [ ] Escalation process documented
 - [ ] Communication channels established
   - Slack channels: #ticket-system-builds, #ticket-system-urgent
-  - Email: ticket-system-team@camiprint.com
+  - Email: ticket-system-team@camiart.com
 - [ ] **Owner:** PM
 - [ ] **Deliverable:** `COMMUNICATION_PLAN.md`
 
@@ -226,7 +226,7 @@ Establish the project foundation, align the team, configure all development infr
 
 ## Success Criteria for Milestone 0
 
-✅ **All team members can:**
+âœ… **All team members can:**
 - [ ] Clone the repository
 - [ ] Run `npm install` successfully
 - [ ] Connect to the PostgreSQL database
@@ -234,19 +234,19 @@ Establish the project foundation, align the team, configure all development infr
 - [ ] Understand the API architecture
 - [ ] Understand the team roles & responsibilities
 
-✅ **Infrastructure ready:**
+âœ… **Infrastructure ready:**
 - [ ] PostgreSQL running & backed up
 - [ ] CI/CD pipeline configured (test workflow works)
 - [ ] Monitoring/logging tools set up
 - [ ] Git workflow documented & understood
 
-✅ **Project organized:**
+âœ… **Project organized:**
 - [ ] Phase 1 Week 1 tasks clear & assigned
 - [ ] Risk register created & reviewed
 - [ ] Communication plan scheduled
 - [ ] Success metrics established
 
-✅ **Team aligned:**
+âœ… **Team aligned:**
 - [ ] Architecture reviewed & approved
 - [ ] Timeline understood & realistic
 - [ ] No blockers for Phase 1 start
@@ -266,11 +266,11 @@ Establish the project foundation, align the team, configure all development infr
 - [ ] PM sign-off: _____________________ (date)
 - [ ] Backend Lead sign-off: _____________________ (date)
 
-**If all items checked ✅:**
-→ **Ready to start Phase 1 Week 1** 🚀
+**If all items checked âœ…:**
+â†’ **Ready to start Phase 1 Week 1** ðŸš€
 
-**If any items ❌:**
-→ **Fix blockers before starting Phase 1** ⚠️
+**If any items âŒ:**
+â†’ **Fix blockers before starting Phase 1** âš ï¸
 
 ---
 
@@ -280,7 +280,7 @@ Establish the project foundation, align the team, configure all development infr
 |------|----------|-------|-------|
 | Kickoff Meeting | 1 hr | PM | 0.5 |
 | Environment Walkthrough | 1 hr | Backend Lead | 1 |
-| Individual Setup | 2 hrs | Each dev (5×) | 10 |
+| Individual Setup | 2 hrs | Each dev (5Ã—) | 10 |
 | Database Setup | 2 hrs | Backend Lead + DevOps | 3 |
 | CI/CD Setup | 2 hrs | DevOps | 2 |
 | Architecture Deep Dive | 2 hrs | Backend Lead | 2 |

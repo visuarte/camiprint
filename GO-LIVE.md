@@ -1,4 +1,5 @@
-# 🚀 Camiprint MVP - Go-Live Documentation
+> Nota de migracion (2026-06-03): este documento fue normalizado a marca CamiArt y dominio can�nico camiart.com. Se mantienen identificadores tecnicos historicos cuando aportan trazabilidad.
+# 🚀 CAMIART MVP - Go-Live Documentation
 
 **Version:** 1.0.0-MVP  
 **Date:** May 19, 2026  
@@ -8,7 +9,7 @@
 
 ## 📋 Executive Summary
 
-Camiprint MVP has successfully completed all 7 days of development and is ready for production deployment. This is a complete, tested, and secure t-shirt e-commerce store with:
+CAMIART MVP has successfully completed all 7 days of development and is ready for production deployment. This is a complete, tested, and secure t-shirt e-commerce store with:
 
 - ✅ 48 products (8 models × 6 sizes)
 - ✅ Full shopping cart with Zustand
@@ -28,7 +29,7 @@ Camiprint MVP has successfully completed all 7 days of development and is ready 
 | Component | Details |
 |-----------|---------|
 | **Platform** | Vercel |
-| **Domain** | `https://camiprint.vercel.app` (custom domain: TBD) |
+| **Domain** | `https://camiart.com` (custom domain: TBD) |
 | **Database** | PostgreSQL (Vercel Postgres) |
 | **Cache** | Redis (optional - memory for MVP) |
 | **Payment** | Stripe (Live Mode) |
@@ -45,8 +46,8 @@ Camiprint MVP has successfully completed all 7 days of development and is ready 
 
 ```env
 # Database - Vercel Postgres
-DATABASE_URL=postgresql://[user]:[password]@[host]:[port]/camiprint
-DIRECT_URL=postgresql://[user]:[password]@[host]:[port]/camiprint
+DATABASE_URL=postgresql://[user]:[password]@[host]:[port]/CAMIART
+DIRECT_URL=postgresql://[user]:[password]@[host]:[port]/CAMIART
 
 # Stripe - LIVE KEYS (NOT test keys)
 STRIPE_PUBLIC_KEY=pk_live_xxxxxxxxxxx
@@ -62,7 +63,7 @@ SMTP_HOST=smtp.sendgrid.net
 SMTP_PORT=587
 SMTP_USER=apikey
 SMTP_PASS=[SendGrid API Key]
-SMTP_FROM=orders@camiprint.com
+SMTP_FROM=orders@camiart.com
 
 # Runtime Settings
 NODE_ENV=production
@@ -90,7 +91,7 @@ NEXT_PUBLIC_ANALYTICS_ENABLED=true
 vercel login
 
 # Link project (if not already done)
-vercel link --project=camiprint
+vercel link --project=CAMIART
 
 # Verify project linked
 vercel projects list
@@ -101,7 +102,7 @@ vercel projects list
 **Via Vercel Dashboard:**
 
 1. Go to: `vercel.com/dashboard`
-2. Select project `camiprint`
+2. Select project `CAMIART`
 3. Go to: `Settings` → `Environment Variables`
 4. Add all variables from section above
 5. Set scope to `Production`
@@ -150,8 +151,8 @@ vercel deploy --prod
 ✓ No ESLint errors
 
 # Test production URL
-curl https://camiprint.vercel.app/
-curl https://camiprint.vercel.app/api/products
+curl https://camiart.com/
+curl https://camiart.com/api/products
 ```
 
 ---
@@ -171,7 +172,7 @@ In Stripe Dashboard:
 1. Go to: Stripe Dashboard → Developers → Webhooks
 2. Click `+ Add endpoint`
 3. **Endpoint URL (canónica):** `https://camiart.com/api/webhook/stripe`
-4. **Compatibilidad:** `https://camiprint.vercel.app/api/webhook/stripe` y `https://camiprint.vercel.app/api/webhooks/stripe` siguen funcionando para evitar 404 por rutas antiguas.
+4. **Compatibilidad:** `https://camiart.com/api/webhook/stripe` y `https://camiart.com/api/webhooks/stripe` siguen funcionando para evitar 404 por rutas antiguas.
 5. **Events to send:**
    - `payment_intent.succeeded`
    - `payment_intent.payment_failed`
@@ -204,7 +205,7 @@ En Stripe Dashboard, usa `Resend` en eventos fallidos del endpoint para confirma
    - `SMTP_PORT=587`
    - `SMTP_USER=apikey`
    - `SMTP_PASS=[your-sendgrid-api-key]`
-   - `SMTP_FROM=orders@camiprint.com`
+   - `SMTP_FROM=orders@camiart.com`
 
 ### Option 2: Gmail SMTP
 
@@ -243,7 +244,7 @@ curl -X POST http://localhost:3000/api/orders \
 
 ```bash
 # Run production smoke tests
-PROD_URL=https://camiprint.vercel.app \
+PROD_URL=https://camiart.com \
 ADMIN_TOKEN=[your-admin-token] \
 node scripts/smoke-test-prod.mjs
 ```
@@ -264,7 +265,7 @@ Expected output:
 **Test User Journey:**
 
 1. **Browse Catalog**
-   - Go to: `https://camiprint.vercel.app/catalog`
+   - Go to: `https://camiart.com/catalog`
    - Verify 48+ products load
    - Click on product → verify details page
 
@@ -274,7 +275,7 @@ Expected output:
    - Verify cart updates
 
 3. **Checkout**
-   - Go to: `https://camiprint.vercel.app/checkout`
+   - Go to: `https://camiart.com/checkout`
    - Fill form:
      - Email: `test@example.com`
      - Phone: `+1-555-0123`
@@ -293,7 +294,7 @@ Expected output:
    - Verify order details, items, and total
 
 6. **Admin Dashboard**
-   - Go to: `https://camiprint.vercel.app/admin`
+   - Go to: `https://camiart.com/admin`
    - Login with `ADMIN_AUTH_TOKEN`
    - View new order in dashboard
    - Click order → verify details
@@ -406,14 +407,14 @@ Expected output:
 
 ```bash
 # Check app status
-curl https://camiprint.vercel.app/api/v1/health
+curl https://camiart.com/api/v1/health
 
 # Check products API
-curl https://camiprint.vercel.app/api/products
+curl https://camiart.com/api/products
 
 # Check admin (should return 401 without token)
 curl -H "Authorization: Bearer invalid" \
-  https://camiprint.vercel.app/api/admin/orders
+  https://camiart.com/api/admin/orders
 ```
 
 ---
@@ -582,7 +583,7 @@ vercel deploy --prod --with-commit=[commit-hash]
 
 ## 📝 Final Notes
 
-**Camiprint MVP is production-ready and has been tested comprehensively.**
+**CAMIART MVP is production-ready and has been tested comprehensively.**
 
 - **Build Time:** < 2 minutes
 - **Test Coverage:** > 85%
@@ -612,4 +613,4 @@ vercel deploy --prod --with-commit=[commit-hash]
 
 ---
 
-🚀 **Camiprint MVP is ready. Let's ship it!**
+🚀 **CAMIART MVP is ready. Let's ship it!**

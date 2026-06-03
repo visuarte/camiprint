@@ -1,4 +1,4 @@
-# Admin Panel - Architecture Decision Records
+﻿# Admin Panel - Architecture Decision Records
 
 **Total ADRs:** 13  
 **Status:** Approved  
@@ -23,10 +23,10 @@
 - App Router is modern and performant
 
 **Consequences:**
-- ✅ Code reuse with existing Camiprint systems
-- ✅ Server-side rendering for SEO of admin docs
-- ⚠️ Next.js minor version upgrades require testing
-- ⚠️ Learning curve for new team members on App Router
+- âœ… Code reuse with existing CAMIART systems
+- âœ… Server-side rendering for SEO of admin docs
+- âš ï¸ Next.js minor version upgrades require testing
+- âš ï¸ Learning curve for new team members on App Router
 
 **Phase:** 1  
 **Status:** Approved
@@ -50,11 +50,11 @@
 - Change queue prevents conflicts during simultaneous edits
 
 **Consequences:**
-- ✅ Sub-second configuration propagation
-- ✅ Minimal database queries (cache hit rate >95%)
-- ⚠️ Requires Redis infrastructure
-- ⚠️ Complex cache invalidation logic
-- ⚠️ Transactional consistency needs careful handling
+- âœ… Sub-second configuration propagation
+- âœ… Minimal database queries (cache hit rate >95%)
+- âš ï¸ Requires Redis infrastructure
+- âš ï¸ Complex cache invalidation logic
+- âš ï¸ Transactional consistency needs careful handling
 
 **Phase:** 1  
 **Status:** Approved
@@ -78,11 +78,11 @@
 - Session limits prevent account takeover via stolen tokens
 
 **Consequences:**
-- ✅ Flexible permission model
-- ✅ Audit trail for compliance
-- ✅ Multi-device session management
-- ⚠️ Session cleanup overhead
-- ⚠️ IP tracking may break VPN users
+- âœ… Flexible permission model
+- âœ… Audit trail for compliance
+- âœ… Multi-device session management
+- âš ï¸ Session cleanup overhead
+- âš ï¸ IP tracking may break VPN users
 
 **Phase:** 1  
 **Status:** Approved
@@ -106,11 +106,11 @@
 - 1-year retention meets compliance requirements
 
 **Consequences:**
-- ✅ Prevention of configuration errors
-- ✅ Compliance-ready audit trail
-- ✅ Easy debugging of configuration issues
-- ⚠️ Audit logging adds ~5% performance overhead
-- ⚠️ Large audit log storage (estimate: 2-3GB/year)
+- âœ… Prevention of configuration errors
+- âœ… Compliance-ready audit trail
+- âœ… Easy debugging of configuration issues
+- âš ï¸ Audit logging adds ~5% performance overhead
+- âš ï¸ Large audit log storage (estimate: 2-3GB/year)
 
 **Phase:** 2  
 **Status:** Approved
@@ -134,11 +134,11 @@
 - Broadcast ensures all admins see updates
 
 **Consequences:**
-- ✅ Real-time collaboration experience
-- ✅ Conflict prevention
-- ✅ Low latency updates
-- ⚠️ Requires WebSocket infrastructure (sticky sessions)
-- ⚠️ Connection state management complexity
+- âœ… Real-time collaboration experience
+- âœ… Conflict prevention
+- âœ… Low latency updates
+- âš ï¸ Requires WebSocket infrastructure (sticky sessions)
+- âš ï¸ Connection state management complexity
 
 **Phase:** 2  
 **Status:** Approved
@@ -162,11 +162,11 @@
 - Aligns with NIST password guidelines
 
 **Consequences:**
-- ✅ High-entropy initial passwords
-- ✅ User ownership of credentials
-- ✅ Audit trail of credential changes
-- ⚠️ Email delivery can fail or be delayed
-- ⚠️ Users may share temporary passwords
+- âœ… High-entropy initial passwords
+- âœ… User ownership of credentials
+- âœ… Audit trail of credential changes
+- âš ï¸ Email delivery can fail or be delayed
+- âš ï¸ Users may share temporary passwords
 
 **Phase:** 2  
 **Status:** Approved
@@ -190,11 +190,11 @@
 - Template preview helps catch errors before sending
 
 **Consequences:**
-- ✅ Flexible email provider support
-- ✅ Error detection before production
-- ✅ Maintainable templates
-- ⚠️ SMTP configuration complexity
-- ⚠️ OAuth2 token refresh management
+- âœ… Flexible email provider support
+- âœ… Error detection before production
+- âœ… Maintainable templates
+- âš ï¸ SMTP configuration complexity
+- âš ï¸ OAuth2 token refresh management
 
 **Phase:** 2  
 **Status:** Approved
@@ -218,11 +218,11 @@
 - Multi-channel provides flexibility
 
 **Consequences:**
-- ✅ Non-technical rule configuration
-- ✅ Reduced notification noise
-- ✅ Flexible delivery options
-- ⚠️ Complex rule evaluation logic
-- ⚠️ Deduplication adds 50-100ms latency
+- âœ… Non-technical rule configuration
+- âœ… Reduced notification noise
+- âœ… Flexible delivery options
+- âš ï¸ Complex rule evaluation logic
+- âš ï¸ Deduplication adds 50-100ms latency
 
 **Phase:** 3  
 **Status:** Approved
@@ -246,11 +246,11 @@
 - Background job prevents blocking
 
 **Consequences:**
-- ✅ Flexible SLA policies
-- ✅ Global business hours support
-- ✅ Immediate compliance updates
-- ⚠️ SLA calculation is computationally expensive
-- ⚠️ Timezone handling complexity
+- âœ… Flexible SLA policies
+- âœ… Global business hours support
+- âœ… Immediate compliance updates
+- âš ï¸ SLA calculation is computationally expensive
+- âš ï¸ Timezone handling complexity
 
 **Phase:** 3  
 **Status:** Approved
@@ -274,11 +274,11 @@
 - Status monitoring helps detect failures
 
 **Consequences:**
-- ✅ Secure credential storage
-- ✅ Compliance-ready encryption
-- ✅ Multiple auth method support
-- ⚠️ Key rotation complexity
-- ⚠️ Encryption adds 1-2ms latency per request
+- âœ… Secure credential storage
+- âœ… Compliance-ready encryption
+- âœ… Multiple auth method support
+- âš ï¸ Key rotation complexity
+- âš ï¸ Encryption adds 1-2ms latency per request
 
 **Phase:** 3  
 **Status:** Approved
@@ -302,11 +302,11 @@
 - Point-in-time recovery enables targeted restoration
 
 **Consequences:**
-- ✅ Fast recovery from disasters
-- ✅ Protection against configuration errors
-- ✅ Compliance-ready backup retention
-- ⚠️ 30 days × database size = storage cost
-- ⚠️ Backup validation adds complexity
+- âœ… Fast recovery from disasters
+- âœ… Protection against configuration errors
+- âœ… Compliance-ready backup retention
+- âš ï¸ 30 days Ã— database size = storage cost
+- âš ï¸ Backup validation adds complexity
 
 **Phase:** 4  
 **Status:** Approved
@@ -330,11 +330,11 @@
 - Tanstack Query handles caching and invalidation
 
 **Consequences:**
-- ✅ Maintainable component structure
-- ✅ Reduced boilerplate code
-- ✅ Better UX with caching and optimistic updates
-- ⚠️ Learning curve for Zustand + React Hook Form
-- ⚠️ Requires careful invalidation logic
+- âœ… Maintainable component structure
+- âœ… Reduced boilerplate code
+- âœ… Better UX with caching and optimistic updates
+- âš ï¸ Learning curve for Zustand + React Hook Form
+- âš ï¸ Requires careful invalidation logic
 
 **Phase:** 1  
 **Status:** Approved
@@ -358,11 +358,11 @@
 - Real-time alerts for threshold violations
 
 **Consequences:**
-- ✅ Rapid issue detection and diagnosis
-- ✅ Performance insights guide optimization
-- ✅ Error context improves debugging
-- ⚠️ APM adds 2-3% performance overhead
-- ⚠️ Additional infrastructure and licensing costs
+- âœ… Rapid issue detection and diagnosis
+- âœ… Performance insights guide optimization
+- âœ… Error context improves debugging
+- âš ï¸ APM adds 2-3% performance overhead
+- âš ï¸ Additional infrastructure and licensing costs
 
 **Phase:** 4  
 **Status:** Approved

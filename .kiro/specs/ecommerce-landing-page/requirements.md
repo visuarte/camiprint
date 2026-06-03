@@ -1,41 +1,41 @@
-# Requirements Document
+﻿# Requirements Document
 
 ## Introduction
 
-Este documento define los requisitos para transformar la landing page básica de Camiprint en una plataforma de ecommerce profesional y optimizada para conversión. Camiprint es una tienda online especializada en camisetas personalizadas para negocios, restaurantes y empresas, enfocada en ropa laboral y campañas publicitarias.
+Este documento define los requisitos para transformar la landing page bÃ¡sica de CAMIART en una plataforma de ecommerce profesional y optimizada para conversiÃ³n. CAMIART es una tienda online especializada en camisetas personalizadas para negocios, restaurantes y empresas, enfocada en ropa laboral y campaÃ±as publicitarias.
 
-La landing page actual cuenta con una estructura básica (hero, ofertas por cantidad, categorías y footer). Este proyecto añadirá funcionalidades profesionales de ecommerce incluyendo navegación mejorada, secciones adicionales (testimonios, proceso de compra, FAQ), formularios de contacto/cotización, optimización de conversión y diseño responsive profesional.
+La landing page actual cuenta con una estructura bÃ¡sica (hero, ofertas por cantidad, categorÃ­as y footer). Este proyecto aÃ±adirÃ¡ funcionalidades profesionales de ecommerce incluyendo navegaciÃ³n mejorada, secciones adicionales (testimonios, proceso de compra, FAQ), formularios de contacto/cotizaciÃ³n, optimizaciÃ³n de conversiÃ³n y diseÃ±o responsive profesional.
 
 ## Glossary
 
-- **Landing_Page**: La página principal del sitio web de Camiprint que presenta la oferta de valor y convierte visitantes en leads o clientes
-- **Navigation_Bar**: Barra de navegación superior con logo, menú y botones de acción
-- **Hero_Section**: Sección principal de la página con título, descripción y llamada a la acción principal
-- **Pricing_Section**: Sección que muestra las ofertas por cantidad de camisetas
-- **Category_Section**: Sección que presenta las categorías de productos especializados
-- **Testimonial_Section**: Sección que muestra opiniones y valoraciones de clientes
-- **Process_Section**: Sección que explica el proceso de compra paso a paso
-- **FAQ_Section**: Sección de preguntas frecuentes con respuestas expandibles
-- **Contact_Form**: Formulario para solicitar cotizaciones o información
-- **Footer**: Pie de página con información de contacto, enlaces y redes sociales
-- **CTA_Button**: Botón de llamada a la acción (Call To Action)
-- **Responsive_Design**: Diseño que se adapta a diferentes tamaños de pantalla (móvil, tablet, desktop)
-- **Conversion_Element**: Elemento diseñado para convertir visitantes en leads o clientes
+- **Landing_Page**: La pÃ¡gina principal del sitio web de CAMIART que presenta la oferta de valor y convierte visitantes en leads o clientes
+- **Navigation_Bar**: Barra de navegaciÃ³n superior con logo, menÃº y botones de acciÃ³n
+- **Hero_Section**: SecciÃ³n principal de la pÃ¡gina con tÃ­tulo, descripciÃ³n y llamada a la acciÃ³n principal
+- **Pricing_Section**: SecciÃ³n que muestra las ofertas por cantidad de camisetas
+- **Category_Section**: SecciÃ³n que presenta las categorÃ­as de productos especializados
+- **Testimonial_Section**: SecciÃ³n que muestra opiniones y valoraciones de clientes
+- **Process_Section**: SecciÃ³n que explica el proceso de compra paso a paso
+- **FAQ_Section**: SecciÃ³n de preguntas frecuentes con respuestas expandibles
+- **Contact_Form**: Formulario para solicitar cotizaciones o informaciÃ³n
+- **Footer**: Pie de pÃ¡gina con informaciÃ³n de contacto, enlaces y redes sociales
+- **CTA_Button**: BotÃ³n de llamada a la acciÃ³n (Call To Action)
+- **Responsive_Design**: DiseÃ±o que se adapta a diferentes tamaÃ±os de pantalla (mÃ³vil, tablet, desktop)
+- **Conversion_Element**: Elemento diseÃ±ado para convertir visitantes en leads o clientes
 - **User**: Visitante del sitio web que busca camisetas personalizadas para su negocio
-- **Mobile_Menu**: Menú de navegación adaptado para dispositivos móviles
-- **Scroll_Behavior**: Comportamiento de navegación suave al hacer clic en enlaces internos
+- **Mobile_Menu**: MenÃº de navegaciÃ³n adaptado para dispositivos mÃ³viles
+- **Scroll_Behavior**: Comportamiento de navegaciÃ³n suave al hacer clic en enlaces internos
 
 ## Requirements
 
-### Requirement 1: Navegación Principal
+### Requirement 1: NavegaciÃ³n Principal
 
-**User Story:** Como usuario, quiero una barra de navegación clara y accesible, para poder navegar fácilmente por las diferentes secciones de la página.
+**User Story:** Como usuario, quiero una barra de navegaciÃ³n clara y accesible, para poder navegar fÃ¡cilmente por las diferentes secciones de la pÃ¡gina.
 
 #### Acceptance Criteria 1
 
-1. THE Navigation_Bar SHALL display the Camiprint logo on the left side
+1. THE Navigation_Bar SHALL display the CAMIART logo on the left side
 2. THE Navigation_Bar SHALL include navigation links to all main sections (Inicio, Ofertas, Proceso, Testimonios, FAQ, Contacto)
-3. THE Navigation_Bar SHALL include a primary CTA_Button with text "Solicitar Cotización"
+3. THE Navigation_Bar SHALL include a primary CTA_Button with text "Solicitar CotizaciÃ³n"
 4. THE Navigation_Bar SHALL remain fixed at the top of the viewport while scrolling
 5. WHEN a User clicks a navigation link, THE Landing_Page SHALL scroll smoothly to the corresponding section
 6. WHEN the viewport width is less than 768 pixels, THE Navigation_Bar SHALL display a hamburger menu icon
@@ -44,36 +44,36 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 
 ### Requirement 2: Hero Section Mejorado
 
-**User Story:** Como usuario, quiero una sección hero impactante y clara, para entender inmediatamente la propuesta de valor de Camiprint.
+**User Story:** Como usuario, quiero una secciÃ³n hero impactante y clara, para entender inmediatamente la propuesta de valor de CAMIART.
 
 #### Acceptance Criteria 2
 
 1. THE Hero_Section SHALL display a main heading with the value proposition
 2. THE Hero_Section SHALL display a descriptive subheading explaining the service
 3. THE Hero_Section SHALL include a primary CTA_Button with text "Ver Ofertas"
-4. THE Hero_Section SHALL include a secondary CTA_Button with text "Solicitar Cotización"
+4. THE Hero_Section SHALL include a secondary CTA_Button with text "Solicitar CotizaciÃ³n"
 5. WHEN a User clicks the primary CTA_Button, THE Landing_Page SHALL scroll to the Pricing_Section
 6. WHEN a User clicks the secondary CTA_Button, THE Landing_Page SHALL scroll to the Contact_Form
-7. THE Hero_Section SHALL display trust indicators (e.g., "Entrega en 7-10 días", "Desde 50 unidades", "Diseño gratuito")
+7. THE Hero_Section SHALL display trust indicators (e.g., "Entrega en 7-10 dÃ­as", "Desde 50 unidades", "DiseÃ±o gratuito")
 8. THE Hero_Section SHALL use a gradient background consistent with the brand colors
 
-### Requirement 3: Sección de Ofertas por Cantidad
+### Requirement 3: SecciÃ³n de Ofertas por Cantidad
 
-**User Story:** Como usuario, quiero ver claramente los precios y descuentos por volumen, para tomar una decisión informada sobre mi pedido.
+**User Story:** Como usuario, quiero ver claramente los precios y descuentos por volumen, para tomar una decisiÃ³n informada sobre mi pedido.
 
 #### Acceptance Criteria 3
 
 1. THE Pricing_Section SHALL display at least three pricing tiers (10+, 25+, 50+ units)
 2. FOR EACH pricing tier, THE Pricing_Section SHALL display the quantity range, price per unit, and percentage savings
 3. THE Pricing_Section SHALL highlight the most popular tier with a visual indicator
-4. THE Pricing_Section SHALL include a CTA_Button for each tier with text "Solicitar Cotización"
+4. THE Pricing_Section SHALL include a CTA_Button for each tier with text "Solicitar CotizaciÃ³n"
 5. WHEN a User clicks a tier CTA_Button, THE Landing_Page SHALL scroll to the Contact_Form with the quantity pre-selected
 6. THE Pricing_Section SHALL display in a responsive grid layout (1 column on mobile, 3 columns on desktop)
-7. THE Pricing_Section SHALL include a note stating "Precios orientativos. Cotización final según diseño y especificaciones"
+7. THE Pricing_Section SHALL include a note stating "Precios orientativos. CotizaciÃ³n final segÃºn diseÃ±o y especificaciones"
 
-### Requirement 4: Sección de Proceso de Compra
+### Requirement 4: SecciÃ³n de Proceso de Compra
 
-**User Story:** Como usuario, quiero entender el proceso de compra paso a paso, para saber qué esperar al hacer un pedido.
+**User Story:** Como usuario, quiero entender el proceso de compra paso a paso, para saber quÃ© esperar al hacer un pedido.
 
 #### Acceptance Criteria 4
 
@@ -81,13 +81,13 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 2. FOR EACH step, THE Process_Section SHALL display a step number, title, and brief description
 3. THE Process_Section SHALL use visual indicators (icons or illustrations) for each step
 4. THE Process_Section SHALL display steps in a horizontal layout on desktop and vertical layout on mobile
-5. THE Process_Section SHALL include typical steps: "Solicitar Cotización", "Recibir Propuesta", "Aprobar Diseño", "Recibir Pedido"
+5. THE Process_Section SHALL include typical steps: "Solicitar CotizaciÃ³n", "Recibir Propuesta", "Aprobar DiseÃ±o", "Recibir Pedido"
 6. THE Process_Section SHALL include estimated timeframes for each step
 7. THE Process_Section SHALL include a CTA_Button at the end with text "Comenzar Ahora"
 
-### Requirement 5: Sección de Testimonios
+### Requirement 5: SecciÃ³n de Testimonios
 
-**User Story:** Como usuario, quiero leer opiniones de otros clientes, para confiar en la calidad del servicio de Camiprint.
+**User Story:** Como usuario, quiero leer opiniones de otros clientes, para confiar en la calidad del servicio de CAMIART.
 
 #### Acceptance Criteria 5
 
@@ -99,7 +99,7 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 6. THE Testimonial_Section SHALL include a heading "Lo que dicen nuestros clientes"
 7. THE Testimonial_Section SHALL use card-based design with subtle shadows
 
-### Requirement 6: Sección de Preguntas Frecuentes
+### Requirement 6: SecciÃ³n de Preguntas Frecuentes
 
 **User Story:** Como usuario, quiero encontrar respuestas a preguntas comunes, para resolver mis dudas sin necesidad de contactar.
 
@@ -112,11 +112,11 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 5. THE FAQ_Section SHALL include questions about: minimum order quantity, delivery time, design process, payment methods, customization options, and returns
 6. THE FAQ_Section SHALL use an accordion-style interaction pattern
 7. THE FAQ_Section SHALL include visual indicators (chevron icons) showing expand/collapse state
-8. THE FAQ_Section SHALL include a CTA at the end with text "¿Más preguntas? Contáctanos"
+8. THE FAQ_Section SHALL include a CTA at the end with text "Â¿MÃ¡s preguntas? ContÃ¡ctanos"
 
-### Requirement 7: Formulario de Contacto y Cotización
+### Requirement 7: Formulario de Contacto y CotizaciÃ³n
 
-**User Story:** Como usuario, quiero solicitar una cotización fácilmente, para recibir información personalizada sobre mi pedido.
+**User Story:** Como usuario, quiero solicitar una cotizaciÃ³n fÃ¡cilmente, para recibir informaciÃ³n personalizada sobre mi pedido.
 
 #### Acceptance Criteria 7
 
@@ -125,21 +125,21 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 3. WHEN a User submits the Contact_Form with empty required fields, THE Contact_Form SHALL display validation error messages
 4. WHEN a User enters an invalid email format, THE Contact_Form SHALL display an email validation error
 5. THE Contact_Form SHALL include a quantity selector with predefined options (10-24, 25-49, 50-99, 100+)
-6. THE Contact_Form SHALL include a submit button with text "Solicitar Cotización"
+6. THE Contact_Form SHALL include a submit button with text "Solicitar CotizaciÃ³n"
 7. WHEN a User successfully submits the Contact_Form, THE Landing_Page SHALL display a success message
 8. WHEN a User successfully submits the Contact_Form, THE Contact_Form SHALL reset all fields
-9. THE Contact_Form SHALL include a privacy notice with text "Tus datos están protegidos y no serán compartidos con terceros"
+9. THE Contact_Form SHALL include a privacy notice with text "Tus datos estÃ¡n protegidos y no serÃ¡n compartidos con terceros"
 10. THE Contact_Form SHALL use client-side validation before submission
 
 ### Requirement 8: Footer Mejorado
 
-**User Story:** Como usuario, quiero acceder a información adicional y enlaces importantes en el footer, para encontrar detalles de contacto y políticas.
+**User Story:** Como usuario, quiero acceder a informaciÃ³n adicional y enlaces importantes en el footer, para encontrar detalles de contacto y polÃ­ticas.
 
 #### Acceptance Criteria 8
 
-1. THE Footer SHALL display the Camiprint logo
+1. THE Footer SHALL display the CAMIART logo
 2. THE Footer SHALL include contact information (email, phone, address)
-3. THE Footer SHALL include links to: Política de Privacidad, Términos y Condiciones, Política de Envíos
+3. THE Footer SHALL include links to: PolÃ­tica de Privacidad, TÃ©rminos y Condiciones, PolÃ­tica de EnvÃ­os
 4. THE Footer SHALL include social media icons with links (Facebook, Instagram, LinkedIn)
 5. THE Footer SHALL display copyright information with the current year
 6. THE Footer SHALL include a brief company description
@@ -147,9 +147,9 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 8. WHEN the viewport width is less than 768 pixels, THE Footer SHALL stack columns vertically
 9. THE Footer SHALL use a dark background color consistent with the brand
 
-### Requirement 9: Diseño Responsive
+### Requirement 9: DiseÃ±o Responsive
 
-**User Story:** Como usuario móvil, quiero que la página se vea y funcione correctamente en mi dispositivo, para tener una buena experiencia de navegación.
+**User Story:** Como usuario mÃ³vil, quiero que la pÃ¡gina se vea y funcione correctamente en mi dispositivo, para tener una buena experiencia de navegaciÃ³n.
 
 #### Acceptance Criteria 9
 
@@ -162,7 +162,7 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 7. THE Landing_Page SHALL use responsive images that adapt to different screen sizes
 8. THE Landing_Page SHALL maintain consistent spacing and padding across all breakpoints
 
-### Requirement 10: Optimización de Conversión
+### Requirement 10: OptimizaciÃ³n de ConversiÃ³n
 
 **User Story:** Como propietario del negocio, quiero maximizar las conversiones de visitantes a leads, para aumentar las ventas.
 
@@ -171,15 +171,15 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 1. THE Landing_Page SHALL include at least three visible CTA_Buttons above the fold
 2. THE Landing_Page SHALL use contrasting colors for all CTA_Buttons to ensure visibility
 3. THE Landing_Page SHALL include trust signals (customer count, years in business, guarantees) in at least two sections
-4. THE Landing_Page SHALL use action-oriented language in all CTA_Buttons (e.g., "Solicitar Cotización", "Ver Ofertas", "Comenzar Ahora")
+4. THE Landing_Page SHALL use action-oriented language in all CTA_Buttons (e.g., "Solicitar CotizaciÃ³n", "Ver Ofertas", "Comenzar Ahora")
 5. THE Landing_Page SHALL minimize form fields in the Contact_Form to reduce friction (maximum 6 required fields)
 6. THE Landing_Page SHALL include social proof elements (testimonials, customer logos) visible without scrolling past the hero section
-7. THE Landing_Page SHALL use urgency or scarcity indicators WHERE appropriate (e.g., "Oferta válida hasta fin de mes")
+7. THE Landing_Page SHALL use urgency or scarcity indicators WHERE appropriate (e.g., "Oferta vÃ¡lida hasta fin de mes")
 8. THE Landing_Page SHALL ensure page load time is under 3 seconds on standard broadband connection
 
 ### Requirement 11: Accesibilidad
 
-**User Story:** Como usuario con discapacidad, quiero poder navegar y usar la página con tecnologías asistivas, para acceder a la información y servicios.
+**User Story:** Como usuario con discapacidad, quiero poder navegar y usar la pÃ¡gina con tecnologÃ­as asistivas, para acceder a la informaciÃ³n y servicios.
 
 #### Acceptance Criteria 11
 
@@ -194,7 +194,7 @@ La landing page actual cuenta con una estructura básica (hero, ofertas por cant
 
 ### Requirement 12: Animaciones y Transiciones
 
-**User Story:** Como usuario, quiero una experiencia visual fluida y moderna, para disfrutar de una navegación agradable.
+**User Story:** Como usuario, quiero una experiencia visual fluida y moderna, para disfrutar de una navegaciÃ³n agradable.
 
 #### Acceptance Criteria 12
 

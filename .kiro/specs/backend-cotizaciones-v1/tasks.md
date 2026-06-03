@@ -1,32 +1,32 @@
-# Implementation Plan: Backend Cotizaciones v1
+﻿# Implementation Plan: Backend Cotizaciones v1
 
 ## Estado de Ejecucion - Backend Cotizaciones v1
 
 Fecha de corte: 2026-05-19
-Estado general: Fases 1, 2 y 3 (código) completadas — Pendiente: provisioning DB staging/prod, deploy y monitoreo externo
+Estado general: Fases 1, 2 y 3 (cÃ³digo) completadas â€” Pendiente: provisioning DB staging/prod, deploy y monitoreo externo
 
 ### Hecho
 
 - Fase 1 Backend completa (Epics 1-8, 43 tareas).
 - Fase 2 Frontend completa (Epics 9-11, 12 tareas).
-- Fase 3 código completo (Epics 12-14 partes implementables):
+- Fase 3 cÃ³digo completo (Epics 12-14 partes implementables):
   - CORS: getCorsHeaders + OPTIONS handler en quotes route.
   - Security headers globales en next.config.ts (X-Frame-Options, X-Content-Type-Options, HSTS, Referrer-Policy, Permissions-Policy).
   - ALLOWED_ORIGINS documentada en .env.example.
   - vercel.json con build config y env defaults.
-  - scripts/smoke-test.mjs con 11 pruebas automatizadas (health, metrics, 201, 415, 422, JSON inválido, OPTIONS, headers, rate limit).
+  - scripts/smoke-test.mjs con 11 pruebas automatizadas (health, metrics, 201, 415, 422, JSON invÃ¡lido, OPTIONS, headers, rate limit).
   - npm scripts: smoke:staging y smoke:prod.
   - .kiro/RUNBOOK.md: runbook de incidentes (10 secciones).
-- Cobertura global: 88.21% stmts — 172 tests pasan / 5 skipped (PostgreSQL).
+- Cobertura global: 88.21% stmts â€” 172 tests pasan / 5 skipped (PostgreSQL).
 
-### Pendiente (operacional — requiere infraestructura)
+### Pendiente (operacional â€” requiere infraestructura)
 
-- Provisionar DB staging y producción (12.1, 13.1, 12.3, 13.3).
-- Deploy a Vercel staging y producción (12.4, 13.4).
-- Monitoreo 48h en staging (12.6) y checkpoint de validación (12.7).
+- Provisionar DB staging y producciÃ³n (12.1, 13.1, 12.3, 13.3).
+- Deploy a Vercel staging y producciÃ³n (12.4, 13.4).
+- Monitoreo 48h en staging (12.6) y checkpoint de validaciÃ³n (12.7).
 - Configurar alertas externas (14.2) y smoke tests contra entorno real (12.5, 13.5).
 - Verificar checklist 14.4 contra deployment real.
-- Checkpoint final de producción (14.5).
+- Checkpoint final de producciÃ³n (14.5).
 
 ### Nota de trazabilidad
 
@@ -34,40 +34,40 @@ Las tareas detalladas con checkboxes inferiores se conservan como backlog histor
 
 ## Overview
 
-Este plan implementa el backend de producción para captura de cotizaciones en Camiprint con persistencia durable, observabilidad completa, resiliencia ante fallos, seguridad HTTP y rate limiting. El plan sigue una estrategia de 3 fases: Backend → Frontend → Deployment.
+Este plan implementa el backend de producciÃ³n para captura de cotizaciones en CAMIART con persistencia durable, observabilidad completa, resiliencia ante fallos, seguridad HTTP y rate limiting. El plan sigue una estrategia de 3 fases: Backend â†’ Frontend â†’ Deployment.
 
-**Características principales:**
+**CaracterÃ­sticas principales:**
 - Persistencia durable que sobrevive reinicios
 - Rate limiting con sliding window (5 req/min por IP)
 - Logging estructurado con enmascaramiento de PII
-- Métricas en tiempo real (contadores, histogramas)
+- MÃ©tricas en tiempo real (contadores, histogramas)
 - Health checks para orquestadores
 - Timeouts y circuit breakers
 - Headers de seguridad y CORS configurables
-- Validación y sanitización robusta
+- ValidaciÃ³n y sanitizaciÃ³n robusta
 
-**Tecnologías:** TypeScript, Next.js App Router, Vercel KV o PostgreSQL + Prisma
+**TecnologÃ­as:** TypeScript, Next.js App Router, Vercel KV o PostgreSQL + Prisma
 
 ---
 
 ## Tasks
 
-### Fase 1: Implementación Backend (Semana 1-2)
+### Fase 1: ImplementaciÃ³n Backend (Semana 1-2)
 
 #### Epic 1: Infraestructura Base y Utilidades HTTP
 
-- [x] 1.1 Crear estructura de carpetas y módulos base
+- [x] 1.1 Crear estructura de carpetas y mÃ³dulos base
   - Crear `src/server/http/` para utilidades HTTP compartidas
-  - Crear `src/server/quotes/` para lógica de dominio de cotizaciones
+  - Crear `src/server/quotes/` para lÃ³gica de dominio de cotizaciones
   - Crear `src/app/api/v1/quotes/` para route handlers
   - Crear `src/app/api/v1/health/` para health checks
-  - Crear `src/app/api/v1/metrics/` para exposición de métricas
+  - Crear `src/app/api/v1/metrics/` para exposiciÃ³n de mÃ©tricas
   - _Requirements: 1.1, 7.1_
   - _Complejidad: S_
 
-- [x] 1.2 Implementar generación y propagación de Request ID
+- [x] 1.2 Implementar generaciÃ³n y propagaciÃ³n de Request ID
   - Crear `src/server/http/request-id.ts`
-  - Implementar función `getOrCreateRequestId(request: Request): string`
+  - Implementar funciÃ³n `getOrCreateRequestId(request: Request): string`
   - Formato: `req_{timestamp_base36}{random_base36}`
   - Leer de header `X-Request-Id` si existe, generar si no
   - _Requirements: 5.1, 13.4_
@@ -76,28 +76,28 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
 - [x] 1.3 Implementar mapeo de errores HTTP
   - Crear `src/server/http/errors.ts`
   - Definir interfaz `ErrorResponse` con campos `ok`, `error`, `meta`
-  - Implementar función `jsonError(statusCode, requestId, code, message, details?, headers?)`
-  - Soportar códigos: `BAD_REQUEST`, `PAYLOAD_TOO_LARGE`, `UNSUPPORTED_MEDIA_TYPE`, `VALIDATION_ERROR`, `RATE_LIMITED`, `INTERNAL_ERROR`, `SERVICE_UNAVAILABLE`
+  - Implementar funciÃ³n `jsonError(statusCode, requestId, code, message, details?, headers?)`
+  - Soportar cÃ³digos: `BAD_REQUEST`, `PAYLOAD_TOO_LARGE`, `UNSUPPORTED_MEDIA_TYPE`, `VALIDATION_ERROR`, `RATE_LIMITED`, `INTERNAL_ERROR`, `SERVICE_UNAVAILABLE`
   - _Requirements: 1.4, 2.8, 4.3_
   - _Complejidad: M_
 
 - [x]* 1.4 Escribir tests unitarios para request-id y errors
   - Test: `getOrCreateRequestId` genera IDs con formato correcto
   - Test: `getOrCreateRequestId` reutiliza header existente
-  - Test: `jsonError` retorna estructura correcta para cada código
+  - Test: `jsonError` retorna estructura correcta para cada cÃ³digo
   - Test: `jsonError` incluye headers adicionales cuando se proveen
   - _Requirements: 10.1_
   - _Complejidad: S_
 
-#### Epic 2: Logging Estructurado y Métricas
+#### Epic 2: Logging Estructurado y MÃ©tricas
 
 - [x] 2.1 Implementar logger estructurado con PII masking
   - Crear `src/server/http/logger.ts`
   - Definir interfaz `LogEntry` con campos: `level`, `timestamp`, `requestId`, `method`, `path`, `statusCode`, `durationMs`, `environment`
-  - Implementar `logRequest(entry)` con formato JSON en producción
+  - Implementar `logRequest(entry)` con formato JSON en producciÃ³n
   - Implementar `logError(requestId, error, context?)` para errores 5xx
-  - Implementar `maskEmail(email)` → `abc***@domain.com`
-  - Implementar `maskPhone(phone)` → `***1234`
+  - Implementar `maskEmail(email)` â†’ `abc***@domain.com`
+  - Implementar `maskPhone(phone)` â†’ `***1234`
   - Asignar nivel: `info` para 2xx, `warn` para 4xx, `error` para 5xx
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 13.1, 13.2_
   - _Complejidad: M_
@@ -105,23 +105,23 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
 - [x]* 2.2 Escribir property test para PII masking
   - **Property 10: Enmascaramiento de PII en logs**
   - **Validates: Requirements 5.3**
-  - Generar 100 emails y teléfonos aleatorios con faker
+  - Generar 100 emails y telÃ©fonos aleatorios con faker
   - Verificar que `maskEmail` siempre muestra solo primeros 3 caracteres antes de @
-  - Verificar que `maskPhone` siempre muestra solo últimos 4 dígitos
+  - Verificar que `maskPhone` siempre muestra solo Ãºltimos 4 dÃ­gitos
   - _Requirements: 10.4_
   - _Complejidad: S_
 
-- [x] 2.3 Implementar collector de métricas
+- [x] 2.3 Implementar collector de mÃ©tricas
   - Crear `src/server/http/metrics.ts`
-  - Implementar clase `MetricsCollector` con métodos: `incrementCounter`, `recordHistogram`, `setGauge`, `getSnapshot`
+  - Implementar clase `MetricsCollector` con mÃ©todos: `incrementCounter`, `recordHistogram`, `setGauge`, `getSnapshot`
   - Mantener contadores: `quotes.created.count`, `quotes.validation_error.count`, `quotes.rate_limited.count`, `quotes.internal_error.count`
   - Mantener histograma: `quotes.request_duration_ms` con percentiles p50, p95, p99
   - Mantener gauge: `quotes.in_flight_requests`
-  - Limitar histogramas a últimos 1000 valores para calcular percentiles
+  - Limitar histogramas a Ãºltimos 1000 valores para calcular percentiles
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6_
   - _Complejidad: M_
 
-- [x]* 2.4 Escribir tests unitarios para métricas
+- [x]* 2.4 Escribir tests unitarios para mÃ©tricas
   - Test: `incrementCounter` acumula valores correctamente
   - Test: `recordHistogram` calcula percentiles p50, p95, p99
   - Test: `setGauge` actualiza valor actual
@@ -131,11 +131,11 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
 
 - [x] 2.5 Checkpoint - Verificar infraestructura base
   - Ejecutar tests unitarios: `npm run test`
-  - Verificar cobertura > 85% en módulos `request-id.ts`, `errors.ts`, `logger.ts`, `metrics.ts`
-  - Asegurar que no hay errores de compilación TypeScript
+  - Verificar cobertura > 85% en mÃ³dulos `request-id.ts`, `errors.ts`, `logger.ts`, `metrics.ts`
+  - Asegurar que no hay errores de compilaciÃ³n TypeScript
   - Preguntar al usuario si hay dudas o ajustes necesarios
 
-#### Epic 3: Validación y Sanitización Robusta
+#### Epic 3: ValidaciÃ³n y SanitizaciÃ³n Robusta
 
 - [x] 3.1 Definir tipos de dominio
   - Crear `src/server/quotes/types.ts`
@@ -146,15 +146,15 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
   - _Requirements: 1.2, 3.4, 3.5_
   - _Complejidad: S_
 
-- [x] 3.2 Implementar validación y sanitización declarativa
+- [x] 3.2 Implementar validaciÃ³n y sanitizaciÃ³n declarativa
   - Crear `src/server/quotes/validation.ts`
   - Definir interfaz `ValidationResult` con campos: `issues`, `data?`
   - Definir interfaz `ValidationIssue` con campos: `field`, `issue`
   - Implementar helpers: `sanitizeString`, `sanitizeMessage`
-  - Sanitización: trim espacios, normalizar espacios múltiples, remover caracteres de control (excepto `\n` en `message`)
+  - SanitizaciÃ³n: trim espacios, normalizar espacios mÃºltiples, remover caracteres de control (excepto `\n` en `message`)
   - Implementar `validateQuotePayload(payload: unknown): ValidationResult`
   - Validar formato email con regex RFC 5322 simplificado: `/^\S+@\S+\.\S+$/`
-  - Validar teléfono con regex: `/^[+0-9\s()-]{7,30}$/`
+  - Validar telÃ©fono con regex: `/^[+0-9\s()-]{7,30}$/`
   - Validar longitudes: `name` (2-120), `email` (max 254), `phone` (7-30), `companyName` (1-160), `message` (max 2000)
   - Validar enum `quantity` contra valores permitidos
   - Rechazar campos adicionales no especificados
@@ -162,40 +162,40 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 2.10_
   - _Complejidad: L_
 
-- [x]* 3.3 Escribir property test para validación de payloads válidos
-  - **Property 1: Validación acepta payloads válidos aleatorios**
+- [x]* 3.3 Escribir property test para validaciÃ³n de payloads vÃ¡lidos
+  - **Property 1: ValidaciÃ³n acepta payloads vÃ¡lidos aleatorios**
   - **Validates: Requirements 1.2, 1.3**
-  - Generar 100 payloads válidos aleatorios con faker
-  - Verificar que todos pasan validación sin errores
+  - Generar 100 payloads vÃ¡lidos aleatorios con faker
+  - Verificar que todos pasan validaciÃ³n sin errores
   - Verificar que `data` contiene todos los campos esperados
   - _Requirements: 10.4_
   - _Complejidad: M_
 
-- [x]* 3.4 Escribir property test para sanitización completa
-  - **Property 2: Sanitización completa de entradas**
+- [x]* 3.4 Escribir property test para sanitizaciÃ³n completa
+  - **Property 2: SanitizaciÃ³n completa de entradas**
   - **Validates: Requirements 2.1, 2.2, 2.3**
-  - Generar 100 strings con espacios múltiples, leading/trailing spaces, caracteres de control
-  - Verificar que sanitización remueve correctamente todos los casos
+  - Generar 100 strings con espacios mÃºltiples, leading/trailing spaces, caracteres de control
+  - Verificar que sanitizaciÃ³n remueve correctamente todos los casos
   - Verificar que `\n` se preserva en campo `message`
   - _Requirements: 10.4_
   - _Complejidad: M_
 
-- [x]* 3.5 Escribir tests unitarios para validación de formatos inválidos
-  - **Property 3: Validación rechaza formatos inválidos**
+- [x]* 3.5 Escribir tests unitarios para validaciÃ³n de formatos invÃ¡lidos
+  - **Property 3: ValidaciÃ³n rechaza formatos invÃ¡lidos**
   - **Validates: Requirements 2.4, 2.5, 2.6, 2.7**
-  - Test: email inválido retorna error con campo `email`
-  - Test: teléfono inválido retorna error con campo `phone`
+  - Test: email invÃ¡lido retorna error con campo `email`
+  - Test: telÃ©fono invÃ¡lido retorna error con campo `phone`
   - Test: longitudes fuera de rango retornan errores
-  - Test: quantity inválido retorna error
+  - Test: quantity invÃ¡lido retorna error
   - Test: campos adicionales retornan error
   - _Requirements: 10.2_
   - _Complejidad: M_
 
-- [x]* 3.6 Escribir test para estructura de errores de validación
-  - **Property 4: Errores de validación incluyen detalles estructurados**
+- [x]* 3.6 Escribir test para estructura de errores de validaciÃ³n
+  - **Property 4: Errores de validaciÃ³n incluyen detalles estructurados**
   - **Validates: Requirements 2.8**
-  - Test: error de validación retorna array `details` con objetos `{field, issue}`
-  - Test: múltiples errores retornan múltiples objetos en `details`
+  - Test: error de validaciÃ³n retorna array `details` con objetos `{field, issue}`
+  - Test: mÃºltiples errores retornan mÃºltiples objetos en `details`
   - _Requirements: 10.1_
   - _Complejidad: S_
 
@@ -203,33 +203,33 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
 #### Epic 4: Persistencia Durable
 
 - [x] 4.1 Decidir estrategia de persistencia
-  - Evaluar opciones: PostgreSQL + Prisma (producción robusta) vs Vercel KV (MVP rápido) vs File System (solo desarrollo)
+  - Evaluar opciones: PostgreSQL + Prisma (producciÃ³n robusta) vs Vercel KV (MVP rÃ¡pido) vs File System (solo desarrollo)
   - Considerar: durabilidad, escalabilidad, costo, tiempo de setup
-  - Documentar decisión en comentario de código
+  - Documentar decisiÃ³n en comentario de cÃ³digo
   - _Requirements: 3.1_
   - _Complejidad: S_
 
 - [x] 4.2 Implementar interfaz abstracta de Repository
   - Crear `src/server/quotes/repository.ts`
-  - Definir interfaz `QuotesRepository` con métodos: `create(input)`, `healthCheck()`
-  - Implementar generación de IDs: formato `q_{timestamp_base36}{random_base36}`
-  - Implementar función helper `generateQuoteId(): string`
+  - Definir interfaz `QuotesRepository` con mÃ©todos: `create(input)`, `healthCheck()`
+  - Implementar generaciÃ³n de IDs: formato `q_{timestamp_base36}{random_base36}`
+  - Implementar funciÃ³n helper `generateQuoteId(): string`
   - _Requirements: 3.2_
   - _Complejidad: M_
 
-- [x] 4.3 Implementar persistencia con opción elegida
+- [x] 4.3 Implementar persistencia con opciÃ³n elegida
   - **Si PostgreSQL + Prisma:**
     - Crear schema Prisma en `prisma/schema.prisma`
     - Definir modelo `Quote` con campos: `id`, `source`, `status`, `name`, `email`, `phone`, `companyName`, `quantity`, `message`, `createdAt`, `updatedAt`
-    - Agregar índices en `createdAt` y `status`
+    - Agregar Ã­ndices en `createdAt` y `status`
     - Ejecutar `npx prisma migrate dev --name init`
     - Implementar `QuotesRepository` usando `PrismaClient`
   - **Si Vercel KV:**
     - Instalar `@vercel/kv`
-    - Implementar `QuotesRepository` usando `kv.set` y `kv.zadd` para índice temporal
+    - Implementar `QuotesRepository` usando `kv.set` y `kv.zadd` para Ã­ndice temporal
     - Implementar `healthCheck` con `kv.ping()`
   - **Si File System (solo desarrollo):**
-    - Crear directorio `.data/` en raíz del proyecto
+    - Crear directorio `.data/` en raÃ­z del proyecto
     - Implementar `QuotesRepository` usando `fs/promises`
     - Agregar `.data/` a `.gitignore`
   - Establecer `source: 'landing-contact-form'` y `status: 'received'` por defecto
@@ -237,8 +237,8 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
   - _Requirements: 3.1, 3.3, 3.4, 3.5, 3.6_
   - _Complejidad: L_
 
-- [x]* 4.4 Escribir property test para generación de IDs únicos
-  - **Property 6: Generación de IDs únicos**
+- [x]* 4.4 Escribir property test para generaciÃ³n de IDs Ãºnicos
+  - **Property 6: GeneraciÃ³n de IDs Ãºnicos**
   - **Validates: Requirements 3.2, 3.8**
   - Generar 1000 IDs concurrentemente con `Promise.all`
   - Verificar que todos tienen formato `q_{alphanumeric}`
@@ -249,9 +249,9 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
 - [x]* 4.5 Escribir property test para timestamps ISO 8601 UTC
   - **Property 7: Timestamps en formato ISO 8601 UTC**
   - **Validates: Requirements 3.3**
-  - Crear 100 registros de cotización
+  - Crear 100 registros de cotizaciÃ³n
   - Verificar que `createdAt` y `updatedAt` tienen formato `YYYY-MM-DDTHH:mm:ss.sssZ`
-  - Verificar que timestamps son válidos con `new Date(timestamp).toISOString() === timestamp`
+  - Verificar que timestamps son vÃ¡lidos con `new Date(timestamp).toISOString() === timestamp`
   - _Requirements: 10.4_
   - _Complejidad: S_
 
@@ -260,14 +260,14 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
   - **Validates: Requirements 3.8**
   - Ejecutar 10 escrituras concurrentes con `Promise.all`
   - Verificar que todos los registros se crean exitosamente
-  - Verificar que todos tienen IDs únicos
-  - Verificar que no hay corrupción de datos
+  - Verificar que todos tienen IDs Ãºnicos
+  - Verificar que no hay corrupciÃ³n de datos
   - _Requirements: 10.5_
   - _Complejidad: M_
 
 - [x] 4.7 Checkpoint - Verificar persistencia
   - Ejecutar tests de repository: `npm run test repository`
-  - Verificar que datos persisten después de reiniciar servidor (si aplica)
+  - Verificar que datos persisten despuÃ©s de reiniciar servidor (si aplica)
   - Verificar cobertura > 90% en `repository.ts`
   - Preguntar al usuario si hay dudas o ajustes necesarios
 
@@ -278,9 +278,9 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
   - Definir interfaz `RateLimitResult` con campos: `allowed`, `retryAfter?`
   - Implementar `checkRateLimit(request: Request): RateLimitResult`
   - Algoritmo: sliding window con almacenamiento en memoria
-  - Límite: 5 requests por ventana de 60 segundos por IP
+  - LÃ­mite: 5 requests por ventana de 60 segundos por IP
   - Identificar IP desde headers: `x-forwarded-for` o `x-real-ip` (fallback a socket IP)
-  - Implementar limpieza automática de entradas expiradas
+  - Implementar limpieza automÃ¡tica de entradas expiradas
   - Retornar `retryAfter` en segundos hasta reset de ventana
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6_
   - _Complejidad: M_
@@ -301,9 +301,9 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
     - `X-Content-Type-Options: nosniff`
     - `X-Frame-Options: DENY`
     - `X-XSS-Protection: 1; mode=block`
-    - `Strict-Transport-Security: max-age=31536000; includeSubDomains` (solo producción)
+    - `Strict-Transport-Security: max-age=31536000; includeSubDomains` (solo producciÃ³n)
   - Implementar `corsHeaders(origin: string | null)` que verifica whitelist de `ALLOWED_ORIGINS`
-  - Permitir métodos: `POST, OPTIONS`
+  - Permitir mÃ©todos: `POST, OPTIONS`
   - Permitir headers: `Content-Type, X-Request-Id`
   - Max age: 86400 segundos (24 horas)
   - Implementar `validateContentType(request: Request): boolean` que verifica `application/json`
@@ -313,17 +313,17 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
 - [x]* 5.4 Escribir tests unitarios para seguridad
   - Test: `validateContentType` acepta `application/json`
   - Test: `validateContentType` rechaza otros Content-Types
-  - Test: `corsHeaders` retorna headers solo para orígenes en whitelist
-  - Test: `corsHeaders` retorna objeto vacío para orígenes no permitidos
-  - Test: `securityHeaders` incluye HSTS solo en producción
+  - Test: `corsHeaders` retorna headers solo para orÃ­genes en whitelist
+  - Test: `corsHeaders` retorna objeto vacÃ­o para orÃ­genes no permitidos
+  - Test: `securityHeaders` incluye HSTS solo en producciÃ³n
   - _Requirements: 10.1_
   - _Complejidad: S_
 
 #### Epic 6: Resiliencia (Timeouts y Circuit Breakers)
 
-- [x] 6.1 Implementar wrapper de timeout genérico
+- [x] 6.1 Implementar wrapper de timeout genÃ©rico
   - Crear `src/server/http/resilience.ts`
-  - Implementar función `withTimeout<T>(promise, timeoutMs, errorMessage?): Promise<T>`
+  - Implementar funciÃ³n `withTimeout<T>(promise, timeoutMs, errorMessage?): Promise<T>`
   - Usar `Promise.race` con timeout que rechaza con `TimeoutError`
   - Definir clase `TimeoutError extends Error`
   - _Requirements: 9.1, 9.2_
@@ -332,8 +332,8 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
 - [x] 6.2 Implementar circuit breaker para dependencias
   - En `src/server/http/resilience.ts`
   - Implementar clase `CircuitBreaker` con estados: `closed`, `open`, `half-open`
-  - Configuración: 5 fallos consecutivos → `open`, 30 segundos → `half-open`
-  - Método `execute<T>(fn: () => Promise<T>): Promise<T>`
+  - ConfiguraciÃ³n: 5 fallos consecutivos â†’ `open`, 30 segundos â†’ `half-open`
+  - MÃ©todo `execute<T>(fn: () => Promise<T>): Promise<T>`
   - En estado `open`: rechazar inmediatamente sin ejecutar
   - En estado `half-open`: ejecutar 1 request de prueba
   - Exportar instancia `dbCircuitBreaker` para uso en repository
@@ -350,17 +350,17 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
   - _Complejidad: M_
 
 - [x]* 6.4 Escribir tests unitarios para resiliencia
-  - Test: `withTimeout` rechaza después de timeout
-  - Test: `CircuitBreaker` abre después de 5 fallos
-  - Test: `CircuitBreaker` pasa a half-open después de 30s
-  - Test: `CircuitBreaker` cierra después de request exitoso en half-open
+  - Test: `withTimeout` rechaza despuÃ©s de timeout
+  - Test: `CircuitBreaker` abre despuÃ©s de 5 fallos
+  - Test: `CircuitBreaker` pasa a half-open despuÃ©s de 30s
+  - Test: `CircuitBreaker` cierra despuÃ©s de request exitoso en half-open
   - Test: Repository propaga errores de timeout correctamente
   - _Requirements: 10.1_
   - _Complejidad: M_
 
 - [x] 6.5 Checkpoint - Verificar seguridad y resiliencia
   - Ejecutar tests de rate limiting, seguridad y resiliencia
-  - Verificar cobertura > 85% en módulos de seguridad
+  - Verificar cobertura > 85% en mÃ³dulos de seguridad
   - Simular timeout de DB y verificar respuesta 503
   - Preguntar al usuario si hay dudas o ajustes necesarios
 
@@ -368,32 +368,32 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
 
 - [x] 7.1 Implementar service layer
   - Crear `src/server/quotes/service.ts`
-  - Implementar clase `QuotesService` con método `createQuote(input: QuoteRequestInput): Promise<QuoteLeadRecord>`
+  - Implementar clase `QuotesService` con mÃ©todo `createQuote(input: QuoteRequestInput): Promise<QuoteLeadRecord>`
   - Inyectar `QuotesRepository` en constructor
-  - Actualmente lógica mínima (delegar a repository), preparado para expansión futura
+  - Actualmente lÃ³gica mÃ­nima (delegar a repository), preparado para expansiÃ³n futura
   - _Requirements: 1.3_
   - _Complejidad: S_
 
 - [x] 7.2 Implementar route handler principal POST /api/v1/quotes
   - Crear `src/app/api/v1/quotes/route.ts`
-  - Implementar función `POST(request: Request): Promise<Response>`
-  - Orquestación completa:
+  - Implementar funciÃ³n `POST(request: Request): Promise<Response>`
+  - OrquestaciÃ³n completa:
     1. Generar o reutilizar `requestId`
     2. Validar `Content-Type: application/json` (retornar 415 si falla)
     3. Verificar rate limit (retornar 429 con `Retry-After` si excede)
-    4. Parsear body con timeout de 3 segundos (retornar 422 si JSON inválido)
+    4. Parsear body con timeout de 3 segundos (retornar 422 si JSON invÃ¡lido)
     5. Validar y sanitizar payload (retornar 422 con `details` si falla)
     6. Llamar a `QuotesService.createQuote`
     7. Manejar errores de timeout/circuit breaker (retornar 503)
-    8. Registrar request en logger con duración
-    9. Incrementar métricas correspondientes
+    8. Registrar request en logger con duraciÃ³n
+    9. Incrementar mÃ©tricas correspondientes
     10. Retornar 201 con `data`, `meta.requestId` y headers de seguridad
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7_
   - _Complejidad: L_
 
 - [x] 7.3 Implementar handler OPTIONS para CORS preflight
   - En `src/app/api/v1/quotes/route.ts`
-  - Implementar función `OPTIONS(request: Request): Promise<Response>`
+  - Implementar funciÃ³n `OPTIONS(request: Request): Promise<Response>`
   - Retornar 204 con headers CORS y seguridad
   - _Requirements: 8.4_
   - _Complejidad: S_
@@ -401,7 +401,7 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
 - [x]* 7.4 Escribir property test para Content-Type en respuestas
   - **Property 14: Content-Type header en todas las respuestas**
   - **Validates: Requirements 1.6**
-  - Enviar 50 requests válidos e inválidos aleatorios
+  - Enviar 50 requests vÃ¡lidos e invÃ¡lidos aleatorios
   - Verificar que todas las respuestas incluyen `Content-Type: application/json`
   - _Requirements: 10.4_
   - _Complejidad: S_
@@ -422,34 +422,34 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
   - _Requirements: 10.4_
   - _Complejidad: S_
 
-- [x]* 7.7 Escribir tests de integración end-to-end
-  - Test: POST con payload válido retorna 201 con estructura correcta
-  - Test: POST con payload inválido retorna 422 con `details`
+- [x]* 7.7 Escribir tests de integraciÃ³n end-to-end
+  - Test: POST con payload vÃ¡lido retorna 201 con estructura correcta
+  - Test: POST con payload invÃ¡lido retorna 422 con `details`
   - Test: POST sin Content-Type correcto retorna 415
-  - Test: POST después de 5 requests retorna 429 con `Retry-After`
-  - Test: POST con JSON inválido retorna 422
+  - Test: POST despuÃ©s de 5 requests retorna 429 con `Retry-After`
+  - Test: POST con JSON invÃ¡lido retorna 422
   - Test: POST con payload > 32KB retorna 413
   - Test: Respuesta incluye header `X-Request-Id`
   - Test: Respuesta incluye headers de seguridad
   - _Requirements: 10.3_
   - _Complejidad: L_
 
-#### Epic 8: Health Checks y Métricas Endpoints
+#### Epic 8: Health Checks y MÃ©tricas Endpoints
 
 - [x] 8.1 Implementar endpoint GET /api/v1/health
   - Crear `src/app/api/v1/health/route.ts`
-  - Implementar función `GET(): Promise<Response>`
+  - Implementar funciÃ³n `GET(): Promise<Response>`
   - Verificar conectividad con `QuotesRepository.healthCheck()` con timeout de 2 segundos
   - Verificar uso de memoria (alerta si heap > 400MB)
   - Retornar 200 con `status: 'ok'` si todas las verificaciones pasan
-  - Retornar 503 con `status: 'down'` si alguna verificación falla
-  - Incluir array `checks` con resultado de cada verificación
+  - Retornar 503 con `status: 'down'` si alguna verificaciÃ³n falla
+  - Incluir array `checks` con resultado de cada verificaciÃ³n
   - Incluir `timestamp` en respuesta
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
   - _Complejidad: M_
 
 - [x]* 8.2 Escribir tests para health endpoint
-  - Test: GET /api/v1/health retorna 200 cuando sistema está operativo
+  - Test: GET /api/v1/health retorna 200 cuando sistema estÃ¡ operativo
   - Test: GET /api/v1/health retorna 503 cuando DB no responde
   - Test: Respuesta incluye `status`, `timestamp`, `checks`
   - Test: Health check completa en menos de 3 segundos
@@ -458,7 +458,7 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
 
 - [x] 8.3 Implementar endpoint GET /api/v1/metrics
   - Crear `src/app/api/v1/metrics/route.ts`
-  - Implementar función `GET(): Promise<Response>`
+  - Implementar funciÃ³n `GET(): Promise<Response>`
   - Llamar a `MetricsCollector.getSnapshot()`
   - Retornar 200 con estructura: `counters`, `histograms`, `gauges`
   - Incluir headers de seguridad
@@ -467,14 +467,14 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
 
 - [x]* 8.4 Escribir tests para metrics endpoint
   - Test: GET /api/v1/metrics retorna 200 con estructura correcta
-  - Test: Métricas incluyen todos los contadores esperados
+  - Test: MÃ©tricas incluyen todos los contadores esperados
   - Test: Histogramas incluyen percentiles p50, p95, p99
   - _Requirements: 10.3_
   - _Complejidad: S_
 
 - [x] 8.5 Checkpoint - Verificar backend completo
   - Ejecutar suite completa de tests: `npm run test`
-  - Verificar cobertura > 85% en todos los módulos críticos
+  - Verificar cobertura > 85% en todos los mÃ³dulos crÃ­ticos
   - Ejecutar linter: `npm run lint`
   - Ejecutar type check: `npx tsc --noEmit`
   - Probar endpoints manualmente con curl o Postman
@@ -483,9 +483,9 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
 
 ---
 
-### Fase 2: Integración Frontend (Semana 3)
+### Fase 2: IntegraciÃ³n Frontend (Semana 3)
 
-#### Epic 9: Adaptación del Formulario de Contacto
+#### Epic 9: AdaptaciÃ³n del Formulario de Contacto
 
 - [x] 9.1 Agregar feature flag para API de cotizaciones
   - Agregar variable de entorno `NEXT_PUBLIC_QUOTES_API_ENABLED=false` en `.env.local`
@@ -496,50 +496,50 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
 
 - [x] 9.2 Implementar submit real con fetch a /api/v1/quotes
   - Modificar `src/app/components/ContactSection.tsx`
-  - Implementar función `submitQuote(payload: QuotePayload): Promise<QuoteResponse>`
+  - Implementar funciÃ³n `submitQuote(payload: QuotePayload): Promise<QuoteResponse>`
   - Usar `fetch('/api/v1/quotes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })`
   - Incluir header `X-Request-Id` generado en cliente (opcional)
-  - Mantener fallback a comportamiento actual si feature flag está desactivado
+  - Mantener fallback a comportamiento actual si feature flag estÃ¡ desactivado
   - _Requirements: 12.1, 12.2_
   - _Complejidad: M_
 
 - [x] 9.3 Agregar estado de carga durante submit
   - Agregar estado `isSubmitting` en componente
-  - Deshabilitar botón de submit mientras `isSubmitting === true`
+  - Deshabilitar botÃ³n de submit mientras `isSubmitting === true`
   - Mostrar spinner o texto "Enviando..." durante submit
   - _Requirements: 12.2_
   - _Complejidad: S_
 
 #### Epic 10: Manejo de Respuestas y Errores
 
-- [x] 10.1 Implementar manejo de respuesta 201 (éxito)
-  - Cuando response.status === 201, mostrar mensaje de éxito
-  - Mensaje: "¡Gracias! Hemos recibido tu solicitud de cotización. Te contactaremos pronto."
-  - Limpiar formulario después de éxito
-  - Scroll a mensaje de éxito
+- [x] 10.1 Implementar manejo de respuesta 201 (Ã©xito)
+  - Cuando response.status === 201, mostrar mensaje de Ã©xito
+  - Mensaje: "Â¡Gracias! Hemos recibido tu solicitud de cotizaciÃ³n. Te contactaremos pronto."
+  - Limpiar formulario despuÃ©s de Ã©xito
+  - Scroll a mensaje de Ã©xito
   - _Requirements: 12.3_
   - _Complejidad: S_
 
-- [x] 10.2 Implementar manejo de respuesta 422 (validación)
+- [x] 10.2 Implementar manejo de respuesta 422 (validaciÃ³n)
   - Cuando response.status === 422, parsear `error.details` array
   - Mostrar errores por campo usando array `details`
-  - Formato: `details[].field` → mostrar `details[].issue` debajo del campo correspondiente
+  - Formato: `details[].field` â†’ mostrar `details[].issue` debajo del campo correspondiente
   - Mantener valores ingresados en formulario
   - _Requirements: 12.4_
   - _Complejidad: M_
 
 - [x] 10.3 Implementar manejo de respuesta 429 (rate limit)
-  - Cuando response.status === 429, mostrar mensaje específico
+  - Cuando response.status === 429, mostrar mensaje especÃ­fico
   - Mensaje: "Has enviado demasiadas solicitudes. Por favor, intenta de nuevo en unos minutos."
-  - Leer header `Retry-After` y mostrar tiempo de espera si está disponible
+  - Leer header `Retry-After` y mostrar tiempo de espera si estÃ¡ disponible
   - _Requirements: 12.5_
   - _Complejidad: S_
 
 - [x] 10.4 Implementar manejo de respuestas 500/503 (errores de servidor)
   - Cuando response.status >= 500, mostrar error general recuperable
-  - Mensaje: "Ocurrió un error al procesar tu solicitud. Por favor, intenta de nuevo."
-  - Incluir botón "Reintentar" que vuelve a enviar el formulario
-  - Implementar exponential backoff: 1s, 2s, 4s (máximo 3 intentos)
+  - Mensaje: "OcurriÃ³ un error al procesar tu solicitud. Por favor, intenta de nuevo."
+  - Incluir botÃ³n "Reintentar" que vuelve a enviar el formulario
+  - Implementar exponential backoff: 1s, 2s, 4s (mÃ¡ximo 3 intentos)
   - _Requirements: 12.6_
   - _Complejidad: M_
 
@@ -547,43 +547,43 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
   - Leer header `X-Request-Id` de respuesta
   - Almacenar `requestId` en estado del componente
   - En caso de error, mostrar `requestId` en mensaje de error para soporte
-  - Formato: "Si el problema persiste, contacta a soporte con el código: {requestId}"
+  - Formato: "Si el problema persiste, contacta a soporte con el cÃ³digo: {requestId}"
   - _Requirements: 12.7, 13.4_
   - _Complejidad: S_
 
 - [x]* 10.6 Escribir property test para round-trip serialization
   - **Property 12: Round-trip serialization preserva datos**
   - **Validates: Requirements 11.4, 11.5**
-  - Generar 100 objetos `QuoteLeadRecord` válidos
+  - Generar 100 objetos `QuoteLeadRecord` vÃ¡lidos
   - Serializar a JSON y parsear de vuelta
   - Verificar que objeto resultante es equivalente al original
   - _Requirements: 10.4_
   - _Complejidad: S_
 
-- [x]* 10.7 Escribir property test para parsing de JSON inválido
-  - **Property 13: Parsing de JSON inválido retorna error estructurado**
+- [x]* 10.7 Escribir property test para parsing de JSON invÃ¡lido
+  - **Property 13: Parsing de JSON invÃ¡lido retorna error estructurado**
   - **Validates: Requirements 11.1, 11.2**
   - Generar 50 strings de JSON malformados
   - Enviar como body a endpoint
-  - Verificar que retorna 422 con código `VALIDATION_ERROR`
+  - Verificar que retorna 422 con cÃ³digo `VALIDATION_ERROR`
   - Verificar que mensaje es descriptivo sin exponer detalles internos
   - _Requirements: 10.4_
   - _Complejidad: M_
 
 #### Epic 11: Testing Frontend-Backend
 
-- [x]* 11.1 Escribir tests de integración frontend-backend
-  - Test: Submit de formulario con datos válidos muestra mensaje de éxito
-  - Test: Submit con email inválido muestra error en campo email
-  - Test: Submit después de 5 intentos muestra mensaje de rate limit
-  - Test: Submit con servidor caído muestra error recuperable con botón reintentar
-  - Test: Botón de submit se deshabilita durante envío
-  - Test: Formulario se limpia después de éxito
+- [x]* 11.1 Escribir tests de integraciÃ³n frontend-backend
+  - Test: Submit de formulario con datos vÃ¡lidos muestra mensaje de Ã©xito
+  - Test: Submit con email invÃ¡lido muestra error en campo email
+  - Test: Submit despuÃ©s de 5 intentos muestra mensaje de rate limit
+  - Test: Submit con servidor caÃ­do muestra error recuperable con botÃ³n reintentar
+  - Test: BotÃ³n de submit se deshabilita durante envÃ­o
+  - Test: Formulario se limpia despuÃ©s de Ã©xito
   - _Requirements: 10.3_
   - _Complejidad: L_
 
-- [x] 11.2 Checkpoint - Verificar integración frontend
-  - Ejecutar tests de integración: `npm run test -- ContactSection`
+- [x] 11.2 Checkpoint - Verificar integraciÃ³n frontend
+  - Ejecutar tests de integraciÃ³n: `npm run test -- ContactSection`
   - Probar flujo completo manualmente en navegador
   - Verificar que feature flag funciona correctamente
   - Verificar que todos los estados de respuesta se manejan correctamente
@@ -593,7 +593,7 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
 
 ### Fase 3: Deployment y Monitoreo (Semana 4)
 
-#### Epic 12: Configuración de Staging
+#### Epic 12: ConfiguraciÃ³n de Staging
 
 - [ ] 12.1 Provisionar base de datos para staging
   - **Si PostgreSQL:** Crear instancia en Vercel Postgres o proveedor elegido
@@ -609,72 +609,72 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
 - [ ] 12.3 Ejecutar migraciones de base de datos en staging
   - **Si PostgreSQL:** Ejecutar `npx prisma migrate deploy`
   - **Si Vercel KV:** No requiere migraciones
-  - Verificar que schema está correctamente aplicado
+  - Verificar que schema estÃ¡ correctamente aplicado
   - _Requirements: 3.1_
   - _Complejidad: S_
 
 - [ ] 12.4 Deploy a staging
   - Hacer deploy a entorno de staging (Vercel preview deployment o similar)
   - Verificar que build completa sin errores
-  - Verificar que aplicación inicia correctamente
+  - Verificar que aplicaciÃ³n inicia correctamente
   - _Complejidad: S_
 
 - [x] 12.5 Ejecutar smoke tests en staging
   - Script: `BASE_URL=https://staging.app node scripts/smoke-test.mjs` (11 pruebas)
   - Cubre: health, metrics, 201, 415, 422, invalid JSON, OPTIONS preflight, security headers, rate limiting
 
-- [ ] 12.6 Monitorear logs y métricas en staging por 48 horas
+- [ ] 12.6 Monitorear logs y mÃ©tricas en staging por 48 horas
   - Revisar logs estructurados en consola de Vercel o proveedor
   - Verificar que no hay errores 5xx inesperados
-  - Verificar que métricas se actualizan correctamente
-  - Verificar que PII está enmascarada en logs
-  - Documentar cualquier anomalía encontrada
+  - Verificar que mÃ©tricas se actualizan correctamente
+  - Verificar que PII estÃ¡ enmascarada en logs
+  - Documentar cualquier anomalÃ­a encontrada
   - _Requirements: 5.3, 6.1, 6.2, 6.3, 6.4, 6.5_
   - _Complejidad: M_
 
 - [ ] 12.7 Checkpoint - Validar staging
   - Revisar resultados de smoke tests
   - Revisar logs de 48 horas
-  - Verificar que no hay issues críticos
-  - Obtener aprobación del usuario para proceder a producción
+  - Verificar que no hay issues crÃ­ticos
+  - Obtener aprobaciÃ³n del usuario para proceder a producciÃ³n
 
-#### Epic 13: Deployment a Producción
+#### Epic 13: Deployment a ProducciÃ³n
 
-- [ ] 13.1 Provisionar base de datos para producción
-  - **Si PostgreSQL:** Crear instancia en Vercel Postgres o proveedor elegido con plan de producción
-  - **Si Vercel KV:** Crear store en Vercel dashboard con plan de producción
-  - Configurar backups automáticos (si PostgreSQL)
+- [ ] 13.1 Provisionar base de datos para producciÃ³n
+  - **Si PostgreSQL:** Crear instancia en Vercel Postgres o proveedor elegido con plan de producciÃ³n
+  - **Si Vercel KV:** Crear store en Vercel dashboard con plan de producciÃ³n
+  - Configurar backups automÃ¡ticos (si PostgreSQL)
   - Obtener connection string o API URL/token
   - _Requirements: 3.1_
   - _Complejidad: M_
 
-- [x] 13.2 Configurar variables de entorno en producción
-  - vercel.json con env defaults para producción
-  - ALLOWED_ORIGINS: https://camiprint.com,https://www.camiprint.com (configurar en Vercel Dashboard)
+- [x] 13.2 Configurar variables de entorno en producciÃ³n
+  - vercel.json con env defaults para producciÃ³n
+  - ALLOWED_ORIGINS: https://camiart.com,https://www.camiart.com (configurar en Vercel Dashboard)
 
-- [ ] 13.3 Ejecutar migraciones de base de datos en producción
+- [ ] 13.3 Ejecutar migraciones de base de datos en producciÃ³n
   - **Si PostgreSQL:** Ejecutar `npx prisma migrate deploy`
   - **Si Vercel KV:** No requiere migraciones
-  - Verificar que schema está correctamente aplicado
+  - Verificar que schema estÃ¡ correctamente aplicado
   - _Requirements: 3.1_
   - _Complejidad: S_
 
-- [ ] 13.4 Deploy a producción
-  - Hacer deploy a producción (Vercel production deployment)
+- [ ] 13.4 Deploy a producciÃ³n
+  - Hacer deploy a producciÃ³n (Vercel production deployment)
   - Verificar que build completa sin errores
-  - Verificar que aplicación inicia correctamente
+  - Verificar que aplicaciÃ³n inicia correctamente
   - _Complejidad: S_
 
-- [x] 13.5 Ejecutar smoke tests en producción
-  - Script: `npm run smoke:prod` (alias: BASE_URL=https://camiprint.com node scripts/smoke-test.mjs)
+- [x] 13.5 Ejecutar smoke tests en producciÃ³n
+  - Script: `npm run smoke:prod` (alias: BASE_URL=https://camiart.com node scripts/smoke-test.mjs)
 
 #### Epic 14: Monitoreo y Alertas
 
-- [x] 14.1 Configurar monitoreo de métricas en tiempo real
+- [x] 14.1 Configurar monitoreo de mÃ©tricas en tiempo real
   - Endpoint `/api/v1/metrics` expone counters, histograms (p50/p95/p99), gauges en formato Prometheus
   - Configurar METRICS_TOKEN en Vercel y scrape con Grafana/Datadog/UptimeRobot si disponible
 
-- [ ] 14.2 Configurar alertas para anomalías
+- [ ] 14.2 Configurar alertas para anomalÃ­as
   - Alerta: Error rate > 5% por 5 minutos
   - Alerta: p95 latency > 1000ms por 5 minutos
   - Alerta: Health check down por 2 minutos
@@ -684,26 +684,26 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
   - _Complejidad: M_
 
 - [x] 14.3 Documentar runbook de incidentes
-  - Creado: `.kiro/RUNBOOK.md` con 10 secciones: error rate alto, latencia, DB down, rate limit excesivo, leads perdidos, comandos de debugging, escalación, variables de produccion
+  - Creado: `.kiro/RUNBOOK.md` con 10 secciones: error rate alto, latencia, DB down, rate limit excesivo, leads perdidos, comandos de debugging, escalaciÃ³n, variables de produccion
 
-- [ ] 14.4 Verificar checklist de producción
-  - [ ] Datos persisten después de restart
+- [ ] 14.4 Verificar checklist de producciÃ³n
+  - [ ] Datos persisten despuÃ©s de restart
   - [ ] Backups configurados (si PostgreSQL)
-  - [ ] Índices creados en `createdAt` y `status`
+  - [ ] Ãndices creados en `createdAt` y `status`
   - [ ] Rate limiting activo (5 req/min)
   - [ ] CORS configurado con whitelist
   - [ ] Headers de seguridad presentes
   - [ ] PII enmascarada en logs
-  - [ ] Validación y sanitización completa
-  - [ ] Logs estructurados en JSON (producción)
-  - [ ] Métricas expuestas en `/api/v1/metrics`
+  - [ ] ValidaciÃ³n y sanitizaciÃ³n completa
+  - [ ] Logs estructurados en JSON (producciÃ³n)
+  - [ ] MÃ©tricas expuestas en `/api/v1/metrics`
   - [ ] Health check responde en `/api/v1/health`
   - [ ] RequestId en todas las respuestas
   - [ ] Timeouts configurados (5s para DB)
   - [ ] Circuit breaker activo
   - [ ] Errores manejados gracefully
   - [ ] Retry logic en cliente (frontend)
-  - [ ] Cobertura > 85% en módulos críticos
+  - [ ] Cobertura > 85% en mÃ³dulos crÃ­ticos
   - [ ] Property-based tests pasando (100 iteraciones)
   - [ ] Tests de concurrencia pasando (10 requests)
   - [ ] Integration tests frontend-backend pasando
@@ -712,13 +712,13 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
   - [ ] Carga de 100 req/min soportada
   - _Complejidad: M_
 
-- [ ] 14.5 Checkpoint final - Validar producción
-  - Monitorear métricas por 24 horas
-  - Verificar que KPIs técnicos se cumplen:
+- [ ] 14.5 Checkpoint final - Validar producciÃ³n
+  - Monitorear mÃ©tricas por 24 horas
+  - Verificar que KPIs tÃ©cnicos se cumplen:
     - Disponibilidad > 99.5% uptime
     - Latencia p95 < 500ms
     - Tasa de error < 1% de requests
-  - Verificar que no hay pérdida de leads
+  - Verificar que no hay pÃ©rdida de leads
   - Obtener feedback del usuario sobre funcionamiento
   - Documentar lecciones aprendidas
 
@@ -729,22 +729,22 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
 ### Sobre Testing
 
 - **Tests marcados con `*` son opcionales** pero altamente recomendados para garantizar correctitud
-- **Property-based tests** requieren 100 iteraciones mínimas para cobertura adecuada
-- **Tests de concurrencia** son críticos para validar escrituras sin race conditions
-- **Cobertura objetivo:** > 85% en módulos críticos (`validation.ts`, `repository.ts`, `service.ts`, `rate-limiter.ts`, `route.ts`)
+- **Property-based tests** requieren 100 iteraciones mÃ­nimas para cobertura adecuada
+- **Tests de concurrencia** son crÃ­ticos para validar escrituras sin race conditions
+- **Cobertura objetivo:** > 85% en mÃ³dulos crÃ­ticos (`validation.ts`, `repository.ts`, `service.ts`, `rate-limiter.ts`, `route.ts`)
 
 ### Sobre Persistencia
 
-- **Decisión de persistencia** debe tomarse en tarea 4.1 considerando:
-  - **PostgreSQL + Prisma:** Mejor para producción robusta, requiere provisionar DB
-  - **Vercel KV:** Mejor para MVP rápido, setup instantáneo, costo por operación
-  - **File System:** Solo para desarrollo local, NO usar en producción
+- **DecisiÃ³n de persistencia** debe tomarse en tarea 4.1 considerando:
+  - **PostgreSQL + Prisma:** Mejor para producciÃ³n robusta, requiere provisionar DB
+  - **Vercel KV:** Mejor para MVP rÃ¡pido, setup instantÃ¡neo, costo por operaciÃ³n
+  - **File System:** Solo para desarrollo local, NO usar en producciÃ³n
 
 ### Sobre Feature Flags
 
 - **Feature flag `NEXT_PUBLIC_QUOTES_API_ENABLED`** permite activar/desactivar API sin re-deploy
-- Mantener desactivado hasta completar Fase 2 (integración frontend)
-- Activar en staging primero, luego en producción después de validación
+- Mantener desactivado hasta completar Fase 2 (integraciÃ³n frontend)
+- Activar en staging primero, luego en producciÃ³n despuÃ©s de validaciÃ³n
 
 ### Sobre Rollback
 
@@ -756,28 +756,28 @@ Este plan implementa el backend de producción para captura de cotizaciones en C
 - **Procedimiento de rollback:**
   1. Desactivar feature flag `NEXT_PUBLIC_QUOTES_API_ENABLED`
   2. Verificar que formulario vuelve a comportamiento anterior
-  3. Investigar causa raíz en logs con `requestId`
+  3. Investigar causa raÃ­z en logs con `requestId`
   4. Aplicar fix y re-deploy a staging
 
-### Sobre Métricas de Éxito
+### Sobre MÃ©tricas de Ã‰xito
 
-**KPIs Técnicos (Semana 1 post-launch):**
+**KPIs TÃ©cnicos (Semana 1 post-launch):**
 - Disponibilidad: > 99.5% uptime
 - Latencia p95: < 500ms
 - Tasa de error: < 1% de requests
 - Cobertura de tests: > 85%
 
 **KPIs de Negocio:**
-- Leads capturados: 0 pérdidas por fallos técnicos
-- Conversión: Mantener o mejorar tasa actual
+- Leads capturados: 0 pÃ©rdidas por fallos tÃ©cnicos
+- ConversiÃ³n: Mantener o mejorar tasa actual
 - Tiempo de respuesta: Feedback inmediato al usuario (< 1s percibido)
 
 ### Sobre Compatibilidad con Frontend
 
-- **Mantener experiencia de usuario consistente:** No cambiar diseño visual del formulario
+- **Mantener experiencia de usuario consistente:** No cambiar diseÃ±o visual del formulario
 - **Mapeo 1:1 con campos actuales:** API contract debe coincidir exactamente con formulario
-- **Estados de carga claros:** Usuario debe saber que su solicitud está siendo procesada
-- **Mensajes de error específicos:** Errores de validación deben indicar qué campo corregir
+- **Estados de carga claros:** Usuario debe saber que su solicitud estÃ¡ siendo procesada
+- **Mensajes de error especÃ­ficos:** Errores de validaciÃ³n deben indicar quÃ© campo corregir
 
 ---
 

@@ -91,7 +91,7 @@ export const useCart = create<CartStore>()(
       },
     }),
     {
-      name: 'camiprint-cart',
+      name: 'camiart-cart',
     }
   )
 );

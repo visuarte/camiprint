@@ -43,8 +43,8 @@ describe('Tarea 5 - Checkpoint', () => {
     const hero = fs.readFileSync(heroPath, 'utf-8');
     const pricing = fs.readFileSync(pricingPath, 'utf-8');
 
-    expect(nav).toContain('md:hidden');
-    expect(nav).toContain('hidden md:flex');
+    expect(nav).toContain('lg:hidden');
+    expect(nav).toContain('hidden lg:flex');
     expect(hero).toContain('text-3xl');
     expect(hero).toContain('md:text-5xl');
     expect(pricing).toContain('grid-cols-1 md:grid-cols-3');

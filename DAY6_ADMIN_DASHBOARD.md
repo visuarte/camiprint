@@ -1,3 +1,4 @@
+> Nota de migracion (2026-06-03): este documento fue normalizado a marca CamiArt y dominio can�nico camiart.com. Se mantienen identificadores tecnicos historicos cuando aportan trazabilidad.
 # Day 6: Admin Dashboard & Vercel Deployment
 
 ## Status
@@ -45,7 +46,7 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 DATABASE_URL=postgresql://...
 SMTP_HOST=localhost
 SMTP_PORT=1025
-SMTP_FROM=noreply@camiprint.com
+SMTP_FROM=noreply@camiart.com
 NODE_ENV=production
 ```
 
@@ -117,7 +118,7 @@ In Vercel Dashboard → Project Settings → Environment Variables:
 # Push to main branch triggers auto-deploy
 git add -A
 git commit -m "feat: Day 6 Admin Dashboard & Vercel Setup"
-git push camiprint main
+git push CAMIART main
 
 # Or manual deploy with Vercel CLI
 vercel deploy --prod

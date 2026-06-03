@@ -35,7 +35,7 @@ const DEFAULT_TIMEOUT_MS = 5_000;
 const DEFAULT_FAILURE_THRESHOLD = 5;
 const DEFAULT_OPEN_WINDOW_MS = 30_000;
 
-const GLOBAL_CIRCUIT_KEY = '__camiprint_quotes_circuit_breaker__';
+const GLOBAL_CIRCUIT_KEY = '__camiart_quotes_circuit_breaker__';
 
 const createFallbackQuoteId = () => {
   const uuid =

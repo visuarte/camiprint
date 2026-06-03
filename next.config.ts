@@ -54,6 +54,26 @@ const nextConfig: NextConfig = {
         destination: '/catalog',
         permanent: true,
       },
+      {
+        source: '/faq',
+        destination: '/#faq',
+        permanent: true,
+      },
+      {
+        source: '/contact',
+        destination: '/#contacto',
+        permanent: true,
+      },
+      {
+        source: '/returns',
+        destination: '/terminos-y-condiciones',
+        permanent: true,
+      },
+      {
+        source: '/preferences',
+        destination: '/politica-privacidad',
+        permanent: true,
+      },
     ];
   },
 

@@ -13,7 +13,7 @@ import Footer from './components/Footer';
 import ViewportAnimator from './components/ViewportAnimator';
 
 export const metadata: Metadata = {
-  title: 'Camisetas Personalizadas para Empresas | Ropa Corporativa con Logo | CamiPrint',
+  title: `Camisetas Personalizadas para Empresas | Ropa Corporativa con Logo | ${brandConfig.displayName}`,
   description:
     'Fabricamos camisetas personalizadas para empresas con tu logo. Calidad premium, mínimo desde 10 unidades, diseño incluido y envío a toda España. Presupuesto gratuito en menos de 24h.',
   keywords: [
@@ -156,15 +156,33 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-      <ViewportAnimator />
-      <Navigation />
-      <Hero />
-      <Pricing />
-      <Process />
-      <TestimonialsSection />
-      <FAQSection />
-      <ContactSection />
-      <Footer />
+      <div className="landing-design-ready" data-landing-version="v-next-ready">
+        <ViewportAnimator />
+        <div data-landing-section="navigation">
+          <Navigation />
+        </div>
+        <div data-landing-section="hero">
+          <Hero />
+        </div>
+        <div data-landing-section="pricing">
+          <Pricing />
+        </div>
+        <div data-landing-section="process">
+          <Process />
+        </div>
+        <div data-landing-section="testimonials">
+          <TestimonialsSection />
+        </div>
+        <div data-landing-section="faq">
+          <FAQSection />
+        </div>
+        <div data-landing-section="contact">
+          <ContactSection />
+        </div>
+        <div data-landing-section="footer">
+          <Footer />
+        </div>
+      </div>
     </>
   );
 }

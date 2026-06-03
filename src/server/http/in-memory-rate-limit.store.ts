@@ -1,6 +1,6 @@
 import type { IRateLimitStore, RateBucket } from './rate-limit.store';
 
-const GLOBAL_KEY = '__camiprint_rate_limit_store__';
+const GLOBAL_KEY = '__camiart_rate_limit_store__';
 
 const getMap = (): Map<string, RateBucket> => {
   const g = globalThis as typeof globalThis & {

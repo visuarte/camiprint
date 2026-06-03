@@ -11,7 +11,7 @@ const DATA_FILE_PATH =
   process.env.NODE_ENV === 'test'
     ? join(/* turbopackIgnore: true */ process.cwd(), 'data', `quotes.${process.pid}.json`)
     : join(/* turbopackIgnore: true */ process.cwd(), 'data', 'quotes.json');
-const GLOBAL_STORAGE_LOCK_KEY = '__camiprint_quotes_storage_lock__';
+const GLOBAL_STORAGE_LOCK_KEY = '__camiart_quotes_storage_lock__';
 
 const withStorageLock = async <T>(operation: () => Promise<T>): Promise<T> => {
   const globalScope = globalThis as typeof globalThis & {

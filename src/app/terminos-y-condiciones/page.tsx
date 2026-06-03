@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata = {
   title: 'Términos y Condiciones — CamiArt',
-  description: 'Términos y condiciones de uso y contratación de CamiPrint.',
+  description: `Términos y condiciones de uso y contratación de ${brandConfig.displayName}.`,
   alternates: { canonical: `${brandConfig.siteUrl}/terminos-y-condiciones` },
 };
 
@@ -15,7 +15,7 @@ export default function Terms() {
 
       <section className="mt-8">
         <h2 className="text-xl font-semibold text-white">1. Objeto</h2>
-        <p className="text-sm text-cami-300">Estos Términos y Condiciones regulan el uso del sitio web y la contratación de productos ofrecidos por {brandConfig.displayName} a través de https://CamiPrint.com.</p>
+        <p className="text-sm text-cami-300">Estos Términos y Condiciones regulan el uso del sitio web y la contratación de productos ofrecidos por {brandConfig.displayName} a través de {brandConfig.siteUrl}.</p>
       </section>
 
       <section className="mt-6">
@@ -40,12 +40,12 @@ export default function Terms() {
 
       <section className="mt-6">
         <h2 className="text-xl font-semibold text-white">6. Entrega y devoluciones</h2>
-        <p className="text-sm text-cami-300">Los plazos y condiciones de entrega se describen en nuestra <Link href="/politica-de-envios" className="text-cami-200 underline">Política de Envíos</Link>. Debido a la naturaleza personalizada de muchos productos, las devoluciones solo se aceptan por defectos de fabricación o errores imputables a CamiPrint; para el resto de casos consultar condiciones específicas en la política de devolución incluida en la confirmación del pedido.</p>
+        <p className="text-sm text-cami-300">Los plazos y condiciones de entrega se describen en nuestra <Link href="/politica-de-envios" className="text-cami-200 underline">Política de Envíos</Link>. Debido a la naturaleza personalizada de muchos productos, las devoluciones solo se aceptan por defectos de fabricación o errores imputables a {brandConfig.displayName}; para el resto de casos consultar condiciones específicas en la política de devolución incluida en la confirmación del pedido.</p>
       </section>
 
       <section className="mt-6">
         <h2 className="text-xl font-semibold text-white">7. Garantía</h2>
-        <p className="text-sm text-cami-300">Nuestros productos cuentan con la garantía legal frente a defectos de conformidad según la legislación vigente. Para ejercer la garantía, contacta con <a href="mailto:help@CamiPrint.com" className="text-cami-200 underline">help@CamiPrint.com</a> y facilita la información del pedido y fotografías.</p>
+        <p className="text-sm text-cami-300">Nuestros productos cuentan con la garantía legal frente a defectos de conformidad según la legislación vigente. Para ejercer la garantía, contacta con <a href={`mailto:${brandConfig.supportEmail}`} className="text-cami-200 underline">{brandConfig.supportEmail}</a> y facilita la información del pedido y fotografías.</p>
       </section>
 
       <section className="mt-6">

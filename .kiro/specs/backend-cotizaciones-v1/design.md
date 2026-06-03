@@ -1,18 +1,18 @@
-# Design Document
+﻿# Design Document
 
 ## Overview
 
-Backend de producción para captura de cotizaciones en Camiprint. Sistema robusto con persistencia durable, observabilidad completa, resiliencia ante fallos, seguridad HTTP y rate limiting. Diseñado para escalar horizontalmente y soportar alta disponibilidad.
+Backend de producciÃ³n para captura de cotizaciones en CAMIART. Sistema robusto con persistencia durable, observabilidad completa, resiliencia ante fallos, seguridad HTTP y rate limiting. DiseÃ±ado para escalar horizontalmente y soportar alta disponibilidad.
 
-**Características principales:**
+**CaracterÃ­sticas principales:**
 - Persistencia durable que sobrevive reinicios
 - Rate limiting con sliding window (5 req/min por IP)
 - Logging estructurado con enmascaramiento de PII
-- Métricas en tiempo real (contadores, histogramas)
+- MÃ©tricas en tiempo real (contadores, histogramas)
 - Health checks para orquestadores
 - Timeouts y circuit breakers
 - Headers de seguridad y CORS configurables
-- Validación y sanitización robusta
+- ValidaciÃ³n y sanitizaciÃ³n robusta
 
 ## Architecture
 
@@ -20,23 +20,23 @@ Backend de producción para captura de cotizaciones en Camiprint. Sistema robust
 
 ```
 src/
-├── app/api/v1/
-│   ├── quotes/route.ts          # Endpoint principal POST /api/v1/quotes
-│   ├── health/route.ts          # Health checks GET /api/v1/health
-│   └── metrics/route.ts         # Métricas GET /api/v1/metrics
-├── server/
-│   ├── http/
-│   │   ├── errors.ts            # Mapeo de errores a respuestas HTTP
-│   │   ├── request-id.ts        # Generación y propagación de requestId
-│   │   └── rate-limit.ts        # Rate limiting con sliding window
-│   ├── observability/
-│   │   ├── logger.ts            # Logger estructurado con PII masking
-│   │   └── metrics.ts           # Collector de métricas (contadores, histogramas)
-│   └── quotes/
-│       ├── types.ts             # Tipos de dominio
-│       ├── validation.ts        # Validación y sanitización de payloads
-│       ├── repository.ts        # Capa de persistencia (interfaz + implementación)
-│       └── service.ts           # Lógica de negocio
+â”œâ”€â”€ app/api/v1/
+â”‚   â”œâ”€â”€ quotes/route.ts          # Endpoint principal POST /api/v1/quotes
+â”‚   â”œâ”€â”€ health/route.ts          # Health checks GET /api/v1/health
+â”‚   â””â”€â”€ metrics/route.ts         # MÃ©tricas GET /api/v1/metrics
+â”œâ”€â”€ server/
+â”‚   â”œâ”€â”€ http/
+â”‚   â”‚   â”œâ”€â”€ errors.ts            # Mapeo de errores a respuestas HTTP
+â”‚   â”‚   â”œâ”€â”€ request-id.ts        # GeneraciÃ³n y propagaciÃ³n de requestId
+â”‚   â”‚   â””â”€â”€ rate-limit.ts        # Rate limiting con sliding window
+â”‚   â”œâ”€â”€ observability/
+â”‚   â”‚   â”œâ”€â”€ logger.ts            # Logger estructurado con PII masking
+â”‚   â”‚   â””â”€â”€ metrics.ts           # Collector de mÃ©tricas (contadores, histogramas)
+â”‚   â””â”€â”€ quotes/
+â”‚       â”œâ”€â”€ types.ts             # Tipos de dominio
+â”‚       â”œâ”€â”€ validation.ts        # ValidaciÃ³n y sanitizaciÃ³n de payloads
+â”‚       â”œâ”€â”€ repository.ts        # Capa de persistencia (interfaz + implementaciÃ³n)
+â”‚       â””â”€â”€ service.ts           # LÃ³gica de negocio
 ```
 
 ### Flujo de Request Mejorado
@@ -55,13 +55,13 @@ sequenceDiagram
     Client->>RouteHandler: POST /api/v1/quotes
     RouteHandler->>RouteHandler: Generar requestId
     RouteHandler->>RouteHandler: Validar Content-Type
-    RouteHandler->>RateLimiter: Verificar límite por IP
+    RouteHandler->>RateLimiter: Verificar lÃ­mite por IP
     alt Rate limit excedido
         RateLimiter-->>Client: 429 Too Many Requests
     end
     RouteHandler->>RouteHandler: Parsear body (con timeout)
     RouteHandler->>Validator: Validar y sanitizar payload
-    alt Validación falla
+    alt ValidaciÃ³n falla
         Validator-->>Client: 422 Unprocessable Entity
     end
     RouteHandler->>Service: createQuote(data)
@@ -75,22 +75,22 @@ sequenceDiagram
     Service-->>RouteHandler: QuoteLeadRecord
     RouteHandler->>Logger: Log request (info/warn/error)
     RouteHandler->>Metrics: Incrementar contadores
-    RouteHandler->>Metrics: Registrar duración
+    RouteHandler->>Metrics: Registrar duraciÃ³n
     RouteHandler-->>Client: 201 Created + headers seguridad
 ```
 
 ### Decisiones de Arquitectura
 
-**1. Separación de capas**
-- **Route Handler**: Orquestación HTTP, validación de headers, rate limiting
-- **Validation**: Sanitización y validación declarativa de payloads
-- **Service**: Lógica de negocio (actualmente mínima, preparada para expansión)
-- **Repository**: Abstracción de persistencia (permite cambiar DB sin tocar capas superiores)
+**1. SeparaciÃ³n de capas**
+- **Route Handler**: OrquestaciÃ³n HTTP, validaciÃ³n de headers, rate limiting
+- **Validation**: SanitizaciÃ³n y validaciÃ³n declarativa de payloads
+- **Service**: LÃ³gica de negocio (actualmente mÃ­nima, preparada para expansiÃ³n)
+- **Repository**: AbstracciÃ³n de persistencia (permite cambiar DB sin tocar capas superiores)
 
-**2. Observabilidad desde el diseño**
+**2. Observabilidad desde el diseÃ±o**
 - Logger estructurado integrado en cada request
-- Métricas expuestas en endpoint dedicado
-- RequestId propagado end-to-end para correlación
+- MÃ©tricas expuestas en endpoint dedicado
+- RequestId propagado end-to-end para correlaciÃ³n
 
 **3. Resiliencia por defecto**
 - Timeouts en operaciones de I/O (5s para DB)
@@ -98,8 +98,8 @@ sequenceDiagram
 - Rate limiting para proteger contra abuso
 
 **4. Seguridad en profundidad**
-- Validación estricta de Content-Type
-- Sanitización de caracteres de control
+- ValidaciÃ³n estricta de Content-Type
+- SanitizaciÃ³n de caracteres de control
 - Headers de seguridad (CSP, HSTS, X-Frame-Options)
 - CORS con whitelist por entorno
 - PII enmascarada en logs
@@ -121,12 +121,12 @@ interface RateLimitResult {
 export const checkQuoteRateLimit = (request: Request): RateLimitResult;
 ```
 
-**Configuración:**
-- Límite: 5 requests por ventana de 60 segundos
-- Identificación: IP desde `x-forwarded-for` o `x-real-ip`
-- Limpieza automática de entradas expiradas
+**ConfiguraciÃ³n:**
+- LÃ­mite: 5 requests por ventana de 60 segundos
+- IdentificaciÃ³n: IP desde `x-forwarded-for` o `x-real-ip`
+- Limpieza automÃ¡tica de entradas expiradas
 
-**Decisión de diseño:** Almacenamiento en memoria es suficiente para MVP. Para escalar horizontalmente, migrar a Redis/Vercel KV compartido.
+**DecisiÃ³n de diseÃ±o:** Almacenamiento en memoria es suficiente para MVP. Para escalar horizontalmente, migrar a Redis/Vercel KV compartido.
 
 ---
 
@@ -153,18 +153,18 @@ export const logError = (requestId: string, error: Error, context?: Record<strin
 ```
 
 **Formato:**
-- **Producción:** JSON estructurado para parsing automático
+- **ProducciÃ³n:** JSON estructurado para parsing automÃ¡tico
 - **Desarrollo:** Formato legible para humanos
 
 **PII Masking:**
 - Email: `abc***@domain.com` (primeros 3 caracteres)
-- Teléfono: `***1234` (últimos 4 dígitos)
+- TelÃ©fono: `***1234` (Ãºltimos 4 dÃ­gitos)
 
 ---
 
 ### 3. Metrics Collector (`observability/metrics.ts`)
 
-**Responsabilidad:** Recolectar métricas operacionales en tiempo real.
+**Responsabilidad:** Recolectar mÃ©tricas operacionales en tiempo real.
 
 ```typescript
 class MetricsCollector {
@@ -181,21 +181,21 @@ interface MetricsSnapshot {
 }
 ```
 
-**Métricas expuestas:**
+**MÃ©tricas expuestas:**
 - `quotes.created.count` - Total de cotizaciones creadas
-- `quotes.validation_error.count` - Total de errores de validación
+- `quotes.validation_error.count` - Total de errores de validaciÃ³n
 - `quotes.rate_limited.count` - Total de requests bloqueados por rate limit
 - `quotes.internal_error.count` - Total de errores internos
 - `quotes.request_duration_ms` - Histograma de latencias (p50, p95, p99)
 - `quotes.in_flight_requests` - Gauge de requests activos
 
-**Decisión de diseño:** Mantener últimos 1000 valores en histogramas para calcular percentiles sin consumir memoria excesiva.
+**DecisiÃ³n de diseÃ±o:** Mantener Ãºltimos 1000 valores en histogramas para calcular percentiles sin consumir memoria excesiva.
 
 ---
 
 ### 4. Validation Layer (`validation.ts`)
 
-**Responsabilidad:** Validación declarativa y sanitización de payloads.
+**Responsabilidad:** ValidaciÃ³n declarativa y sanitizaciÃ³n de payloads.
 
 ```typescript
 interface ValidationResult {
@@ -211,17 +211,17 @@ interface ValidationIssue {
 export const validateQuotePayload = (payload: unknown): ValidationResult;
 ```
 
-**Sanitización aplicada:**
+**SanitizaciÃ³n aplicada:**
 - Trim de espacios en todos los campos
-- Normalización de espacios múltiples a uno solo
-- Remoción de caracteres de control (excepto `\n` en `message`)
+- NormalizaciÃ³n de espacios mÃºltiples a uno solo
+- RemociÃ³n de caracteres de control (excepto `\n` en `message`)
 - Rechazo de campos adicionales no especificados
-- Límite de 32KB en body size
+- LÃ­mite de 32KB en body size
 
 **Validaciones:**
 - `name`: 2-120 caracteres
 - `email`: RFC 5322 simplificado, max 254 caracteres
-- `phone`: Regex `/^[+0-9\s()-]{7,}$/` (mínimo 7, sin máximo)
+- `phone`: Regex `/^[+0-9\s()-]{7,}$/` (mÃ­nimo 7, sin mÃ¡ximo)
 - `companyName`: 1-160 caracteres
 - `quantity`: Enum `['10-24', '25-49', '50-99', '100+']`
 - `message`: Opcional, max 2000 caracteres
@@ -230,7 +230,7 @@ export const validateQuotePayload = (payload: unknown): ValidationResult;
 
 ### 5. Repository Layer (`repository.ts`)
 
-**Responsabilidad:** Abstracción de persistencia durable.
+**Responsabilidad:** AbstracciÃ³n de persistencia durable.
 
 ```typescript
 interface QuotesRepository {
@@ -262,23 +262,23 @@ interface QuoteLeadRecord {
 }
 ```
 
-**Generación de IDs:** Formato `q_{timestamp_base36}{random_base36}` (ej: `q_lx3k9a2b7f`)
+**GeneraciÃ³n de IDs:** Formato `q_{timestamp_base36}{random_base36}` (ej: `q_lx3k9a2b7f`)
 
-**Decisión de persistencia:** Ver sección "Data Models" para comparación de opciones.
+**DecisiÃ³n de persistencia:** Ver secciÃ³n "Data Models" para comparaciÃ³n de opciones.
 
 ---
 
 ### 6. Resiliencia en QuotesService (`quotes/service.ts`)
 
-**Responsabilidad:** aplicar timeout y circuit breaker en la operación de persistencia de cotizaciones.
+**Responsabilidad:** aplicar timeout y circuit breaker en la operaciÃ³n de persistencia de cotizaciones.
 
-Implementación real:
+ImplementaciÃ³n real:
 - Timeout de persistencia: 5 segundos.
 - Circuit breaker: estados `closed`, `open`, `half-open`.
 - Umbral de apertura: 5 fallos consecutivos.
-- Ventana de recuperación: 30 segundos para transición a half-open.
+- Ventana de recuperaciÃ³n: 30 segundos para transiciÃ³n a half-open.
 - Estado open: rechaza de inmediato con `SERVICE_UNAVAILABLE`.
-- Eventos del circuito registrados en logs estructurados y métricas.
+- Eventos del circuito registrados en logs estructurados y mÃ©tricas.
 
 ---
 
@@ -286,30 +286,30 @@ Implementación real:
 
 **Responsabilidad:** aplicar headers de seguridad y validaciones HTTP directamente en helpers de respuesta y route handlers.
 
-Implementación real:
-- Validación de `Content-Type: application/json` en `POST /api/v1/quotes`.
+ImplementaciÃ³n real:
+- ValidaciÃ³n de `Content-Type: application/json` en `POST /api/v1/quotes`.
 - Headers `X-Content-Type-Options: nosniff` y `X-Frame-Options: DENY` en respuestas.
-- `Strict-Transport-Security` en producción.
-- `X-Request-Id` en respuestas para correlación.
+- `Strict-Transport-Security` en producciÃ³n.
+- `X-Request-Id` en respuestas para correlaciÃ³n.
 
 ## Data Models
 
-### Persistencia: Comparación de Opciones
+### Persistencia: ComparaciÃ³n de Opciones
 
-#### Opción A: PostgreSQL + Prisma (Recomendado para Producción)
+#### OpciÃ³n A: PostgreSQL + Prisma (Recomendado para ProducciÃ³n)
 
 **Ventajas:**
-- ✅ Persistencia durable y transaccional
-- ✅ Escalabilidad horizontal con réplicas
-- ✅ Backups automáticos
-- ✅ Índices para consultas eficientes
-- ✅ Soporte para relaciones futuras (ej: quotes → orders)
-- ✅ Prisma ORM con type safety
+- âœ… Persistencia durable y transaccional
+- âœ… Escalabilidad horizontal con rÃ©plicas
+- âœ… Backups automÃ¡ticos
+- âœ… Ãndices para consultas eficientes
+- âœ… Soporte para relaciones futuras (ej: quotes â†’ orders)
+- âœ… Prisma ORM con type safety
 
 **Desventajas:**
-- ⚠️ Requiere provisionar base de datos
-- ⚠️ Costo adicional de infraestructura
-- ⚠️ Latencia de red (mitigable con connection pooling)
+- âš ï¸ Requiere provisionar base de datos
+- âš ï¸ Costo adicional de infraestructura
+- âš ï¸ Latencia de red (mitigable con connection pooling)
 
 **Schema Prisma:**
 ```prisma
@@ -331,7 +331,7 @@ model Quote {
 }
 ```
 
-**Implementación:**
+**ImplementaciÃ³n:**
 ```typescript
 import { PrismaClient } from '@prisma/client';
 
@@ -362,21 +362,21 @@ export class QuotesRepository {
 
 ---
 
-#### Opción B: Vercel KV (Redis) - Rápido para MVP
+#### OpciÃ³n B: Vercel KV (Redis) - RÃ¡pido para MVP
 
 **Ventajas:**
-- ✅ Setup instantáneo en Vercel
-- ✅ Latencia ultra-baja (< 10ms)
-- ✅ Sin provisionar infraestructura
-- ✅ Escalabilidad automática
+- âœ… Setup instantÃ¡neo en Vercel
+- âœ… Latencia ultra-baja (< 10ms)
+- âœ… Sin provisionar infraestructura
+- âœ… Escalabilidad automÃ¡tica
 
 **Desventajas:**
-- ⚠️ Sin transacciones ACID completas
-- ⚠️ Consultas complejas limitadas
-- ⚠️ Costo por operación (puede ser alto con tráfico)
-- ⚠️ Migración futura a SQL requiere esfuerzo
+- âš ï¸ Sin transacciones ACID completas
+- âš ï¸ Consultas complejas limitadas
+- âš ï¸ Costo por operaciÃ³n (puede ser alto con trÃ¡fico)
+- âš ï¸ MigraciÃ³n futura a SQL requiere esfuerzo
 
-**Implementación:**
+**ImplementaciÃ³n:**
 ```typescript
 import { kv } from '@vercel/kv';
 
@@ -405,19 +405,19 @@ export class QuotesRepository {
 
 ---
 
-#### Opción C: File System (Solo Desarrollo)
+#### OpciÃ³n C: File System (Solo Desarrollo)
 
 **Ventajas:**
-- ✅ Cero configuración
-- ✅ Ideal para desarrollo local
+- âœ… Cero configuraciÃ³n
+- âœ… Ideal para desarrollo local
 
 **Desventajas:**
-- ❌ No escala horizontalmente
-- ❌ Race conditions en escrituras concurrentes
-- ❌ Sin backups automáticos
-- ❌ **NO USAR EN PRODUCCIÓN**
+- âŒ No escala horizontalmente
+- âŒ Race conditions en escrituras concurrentes
+- âŒ Sin backups automÃ¡ticos
+- âŒ **NO USAR EN PRODUCCIÃ“N**
 
-**Implementación:**
+**ImplementaciÃ³n:**
 ```typescript
 import fs from 'fs/promises';
 import path from 'path';
@@ -445,25 +445,25 @@ export class QuotesRepository {
 
 ---
 
-### Recomendación Final
+### RecomendaciÃ³n Final
 
-**Para MVP rápido:** Opción B (Vercel KV)
+**Para MVP rÃ¡pido:** OpciÃ³n B (Vercel KV)
 - Deploy en minutos
 - Suficiente para validar producto
-- Migración a PostgreSQL cuando escale
+- MigraciÃ³n a PostgreSQL cuando escale
 
-**Para producción robusta:** Opción A (PostgreSQL + Prisma)
-- Mejor para datos críticos de negocio
+**Para producciÃ³n robusta:** OpciÃ³n A (PostgreSQL + Prisma)
+- Mejor para datos crÃ­ticos de negocio
 - Escalabilidad probada
 - Ecosistema maduro
 
-**Decisión:** Implementar interfaz `QuotesRepository` que permita cambiar entre opciones sin modificar capas superiores.
+**DecisiÃ³n:** Implementar interfaz `QuotesRepository` que permita cambiar entre opciones sin modificar capas superiores.
 
 ## Error Handling
 
 ### Estrategia de Manejo de Errores
 
-**Principio:** Fallar rápido, fallar explícitamente, nunca exponer detalles internos al cliente.
+**Principio:** Fallar rÃ¡pido, fallar explÃ­citamente, nunca exponer detalles internos al cliente.
 
 ### Mapeo de Errores HTTP
 
@@ -492,17 +492,17 @@ export const jsonError = (
 ): Response;
 ```
 
-### Códigos de Error Estándar
+### CÃ³digos de Error EstÃ¡ndar
 
-| Status | Code | Descripción | Acción del Cliente |
+| Status | Code | DescripciÃ³n | AcciÃ³n del Cliente |
 |--------|------|-------------|-------------------|
 | 400 | `BAD_REQUEST` | Request malformado | Revisar formato |
-| 413 | `PAYLOAD_TOO_LARGE` | Body > 32KB | Reducir tamaño |
-| 415 | `UNSUPPORTED_MEDIA_TYPE` | Content-Type inválido | Usar `application/json` |
-| 422 | `VALIDATION_ERROR` | Payload inválido | Corregir campos en `details` |
-| 429 | `RATE_LIMITED` | Límite excedido | Esperar `Retry-After` segundos |
+| 413 | `PAYLOAD_TOO_LARGE` | Body > 32KB | Reducir tamaÃ±o |
+| 415 | `UNSUPPORTED_MEDIA_TYPE` | Content-Type invÃ¡lido | Usar `application/json` |
+| 422 | `VALIDATION_ERROR` | Payload invÃ¡lido | Corregir campos en `details` |
+| 429 | `RATE_LIMITED` | LÃ­mite excedido | Esperar `Retry-After` segundos |
 | 500 | `INTERNAL_ERROR` | Error interno | Reintentar con backoff |
-| 503 | `SERVICE_UNAVAILABLE` | Dependencia caída | Reintentar con backoff |
+| 503 | `SERVICE_UNAVAILABLE` | Dependencia caÃ­da | Reintentar con backoff |
 
 ### Manejo de Errores por Capa
 
@@ -528,12 +528,12 @@ try {
   
 } catch (error) {
   if (error instanceof SyntaxError) {
-    return jsonError(422, requestId, 'VALIDATION_ERROR', 'JSON inválido');
+    return jsonError(422, requestId, 'VALIDATION_ERROR', 'JSON invÃ¡lido');
   }
   
   if ((error as Error).name === 'PAYLOAD_TOO_LARGE') {
     return jsonError(413, requestId, 'PAYLOAD_TOO_LARGE', 
-      'El payload supera el límite permitido');
+      'El payload supera el lÃ­mite permitido');
   }
   
   logError(requestId, error as Error);
@@ -548,7 +548,7 @@ const { data, issues } = validateQuotePayload(payload);
 
 if (!data) {
   return jsonError(422, requestId, 'VALIDATION_ERROR', 
-    'Payload inválido', issues);
+    'Payload invÃ¡lido', issues);
 }
 ```
 
@@ -587,11 +587,11 @@ try {
 - Incluir: `requestId`, `errorCode`, `errorMessage`, `path`, `method`, `stackTrace` (solo desarrollo)
 - Incluir: payload sanitizado (sin PII completa)
 
-### Recuperación y Reintentos
+### RecuperaciÃ³n y Reintentos
 
 **Cliente (frontend):**
 - `422`: No reintentar, mostrar errores por campo
-- `429`: Reintentar después de `Retry-After` segundos
+- `429`: Reintentar despuÃ©s de `Retry-After` segundos
 - `500/503`: Reintentar con exponential backoff (1s, 2s, 4s)
 
 **Servidor:**
@@ -602,23 +602,23 @@ try {
 
 ### Enfoque Dual: Unit Tests + Property-Based Tests
 
-**Objetivo:** Cobertura > 85% en módulos críticos con tests exhaustivos que cubran casos edge y concurrencia.
+**Objetivo:** Cobertura > 85% en mÃ³dulos crÃ­ticos con tests exhaustivos que cubran casos edge y concurrencia.
 
 ---
 
-### 1. Unit Tests (Casos Específicos)
+### 1. Unit Tests (Casos EspecÃ­ficos)
 
 **Validation Layer (`validation.test.ts`)**
 ```typescript
 describe('validateQuotePayload', () => {
-  it('acepta payload válido completo', () => {
+  it('acepta payload vÃ¡lido completo', () => {
     const payload = {
-      name: 'Juan Pérez',
+      name: 'Juan PÃ©rez',
       email: 'juan@example.com',
       phone: '+52 123 456 7890',
       companyName: 'Acme Corp',
       quantity: '25-49',
-      message: 'Necesito cotización urgente',
+      message: 'Necesito cotizaciÃ³n urgente',
     };
     
     const result = validateQuotePayload(payload);
@@ -626,7 +626,7 @@ describe('validateQuotePayload', () => {
     expect(result.data).toBeDefined();
   });
   
-  it('rechaza email inválido', () => {
+  it('rechaza email invÃ¡lido', () => {
     const payload = { /* ... */ email: 'notanemail' };
     const result = validateQuotePayload(payload);
     expect(result.issues).toContainEqual({
@@ -635,16 +635,16 @@ describe('validateQuotePayload', () => {
     });
   });
   
-  it('sanitiza espacios múltiples', () => {
-    const payload = { /* ... */ name: 'Juan    Pérez' };
+  it('sanitiza espacios mÃºltiples', () => {
+    const payload = { /* ... */ name: 'Juan    PÃ©rez' };
     const result = validateQuotePayload(payload);
-    expect(result.data?.name).toBe('Juan Pérez');
+    expect(result.data?.name).toBe('Juan PÃ©rez');
   });
   
   it('remueve caracteres de control', () => {
-    const payload = { /* ... */ name: 'Juan\x00Pérez' };
+    const payload = { /* ... */ name: 'Juan\x00PÃ©rez' };
     const result = validateQuotePayload(payload);
-    expect(result.data?.name).toBe('JuanPérez');
+    expect(result.data?.name).toBe('JuanPÃ©rez');
   });
   
   it('rechaza campos adicionales', () => {
@@ -661,7 +661,7 @@ describe('validateQuotePayload', () => {
 **Repository Layer (`repository.test.ts`)**
 ```typescript
 describe('QuotesRepository', () => {
-  it('genera IDs únicos con prefijo q_', async () => {
+  it('genera IDs Ãºnicos con prefijo q_', async () => {
     const repo = new QuotesRepository();
     const record = await repo.create(validInput);
     expect(record.id).toMatch(/^q_[a-z0-9]+$/);
@@ -701,7 +701,7 @@ describe('checkRateLimit', () => {
   it('bloquea request 6 con retryAfter', () => {
     const request = mockRequest('192.168.1.1');
     
-    // Consumir límite
+    // Consumir lÃ­mite
     for (let i = 0; i < 5; i++) checkRateLimit(request);
     
     const result = checkRateLimit(request);
@@ -709,10 +709,10 @@ describe('checkRateLimit', () => {
     expect(result.retryAfter).toBeGreaterThan(0);
   });
   
-  it('resetea contador después de ventana', async () => {
+  it('resetea contador despuÃ©s de ventana', async () => {
     const request = mockRequest('192.168.1.1');
     
-    // Consumir límite
+    // Consumir lÃ­mite
     for (let i = 0; i < 5; i++) checkRateLimit(request);
     
     // Esperar ventana
@@ -726,17 +726,17 @@ describe('checkRateLimit', () => {
 
 ---
 
-### 2. Property-Based Tests (Generación Aleatoria)
+### 2. Property-Based Tests (GeneraciÃ³n Aleatoria)
 
 **Feature: backend-cotizaciones-v1**
 
-**Property 1: Validación acepta 100 payloads válidos aleatorios**
+**Property 1: ValidaciÃ³n acepta 100 payloads vÃ¡lidos aleatorios**
 ```typescript
 import { faker } from '@faker-js/faker';
 
 describe('Property-Based: Validation', () => {
-  it('acepta 100 payloads válidos generados aleatoriamente', () => {
-    // Feature: backend-cotizaciones-v1, Property 1: Validación robusta
+  it('acepta 100 payloads vÃ¡lidos generados aleatoriamente', () => {
+    // Feature: backend-cotizaciones-v1, Property 1: ValidaciÃ³n robusta
     
     const results = Array.from({ length: 100 }, () => {
       const payload = {
@@ -757,7 +757,7 @@ describe('Property-Based: Validation', () => {
 });
 ```
 
-**Property 2: Serialización round-trip preserva datos**
+**Property 2: SerializaciÃ³n round-trip preserva datos**
 ```typescript
 describe('Property-Based: Serialization', () => {
   it('round-trip preserva estructura de datos', () => {
@@ -776,10 +776,10 @@ describe('Property-Based: Serialization', () => {
 });
 ```
 
-**Property 3: IDs generados son únicos**
+**Property 3: IDs generados son Ãºnicos**
 ```typescript
 describe('Property-Based: ID Generation', () => {
-  it('genera 1000 IDs únicos sin colisiones', async () => {
+  it('genera 1000 IDs Ãºnicos sin colisiones', async () => {
     // Feature: backend-cotizaciones-v1, Property 3: ID uniqueness
     
     const repo = new QuotesRepository();
@@ -802,7 +802,7 @@ describe('Property-Based: ID Generation', () => {
 **Route Handler (`route.integration.test.ts`)**
 ```typescript
 describe('POST /api/v1/quotes - Integration', () => {
-  it('retorna 201 con payload válido', async () => {
+  it('retorna 201 con payload vÃ¡lido', async () => {
     const request = new Request('http://localhost/api/v1/quotes', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -817,7 +817,7 @@ describe('POST /api/v1/quotes - Integration', () => {
     expect(body.data.id).toMatch(/^q_/);
   });
   
-  it('retorna 422 con payload inválido', async () => {
+  it('retorna 422 con payload invÃ¡lido', async () => {
     const request = new Request('http://localhost/api/v1/quotes', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -832,10 +832,10 @@ describe('POST /api/v1/quotes - Integration', () => {
     expect(body.error.details).toBeDefined();
   });
   
-  it('retorna 429 después de 5 requests', async () => {
+  it('retorna 429 despuÃ©s de 5 requests', async () => {
     const ip = '192.168.1.100';
     
-    // Consumir límite
+    // Consumir lÃ­mite
     for (let i = 0; i < 5; i++) {
       await POST(mockRequestWithIp(ip, validPayload));
     }
@@ -883,7 +883,7 @@ describe('Concurrency Tests', () => {
     // Todos deben ser exitosos
     expect(responses.every(r => r.status === 201)).toBe(true);
     
-    // Todos deben tener IDs únicos
+    // Todos deben tener IDs Ãºnicos
     const ids = bodies.map((b: any) => b.data.id);
     const uniqueIds = new Set(ids);
     expect(uniqueIds.size).toBe(10);
@@ -897,7 +897,7 @@ describe('Concurrency Tests', () => {
 
 ```typescript
 describe('GET /api/v1/health', () => {
-  it('retorna 200 cuando sistema está operativo', async () => {
+  it('retorna 200 cuando sistema estÃ¡ operativo', async () => {
     const response = await GET();
     expect(response.status).toBe(200);
     
@@ -922,26 +922,26 @@ describe('GET /api/v1/health', () => {
 
 ### Cobertura Objetivo
 
-| Módulo | Cobertura Mínima | Prioridad |
+| MÃ³dulo | Cobertura MÃ­nima | Prioridad |
 |--------|------------------|-----------|
-| `validation.ts` | 95% | Crítica |
-| `repository.ts` | 90% | Crítica |
+| `validation.ts` | 95% | CrÃ­tica |
+| `repository.ts` | 90% | CrÃ­tica |
 | `service.ts` | 90% | Alta |
 | `rate-limit.ts` | 85% | Alta |
 | `logger.ts` | 80% | Media |
 | `metrics.ts` | 80% | Media |
 | `route.ts` | 85% | Alta |
 
-**Comando de ejecución:**
+**Comando de ejecuciÃ³n:**
 ```bash
 npm run test -- --coverage --coverage-threshold=85
 ```
 
 ---
 
-### Configuración de Property-Based Testing
+### ConfiguraciÃ³n de Property-Based Testing
 
-**Iteraciones mínimas:** 100 por property test (debido a randomización)
+**Iteraciones mÃ­nimas:** 100 por property test (debido a randomizaciÃ³n)
 
 **Generadores personalizados:**
 ```typescript
@@ -965,65 +965,65 @@ const generateInvalidEmail = () => faker.helpers.arrayElement([
 
 ## Migration Plan
 
-### Fase 1: Implementación Backend (Semana 1-2)
+### Fase 1: ImplementaciÃ³n Backend (Semana 1-2)
 
-**Día 1-2: Infraestructura base**
+**DÃ­a 1-2: Infraestructura base**
 - [ ] Crear estructura de carpetas (`server/http`, `server/quotes`)
 - [ ] Implementar `errors.ts` y `request-id.ts`
 - [ ] Implementar `observability/logger.ts` con PII masking
 - [ ] Implementar `observability/metrics.ts` con contadores e histogramas
-- [ ] Tests unitarios para cada módulo
+- [ ] Tests unitarios para cada mÃ³dulo
 
-**Día 3-4: Validación y sanitización**
-- [ ] Implementar `validation.ts` con sanitización robusta
+**DÃ­a 3-4: ValidaciÃ³n y sanitizaciÃ³n**
+- [ ] Implementar `validation.ts` con sanitizaciÃ³n robusta
 - [ ] Agregar rechazo de campos adicionales
 - [ ] Tests unitarios con casos edge
 - [ ] Property-based tests (100 payloads aleatorios)
 
-**Día 5-6: Persistencia**
+**DÃ­a 5-6: Persistencia**
 - [ ] Decidir entre PostgreSQL/Vercel KV/File system
 - [ ] Implementar `repository.ts` con interfaz abstracta
 - [ ] Agregar timeouts (5s) y circuit breaker
-- [ ] Tests de concurrencia (10 requests simultáneos)
+- [ ] Tests de concurrencia (10 requests simultÃ¡neos)
 
-**Día 7-8: Rate limiting y seguridad**
+**DÃ­a 7-8: Rate limiting y seguridad**
 - [ ] Implementar `rate-limit.ts` con sliding window
 - [ ] Consolidar reglas de seguridad HTTP en rutas y helpers de respuesta
-- [ ] Configurar whitelist de orígenes por entorno
+- [ ] Configurar whitelist de orÃ­genes por entorno
 - [ ] Tests de rate limiting
 
-**Día 9-10: Route handler y health checks**
-- [ ] Implementar `route.ts` con orquestación completa
-- [ ] Implementar `health/route.ts` con verificación de DB
-- [ ] Implementar `metrics/route.ts` para exposición
+**DÃ­a 9-10: Route handler y health checks**
+- [ ] Implementar `route.ts` con orquestaciÃ³n completa
+- [ ] Implementar `health/route.ts` con verificaciÃ³n de DB
+- [ ] Implementar `metrics/route.ts` para exposiciÃ³n
 - [ ] Integration tests end-to-end
 
 ---
 
-### Fase 2: Integración Frontend (Semana 3)
+### Fase 2: IntegraciÃ³n Frontend (Semana 3)
 
-**Día 1-2: Adaptación del formulario**
+**DÃ­a 1-2: AdaptaciÃ³n del formulario**
 - [ ] Agregar feature flag `NEXT_PUBLIC_QUOTES_API_ENABLED`
 - [ ] Implementar submit real con fetch a `/api/v1/quotes`
 - [ ] Mantener fallback a comportamiento actual
 - [ ] Agregar estado de carga durante submit
 
-**Día 3-4: Manejo de respuestas**
-- [ ] Mostrar mensaje de éxito en 201
+**DÃ­a 3-4: Manejo de respuestas**
+- [ ] Mostrar mensaje de Ã©xito en 201
 - [ ] Mostrar errores por campo en 422 usando `details` array
 - [ ] Mostrar mensaje de rate limit en 429
-- [ ] Mostrar error recuperable en 500/503 con opción de reintentar
+- [ ] Mostrar error recuperable en 500/503 con opciÃ³n de reintentar
 
-**Día 5: Testing frontend**
-- [ ] Tests de integración con API real/mocked
-- [ ] Tests de visualización de errores
+**DÃ­a 5: Testing frontend**
+- [ ] Tests de integraciÃ³n con API real/mocked
+- [ ] Tests de visualizaciÃ³n de errores
 - [ ] Tests de reintentos con backoff
 
 ---
 
 ### Fase 3: Deployment y Monitoreo (Semana 4)
 
-**Staging (Día 1-3)**
+**Staging (DÃ­a 1-3)**
 - [ ] Provisionar base de datos (PostgreSQL o Vercel KV)
 - [ ] Configurar variables de entorno:
   - `DATABASE_URL` (si PostgreSQL)
@@ -1032,11 +1032,11 @@ const generateInvalidEmail = () => faker.helpers.arrayElement([
   - `NODE_ENV=staging`
 - [ ] Deploy a staging
 - [ ] Ejecutar smoke tests
-- [ ] Monitorear logs y métricas por 48 horas
+- [ ] Monitorear logs y mÃ©tricas por 48 horas
 
-**Producción (Día 4-5)**
-- [ ] Activar feature flag en producción
-- [ ] Monitorear métricas en tiempo real:
+**ProducciÃ³n (DÃ­a 4-5)**
+- [ ] Activar feature flag en producciÃ³n
+- [ ] Monitorear mÃ©tricas en tiempo real:
   - `quotes.created.count` (debe incrementar)
   - `quotes.validation_error.count` (debe ser < 5%)
   - `quotes.request_duration_ms` (p95 < 500ms)
@@ -1059,28 +1059,28 @@ const generateInvalidEmail = () => faker.helpers.arrayElement([
 **Procedimiento:**
 1. Desactivar feature flag `NEXT_PUBLIC_QUOTES_API_ENABLED`
 2. Verificar que formulario vuelve a comportamiento anterior
-3. Investigar causa raíz en logs con `requestId`
+3. Investigar causa raÃ­z en logs con `requestId`
 4. Aplicar fix y re-deploy a staging
 
 ---
 
-### Checklist de Producción
+### Checklist de ProducciÃ³n
 
 **Persistencia**
-- [ ] Datos persisten después de restart
+- [ ] Datos persisten despuÃ©s de restart
 - [ ] Backups configurados (si PostgreSQL)
-- [ ] Índices creados en `createdAt` y `status`
+- [ ] Ãndices creados en `createdAt` y `status`
 
 **Seguridad**
 - [ ] Rate limiting activo (5 req/min)
 - [ ] CORS configurado con whitelist
 - [ ] Headers de seguridad presentes
 - [ ] PII enmascarada en logs
-- [ ] Validación y sanitización completa
+- [ ] ValidaciÃ³n y sanitizaciÃ³n completa
 
 **Observabilidad**
-- [ ] Logs estructurados en JSON (producción)
-- [ ] Métricas expuestas en `/api/v1/metrics`
+- [ ] Logs estructurados en JSON (producciÃ³n)
+- [ ] MÃ©tricas expuestas en `/api/v1/metrics`
 - [ ] Health check responde en `/api/v1/health`
 - [ ] RequestId en todas las respuestas
 
@@ -1091,7 +1091,7 @@ const generateInvalidEmail = () => faker.helpers.arrayElement([
 - [ ] Retry logic en cliente (frontend)
 
 **Testing**
-- [ ] Cobertura > 85% en módulos críticos
+- [ ] Cobertura > 85% en mÃ³dulos crÃ­ticos
 - [ ] Property-based tests pasando (100 iteraciones)
 - [ ] Tests de concurrencia pasando (10 requests)
 - [ ] Integration tests frontend-backend pasando
@@ -1103,40 +1103,40 @@ const generateInvalidEmail = () => faker.helpers.arrayElement([
 
 ---
 
-### Métricas de Éxito
+### MÃ©tricas de Ã‰xito
 
-**KPIs Técnicos (Semana 1 post-launch)**
+**KPIs TÃ©cnicos (Semana 1 post-launch)**
 - Disponibilidad: > 99.5% uptime
 - Latencia p95: < 500ms
 - Tasa de error: < 1% de requests
 - Cobertura de tests: > 85%
 
 **KPIs de Negocio**
-- Leads capturados: 0 pérdidas por fallos técnicos
-- Conversión: Mantener o mejorar tasa actual
+- Leads capturados: 0 pÃ©rdidas por fallos tÃ©cnicos
+- ConversiÃ³n: Mantener o mejorar tasa actual
 - Tiempo de respuesta: Feedback inmediato al usuario (< 1s percibido)
 
 ---
 
 ### Riesgos y Mitigaciones
 
-| Riesgo | Probabilidad | Impacto | Mitigación |
+| Riesgo | Probabilidad | Impacto | MitigaciÃ³n |
 |--------|--------------|---------|------------|
-| Pérdida de datos por fallo de DB | Media | Alto | Backups automáticos + replicación |
+| PÃ©rdida de datos por fallo de DB | Media | Alto | Backups automÃ¡ticos + replicaciÃ³n |
 | DDoS/abuso | Alta | Medio | Rate limiting + WAF (Cloudflare) |
-| Fallo en deploy | Baja | Alto | Blue-green deployment + rollback automático |
-| Memory leak | Baja | Medio | Monitoreo de heap + alertas + restart automático |
+| Fallo en deploy | Baja | Alto | Blue-green deployment + rollback automÃ¡tico |
+| Memory leak | Baja | Medio | Monitoreo de heap + alertas + restart automÃ¡tico |
 | Latencia alta en DB | Media | Medio | Circuit breaker + timeouts + connection pooling |
-| CORS misconfiguration | Media | Alto | Tests de integración + whitelist estricta |
+| CORS misconfiguration | Media | Alto | Tests de integraciÃ³n + whitelist estricta |
 
 
 
 
 ## Correctness Properties
 
-*A property is a characteristic or behavior that should hold true across all valid executions of a system—essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+*A property is a characteristic or behavior that should hold true across all valid executions of a systemâ€”essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
 
-### Property 1: Validación acepta payloads válidos aleatorios
+### Property 1: ValidaciÃ³n acepta payloads vÃ¡lidos aleatorios
 
 *For any* valid payload structure with fields `name`, `email`, `phone`, `companyName`, `quantity`, and optional `message` that meet format requirements, the Quote_API SHALL accept the payload and return 201 with response containing `id`, `status`, and `createdAt`.
 
@@ -1144,7 +1144,7 @@ const generateInvalidEmail = () => faker.helpers.arrayElement([
 
 ---
 
-### Property 2: Sanitización completa de entradas
+### Property 2: SanitizaciÃ³n completa de entradas
 
 *For any* string input in payload fields, the sanitizer SHALL trim leading/trailing spaces, normalize multiple consecutive spaces to single space, and remove control characters (except newline in `message` field).
 
@@ -1152,7 +1152,7 @@ const generateInvalidEmail = () => faker.helpers.arrayElement([
 
 ---
 
-### Property 3: Validación rechaza formatos inválidos
+### Property 3: ValidaciÃ³n rechaza formatos invÃ¡lidos
 
 *For any* payload with invalid field formats (email not matching RFC 5322 simplified, phone not matching regex, lengths outside bounds, or quantity not in enum), the Quote_API SHALL return 422 with validation errors.
 
@@ -1160,7 +1160,7 @@ const generateInvalidEmail = () => faker.helpers.arrayElement([
 
 ---
 
-### Property 4: Errores de validación incluyen detalles estructurados
+### Property 4: Errores de validaciÃ³n incluyen detalles estructurados
 
 *For any* validation failure, the Quote_API SHALL return 422 with `error.details` array containing objects with `field` and `issue` properties for each failed validation.
 
@@ -1176,7 +1176,7 @@ const generateInvalidEmail = () => faker.helpers.arrayElement([
 
 ---
 
-### Property 6: Generación de IDs únicos
+### Property 6: GeneraciÃ³n de IDs Ãºnicos
 
 *For any* sequence of quote creation operations, the Persistence_Layer SHALL generate unique IDs with format `q_{alphanumeric}` such that no two IDs collide even under concurrent execution.
 
@@ -1232,7 +1232,7 @@ const generateInvalidEmail = () => faker.helpers.arrayElement([
 
 ---
 
-### Property 13: Parsing de JSON inválido retorna error estructurado
+### Property 13: Parsing de JSON invÃ¡lido retorna error estructurado
 
 *For any* malformed JSON in request body, the Quote_API SHALL return 422 with error code `VALIDATION_ERROR` and descriptive message without exposing internal details.
 
@@ -1254,7 +1254,7 @@ const generateInvalidEmail = () => faker.helpers.arrayElement([
 
 **Formato de Logs:**
 
-**Producción (JSON):**
+**ProducciÃ³n (JSON):**
 ```json
 {
   "level": "info",
@@ -1278,7 +1278,7 @@ const generateInvalidEmail = () => faker.helpers.arrayElement([
 - `level`: info | warn | error
 - `timestamp`: ISO 8601 UTC
 - `environment`: development | staging | production
-- `requestId`: Identificador único de request
+- `requestId`: Identificador Ãºnico de request
 - `method`: HTTP method
 - `path`: Request path
 - `statusCode`: HTTP status code
@@ -1286,12 +1286,12 @@ const generateInvalidEmail = () => faker.helpers.arrayElement([
 
 **PII Masking:**
 - Email: `abc***@domain.com`
-- Teléfono: `***1234`
+- TelÃ©fono: `***1234`
 - Nunca loguear: passwords, tokens, API keys
 
 ---
 
-### Métricas Expuestas
+### MÃ©tricas Expuestas
 
 **Endpoint:** `GET /api/v1/metrics`
 
@@ -1317,12 +1317,12 @@ const generateInvalidEmail = () => faker.helpers.arrayElement([
 }
 ```
 
-**Métricas Clave:**
+**MÃ©tricas Clave:**
 
-| Métrica | Tipo | Descripción | Umbral de Alerta |
+| MÃ©trica | Tipo | DescripciÃ³n | Umbral de Alerta |
 |---------|------|-------------|------------------|
 | `quotes.created.count` | Counter | Total de cotizaciones creadas | N/A |
-| `quotes.validation_error.count` | Counter | Total de errores de validación | > 10% de requests |
+| `quotes.validation_error.count` | Counter | Total de errores de validaciÃ³n | > 10% de requests |
 | `quotes.rate_limited.count` | Counter | Total de requests bloqueados | > 5% de requests |
 | `quotes.internal_error.count` | Counter | Total de errores internos | > 1% de requests |
 | `quotes.request_duration_ms` | Histogram | Latencia de requests (p50, p95, p99) | p95 > 500ms |
@@ -1389,7 +1389,7 @@ const generateInvalidEmail = () => faker.helpers.arrayElement([
 
 **Request ID Propagation:**
 
-1. Cliente envía request (opcional: incluir `X-Request-Id` header)
+1. Cliente envÃ­a request (opcional: incluir `X-Request-Id` header)
 2. Route handler genera o reutiliza `requestId`
 3. `requestId` se propaga a:
    - Logger (todos los logs)
@@ -1400,7 +1400,7 @@ const generateInvalidEmail = () => faker.helpers.arrayElement([
 
 **Formato de requestId:** `req_{timestamp_base36}{random_base36}`
 
-**Ejemplo de correlación:**
+**Ejemplo de correlaciÃ³n:**
 ```
 # Request
 POST /api/v1/quotes
@@ -1420,18 +1420,18 @@ X-Request-Id: req_lx3k9a2b7f
 
 ### Timeouts
 
-**Configuración de timeouts por operación:**
+**ConfiguraciÃ³n de timeouts por operaciÃ³n:**
 
-| Operación | Timeout | Justificación |
+| OperaciÃ³n | Timeout | JustificaciÃ³n |
 |-----------|---------|---------------|
 | Database write | 5 segundos | Suficiente para escritura simple, previene bloqueos |
-| Database health check | 2 segundos | Health check debe ser rápido |
+| Database health check | 2 segundos | Health check debe ser rÃ¡pido |
 | Request body parsing | 3 segundos | Previene ataques de slow POST |
-| Total request | 10 segundos | Límite global para prevenir recursos bloqueados |
+| Total request | 10 segundos | LÃ­mite global para prevenir recursos bloqueados |
 
-**Implementación:**
+**ImplementaciÃ³n:**
 ```typescript
-// Wrapper genérico de timeout
+// Wrapper genÃ©rico de timeout
 export const withTimeout = <T>(
   promise: Promise<T>,
   timeoutMs: number,
@@ -1459,10 +1459,10 @@ async create(input: QuoteRequestInput): Promise<QuoteLeadRecord> {
 
 ### Circuit Breaker
 
-**Configuración:**
-- **Umbral de fallos:** 5 fallos consecutivos → estado `open`
-- **Timeout de recuperación:** 30 segundos → estado `half-open`
-- **Verificación:** 1 request exitoso en `half-open` → estado `closed`
+**ConfiguraciÃ³n:**
+- **Umbral de fallos:** 5 fallos consecutivos â†’ estado `open`
+- **Timeout de recuperaciÃ³n:** 30 segundos â†’ estado `half-open`
+- **VerificaciÃ³n:** 1 request exitoso en `half-open` â†’ estado `closed`
 
 **Estados del Circuit Breaker:**
 
@@ -1470,7 +1470,7 @@ async create(input: QuoteRequestInput): Promise<QuoteLeadRecord> {
 stateDiagram-v2
     [*] --> Closed
     Closed --> Open: 5 fallos consecutivos
-    Open --> HalfOpen: Después de 30s
+    Open --> HalfOpen: DespuÃ©s de 30s
     HalfOpen --> Closed: Request exitoso
     HalfOpen --> Open: Request falla
     Closed --> Closed: Request exitoso
@@ -1478,13 +1478,13 @@ stateDiagram-v2
 
 **Comportamiento por estado:**
 
-| Estado | Comportamiento | Acción |
+| Estado | Comportamiento | AcciÃ³n |
 |--------|----------------|--------|
-| `closed` | Normal | Ejecutar operación |
+| `closed` | Normal | Ejecutar operaciÃ³n |
 | `open` | Rechazar inmediatamente | Retornar 503 sin intentar |
-| `half-open` | Probar recuperación | Ejecutar 1 request de prueba |
+| `half-open` | Probar recuperaciÃ³n | Ejecutar 1 request de prueba |
 
-**Implementación:**
+**ImplementaciÃ³n:**
 ```typescript
 class CircuitBreaker {
   private failures = 0;
@@ -1528,10 +1528,10 @@ class CircuitBreaker {
 export const dbCircuitBreaker = new CircuitBreaker();
 ```
 
-**Métricas del Circuit Breaker:**
+**MÃ©tricas del Circuit Breaker:**
 - `circuit_breaker.state` (gauge): Estado actual (0=closed, 1=open, 2=half-open)
 - `circuit_breaker.failures` (counter): Total de fallos
-- `circuit_breaker.trips` (counter): Veces que se abrió el circuito
+- `circuit_breaker.trips` (counter): Veces que se abriÃ³ el circuito
 
 ---
 
@@ -1541,10 +1541,10 @@ export const dbCircuitBreaker = new CircuitBreaker();
 
 | Error | Reintentable | Estrategia |
 |-------|--------------|------------|
-| 422 Validation Error | ❌ No | Corregir payload |
-| 429 Rate Limited | ✅ Sí | Esperar `Retry-After` segundos |
-| 500 Internal Error | ✅ Sí | Exponential backoff: 1s, 2s, 4s |
-| 503 Service Unavailable | ✅ Sí | Exponential backoff: 1s, 2s, 4s |
+| 422 Validation Error | âŒ No | Corregir payload |
+| 429 Rate Limited | âœ… SÃ­ | Esperar `Retry-After` segundos |
+| 500 Internal Error | âœ… SÃ­ | Exponential backoff: 1s, 2s, 4s |
+| 503 Service Unavailable | âœ… SÃ­ | Exponential backoff: 1s, 2s, 4s |
 
 **Exponential Backoff (frontend):**
 ```typescript
@@ -1560,7 +1560,7 @@ async function submitWithRetry(payload: QuotePayload, maxRetries = 3) {
       if (response.ok) return await response.json();
       
       if (response.status === 422) {
-        // No reintentar errores de validación
+        // No reintentar errores de validaciÃ³n
         throw new ValidationError(await response.json());
       }
       
@@ -1590,14 +1590,14 @@ async function submitWithRetry(payload: QuotePayload, maxRetries = 3) {
 
 ### Graceful Degradation
 
-**Escenarios de degradación:**
+**Escenarios de degradaciÃ³n:**
 
 1. **Database lento (latencia > 1s):**
    - Continuar operando con timeouts
    - Alertar equipo de operaciones
    - Considerar activar cache (futura mejora)
 
-2. **Database caído:**
+2. **Database caÃ­do:**
    - Circuit breaker abre
    - Retornar 503 inmediatamente
    - Evitar cascada de timeouts
@@ -1605,12 +1605,12 @@ async function submitWithRetry(payload: QuotePayload, maxRetries = 3) {
 3. **Memory alta (> 400MB heap):**
    - Health check reporta `degraded`
    - Continuar operando
-   - Alertar para investigación
+   - Alertar para investigaciÃ³n
 
 4. **Rate limiting activado:**
    - Proteger sistema de sobrecarga
    - Retornar 429 con `Retry-After`
-   - Cliente reintenta después de espera
+   - Cliente reintenta despuÃ©s de espera
 
 
 
@@ -1631,30 +1631,30 @@ const securityHeaders = {
 };
 ```
 
-**Descripción de headers:**
+**DescripciÃ³n de headers:**
 
-| Header | Valor | Propósito |
+| Header | Valor | PropÃ³sito |
 |--------|-------|-----------|
 | `X-Content-Type-Options` | `nosniff` | Prevenir MIME type sniffing |
 | `X-Frame-Options` | `DENY` | Prevenir clickjacking |
 | `X-XSS-Protection` | `1; mode=block` | Activar filtro XSS del navegador |
-| `Strict-Transport-Security` | `max-age=31536000; includeSubDomains` | Forzar HTTPS (solo producción) |
+| `Strict-Transport-Security` | `max-age=31536000; includeSubDomains` | Forzar HTTPS (solo producciÃ³n) |
 
 ---
 
 ### CORS (Cross-Origin Resource Sharing)
 
-**Configuración por entorno:**
+**ConfiguraciÃ³n por entorno:**
 
 ```typescript
 // .env.development
 ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001
 
 // .env.production
-ALLOWED_ORIGINS=https://camiprint.com,https://www.camiprint.com
+ALLOWED_ORIGINS=https://camiart.com,https://www.camiart.com
 ```
 
-**Implementación:**
+**ImplementaciÃ³n:**
 ```typescript
 export const corsHeaders = (origin: string | null) => {
   const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
@@ -1668,7 +1668,7 @@ export const corsHeaders = (origin: string | null) => {
     };
   }
   
-  return {}; // No CORS headers si origen no está en whitelist
+  return {}; // No CORS headers si origen no estÃ¡ en whitelist
 };
 ```
 
@@ -1688,9 +1688,9 @@ export async function OPTIONS(request: Request) {
 
 ---
 
-### Validación de Content-Type
+### ValidaciÃ³n de Content-Type
 
-**Rechazo de Content-Type inválido:**
+**Rechazo de Content-Type invÃ¡lido:**
 
 ```typescript
 export const validateContentType = (request: Request): boolean => {
@@ -1714,17 +1714,17 @@ if (!validateContentType(request)) {
 
 ---
 
-### Sanitización de Entradas
+### SanitizaciÃ³n de Entradas
 
 **Caracteres removidos:**
 - Control characters: `\x00-\x08`, `\x0B`, `\x0C`, `\x0E-\x1F`, `\x7F`
-- Excepción: `\n` (newline) permitido en campo `message`
+- ExcepciÃ³n: `\n` (newline) permitido en campo `message`
 
-**Normalización:**
-- Trim de espacios: `"  Juan  "` → `"Juan"`
-- Espacios múltiples: `"Juan    Pérez"` → `"Juan Pérez"`
+**NormalizaciÃ³n:**
+- Trim de espacios: `"  Juan  "` â†’ `"Juan"`
+- Espacios mÃºltiples: `"Juan    PÃ©rez"` â†’ `"Juan PÃ©rez"`
 
-**Implementación:**
+**ImplementaciÃ³n:**
 ```typescript
 const sanitizeString = (value: string): string => {
   return value
@@ -1743,34 +1743,34 @@ const sanitizeMessage = (value: string): string => {
 
 ---
 
-### Protección contra Ataques Comunes
+### ProtecciÃ³n contra Ataques Comunes
 
 **1. SQL Injection**
-- ✅ Usar ORM (Prisma) con queries parametrizadas
-- ✅ Nunca concatenar strings para queries
-- ✅ Validar tipos de datos antes de persistir
+- âœ… Usar ORM (Prisma) con queries parametrizadas
+- âœ… Nunca concatenar strings para queries
+- âœ… Validar tipos de datos antes de persistir
 
 **2. XSS (Cross-Site Scripting)**
-- ✅ Sanitizar caracteres de control
-- ✅ Content-Type siempre `application/json`
-- ✅ Headers de seguridad (`X-XSS-Protection`)
+- âœ… Sanitizar caracteres de control
+- âœ… Content-Type siempre `application/json`
+- âœ… Headers de seguridad (`X-XSS-Protection`)
 
 **3. CSRF (Cross-Site Request Forgery)**
-- ✅ CORS estricto con whitelist
-- ✅ Validar `Content-Type: application/json`
-- ⚠️ Considerar CSRF tokens para futuras operaciones sensibles
+- âœ… CORS estricto con whitelist
+- âœ… Validar `Content-Type: application/json`
+- âš ï¸ Considerar CSRF tokens para futuras operaciones sensibles
 
 **4. DoS (Denial of Service)**
-- ✅ Rate limiting (5 req/min por IP)
-- ✅ Body size limit (32KB)
-- ✅ Timeouts en operaciones
-- ✅ Circuit breaker para dependencias
+- âœ… Rate limiting (5 req/min por IP)
+- âœ… Body size limit (32KB)
+- âœ… Timeouts en operaciones
+- âœ… Circuit breaker para dependencias
 
 **5. Information Disclosure**
-- ✅ No exponer stack traces en producción
-- ✅ Enmascarar PII en logs
-- ✅ Mensajes de error genéricos al cliente
-- ✅ No incluir versiones de software en headers
+- âœ… No exponer stack traces en producciÃ³n
+- âœ… Enmascarar PII en logs
+- âœ… Mensajes de error genÃ©ricos al cliente
+- âœ… No incluir versiones de software en headers
 
 ---
 
@@ -1782,60 +1782,60 @@ const sanitizeMessage = (value: string): string => {
 - `KV_REST_API_TOKEN` - Token de Vercel KV
 
 **Reglas:**
-- ❌ Nunca commitear secretos en git
-- ❌ Nunca loguear secretos completos
-- ✅ Usar variables de entorno
-- ✅ Rotar secretos periódicamente
-- ✅ Usar servicios de secrets management (AWS Secrets Manager, Vercel Env)
+- âŒ Nunca commitear secretos en git
+- âŒ Nunca loguear secretos completos
+- âœ… Usar variables de entorno
+- âœ… Rotar secretos periÃ³dicamente
+- âœ… Usar servicios de secrets management (AWS Secrets Manager, Vercel Env)
 
 **Logging seguro:**
 ```typescript
-// ❌ MAL
+// âŒ MAL
 logger.log({ databaseUrl: process.env.DATABASE_URL });
 
-// ✅ BIEN
+// âœ… BIEN
 logger.log({ databaseConfigured: !!process.env.DATABASE_URL });
 ```
 
 ---
 
-### Auditoría y Compliance
+### AuditorÃ­a y Compliance
 
 **Datos sensibles (PII):**
 - `name` - Nombre completo
-- `email` - Dirección de email
-- `phone` - Número de teléfono
+- `email` - DirecciÃ³n de email
+- `phone` - NÃºmero de telÃ©fono
 - `companyName` - Nombre de empresa
 
-**Medidas de protección:**
-1. **Enmascaramiento en logs:** Email y teléfono enmascarados
+**Medidas de protecciÃ³n:**
+1. **Enmascaramiento en logs:** Email y telÃ©fono enmascarados
 2. **Acceso restringido:** Solo equipo autorizado puede acceder a DB
-3. **Retención de datos:** Definir política de retención (ej: 2 años)
+3. **RetenciÃ³n de datos:** Definir polÃ­tica de retenciÃ³n (ej: 2 aÃ±os)
 4. **Derecho al olvido:** Implementar endpoint para eliminar datos (futura mejora)
 
 **Compliance consideraciones:**
-- GDPR (Europa): Consentimiento explícito, derecho al olvido
-- CCPA (California): Derecho a saber qué datos se recopilan
-- LGPD (Brasil): Protección de datos personales
+- GDPR (Europa): Consentimiento explÃ­cito, derecho al olvido
+- CCPA (California): Derecho a saber quÃ© datos se recopilan
+- LGPD (Brasil): ProtecciÃ³n de datos personales
 
 
 
 ## Code Optimization Principles
 
-### Objetivo: Menos Líneas, Más Claridad
+### Objetivo: Menos LÃ­neas, MÃ¡s Claridad
 
 **Principios aplicados:**
-1. **Declarativo sobre Imperativo** - Expresar "qué" en lugar de "cómo"
-2. **Composición sobre Repetición** - Reutilizar lógica común
-3. **Funciones Puras y Pequeñas** - Funciones < 50 líneas, sin side effects
-4. **Ternarios para Lógica Simple** - Reducir verbosidad en condicionales
+1. **Declarativo sobre Imperativo** - Expresar "quÃ©" en lugar de "cÃ³mo"
+2. **ComposiciÃ³n sobre RepeticiÃ³n** - Reutilizar lÃ³gica comÃºn
+3. **Funciones Puras y PequeÃ±as** - Funciones < 50 lÃ­neas, sin side effects
+4. **Ternarios para LÃ³gica Simple** - Reducir verbosidad en condicionales
 5. **Destructuring y Spread** - Sintaxis moderna de JavaScript/TypeScript
 
 ---
 
-### Validación Declarativa
+### ValidaciÃ³n Declarativa
 
-**Antes (imperativo, 60 líneas):**
+**Antes (imperativo, 60 lÃ­neas):**
 ```typescript
 export const validateQuotePayload = (payload: unknown) => {
   const issues: ValidationIssue[] = [];
@@ -1851,11 +1851,11 @@ export const validateQuotePayload = (payload: unknown) => {
     issues.push({ field: 'name', issue: 'Must be 2-120 characters' });
   }
   
-  // ... más validaciones repetitivas ...
+  // ... mÃ¡s validaciones repetitivas ...
 }
 ```
 
-**Después (declarativo, 35 líneas):**
+**DespuÃ©s (declarativo, 35 lÃ­neas):**
 ```typescript
 const validators = {
   name: (v: string) => v.length >= 2 && v.length <= 120 || 'Must be 2-120 characters',
@@ -1892,16 +1892,16 @@ export const validateQuotePayload = (payload: unknown): ValidationResult => {
 };
 ```
 
-**Reducción: 42%**
+**ReducciÃ³n: 42%**
 
 ---
 
 ### Error Handling Unificado
 
-**Antes (repetitivo, 32 líneas):**
+**Antes (repetitivo, 32 lÃ­neas):**
 ```typescript
 try {
-  // ... lógica ...
+  // ... lÃ³gica ...
 } catch (error) {
   if (error instanceof SyntaxError) {
     return jsonError(422, requestId, 'VALIDATION_ERROR', 'Invalid JSON', [
@@ -1917,7 +1917,7 @@ try {
 }
 ```
 
-**Después (composición, 24 líneas):**
+**DespuÃ©s (composiciÃ³n, 24 lÃ­neas):**
 ```typescript
 const errorHandlers = {
   SyntaxError: (requestId: string) => 
@@ -1932,7 +1932,7 @@ const errorHandlers = {
 };
 
 try {
-  // ... lógica ...
+  // ... lÃ³gica ...
 } catch (error) {
   const handler = error instanceof SyntaxError ? errorHandlers.SyntaxError :
                   (error as Error).name === 'PAYLOAD_TOO_LARGE' ? errorHandlers.PAYLOAD_TOO_LARGE :
@@ -1941,13 +1941,13 @@ try {
 }
 ```
 
-**Reducción: 25%**
+**ReducciÃ³n: 25%**
 
 ---
 
-### Funciones Puras y Pequeñas
+### Funciones Puras y PequeÃ±as
 
-**Helpers de una línea:**
+**Helpers de una lÃ­nea:**
 ```typescript
 const timestamp = () => new Date().toISOString();
 const createId = () => `q_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
@@ -1957,13 +1957,13 @@ const maskPhone = (p: string) => `***${p.slice(-4)}`;
 ```
 
 **Ventajas:**
-- Fácil de testear (sin side effects)
-- Reutilizables en múltiples lugares
+- FÃ¡cil de testear (sin side effects)
+- Reutilizables en mÃºltiples lugares
 - Autodocumentadas por nombre
 
 ---
 
-### Ternarios para Lógica Simple
+### Ternarios para LÃ³gica Simple
 
 **Antes:**
 ```typescript
@@ -1977,21 +1977,21 @@ if (statusCode >= 500) {
 }
 ```
 
-**Después:**
+**DespuÃ©s:**
 ```typescript
 const level = statusCode >= 500 ? 'error' : statusCode >= 400 ? 'warn' : 'info';
 ```
 
 ---
 
-### Cuándo NO Optimizar
+### CuÃ¡ndo NO Optimizar
 
-**❌ No sacrificar claridad:**
+**âŒ No sacrificar claridad:**
 ```typescript
-// ❌ Demasiado compacto
+// âŒ Demasiado compacto
 const v=(p:any)=>!p||typeof p!=='object'?{i:[{f:'body',i:'Invalid'}]}:...
 
-// ✅ Balance entre conciso y legible
+// âœ… Balance entre conciso y legible
 const validatePayload = (payload: unknown): ValidationResult => {
   if (!payload || typeof payload !== 'object') {
     return { issues: [{ field: 'body', issue: 'Invalid payload' }] };
@@ -2000,54 +2000,54 @@ const validatePayload = (payload: unknown): ValidationResult => {
 };
 ```
 
-**❌ No comprometer tipos:**
+**âŒ No comprometer tipos:**
 ```typescript
-// ❌ Perder type safety
+// âŒ Perder type safety
 const fields: any = { name, email, phone };
 
-// ✅ Mantener tipos
+// âœ… Mantener tipos
 const fields: QuoteRequestInput = { name, email, phone, companyName, quantity };
 ```
 
-**❌ No ocultar lógica compleja:**
+**âŒ No ocultar lÃ³gica compleja:**
 ```typescript
-// ❌ Regex críptico sin explicación
+// âŒ Regex crÃ­ptico sin explicaciÃ³n
 const isValid = /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+...$/i.test(email);
 
-// ✅ Regex simple con comentario
+// âœ… Regex simple con comentario
 // RFC 5322 simplificado: local@domain
 const EMAIL_RE = /^\S+@\S+\.\S+$/;
 ```
 
 ---
 
-### Checklist de Código Limpio
+### Checklist de CÃ³digo Limpio
 
 Antes de commit, verificar:
 
-- [ ] Funciones < 50 líneas
+- [ ] Funciones < 50 lÃ­neas
 - [ ] Nombres descriptivos (no `data`, `temp`, `x`)
-- [ ] Sin código comentado (usar git)
+- [ ] Sin cÃ³digo comentado (usar git)
 - [ ] Sin `any` innecesarios
-- [ ] Sin duplicación (DRY)
+- [ ] Sin duplicaciÃ³n (DRY)
 - [ ] Tests actualizados
-- [ ] Tipos explícitos en interfaces públicas
-- [ ] Comentarios solo para "por qué", no "qué"
+- [ ] Tipos explÃ­citos en interfaces pÃºblicas
+- [ ] Comentarios solo para "por quÃ©", no "quÃ©"
 
 ---
 
 ### Resumen de Optimizaciones
 
-| Componente | Antes | Después | Reducción |
+| Componente | Antes | DespuÃ©s | ReducciÃ³n |
 |------------|-------|---------|-----------|
-| Validación | 60 líneas | 35 líneas | **42%** |
-| Repository | 18 líneas | 14 líneas | **22%** |
-| Route handler | 32 líneas | 24 líneas | **25%** |
-| Rate limiter | 45 líneas | 25 líneas | **44%** |
-| Logger | 70 líneas | 20 líneas | **71%** |
-| Métricas | 90 líneas | 30 líneas | **67%** |
-| Health check | 60 líneas | 20 líneas | **67%** |
-| **TOTAL** | **375 líneas** | **168 líneas** | **55%** |
+| ValidaciÃ³n | 60 lÃ­neas | 35 lÃ­neas | **42%** |
+| Repository | 18 lÃ­neas | 14 lÃ­neas | **22%** |
+| Route handler | 32 lÃ­neas | 24 lÃ­neas | **25%** |
+| Rate limiter | 45 lÃ­neas | 25 lÃ­neas | **44%** |
+| Logger | 70 lÃ­neas | 20 lÃ­neas | **71%** |
+| MÃ©tricas | 90 lÃ­neas | 30 lÃ­neas | **67%** |
+| Health check | 60 lÃ­neas | 20 lÃ­neas | **67%** |
+| **TOTAL** | **375 lÃ­neas** | **168 lÃ­neas** | **55%** |
 
-**Resultado:** Código 55% más compacto sin perder claridad ni robustez. 🎯
+**Resultado:** CÃ³digo 55% mÃ¡s compacto sin perder claridad ni robustez. ðŸŽ¯
 

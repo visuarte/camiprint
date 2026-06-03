@@ -3,11 +3,11 @@ import { processSteps } from '../data/processSteps';
 
 const Process = () => {
   return (
-    <section id="proceso" data-reveal data-reveal-delay="70" className="scroll-mt-20 bg-cami-950 px-4 py-16 md:px-6 md:py-24">
+    <section id="proceso" data-reveal data-reveal-delay="70" className="scroll-mt-20 px-4 py-16 md:px-6 md:py-24">
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 text-center md:mb-16">
-          <span className="section-eyebrow">Metodo de trabajo</span>
-          <h2 className="mb-4 text-3xl font-bold text-white md:text-4xl lg:text-5xl">
+          <span className="section-eyebrow" data-v2="microcopy">Metodo de trabajo</span>
+          <h2 data-v2="headline" className="mb-4 text-3xl font-bold text-white md:text-4xl lg:text-5xl">
             Tu pedido en 4 pasos
           </h2>
           <p className="mx-auto max-w-2xl text-base text-cami-300 md:text-lg">
@@ -19,10 +19,11 @@ const Process = () => {
           {processSteps.map((step, index) => (
             <article
               key={step.stepNumber}
-              className="relative rounded-2xl border border-white/12 bg-gradient-to-b from-cami-900 to-cami-800 p-6 shadow-glow backdrop-blur-sm"
+              data-landing-shell="surface"
+              className="relative rounded-2xl p-6 shadow-glow backdrop-blur-sm"
             >
               {index < processSteps.length - 1 && (
-                <div className="absolute top-1/2 -right-3 hidden h-0.5 w-6 bg-blue-300 lg:block" aria-hidden="true" />
+                <div className="absolute top-1/2 -right-3 hidden h-0.5 w-6 bg-accent-300/70 lg:block" aria-hidden="true" />
               )}
 
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-sm font-semibold text-cami-100">

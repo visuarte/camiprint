@@ -1,3 +1,4 @@
+> Nota de migracion (2026-06-03): este documento fue normalizado a marca CamiArt y dominio can�nico camiart.com. Se mantienen identificadores tecnicos historicos cuando aportan trazabilidad.
 # ✅ Day 7 - Testing & Go-Live Production Deployment - COMPLETE
 
 **Date:** May 19, 2026  
@@ -101,7 +102,7 @@ Verifies all critical endpoints:
 npm run smoke:staging
 
 # Run against production
-PROD_URL=https://camiprint.vercel.app ADMIN_TOKEN=xxx npm run smoke:prod
+PROD_URL=https://camiart.com ADMIN_TOKEN=xxx npm run smoke:prod
 
 # Or direct command
 node scripts/smoke-test-prod.mjs
@@ -325,7 +326,7 @@ npm run lint                 # Check for linting errors
 
 ## 💪 Final Words
 
-**The Camiprint MVP is production-ready and fully tested.**
+**The CAMIART MVP is production-ready and fully tested.**
 
 All critical user journeys have been verified:
 - From browsing products

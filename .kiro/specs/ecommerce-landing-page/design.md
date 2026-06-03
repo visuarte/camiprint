@@ -1,12 +1,12 @@
-# Design Document
+﻿# Design Document
 
 ## Overview
 
-This design document outlines the technical architecture for transforming the Camiprint landing page from a basic presentation into a professional, conversion-optimized ecommerce landing page. The solution will be built using Next.js 16.2.6, React 19, and Tailwind CSS 4, leveraging modern web development practices including server components, responsive design, and accessibility standards.
+This design document outlines the technical architecture for transforming the CAMIART landing page from a basic presentation into a professional, conversion-optimized ecommerce landing page. The solution will be built using Next.js 16.2.6, React 19, and Tailwind CSS 4, leveraging modern web development practices including server components, responsive design, and accessibility standards.
 
 ### Goals
 
-- Create a professional, conversion-optimized landing page for Camiprint
+- Create a professional, conversion-optimized landing page for CAMIART
 - Implement a component-based architecture for maintainability and reusability
 - Ensure responsive design across all device sizes (mobile, tablet, desktop)
 - Optimize for accessibility (WCAG 2.1 AA compliance)
@@ -29,18 +29,18 @@ The landing page will be implemented as a single-page application using Next.js 
 
 ```
 src/app/
-├── page.tsx                 # Main landing page (Server Component)
-├── layout.tsx              # Root layout with metadata
-├── globals.css             # Global styles and Tailwind directives
-└── components/
-    ├── Navigation.tsx      # Navigation bar with mobile menu
-    ├── Hero.tsx           # Hero section with CTAs
-    ├── Pricing.tsx        # Pricing tiers section
-    ├── Process.tsx        # Purchase process steps
-    ├── Testimonials.tsx   # Customer testimonials
-    ├── FAQ.tsx            # Accordion-style FAQ
-    ├── ContactForm.tsx    # Quote request form (Client Component)
-    └── Footer.tsx         # Footer with links and contact info
+â”œâ”€â”€ page.tsx                 # Main landing page (Server Component)
+â”œâ”€â”€ layout.tsx              # Root layout with metadata
+â”œâ”€â”€ globals.css             # Global styles and Tailwind directives
+â””â”€â”€ components/
+    â”œâ”€â”€ Navigation.tsx      # Navigation bar with mobile menu
+    â”œâ”€â”€ Hero.tsx           # Hero section with CTAs
+    â”œâ”€â”€ Pricing.tsx        # Pricing tiers section
+    â”œâ”€â”€ Process.tsx        # Purchase process steps
+    â”œâ”€â”€ Testimonials.tsx   # Customer testimonials
+    â”œâ”€â”€ FAQ.tsx            # Accordion-style FAQ
+    â”œâ”€â”€ ContactForm.tsx    # Quote request form (Client Component)
+    â””â”€â”€ Footer.tsx         # Footer with links and contact info
 ```
 
 ### Component Strategy
@@ -83,7 +83,7 @@ interface NavigationState {
 - Fixed positioning with backdrop blur
 - Smooth scroll to sections using anchor links
 - Hamburger menu for mobile (<768px)
-- Primary CTA button "Solicitar Cotización"
+- Primary CTA button "Solicitar CotizaciÃ³n"
 
 **Implementation Notes:**
 - Use `position: fixed` with `backdrop-blur` for glassmorphism effect
@@ -108,7 +108,7 @@ interface HeroProps {
 - Gradient background (slate-900 to blue-800)
 - Main heading with value proposition
 - Descriptive subheading
-- Two CTA buttons (primary: "Ver Ofertas", secondary: "Solicitar Cotización")
+- Two CTA buttons (primary: "Ver Ofertas", secondary: "Solicitar CotizaciÃ³n")
 - Trust indicators (delivery time, minimum order, free design)
 
 **Implementation Notes:**
@@ -128,7 +128,7 @@ interface HeroProps {
 interface PricingTier {
   id: string;
   quantity: string;          // e.g., "10+ camisetas"
-  pricePerUnit: string;      // e.g., "12,90 € / unidad"
+  pricePerUnit: string;      // e.g., "12,90 â‚¬ / unidad"
   savings: string;           // e.g., "Ahorra 8%"
   isPopular?: boolean;       // Highlight flag
 }
@@ -146,7 +146,7 @@ interface PricingProps {
 
 **Implementation Notes:**
 - Use CSS Grid with `grid-cols-1 md:grid-cols-3`
-- Popular tier gets border accent and "Más Popular" badge
+- Popular tier gets border accent and "MÃ¡s Popular" badge
 - CTA buttons link to `#contacto?quantity={tier.id}`
 - Card design with subtle shadows and hover effects
 
@@ -172,7 +172,7 @@ interface ProcessProps {
 ```
 
 **Key Features:**
-- 4 steps: Solicitar Cotización → Recibir Propuesta → Aprobar Diseño → Recibir Pedido
+- 4 steps: Solicitar CotizaciÃ³n â†’ Recibir Propuesta â†’ Aprobar DiseÃ±o â†’ Recibir Pedido
 - Visual step indicators with icons
 - Horizontal layout on desktop, vertical on mobile
 - Timeframe for each step
@@ -215,7 +215,7 @@ interface TestimonialsProps {
 
 **Implementation Notes:**
 - Card-based design with shadows
-- Star rating rendered as SVG or Unicode stars (★)
+- Star rating rendered as SVG or Unicode stars (â˜…)
 - Truncate long testimonials with "..." if needed
 - Use CSS Grid: `grid-cols-1 md:grid-cols-3`
 
@@ -250,7 +250,7 @@ interface FAQState {
 - Accordion interaction (click to expand/collapse)
 - Only one answer visible at a time
 - Chevron icons indicating expand/collapse state
-- Final CTA "¿Más preguntas? Contáctanos"
+- Final CTA "Â¿MÃ¡s preguntas? ContÃ¡ctanos"
 
 **Implementation Notes:**
 - Use `useState` to track expanded item
@@ -366,21 +366,21 @@ const pricingTiers: PricingTier[] = [
   {
     id: "tier-10",
     quantity: "10-24 camisetas",
-    pricePerUnit: "12,90 €",
+    pricePerUnit: "12,90 â‚¬",
     savings: "Ahorra 8%",
     isPopular: false
   },
   {
     id: "tier-25",
     quantity: "25-49 camisetas",
-    pricePerUnit: "10,90 €",
+    pricePerUnit: "10,90 â‚¬",
     savings: "Ahorra 18%",
     isPopular: true
   },
   {
     id: "tier-50",
     quantity: "50+ camisetas",
-    pricePerUnit: "8,90 €",
+    pricePerUnit: "8,90 â‚¬",
     savings: "Ahorra 30%",
     isPopular: false
   }
@@ -392,31 +392,31 @@ const pricingTiers: PricingTier[] = [
 const processSteps: ProcessStep[] = [
   {
     stepNumber: 1,
-    title: "Solicitar Cotización",
+    title: "Solicitar CotizaciÃ³n",
     description: "Completa el formulario con los detalles de tu pedido",
-    icon: "📝",
+    icon: "ðŸ“",
     timeframe: "2 minutos"
   },
   {
     stepNumber: 2,
     title: "Recibir Propuesta",
-    description: "Te enviamos una cotización personalizada",
-    icon: "📧",
+    description: "Te enviamos una cotizaciÃ³n personalizada",
+    icon: "ðŸ“§",
     timeframe: "24 horas"
   },
   {
     stepNumber: 3,
-    title: "Aprobar Diseño",
-    description: "Revisas y apruebas el diseño de tus camisetas",
-    icon: "✅",
-    timeframe: "2-3 días"
+    title: "Aprobar DiseÃ±o",
+    description: "Revisas y apruebas el diseÃ±o de tus camisetas",
+    icon: "âœ…",
+    timeframe: "2-3 dÃ­as"
   },
   {
     stepNumber: 4,
     title: "Recibir Pedido",
     description: "Producimos y enviamos tu pedido",
-    icon: "📦",
-    timeframe: "7-10 días"
+    icon: "ðŸ“¦",
+    timeframe: "7-10 dÃ­as"
   }
 ];
 ```
@@ -426,23 +426,23 @@ const processSteps: ProcessStep[] = [
 const testimonials: Testimonial[] = [
   {
     id: "test-1",
-    customerName: "María González",
+    customerName: "MarÃ­a GonzÃ¡lez",
     companyName: "Restaurante El Buen Sabor",
-    testimonialText: "Excelente calidad y servicio rápido. Nuestro equipo luce profesional con las camisetas personalizadas.",
+    testimonialText: "Excelente calidad y servicio rÃ¡pido. Nuestro equipo luce profesional con las camisetas personalizadas.",
     rating: 5
   },
   {
     id: "test-2",
     customerName: "Carlos Ruiz",
     companyName: "Hotel Costa Azul",
-    testimonialText: "Muy satisfechos con el resultado. El proceso fue sencillo y el diseño quedó perfecto.",
+    testimonialText: "Muy satisfechos con el resultado. El proceso fue sencillo y el diseÃ±o quedÃ³ perfecto.",
     rating: 5
   },
   {
     id: "test-3",
-    customerName: "Ana Martínez",
-    companyName: "Cafetería Urban Coffee",
-    testimonialText: "Recomendado 100%. Buena relación calidad-precio y atención personalizada.",
+    customerName: "Ana MartÃ­nez",
+    companyName: "CafeterÃ­a Urban Coffee",
+    testimonialText: "Recomendado 100%. Buena relaciÃ³n calidad-precio y atenciÃ³n personalizada.",
     rating: 5
   }
 ];
@@ -453,33 +453,33 @@ const testimonials: Testimonial[] = [
 const faqItems: FAQItem[] = [
   {
     id: "faq-1",
-    question: "¿Cuál es el pedido mínimo?",
-    answer: "El pedido mínimo es de 10 camisetas. Ofrecemos mejores precios por volumen a partir de 25 y 50 unidades."
+    question: "Â¿CuÃ¡l es el pedido mÃ­nimo?",
+    answer: "El pedido mÃ­nimo es de 10 camisetas. Ofrecemos mejores precios por volumen a partir de 25 y 50 unidades."
   },
   {
     id: "faq-2",
-    question: "¿Cuánto tiempo tarda la entrega?",
-    answer: "El tiempo de entrega es de 7-10 días hábiles desde la aprobación del diseño. Para pedidos urgentes, consulta disponibilidad de servicio express."
+    question: "Â¿CuÃ¡nto tiempo tarda la entrega?",
+    answer: "El tiempo de entrega es de 7-10 dÃ­as hÃ¡biles desde la aprobaciÃ³n del diseÃ±o. Para pedidos urgentes, consulta disponibilidad de servicio express."
   },
   {
     id: "faq-3",
-    question: "¿Cómo funciona el proceso de diseño?",
-    answer: "Puedes enviarnos tu logo o idea, y nuestro equipo creará un diseño sin costo adicional. Te enviamos una prueba digital para tu aprobación antes de producir."
+    question: "Â¿CÃ³mo funciona el proceso de diseÃ±o?",
+    answer: "Puedes enviarnos tu logo o idea, y nuestro equipo crearÃ¡ un diseÃ±o sin costo adicional. Te enviamos una prueba digital para tu aprobaciÃ³n antes de producir."
   },
   {
     id: "faq-4",
-    question: "¿Qué métodos de pago aceptan?",
-    answer: "Aceptamos transferencia bancaria, tarjeta de crédito/débito y PayPal. Para empresas, ofrecemos pago contra factura con condiciones especiales."
+    question: "Â¿QuÃ© mÃ©todos de pago aceptan?",
+    answer: "Aceptamos transferencia bancaria, tarjeta de crÃ©dito/dÃ©bito y PayPal. Para empresas, ofrecemos pago contra factura con condiciones especiales."
   },
   {
     id: "faq-5",
-    question: "¿Puedo personalizar el tipo de camiseta?",
-    answer: "Sí, ofrecemos diferentes tipos de camisetas (cuello redondo, polo, manga larga) y colores. Consulta opciones disponibles al solicitar tu cotización."
+    question: "Â¿Puedo personalizar el tipo de camiseta?",
+    answer: "SÃ­, ofrecemos diferentes tipos de camisetas (cuello redondo, polo, manga larga) y colores. Consulta opciones disponibles al solicitar tu cotizaciÃ³n."
   },
   {
     id: "faq-6",
-    question: "¿Tienen política de devoluciones?",
-    answer: "Garantizamos la calidad de nuestros productos. Si hay algún defecto de fabricación, realizamos reposición sin costo. No aceptamos devoluciones por cambio de opinión en pedidos personalizados."
+    question: "Â¿Tienen polÃ­tica de devoluciones?",
+    answer: "Garantizamos la calidad de nuestros productos. Si hay algÃºn defecto de fabricaciÃ³n, realizamos reposiciÃ³n sin costo. No aceptamos devoluciones por cambio de opiniÃ³n en pedidos personalizados."
   }
 ];
 ```
@@ -574,7 +574,7 @@ This landing page is primarily a UI/presentation feature with limited business l
 **Test Cases:**
 - All sections stack correctly on mobile
 - Navigation switches to hamburger menu below 768px
-- Grid layouts adjust (1 column → 3 columns)
+- Grid layouts adjust (1 column â†’ 3 columns)
 - Text sizes scale appropriately
 - Touch targets meet 44x44px minimum on mobile
 - No horizontal scrolling at any breakpoint
@@ -622,11 +622,11 @@ const validateForm = (formData: FormData): FormErrors => {
   }
   
   if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-    errors.email = "Por favor, introduce un email válido";
+    errors.email = "Por favor, introduce un email vÃ¡lido";
   }
   
   if (!formData.phone || !/^[0-9\s\+\-\(\)]+$/.test(formData.phone)) {
-    errors.phone = "Por favor, introduce un teléfono válido";
+    errors.phone = "Por favor, introduce un telÃ©fono vÃ¡lido";
   }
   
   if (!formData.companyName || formData.companyName.trim().length === 0) {
@@ -823,11 +823,11 @@ React 19 may include new features:
 ```typescript
 // app/layout.tsx or app/page.tsx
 export const metadata = {
-  title: 'Camiprint - Camisetas Personalizadas para Empresas',
-  description: 'Camisetas personalizadas para negocios, restaurantes y empresas. Diseño gratuito, entrega en 7-10 días. Desde 50 unidades.',
+  title: 'CAMIART - Camisetas Personalizadas para Empresas',
+  description: 'Camisetas personalizadas para negocios, restaurantes y empresas. DiseÃ±o gratuito, entrega en 7-10 dÃ­as. Desde 50 unidades.',
   keywords: 'camisetas personalizadas, ropa laboral, uniformes empresa, camisetas promocionales',
   openGraph: {
-    title: 'Camiprint - Camisetas Personalizadas para Empresas',
+    title: 'CAMIART - Camisetas Personalizadas para Empresas',
     description: 'Camisetas personalizadas para negocios, restaurantes y empresas.',
     type: 'website',
   },
@@ -865,7 +865,7 @@ No environment variables needed for MVP (static content only).
 
 For future API integration:
 ```
-NEXT_PUBLIC_API_URL=https://api.camiprint.com
+NEXT_PUBLIC_API_URL=https://api.camiart.com
 NEXT_PUBLIC_FORM_ENDPOINT=/api/quotes
 ```
 
@@ -918,7 +918,7 @@ NEXT_PUBLIC_FORM_ENDPOINT=/api/quotes
 
 ## Conclusion
 
-This design provides a comprehensive blueprint for building a professional, conversion-optimized landing page for Camiprint. The component-based architecture ensures maintainability, while the focus on responsive design, accessibility, and performance guarantees a high-quality user experience across all devices.
+This design provides a comprehensive blueprint for building a professional, conversion-optimized landing page for CAMIART. The component-based architecture ensures maintainability, while the focus on responsive design, accessibility, and performance guarantees a high-quality user experience across all devices.
 
 The implementation plan is structured in phases to deliver value incrementally, with the highest priority features (navigation, hero, pricing, form) delivered first. The testing strategy ensures quality and reliability, while the technical considerations address modern web development best practices.
 

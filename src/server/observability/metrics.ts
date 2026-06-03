@@ -23,7 +23,7 @@ export interface QuotesMetricsSnapshot {
   requestsByIp: Record<string, number>;
 }
 
-const GLOBAL_METRICS_KEY = '__camiprint_quotes_metrics_store__';
+const GLOBAL_METRICS_KEY = '__camiart_quotes_metrics_store__';
 
 const getMetricsStore = (): QuotesMetricsSnapshot => {
   const globalScope = globalThis as typeof globalThis & {

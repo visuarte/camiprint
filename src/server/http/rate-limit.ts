@@ -5,7 +5,7 @@ import type { IRateLimitStore } from './rate-limit.store';
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS = 5;
 
-const GLOBAL_STORE_KEY = '__camiprint_rate_limit_store_instance__';
+const GLOBAL_STORE_KEY = '__camiart_rate_limit_store_instance__';
 
 const getRateLimitStore = async (): Promise<IRateLimitStore> => {
   const g = globalThis as typeof globalThis & {

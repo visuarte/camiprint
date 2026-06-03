@@ -1,3 +1,4 @@
+> Nota de migracion (2026-06-03): este documento fue normalizado a marca CamiArt y dominio can�nico camiart.com. Se mantienen identificadores tecnicos historicos cuando aportan trazabilidad.
 # Demo & E2E Testing Guide
 
 ## 🚀 Quick Start
@@ -97,7 +98,7 @@ npm run smoke:prod:live
 ## 🗄️ Demo Data Structure
 
 ### Demo Customer
-- **Email**: `demo@camiprint.test`
+- **Email**: `demo@camiart.test`
 - **Name**: Demo User
 - **Address**: 123 Demo Street, Demo City, DC 12345
 - **Phone**: +1 (555) 000-0000

@@ -1,3 +1,4 @@
+> Nota de migracion (2026-06-03): este documento fue normalizado a marca CamiArt y dominio can�nico camiart.com. Se mantienen identificadores tecnicos historicos cuando aportan trazabilidad.
 # DAY 8 — Sesión 25 May 2026: Producción Estabilizada
 
 ## Resumen de lo realizado hoy
@@ -24,8 +25,8 @@
 - `GET /api/admin/metrics` con Bearer token → **200 OK** ✅
 - `GET /api/admin/quotes` con Bearer token → **200 OK** ✅
 - Build Vercel: 20 rutas compiladas, TypeScript pasa ✅
-- Deploy activo: `camiprint-p77pa2xfw-visuarte.vercel.app` aliased a `camiart.com`
-- Redeploy TLS hardening iniciado: `dpl_DKf6ae98Bte6R6UDmdyPmrZZ3vy2` (`camiprint-2n3uxgnrz-visuarte.vercel.app`)
+- Deploy activo: `CAMIART-p77pa2xfw-visuarte.vercel.app` aliased a `camiart.com`
+- Redeploy TLS hardening iniciado: `dpl_DKf6ae98Bte6R6UDmdyPmrZZ3vy2` (`CAMIART-2n3uxgnrz-visuarte.vercel.app`)
 
 ### 5. DNS Resend `camiart.com` (terminado sesión anterior)
 - DKIM verificado ✅
@@ -123,12 +124,12 @@ af24e69  fix: result.value is SendResult not boolean — use .success property
 - `SUPABASE_CA_CERT` configurada (certificado base64) para `ssl.ca` en `pg.Pool`
 
 ### Remote de git
-- El remote se llama `camiprint`, NO `origin`
-- Usar siempre: `git push camiprint main`
+- El remote se llama `CAMIART`, NO `origin`
+- Usar siempre: `git push CAMIART main`
 
 ### Deploy a Vercel
 - Auto-deploy al hacer push a `main` en GitHub
-- Manual: `npx vercel --prod --yes` desde `E:\creacion\camiprint`
+- Manual: `npx vercel --prod --yes` desde `E:\creacion\CAMIART`
 - Logs completos: `npx vercel --prod --yes 2>&1 | Out-File vercel-build-log.txt`
 
 ---
@@ -195,7 +196,7 @@ Sesión cerrada con smoke test aprobado. Retomamos mañana desde estos 3 puntos.
 
 - Hora de cierre: 15:40 UTC+2
 - Estado de despliegues:
-   - Preview listo y build OK (`camiprint-2ce8t5sbu-visuarte.vercel.app`).
+   - Preview listo y build OK (`CAMIART-2ce8t5sbu-visuarte.vercel.app`).
    - Produccion lista y alias activo en `https://camiart.com`.
 - Build checks:
    - `scripts/check-vercel-env-build.mjs` actualizado para validar por entorno.
@@ -203,7 +204,7 @@ Sesión cerrada con smoke test aprobado. Retomamos mañana desde estos 3 puntos.
    - Production mantiene validacion estricta.
 - Stripe webhooks (resolucion incidente 404):
    - Endpoint obsoleto eliminado: `https://camiart.com/webhook/stripe`.
-   - Endpoint legacy eliminado: `https://camiprint.vercel.app/api/webhooks/stripe`.
+   - Endpoint legacy eliminado: `https://camiart.com/api/webhooks/stripe`.
    - Endpoint final activo: `https://camiart.com/api/webhook/stripe`.
    - Trigger de prueba (`payment_intent.succeeded`) con entrega correcta (`pending_webhooks=0`).
    - Fallos recientes en Stripe (ultima ventana de 10 minutos): `0`.
