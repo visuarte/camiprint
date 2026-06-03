@@ -123,16 +123,29 @@ const Template3Page = () => {
       }
     };
 
-    const initialize = async () => {
-      // Import Three.js modules - resolved via importmap at runtime, ignored by webpack at build
-      const THREE = await import(/* webpackIgnore: true */ 'three');
-      const gltf = await import(/* webpackIgnore: true */ 'three/examples/jsm/loaders/GLTFLoader.js');
-      const orbit = await import(/* webpackIgnore: true */ 'three/examples/jsm/controls/OrbitControls.js');
-      const decal = await import(/* webpackIgnore: true */ 'three/examples/jsm/geometries/DecalGeometry.js');
+    const loadScript = (src: string): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.type = 'module';
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error(`Failed to load ${src}`));
+        document.head.appendChild(script);
+      });
+    };
 
-      const { GLTFLoader } = gltf;
-      const { OrbitControls } = orbit;
-      const { DecalGeometry } = decal;
+    const initialize = async () => {
+      // Load Three.js modules as global scripts (no webpack processing)
+      await loadScript('https://cdn.jsdelivr.net/npm/three@0.178.0/build/three.min.js');
+      await loadScript('https://cdn.jsdelivr.net/npm/three@0.178.0/examples/jsm/loaders/GLTFLoader.js');
+      await loadScript('https://cdn.jsdelivr.net/npm/three@0.178.0/examples/jsm/controls/OrbitControls.js');
+      await loadScript('https://cdn.jsdelivr.net/npm/three@0.178.0/examples/jsm/geometries/DecalGeometry.js');
+
+      // Access from global scope (scripts expose to window)
+      const THREE = (window as any).THREE;
+      const GLTFLoader = (window as any).GLTFLoader;
+      const OrbitControls = (window as any).OrbitControls;
+      const DecalGeometry = (window as any).DecalGeometry;
 
       if (cancelled) return;
 
