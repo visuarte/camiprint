@@ -83,6 +83,8 @@ const rebuildDecal = (runtime: RuntimeState, point: any, normal: any, sizeValue:
 const Template3Page = () => {
   const canvasHostRef = useRef<HTMLDivElement>(null);
   const runtimeRef = useRef<RuntimeState | null>(null);
+  const cameraRef = useRef<any>(null);
+  const shirtMeshRef = useRef<any>(null);
   const draggingRef = useRef(false);
   const decalScaleRef = useRef(0.65);
   const decalOpacityRef = useRef(0.95);
@@ -117,6 +119,56 @@ const Template3Page = () => {
       rebuildDecal(runtime, runtime.decalState.point, runtime.decalState.normal, decalScaleRef.current, decalOpacityRef.current, isFlipped);
     }
   }, [isFlipped]);
+
+  const placeOnZone = (zone: 'chest-large' | 'back-large' | 'chest-small-left') => {
+    const runtime = runtimeRef.current;
+    const camera = cameraRef.current;
+    const shirtMesh = shirtMeshRef.current;
+
+    if (!runtime || !camera || !shirtMesh) return;
+
+    const THREE = runtime.THREE;
+    let rayPosition: any;
+    let descriptionText: string;
+    let cameraPos = [0, 1.1, 5.2];
+
+    if (zone === 'chest-large') {
+      rayPosition = new THREE.Vector2(0, 0.15);
+      descriptionText = 'Pecho grande';
+      cameraPos = [0, 1.1, 5.2];
+    } else if (zone === 'back-large') {
+      rayPosition = new THREE.Vector2(0, 0.1);
+      descriptionText = 'Espalda grande';
+      cameraPos = [0, 1.1, -5.2];
+    } else if (zone === 'chest-small-left') {
+      rayPosition = new THREE.Vector2(-0.35, 0.1);
+      descriptionText = 'Pecho pequeño izquierdo';
+      cameraPos = [0, 1.1, 5.2];
+    }
+
+    camera.position.set(...cameraPos);
+
+    runtime.raycaster.setFromCamera(rayPosition, camera);
+    const hits = runtime.raycaster.intersectObject(shirtMesh, true);
+
+    if (hits.length) {
+      const hit = hits[0];
+      let normal = camera.getWorldDirection(new THREE.Vector3()).negate();
+
+      if (hit.face && hit.face.normal) {
+        normal = hit.face.normal.clone();
+        if (hit.object.parent) {
+          normal.transformDirection(hit.object.matrixWorld).normalize();
+        } else {
+          normal.normalize();
+        }
+      }
+
+      rebuildDecal(runtime, hit.point, normal, decalScaleRef.current, decalOpacityRef.current, isFlippedRef.current);
+      setStatus(descriptionText);
+      setSelectedZone(zone);
+    }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -205,6 +257,7 @@ const Template3Page = () => {
 
       const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
       camera.position.set(0, 1.1, 5.2);
+      cameraRef.current = camera;
 
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -306,7 +359,7 @@ const Template3Page = () => {
         }
       });
 
-      const runtime: RuntimeState = {
+      shirtMeshRef.current = shirtMesh;
         THREE,
         DecalGeometry,
         scene,
@@ -325,48 +378,6 @@ const Template3Page = () => {
       runtimeRef.current = runtime;
       setIsReady(true);
       setStatus('Logo listo para estampado');
-
-      // Function to calculate zone positions
-      const placeOnZone = (zone: 'chest-large' | 'back-large' | 'chest-small-left') => {
-        let rayPosition: any;
-        let descriptionText: string;
-
-        if (zone === 'chest-large') {
-          rayPosition = new THREE.Vector2(0, 0.15);
-          descriptionText = 'Pecho grande';
-        } else if (zone === 'back-large') {
-          rayPosition = new THREE.Vector2(0, 0.1);
-          descriptionText = 'Espalda grande';
-          camera.position.set(0, 1.1, -5.2);
-        } else if (zone === 'chest-small-left') {
-          rayPosition = new THREE.Vector2(-0.35, 0.1);
-          descriptionText = 'Pecho pequeño izquierdo';
-          camera.position.set(0, 1.1, 5.2);
-        }
-
-        runtime.raycaster.setFromCamera(rayPosition, camera);
-        const hits = runtime.raycaster.intersectObject(shirtMesh, true);
-        
-        if (hits.length) {
-          const hit = hits[0];
-          let normal = camera.getWorldDirection(new THREE.Vector3()).negate();
-          
-          if (hit.face && hit.face.normal) {
-            normal = hit.face.normal.clone();
-            if (hit.object.parent) {
-              normal.transformDirection(hit.object.matrixWorld).normalize();
-            } else {
-              normal.normalize();
-            }
-          }
-
-          rebuildDecal(runtime, hit.point, normal, decalScaleRef.current, decalOpacityRef.current, isFlippedRef.current);
-          setStatus(descriptionText);
-          setSelectedZone(zone);
-        }
-      };
-
-      (window as any).placeOnZone = placeOnZone;
 
       const initialPoint = (() => {
         const centerRay = new THREE.Vector2(0, 0.15);
@@ -505,8 +516,7 @@ const Template3Page = () => {
             <div className="grid grid-cols-1 gap-2">
               <button
                 onClick={() => {
-                  setSelectedZone('chest-large');
-                  (window as any).placeOnZone?.('chest-large');
+                  placeOnZone('chest-large');
                 }}
                 className={`rounded-lg px-4 py-2 text-xs font-semibold transition-all ${
                   selectedZone === 'chest-large'
@@ -518,8 +528,7 @@ const Template3Page = () => {
               </button>
               <button
                 onClick={() => {
-                  setSelectedZone('back-large');
-                  (window as any).placeOnZone?.('back-large');
+                  placeOnZone('back-large');
                 }}
                 className={`rounded-lg px-4 py-2 text-xs font-semibold transition-all ${
                   selectedZone === 'back-large'
@@ -531,8 +540,7 @@ const Template3Page = () => {
               </button>
               <button
                 onClick={() => {
-                  setSelectedZone('chest-small-left');
-                  (window as any).placeOnZone?.('chest-small-left');
+                  placeOnZone('chest-small-left');
                 }}
                 className={`rounded-lg px-4 py-2 text-xs font-semibold transition-all ${
                   selectedZone === 'chest-small-left'
