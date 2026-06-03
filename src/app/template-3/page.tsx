@@ -73,9 +73,9 @@ const Template3Page = () => {
   const canvasHostRef = useRef<HTMLDivElement>(null);
   const runtimeRef = useRef<RuntimeState | null>(null);
   const draggingRef = useRef(false);
-  const decalScaleRef = useRef(0.34);
+  const decalScaleRef = useRef(0.55);
   const decalOpacityRef = useRef(0.95);
-  const [decalScale, setDecalScale] = useState(0.34);
+  const [decalScale, setDecalScale] = useState(0.55);
   const [decalOpacity, setDecalOpacity] = useState(0.95);
   const [status, setStatus] = useState('Cargando Three.js...');
   const [isReady, setIsReady] = useState(false);
@@ -164,8 +164,8 @@ const Template3Page = () => {
       scene.background = new THREE.Color(0x0c0e11);
       scene.fog = new THREE.Fog(0x0c0e11, 7, 14);
 
-      const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
-      camera.position.set(0, 1.3, 4.3);
+      const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+      camera.position.set(0, 1.1, 5.2);
 
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -173,28 +173,25 @@ const Template3Page = () => {
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.05;
-      renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.shadowMap.enabled = false;
       host.appendChild(renderer.domElement);
 
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enablePan = false;
       controls.enableDamping = true;
       controls.dampingFactor = 0.08;
-      controls.minDistance = 2.9;
-      controls.maxDistance = 6.5;
-      controls.maxPolarAngle = Math.PI * 0.72;
-      controls.minPolarAngle = Math.PI * 0.18;
-      controls.target.set(0, 1.18, 0);
-      controls.autoRotate = true;
-      controls.autoRotateSpeed = 0.55;
+      controls.minDistance = 3.5;
+      controls.maxDistance = 8.0;
+      controls.maxPolarAngle = Math.PI * 0.75;
+      controls.minPolarAngle = Math.PI * 0.15;
+      controls.target.set(0, 1.0, 0);
+      controls.autoRotate = false;
 
       const ambient = new THREE.AmbientLight(0xffffff, 1.6);
       scene.add(ambient);
 
       const keyLight = new THREE.DirectionalLight(0xffffff, 2.8);
       keyLight.position.set(3, 5, 4);
-      keyLight.castShadow = true;
       scene.add(keyLight);
 
       const fillLight = new THREE.DirectionalLight(0xff8a3d, 1.2);
@@ -237,8 +234,6 @@ const Template3Page = () => {
       const modelRoot = gltf.scene;
       modelRoot.traverse((child: any) => {
         if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
           if (Array.isArray(child.material)) {
             child.material.forEach((material: any) => {
               if (material?.map) material.map.colorSpace = THREE.SRGBColorSpace;
@@ -424,7 +419,7 @@ const Template3Page = () => {
               <input
                 type="range"
                 min="0.18"
-                max="0.65"
+                max="0.85"
                 step="0.01"
                 value={decalScale}
                 onChange={(event) => setDecalScale(Number(event.target.value))}
