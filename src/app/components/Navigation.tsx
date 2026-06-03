@@ -38,10 +38,8 @@ const Navigation = () => {
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
     }
 
     const handleResize = () => {
@@ -54,7 +52,6 @@ const Navigation = () => {
 
     return () => {
       document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
       window.removeEventListener('resize', handleResize);
     };
   }, [isMobileMenuOpen]);
@@ -152,18 +149,20 @@ const Navigation = () => {
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/55 backdrop-blur-[1px] lg:hidden"
+          className="fixed inset-0 z-[90] bg-black/55 backdrop-blur-[1px] lg:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menú móvil"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              handleLinkClick();
+            }
+          }}
         >
-          <button
-            type="button"
-            className="absolute inset-0"
-            onClick={handleLinkClick}
-            aria-label="Cerrar menú móvil"
-          />
-
           <div
             id="mobile-main-menu"
-            className="mobile-nav-panel animate-slideDown relative z-10 mx-auto mt-[73px] w-full border-y border-white/12 bg-cami-950/96 shadow-glow md:mt-[73px] md:max-w-md md:rounded-2xl md:border"
+            className="mobile-nav-panel animate-slideDown relative z-10 mx-auto mt-[73px] w-full border-y border-white/12 bg-cami-950/96 shadow-glow md:max-w-md md:rounded-2xl md:border"
+            onClick={(event) => event.stopPropagation()}
           >
             <div className="space-y-3 px-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
               <button
