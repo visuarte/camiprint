@@ -18,54 +18,58 @@ const navItems = [
 const processSteps = [
   {
     step: '01',
-    icon: 'assignment',
-    title: 'Brief rapido',
-    body: 'Nos cuentas objetivo, unidades y fechas. Te respondemos con propuesta clara.',
+    icon: 'palette',
+    title: 'Diseño personalizado',
+    body: 'Nos cuentas tu marca, concepto y presupuesto. Creamos diseños únicos adaptados a tu camiseta.',
   },
   {
     step: '02',
-    icon: 'draw',
-    title: 'Diseno y validacion',
-    body: 'Ajustamos el arte contigo hasta aprobar una version lista para produccion.',
+    icon: 'check_circle',
+    title: 'Validación y ajustes',
+    body: 'Revisa el arte, hacemos cambios hasta que quede perfecto. Aprobación final antes de producir.',
   },
   {
     step: '03',
-    icon: 'conveyor_belt',
-    title: 'Produccion y entrega',
-    body: 'Fabricacion controlada, seguimiento y entrega en plazo acordado.',
+    icon: 'local_shipping',
+    title: 'Impresión y envío',
+    body: 'Producción con máxima calidad, seguimiento en tiempo real y entrega segura a tu puerta.',
   },
 ];
 
 const testimonials = [
   {
-    quote: 'Cumplieron tiempos y calidad en una campana con deadline agresivo.',
-    author: 'Marta R.',
-    role: 'MARKETING, SAAS B2B',
+    quote: 'Mis camisetas llegaron perfectas. El diseño quedó tal como lo pedí, muy buen acabado y envío rápido.',
+    author: 'Carlos M.',
+    role: 'EMPRENDEDOR, ROPA DEPORTIVA',
   },
   {
-    quote: 'Proceso ordenado y sin friccion. Repetimos para el siguiente evento.',
-    author: 'Diego P.',
-    role: 'PEOPLE OPS, RETAIL',
+    quote: 'Hicimos 50 camisetas para nuestro equipo. La calidad es increíble y el equipo fue muy profesional.',
+    author: 'Beatriz L.',
+    role: 'GERENTE RR.HH., AGENCIA DIGITAL',
   },
   {
-    quote: 'Muy buen acabado y comunicacion continua durante todo el pedido.',
-    author: 'Laura G.',
-    role: 'COMPRAS, HOSTELERIA',
+    quote: 'Repetidor seguro. Calidad, comunicación clara y cumplen los plazos. Muy recomendado.',
+    author: 'Javier P.',
+    role: 'PRODUCTOR, MÚSICA EN VIVO',
   },
 ];
 
 const faqItems = [
   {
-    q: 'Cual es el minimo de unidades?',
-    a: 'Este template parte de un minimo sugerido de 10 unidades por referencia.',
+    q: 'Cuál es el mínimo de camisetas?',
+    a: 'Puedes pedir desde 1 camiseta. A partir de 10 unidades del mismo diseño, ofrecemos descuentos por volumen.',
   },
   {
-    q: 'Cuanto tarda un pedido?',
-    a: 'El flujo estandar contempla entre 5 y 10 dias habiles, segun volumen.',
+    q: '¿Cuánto tarda una camiseta personalizada?',
+    a: 'Entre 3 y 7 días hábiles desde la aprobación del diseño. Tenemos opciones express si lo necesitas urgente.',
   },
   {
-    q: 'Incluye ayuda con el diseno?',
-    a: 'Si. Puedes iterar el arte dentro del alcance definido antes de producir.',
+    q: '¿Qué técnicas de impresión usan?',
+    a: 'Usamos serigrafía (DTF), estampado directo y bordado. Cada técnica tiene ventajas según el diseño.',
+  },
+  {
+    q: '¿Puedo cambiar el diseño después de encargar?',
+    a: 'Sí, mientras no haya comenzado la impresión. Te confirmamos los cambios rápidamente.',
   },
 ];
 
@@ -177,20 +181,20 @@ export default function TemplateNuevoPage() {
           <div className="space-y-8">
             <div className={`${spaceGrotesk.className} inline-flex items-center gap-2 rounded-full border border-[#ff4f00]/30 bg-[#ff4f00]/10 px-4 py-1 text-xs tracking-[0.1em] text-[#ff4f00]`}>
               <span className="h-2 w-2 animate-pulse rounded-full bg-[#ff4f00]" />
-              INDUSTRIAL KINETIC DESIGN
+              CAMISETAS PERSONALIZADAS
             </div>
             <h1 className={`${montserrat.className} text-4xl font-black leading-tight md:text-7xl`}>
-              Titular potente para tu <span className="text-[#ff4f00]">nueva landing</span>
+              Camisetas <span className="text-[#ff4f00]">personalizadas</span> con tu diseño
             </h1>
             <p className="max-w-xl text-lg text-[#e2e2e2]/80">
-              Este hero esta preparado para que cambies mensaje, oferta y enfoque visual sin romper estructura.
+              Crea camisetas únicas con tus propios diseños. Impresión de calidad, proceso rápido y envío seguro a cualquier lugar.
             </p>
             <div className="flex flex-wrap gap-4 pt-2">
               <button className={`${montserrat.className} bg-[#ff4f00] px-10 py-4 text-sm font-bold text-[#0A0A0A]`}>
-                EMPEZAR AHORA
+                DISEÑA LA TUYA
               </button>
               <a href="#proceso" className={`${montserrat.className} border border-[#e2e2e2]/20 px-10 py-4 text-sm font-bold text-[#e2e2e2]`}>
-                PROCESOS
+                VER PROCESO
               </a>
             </div>
           </div>
@@ -209,8 +213,8 @@ export default function TemplateNuevoPage() {
       <section id="proceso" className="mx-auto w-full max-w-[1440px] px-5 py-24 md:px-16">
         <div className="mb-16 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
           <div>
-            <h2 className={`${spaceGrotesk.className} mb-2 text-sm tracking-[0.1em] text-[#ff4f00]`}>NUESTRO FLUJO</h2>
-            <h3 className={`${montserrat.className} text-4xl font-extrabold md:text-5xl`}>Precision en cada fase.</h3>
+            <h2 className={`${spaceGrotesk.className} mb-2 text-sm tracking-[0.1em] text-[#ff4f00]`}>COMO FUNCIONA</h2>
+            <h3 className={`${montserrat.className} text-4xl font-extrabold md:text-5xl`}>De idea a camiseta lista.</h3>
           </div>
           <div className="mb-2 h-1 w-24 bg-[#ff4f00]" />
         </div>
@@ -232,8 +236,8 @@ export default function TemplateNuevoPage() {
       <section id="testimonios" className="border-y border-[#5c4037]/25 bg-[#0A0A0A] py-24">
         <div className="mx-auto w-full max-w-[1440px] px-5 md:px-16">
           <div className="mb-16 text-center">
-            <h3 className={`${montserrat.className} text-4xl font-extrabold md:text-5xl`}>Impacto Real</h3>
-            <p className="mt-4 text-[#e2e2e2]/60">Nuestra maquinaria habla a traves de sus resultados.</p>
+            <h3 className={`${montserrat.className} text-4xl font-extrabold md:text-5xl`}>Clientes satisfechos</h3>
+            <p className="mt-4 text-[#e2e2e2]/60">Lo que dicen quienes ya tienen sus camisetas personalizadas.</p>
           </div>
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
