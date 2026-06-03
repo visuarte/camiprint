@@ -1,16 +1,7 @@
 import type { Metadata } from 'next';
 import { brandConfig } from '@/config/brand';
 import { faqItems } from './data/faqs';
-import Navigation from './components/Navigation';
-import Hero from './components/Hero';
-import ServicesSection from './components/ServicesSection';
-import Pricing from './components/Pricing';
-import Process from './components/Process';
-import TestimonialsSection from './components/TestimonialsSection';
-import FAQSection from './components/FAQSection';
-import ContactSection from './components/ContactSection';
-import Footer from './components/Footer';
-import ViewportAnimator from './components/ViewportAnimator';
+import TemplateNuevoPage from './template-nuevo/page';
 
 export const metadata: Metadata = {
   title: `Camisetas Personalizadas para Empresas | Ropa Corporativa con Logo | ${brandConfig.displayName}`,
@@ -156,33 +147,7 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-      <div className="landing-design-ready" data-landing-version="v-next-ready">
-        <ViewportAnimator />
-        <div data-landing-section="navigation">
-          <Navigation />
-        </div>
-        <div data-landing-section="hero">
-          <Hero />
-        </div>
-        <div data-landing-section="pricing">
-          <Pricing />
-        </div>
-        <div data-landing-section="process">
-          <Process />
-        </div>
-        <div data-landing-section="testimonials">
-          <TestimonialsSection />
-        </div>
-        <div data-landing-section="faq">
-          <FAQSection />
-        </div>
-        <div data-landing-section="contact">
-          <ContactSection />
-        </div>
-        <div data-landing-section="footer">
-          <Footer />
-        </div>
-      </div>
+      <TemplateNuevoPage />
     </>
   );
 }
