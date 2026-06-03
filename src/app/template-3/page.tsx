@@ -37,7 +37,7 @@ const disposeMaterial = (material: any) => {
   material.dispose();
 };
 
-const rebuildDecal = (runtime: RuntimeState, point: any, normal: any, sizeValue: number, opacityValue: number) => {
+const rebuildDecal = (runtime: RuntimeState, point: any, normal: any, sizeValue: number, opacityValue: number, isFlipped = false) => {
   const { THREE, DecalGeometry, scene, targetMesh, logoTexture } = runtime;
   if (!targetMesh || !logoTexture) return;
 
@@ -68,6 +68,12 @@ const rebuildDecal = (runtime: RuntimeState, point: any, normal: any, sizeValue:
     flatShading: false,
   });
 
+  // Flip image horizontally if needed
+  if (isFlipped && material.map) {
+    material.map.repeat.x = -1;
+    material.map.offset.x = 1;
+  }
+
   runtime.decalMesh = new THREE.Mesh(geometry, material);
   runtime.decalMesh.position.copy(point);
   scene.add(runtime.decalMesh);
@@ -80,16 +86,19 @@ const Template3Page = () => {
   const draggingRef = useRef(false);
   const decalScaleRef = useRef(0.65);
   const decalOpacityRef = useRef(0.95);
+  const isFlippedRef = useRef(false);
   const [decalScale, setDecalScale] = useState(0.65);
   const [decalOpacity, setDecalOpacity] = useState(0.95);
   const [status, setStatus] = useState('Cargando Three.js...');
   const [isReady, setIsReady] = useState(false);
+  const [selectedZone, setSelectedZone] = useState<'chest-large' | 'back-large' | 'chest-small-left' | null>(null);
+  const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
     decalScaleRef.current = decalScale;
     const runtime = runtimeRef.current;
     if (runtime?.decalState && runtime?.THREE) {
-      rebuildDecal(runtime, runtime.decalState.point, runtime.decalState.normal, decalScale, decalOpacityRef.current);
+      rebuildDecal(runtime, runtime.decalState.point, runtime.decalState.normal, decalScale, decalOpacityRef.current, isFlippedRef.current);
     }
   }, [decalScale]);
 
@@ -97,9 +106,17 @@ const Template3Page = () => {
     decalOpacityRef.current = decalOpacity;
     const runtime = runtimeRef.current;
     if (runtime?.decalState && runtime?.THREE) {
-      rebuildDecal(runtime, runtime.decalState.point, runtime.decalState.normal, decalScaleRef.current, decalOpacity);
+      rebuildDecal(runtime, runtime.decalState.point, runtime.decalState.normal, decalScaleRef.current, decalOpacity, isFlippedRef.current);
     }
   }, [decalOpacity]);
+
+  useEffect(() => {
+    isFlippedRef.current = isFlipped;
+    const runtime = runtimeRef.current;
+    if (runtime?.decalState && runtime?.THREE) {
+      rebuildDecal(runtime, runtime.decalState.point, runtime.decalState.normal, decalScaleRef.current, decalOpacityRef.current, isFlipped);
+    }
+  }, [isFlipped]);
 
   useEffect(() => {
     let cancelled = false;
@@ -139,7 +156,7 @@ const Template3Page = () => {
       }
 
       // Place/update decal
-      rebuildDecal(runtime, hit.point, worldNormal, decalScaleRef.current, decalOpacityRef.current);
+      rebuildDecal(runtime, hit.point, worldNormal, decalScaleRef.current, decalOpacityRef.current, isFlippedRef.current);
       if (shouldDrag) {
         draggingRef.current = true;
       }
@@ -309,8 +326,50 @@ const Template3Page = () => {
       setIsReady(true);
       setStatus('Logo listo para estampado');
 
+      // Function to calculate zone positions
+      const placeOnZone = (zone: 'chest-large' | 'back-large' | 'chest-small-left') => {
+        let rayPosition: any;
+        let descriptionText: string;
+
+        if (zone === 'chest-large') {
+          rayPosition = new THREE.Vector2(0, 0.15);
+          descriptionText = 'Pecho grande';
+        } else if (zone === 'back-large') {
+          rayPosition = new THREE.Vector2(0, 0.1);
+          descriptionText = 'Espalda grande';
+          camera.position.set(0, 1.1, -5.2);
+        } else if (zone === 'chest-small-left') {
+          rayPosition = new THREE.Vector2(-0.35, 0.1);
+          descriptionText = 'Pecho pequeño izquierdo';
+          camera.position.set(0, 1.1, 5.2);
+        }
+
+        runtime.raycaster.setFromCamera(rayPosition, camera);
+        const hits = runtime.raycaster.intersectObject(shirtMesh, true);
+        
+        if (hits.length) {
+          const hit = hits[0];
+          let normal = camera.getWorldDirection(new THREE.Vector3()).negate();
+          
+          if (hit.face && hit.face.normal) {
+            normal = hit.face.normal.clone();
+            if (hit.object.parent) {
+              normal.transformDirection(hit.object.matrixWorld).normalize();
+            } else {
+              normal.normalize();
+            }
+          }
+
+          rebuildDecal(runtime, hit.point, normal, decalScaleRef.current, decalOpacityRef.current, isFlippedRef.current);
+          setStatus(descriptionText);
+          setSelectedZone(zone);
+        }
+      };
+
+      (window as any).placeOnZone = placeOnZone;
+
       const initialPoint = (() => {
-        const centerRay = new THREE.Vector2(0, 0);
+        const centerRay = new THREE.Vector2(0, 0.15);
         runtime.raycaster.setFromCamera(centerRay, camera);
         const centerHits = shirtMesh ? runtime.raycaster.intersectObject(shirtMesh, true) : [];
         if (centerHits.length) {
@@ -323,7 +382,7 @@ const Template3Page = () => {
 
       let initialNormal = camera.getWorldDirection(new THREE.Vector3()).negate();
       if (shirtMesh) {
-        const centerRay = new THREE.Vector2(0, 0);
+        const centerRay = new THREE.Vector2(0, 0.15);
         runtime.raycaster.setFromCamera(centerRay, camera);
         const centerHits = runtime.raycaster.intersectObject(shirtMesh, true);
         if (centerHits.length && centerHits[0].face) {
@@ -331,7 +390,7 @@ const Template3Page = () => {
         }
       }
 
-      rebuildDecal(runtime, initialPoint, initialNormal, decalScaleRef.current, decalOpacityRef.current);
+      rebuildDecal(runtime, initialPoint, initialNormal, decalScaleRef.current, decalOpacityRef.current, isFlippedRef.current);
 
       const updateSize = () => {
         const width = host.clientWidth;
@@ -438,13 +497,55 @@ const Template3Page = () => {
           <p className="text-xs uppercase tracking-[0.2em] text-orange-300">Template 3 · Editor 3D</p>
           <h1 className="mt-3 text-3xl font-semibold md:text-4xl">Serigrafía 3D sobre camiseta</h1>
           <p className="mt-4 text-sm leading-7 text-orange-100/85 md:text-base">
-            Arrastra el logo sobre el pecho, ajusta su tamaño y simula un estampado frontal real con Three.js.
-          </p>
-          <p className="mt-3 text-sm leading-7 text-white/70">
-            Ahora el logo ya no flota como una tarjeta: vive sobre la prenda como un decal editable.
+            Selecciona la zona, luego ajusta tamaño y posición. El logo se coloca automático en el área elegida.
           </p>
 
-          <div className="mt-6 grid grid-cols-1 gap-4 rounded-2xl border border-white/10 bg-[#11141a] p-4">
+          <div className="mt-6 grid grid-cols-1 gap-3 rounded-2xl border border-white/10 bg-[#11141a] p-4">
+            <p className="text-xs uppercase tracking-[0.16em] text-orange-200">Selecciona zona</p>
+            <div className="grid grid-cols-1 gap-2">
+              <button
+                onClick={() => {
+                  setSelectedZone('chest-large');
+                  (window as any).placeOnZone?.('chest-large');
+                }}
+                className={`rounded-lg px-4 py-2 text-xs font-semibold transition-all ${
+                  selectedZone === 'chest-large'
+                    ? 'bg-orange-500 text-white'
+                    : 'border border-orange-400/30 bg-transparent text-orange-300 hover:bg-orange-500/10'
+                }`}
+              >
+                Pecho Grande
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedZone('back-large');
+                  (window as any).placeOnZone?.('back-large');
+                }}
+                className={`rounded-lg px-4 py-2 text-xs font-semibold transition-all ${
+                  selectedZone === 'back-large'
+                    ? 'bg-orange-500 text-white'
+                    : 'border border-orange-400/30 bg-transparent text-orange-300 hover:bg-orange-500/10'
+                }`}
+              >
+                Espalda Grande
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedZone('chest-small-left');
+                  (window as any).placeOnZone?.('chest-small-left');
+                }}
+                className={`rounded-lg px-4 py-2 text-xs font-semibold transition-all ${
+                  selectedZone === 'chest-small-left'
+                    ? 'bg-orange-500 text-white'
+                    : 'border border-orange-400/30 bg-transparent text-orange-300 hover:bg-orange-500/10'
+                }`}
+              >
+                Pecho Pequeño Izquierdo
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-4 grid grid-cols-1 gap-4 rounded-2xl border border-white/10 bg-[#11141a] p-4">
             <label className="text-xs uppercase tracking-[0.16em] text-orange-200">
               Tamaño del estampado
               <input
@@ -471,11 +572,21 @@ const Template3Page = () => {
               />
             </label>
 
+            <label className="flex items-center gap-3 text-xs uppercase tracking-[0.16em] text-orange-200">
+              <input
+                type="checkbox"
+                checked={isFlipped}
+                onChange={(e) => setIsFlipped(e.target.checked)}
+                className="h-4 w-4 accent-orange-400"
+              />
+              Invertir imagen
+            </label>
+
             <p className="text-[0.72rem] leading-6 text-white/60">
               {status}
             </p>
             <p className="text-[0.72rem] leading-6 text-white/60">
-              Arrastra sobre la camiseta para recolocar el logo como si lo estuvieras serigrafiando.
+              Arrastra sobre la camiseta para ajustar la posición fina del logo.
             </p>
           </div>
         </div>
