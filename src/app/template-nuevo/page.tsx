@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google';
+import ContactSection from '@/app/components/ContactSection';
 
 const montserrat = Montserrat({ subsets: ['latin'], weight: ['700', '800', '900'] });
 const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500'] });
@@ -270,22 +271,7 @@ export default function TemplateNuevoPage() {
         </div>
       </section>
 
-      <section id="contacto" className="relative overflow-hidden bg-[#ff4f00] py-28">
-        <div className="hazard-pattern absolute inset-0 opacity-10" />
-        <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-col items-center px-5 text-center md:px-16">
-          <h2 className={`${montserrat.className} mb-10 max-w-3xl text-4xl font-black text-[#0A0A0A] md:text-6xl`}>
-            Titular potente para tu nueva landing
-          </h2>
-          <div className="flex flex-col gap-6 md:flex-row">
-            <button className={`${montserrat.className} bg-[#0A0A0A] px-12 py-5 text-sm font-bold text-[#ff4f00]`}>
-              EMPEZAR AHORA
-            </button>
-            <a href="/" className={`${montserrat.className} border-2 border-[#0A0A0A] px-12 py-5 text-sm font-bold text-[#0A0A0A]`}>
-              VOLVER AL HOME ACTUAL
-            </a>
-          </div>
-        </div>
-      </section>
+      <ContactSection />
 
       <footer className="relative w-full border-t-4 border-[#ff4f00] bg-[#0e0e0e] py-12">
         <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 items-center gap-8 px-5 md:grid-cols-2 md:px-16">
