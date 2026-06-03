@@ -35,7 +35,7 @@ export default function CookieBanner() {
       role="dialog"
       aria-live="polite"
       aria-label="Aviso de cookies"
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-cami-950/95 px-4 py-4 shadow-2xl backdrop-blur-md md:bottom-4 md:left-auto md:right-4 md:max-w-sm md:rounded-xl md:border md:border-white/10"
+      className="fixed bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-cami-950/95 px-4 py-4 shadow-2xl backdrop-blur-md md:bottom-4 md:left-auto md:right-4 md:max-w-sm md:rounded-xl md:border md:border-white/10"
     >
       <p className="mb-1 text-sm font-semibold text-white">Este sitio usa cookies</p>
       <p className="mb-4 text-xs leading-relaxed text-cami-300">
