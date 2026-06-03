@@ -124,11 +124,15 @@ const Template3Page = () => {
     };
 
     const initialize = async () => {
-      // Import Three.js modules - will be resolved via importmap in layout
-      const THREE = await import('three');
-      const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
-      const { OrbitControls } = await import('three/examples/jsm/controls/OrbitControls.js');
-      const { DecalGeometry } = await import('three/examples/jsm/geometries/DecalGeometry.js');
+      // Import Three.js modules - resolved via importmap at runtime, ignored by webpack at build
+      const THREE = await import(/* webpackIgnore: true */ 'three');
+      const gltf = await import(/* webpackIgnore: true */ 'three/examples/jsm/loaders/GLTFLoader.js');
+      const orbit = await import(/* webpackIgnore: true */ 'three/examples/jsm/controls/OrbitControls.js');
+      const decal = await import(/* webpackIgnore: true */ 'three/examples/jsm/geometries/DecalGeometry.js');
+
+      const { GLTFLoader } = gltf;
+      const { OrbitControls } = orbit;
+      const { DecalGeometry } = decal;
 
       if (cancelled) return;
 
