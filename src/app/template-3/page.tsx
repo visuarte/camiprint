@@ -185,7 +185,7 @@ const Template3Page = () => {
         const loader = new THREE.TextureLoader();
         loader.load(
           LOGO_SRC,
-          (texture) => {
+          (texture: any) => {
             texture.colorSpace = THREE.SRGBColorSpace;
             texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
             texture.generateMipmaps = true;
