@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react';
 import { brandConfig } from '@/config/brand';
 
-const MOBILE_HEADER_HEIGHT = 73;
-
 const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -34,14 +32,8 @@ const Navigation = () => {
     }
   }, [isMobileMenuOpen]);
 
-  // Evitar scroll de fondo y cerrar menú al pasar a desktop.
+  // Cerrar menú al pasar a desktop.
   useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
         setIsMobileMenuOpen(false);
@@ -51,10 +43,9 @@ const Navigation = () => {
     window.addEventListener('resize', handleResize);
 
     return () => {
-      document.body.style.overflow = '';
       window.removeEventListener('resize', handleResize);
     };
-  }, [isMobileMenuOpen]);
+  }, []);
 
   // Cerrar menú al hacer click en un enlace
   const handleLinkClick = () => {
@@ -124,10 +115,6 @@ const Navigation = () => {
         <button
           type="button"
           onClick={toggleMenu}
-          onTouchEnd={(event) => {
-            event.preventDefault();
-            toggleMenu();
-          }}
           className="relative z-[60] rounded-2xl border border-white/15 bg-white/5 p-2 text-cami-100 transition-colors hover:bg-white/10 lg:hidden"
           aria-label="Toggle navigation menu"
           aria-expanded={isMobileMenuOpen}
@@ -161,35 +148,19 @@ const Navigation = () => {
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 z-[90] bg-black/55 backdrop-blur-[1px] lg:hidden"
+          className="fixed bottom-0 right-0 top-[73px] z-[90] w-[min(92vw,22rem)] border-l border-white/12 bg-cami-950/98 shadow-[0_0_50px_rgba(0,0,0,0.45)] lg:hidden"
           role="dialog"
           aria-modal="true"
           aria-label="Menú móvil"
-          onClick={(event) => {
-            if (event.target === event.currentTarget) {
-              closeMenu();
-            }
-          }}
-          onTouchEnd={(event) => {
-            if (event.target === event.currentTarget) {
-              event.preventDefault();
-              closeMenu();
-            }
-          }}
         >
           <div
             id="mobile-main-menu"
-            className="mobile-nav-panel animate-slideDown relative z-10 mx-auto mt-[73px] w-full border-y border-white/12 bg-cami-950/96 shadow-glow md:max-w-md md:rounded-2xl md:border"
-            onClick={(event) => event.stopPropagation()}
+            className="mobile-nav-panel animate-slideDown h-full w-full overflow-y-auto"
           >
             <div className="space-y-3 px-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
               <button
                 type="button"
                 onClick={closeMenu}
-                onTouchEnd={(event) => {
-                  event.preventDefault();
-                  closeMenu();
-                }}
                 className="touch-target mb-1 flex w-full items-center justify-center rounded-2xl border border-white/20 bg-white/[0.04] px-4 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-cami-100 transition-all hover:bg-white/12"
               >
                 Cerrar
