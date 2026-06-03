@@ -120,6 +120,14 @@ export default function RootLayout({
     <html lang="es" data-scroll-behavior="smooth" className={`h-full antialiased ${manrope.variable} ${spaceGrotesk.variable} ${montserrat.variable}`}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script type="importmap">
+          {`{
+            "imports": {
+              "three": "https://cdn.jsdelivr.net/npm/three@0.178.0/build/three.module.js",
+              "three/": "https://cdn.jsdelivr.net/npm/three@0.178.0/"
+            }
+          }`}
+        </script>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
         <script
           type="application/ld+json"
