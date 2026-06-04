@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-const THREE_CDN = 'https://cdn.jsdelivr.net/npm/three@0.178.0';
 const MODEL_SRC = '/models/camiseta-camiart.glb';
 const LOGO_SRC = '/textures/camiart-logo.png';
+const THREE_LOADER_SRC = '/three-loader.js';
+const THREE_LOADER_ID = 'camiart-three-loader';
 
 type RuntimeState = {
   THREE: any;
@@ -37,6 +38,18 @@ const disposeMaterial = (material: any) => {
   material.dispose();
 };
 
+const createDecalTexture = (sourceTexture: any, isFlipped: boolean) => {
+  const texture = sourceTexture.clone();
+  texture.needsUpdate = true;
+
+  if (isFlipped) {
+    texture.repeat.x = -1;
+    texture.offset.x = 1;
+  }
+
+  return texture;
+};
+
 const rebuildDecal = (runtime: RuntimeState, point: any, normal: any, sizeValue: number, opacityValue: number, isFlipped = false) => {
   const { THREE, DecalGeometry, scene, targetMesh, logoTexture } = runtime;
   if (!targetMesh || !logoTexture) return;
@@ -47,16 +60,15 @@ const rebuildDecal = (runtime: RuntimeState, point: any, normal: any, sizeValue:
     disposeMaterial(runtime.decalMesh.material);
   }
 
-  // Scale up the decal size for better visibility
-  const scaleFactor = 1.0;
   const projectorDirection = normal.clone().normalize();
   const quaternion = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), projectorDirection);
   const orientation = new THREE.Euler().setFromQuaternion(quaternion);
-  const size = new THREE.Vector3(sizeValue * scaleFactor, sizeValue * scaleFactor, 2.0);
+  const size = new THREE.Vector3(sizeValue, sizeValue, 2.0);
+  const decalTexture = createDecalTexture(logoTexture, isFlipped);
   
   const geometry = new DecalGeometry(targetMesh, point, orientation, size);
   const material = new THREE.MeshPhongMaterial({
-    map: logoTexture,
+    map: decalTexture,
     transparent: true,
     opacity: opacityValue,
     depthTest: true,
@@ -67,12 +79,6 @@ const rebuildDecal = (runtime: RuntimeState, point: any, normal: any, sizeValue:
     side: THREE.DoubleSide,
     flatShading: false,
   });
-
-  // Flip image horizontally if needed
-  if (isFlipped && material.map) {
-    material.map.repeat.x = -1;
-    material.map.offset.x = 1;
-  }
 
   runtime.decalMesh = new THREE.Mesh(geometry, material);
   runtime.decalMesh.position.copy(point);
@@ -183,32 +189,28 @@ const Template3Page = () => {
       runtime.mouse.y = -(((event.clientY - rect.top) / rect.height) * 2 - 1);
       runtime.raycaster.setFromCamera(runtime.mouse, runtime.camera);
       
-      // Raycast against all children to find intersection
       const hits = runtime.raycaster.intersectObject(runtime.targetMesh, true);
       if (!hits.length) {
-        console.warn('No mesh hit');
         return;
       }
 
       const hit = hits[0];
       
-      // Ensure we have a valid normal
       let worldNormal;
       if (hit.face && hit.face.normal) {
         worldNormal = hit.face.normal.clone();
-        // Transform to world space
         if (hit.object.parent) {
           worldNormal.transformDirection(hit.object.matrixWorld).normalize();
         } else {
           worldNormal.normalize();
         }
       } else {
-        // Fallback: use camera direction
         worldNormal = runtime.camera.getWorldDirection(new runtime.THREE.Vector3()).negate();
       }
 
-      // Place/update decal
       rebuildDecal(runtime, hit.point, worldNormal, decalScaleRef.current, decalOpacityRef.current, isFlippedRef.current);
+      setSelectedZone(null);
+      setStatus('Posición personalizada');
       if (shouldDrag) {
         draggingRef.current = true;
       }
@@ -216,7 +218,24 @@ const Template3Page = () => {
 
     const loadScript = (src: string): Promise<void> => {
       return new Promise((resolve, reject) => {
+        if ((window as any).THREE_READY) {
+          resolve();
+          return;
+        }
+
+        if ((window as any).THREE_ERROR) {
+          reject((window as any).THREE_ERROR);
+          return;
+        }
+
+        const existingScript = document.getElementById(THREE_LOADER_ID) as HTMLScriptElement | null;
+        if (existingScript) {
+          resolve();
+          return;
+        }
+
         const script = document.createElement('script');
+        script.id = THREE_LOADER_ID;
         script.src = src;
         script.type = 'module';
         script.onload = () => resolve();
@@ -226,12 +245,15 @@ const Template3Page = () => {
     };
 
     const initialize = async () => {
-      // Load Three.js modules via helper script (exposes to window)
-      await loadScript('/three-loader.js');
+      await loadScript(THREE_LOADER_SRC);
 
       // Wait for Three.js to be ready
       let attempts = 0;
       while (!((window as any).THREE_READY) && attempts < 100) {
+        if ((window as any).THREE_ERROR) {
+          throw (window as any).THREE_ERROR;
+        }
+
         await new Promise((resolve) => setTimeout(resolve, 50));
         attempts++;
       }
