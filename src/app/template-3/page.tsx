@@ -63,6 +63,12 @@ const zoneRay: Record<PlacementZone, [number, number]> = {
   'chest-small-left': [-0.34, 0.12],
 };
 
+const zoneProjectionNormal: Record<PlacementZone, [number, number, number]> = {
+  'chest-large': [0, 0, 1],
+  'back-large': [0, 0, -1],
+  'chest-small-left': [0, 0, 1],
+};
+
 const disposeMaterial = (material: any) => {
   if (!material) return;
   if (Array.isArray(material)) {
@@ -160,7 +166,6 @@ const Template3Page = () => {
   const draggingRef = useRef(false);
   const decalScaleRef = useRef(0.62);
   const decalOpacityRef = useRef(0.95);
-  const isFlippedRef = useRef(false);
   const selectedZoneRef = useRef<PlacementZone>('chest-large');
   const isReviewModeRef = useRef(false);
   const [decalScale, setDecalScale] = useState(0.62);
@@ -168,7 +173,6 @@ const Template3Page = () => {
   const [status, setStatus] = useState('Cargando Three.js...');
   const [isReady, setIsReady] = useState(false);
   const [selectedZone, setSelectedZone] = useState<PlacementZone>('chest-large');
-  const [isFlipped, setIsFlipped] = useState(false);
   const [uploadedDesign, setUploadedDesign] = useState<UploadedDesign | null>(null);
   const [fixedDesigns, setFixedDesigns] = useState<FixedDesign[]>([]);
   const [isReviewMode, setIsReviewMode] = useState(false);
@@ -200,10 +204,7 @@ const Template3Page = () => {
     if (!hits.length) return null;
 
     const hit = hits[0];
-    let normal = runtime.camera.getWorldDirection(new runtime.THREE.Vector3()).negate();
-    if (hit.face?.normal) {
-      normal = hit.face.normal.clone().transformDirection(hit.object.matrixWorld).normalize();
-    }
+    const normal = new runtime.THREE.Vector3(...zoneProjectionNormal[zone]);
 
     return { point: hit.point, normal };
   };
@@ -229,7 +230,7 @@ const Template3Page = () => {
       placement.normal,
       decalScaleRef.current,
       decalOpacityRef.current,
-      isFlippedRef.current,
+      false,
     );
     setStatus(`Borrador colocado en ${zoneLabels[selectedZoneRef.current]}`);
   };
@@ -348,13 +349,6 @@ const Template3Page = () => {
   }, [decalOpacity]);
 
   useEffect(() => {
-    isFlippedRef.current = isFlipped;
-    if (!isReviewModeRef.current) {
-      rebuildDraft();
-    }
-  }, [isFlipped]);
-
-  useEffect(() => {
     let cancelled = false;
     const disposers: Array<() => void> = [];
 
@@ -374,16 +368,17 @@ const Template3Page = () => {
 
       const hit = hits[0];
       const cameraNormal = runtime.camera.getWorldDirection(new runtime.THREE.Vector3()).negate().normalize();
-      const worldNormal = hit.face?.normal
+      const surfaceNormal = hit.face?.normal
         ? hit.face.normal.clone().transformDirection(hit.object.matrixWorld).normalize()
         : cameraNormal;
+      const fixedProjectionNormal = new runtime.THREE.Vector3(...zoneProjectionNormal[selectedZoneRef.current]);
 
-      if (worldNormal.dot(cameraNormal) < 0.32) {
+      if (surfaceNormal.dot(cameraNormal) < 0.32) {
         setStatus(`Mantén el diseño dentro del área de ${zoneLabels[selectedZoneRef.current]}.`);
         return;
       }
 
-      rebuildDraft(hit.point, worldNormal);
+      rebuildDraft(hit.point, fixedProjectionNormal);
       setStatus(`Borrador movido en ${zoneLabels[selectedZoneRef.current]}`);
       if (shouldDrag) {
         draggingRef.current = true;
@@ -746,16 +741,6 @@ const Template3Page = () => {
                 onChange={(event) => setDecalOpacity(Number(event.target.value))}
                 className="mt-3 w-full accent-orange-400"
               />
-            </label>
-
-            <label className="flex items-center gap-3 text-xs uppercase tracking-[0.16em] text-orange-200">
-              <input
-                type="checkbox"
-                checked={isFlipped}
-                onChange={(event) => setIsFlipped(event.target.checked)}
-                className="h-4 w-4 accent-orange-400"
-              />
-              Invertir imagen
             </label>
 
             <div className="grid grid-cols-2 gap-2">
