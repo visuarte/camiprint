@@ -1,0 +1,1367 @@
+{
+	"info": {
+		"_postman_id": "df0aaf6c-df9f-4925-850b-be7fcca79253",
+		"name": "GOR_WSCLIENTS - Public",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "0.Login",
+			"item": [
+				{
+					"name": "DEV_Login_v1.0",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "it09@gorfactory.es",
+									"type": "default"
+								},
+								{
+									"key": "password",
+									"value": "Test1234",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://devclientsws.gorfactory.es:2096/api/v1.0/login",
+							"protocol": "https",
+							"host": [
+								"devclientsws",
+								"gorfactory",
+								"es"
+							],
+							"port": "2096",
+							"path": [
+								"api",
+								"v1.0",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PRO_Login_v1.0",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "it09@gorfactory.es",
+									"type": "default"
+								},
+								{
+									"key": "password",
+									"value": "Test1234",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://clientsws.gorfactory.es:2096/api/v1.0/login",
+							"protocol": "https",
+							"host": [
+								"clientsws",
+								"gorfactory",
+								"es"
+							],
+							"port": "2096",
+							"path": [
+								"api",
+								"v1.0",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "1.Development",
+			"item": [
+				{
+					"name": "Doc",
+					"item": [
+						{
+							"name": "DEV_GetAll_v1.0",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "doctype",
+											"value": "",
+											"description": "Required. Values: invoice, order, deliverynote, payment, expiration, 347report, tracking",
+											"type": "default"
+										},
+										{
+											"key": "datefrom",
+											"value": "",
+											"description": "Optional. Format: yyyy-MM-dd",
+											"type": "default"
+										},
+										{
+											"key": "dateto",
+											"value": "",
+											"description": "Optional. Format: yyyy-MM-dd",
+											"type": "default"
+										},
+										{
+											"key": "docnum",
+											"value": "",
+											"description": "Optional",
+											"type": "default"
+										},
+										{
+											"key": "numatcard",
+											"value": "",
+											"description": "Optional. Client's reference",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "https://devclientsws.gorfactory.es:2096/api/v1.0/doc/getall",
+									"protocol": "https",
+									"host": [
+										"devclientsws",
+										"gorfactory",
+										"es"
+									],
+									"port": "2096",
+									"path": [
+										"api",
+										"v1.0",
+										"doc",
+										"getall"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DEV_Get_v1.0",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "doctype",
+											"value": "",
+											"description": "Required. Values: invoice, order, deliverynote, payment, expiration, 347report, tracking",
+											"type": "default"
+										},
+										{
+											"key": "docnum",
+											"value": "",
+											"description": "Required",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "https://devclientsws.gorfactory.es:2096/api/v1.0/doc/get",
+									"protocol": "https",
+									"host": [
+										"devclientsws",
+										"gorfactory",
+										"es"
+									],
+									"port": "2096",
+									"path": [
+										"api",
+										"v1.0",
+										"doc",
+										"get"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DEV_Print_v1.0",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "doctype",
+											"value": "",
+											"description": "Required. Values: invoice, order, deliverynote, payment, expiration, 347report, tracking",
+											"type": "default"
+										},
+										{
+											"key": "docnum",
+											"value": "",
+											"description": "Required",
+											"type": "default"
+										},
+										{
+											"key": "lang",
+											"value": "",
+											"description": "Required. Format: xx-XX. Example: es-ES, en-GB",
+											"type": "default"
+										},
+										{
+											"key": "format",
+											"value": "",
+											"description": "Required. Values: xml, json. Default: xml",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "https://devclientsws.gorfactory.es:2096/api/v1.0/doc/print",
+									"protocol": "https",
+									"host": [
+										"devclientsws",
+										"gorfactory",
+										"es"
+									],
+									"port": "2096",
+									"path": [
+										"api",
+										"v1.0",
+										"doc",
+										"print"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Item",
+					"item": [
+						{
+							"name": "DEV_Get_v1.0",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://devclientsws.gorfactory.es:2096/api/v1.0/item/get?itemcode=CA65020260&lang=es-ES",
+									"protocol": "https",
+									"host": [
+										"devclientsws",
+										"gorfactory",
+										"es"
+									],
+									"port": "2096",
+									"path": [
+										"api",
+										"v1.0",
+										"item",
+										"get"
+									],
+									"query": [
+										{
+											"key": "itemcode",
+											"value": "CA65020260",
+											"description": "Required. Item code. Example: CA64240402"
+										},
+										{
+											"key": "lang",
+											"value": "es-ES",
+											"description": "Required. Format: xx-XX. Example: es-ES"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DEV_GetCatalog_v1.0",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://devclientsws.gorfactory.es:2096/api/v1.0/item/getcatalog?lang=es-ES&brand=roly",
+									"protocol": "https",
+									"host": [
+										"devclientsws",
+										"gorfactory",
+										"es"
+									],
+									"port": "2096",
+									"path": [
+										"api",
+										"v1.0",
+										"item",
+										"getcatalog"
+									],
+									"query": [
+										{
+											"key": "lang",
+											"value": "es-ES",
+											"description": "Required. Format: xx-XX. Example: es-ES"
+										},
+										{
+											"key": "brand",
+											"value": "roly",
+											"description": "Required. Values: roly, stamina, roly_stamina"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DEV_Pricelist_v1.0",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "brand",
+										"value": "",
+										"type": "default"
+									},
+									{
+										"key": "category",
+										"value": "",
+										"type": "default"
+									},
+									{
+										"key": "model",
+										"value": "",
+										"type": "default"
+									},
+									{
+										"key": "color",
+										"value": "",
+										"type": "default"
+									},
+									{
+										"key": "size",
+										"value": "",
+										"type": "default"
+									},
+									{
+										"key": "includeoutlet",
+										"value": "",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "https://devclientsws.gorfactory.es:2096/api/v1.0/item/pricelist?brand&category&model&color&size&includeoutlet",
+									"protocol": "https",
+									"host": [
+										"devclientsws",
+										"gorfactory",
+										"es"
+									],
+									"port": "2096",
+									"path": [
+										"api",
+										"v1.0",
+										"item",
+										"pricelist"
+									],
+									"query": [
+										{
+											"key": "brand",
+											"value": null
+										},
+										{
+											"key": "category",
+											"value": null
+										},
+										{
+											"key": "model",
+											"value": null
+										},
+										{
+											"key": "color",
+											"value": null
+										},
+										{
+											"key": "size",
+											"value": null
+										},
+										{
+											"key": "includeoutlet",
+											"value": null
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DEV_Categories_v1.0",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://devclientsws.gorfactory.es:2096/api/v1.0/item/categories?lang=es-ES&brand=roly",
+									"protocol": "https",
+									"host": [
+										"devclientsws",
+										"gorfactory",
+										"es"
+									],
+									"port": "2096",
+									"path": [
+										"api",
+										"v1.0",
+										"item",
+										"categories"
+									],
+									"query": [
+										{
+											"key": "lang",
+											"value": "es-ES",
+											"description": "Required. Format: xx-XX. Example: es-ES"
+										},
+										{
+											"key": "brand",
+											"value": "roly",
+											"description": "Required. Values: roly, stamina, roly_stamina"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DEV_Categories/tree_v1.0",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://devclientsws.gorfactory.es:2096/api/v1.0/item/categories/tree?lang=es-ES&brand=roly&category",
+									"protocol": "https",
+									"host": [
+										"devclientsws",
+										"gorfactory",
+										"es"
+									],
+									"port": "2096",
+									"path": [
+										"api",
+										"v1.0",
+										"item",
+										"categories",
+										"tree"
+									],
+									"query": [
+										{
+											"key": "lang",
+											"value": "es-ES",
+											"description": "Required. Format: xx-XX. Example: es-ES"
+										},
+										{
+											"key": "brand",
+											"value": "roly",
+											"description": "Required. Values: roly, stamina, roly_stamina"
+										},
+										{
+											"key": "category",
+											"value": null,
+											"description": "Opcional. Inicio del árbol de id de categoría. Vacío para todo el árbol de categorías"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DEV_Categories/get_v1.0",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://devclientsws.gorfactory.es:2096/api/v1.0/item/categories/get?lang=es-ES&brand=roly",
+									"protocol": "https",
+									"host": [
+										"devclientsws",
+										"gorfactory",
+										"es"
+									],
+									"port": "2096",
+									"path": [
+										"api",
+										"v1.0",
+										"item",
+										"categories",
+										"get"
+									],
+									"query": [
+										{
+											"key": "lang",
+											"value": "es-ES",
+											"description": "Required. Format: xx-XX. Example: es-ES"
+										},
+										{
+											"key": "brand",
+											"value": "roly",
+											"description": "Required. Values: roly, stamina, roly_stamina"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Stock",
+					"item": [
+						{
+							"name": "DEV_GetUserStock_v1.0",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "whscode",
+											"value": "01",
+											"description": "Required. Warehouse Code",
+											"type": "default"
+										},
+										{
+											"key": "brand",
+											"value": "roly",
+											"description": "Required. Values: roly, stamina, roly_stamina",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "https://devclientsws.gorfactory.es:2096/api/v1.0/stock/getuserstock",
+									"protocol": "https",
+									"host": [
+										"devclientsws",
+										"gorfactory",
+										"es"
+									],
+									"port": "2096",
+									"path": [
+										"api",
+										"v1.0",
+										"stock",
+										"getuserstock"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DEV_PutConsignment_v1.0",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"date\": \"2023-04-26 11:25:00\",\r\n    \"stock\": [\r\n        {\r\n            \"warehouse\": \"01\",\r\n            \"sku\": \"CA64240101\",\r\n            \"onhand\": 0\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://devclientsws.gorfactory.es:2096/api/v1.0/stock/consignment",
+									"protocol": "https",
+									"host": [
+										"devclientsws",
+										"gorfactory",
+										"es"
+									],
+									"port": "2096",
+									"path": [
+										"api",
+										"v1.0",
+										"stock",
+										"consignment"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Order",
+					"item": [
+						{
+							"name": "DEV_Order_v1.0",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"deliveryaddress\":\r\n    {\r\n        \"addressname\": \"name of the address\",\r\n        \"address\": \"False Street, 123\",\r\n        \"city\": \"My City\",\r\n        \"postcode\": \"30100\",\r\n        \"state\": \"My State\",\r\n        \"country\": \"My Country\"\r\n    },\r\n    \"reference\": \"TEST_ref\",\r\n    \"comments\": \"TEST_Address\",\r\n    \"lines\": [\r\n        {\r\n            \"itemcode\": \"CA64240401\",\r\n            \"quantity\": \"20\",\r\n            \"warehouse\": \"01\"\r\n        },\r\n        {\r\n            \"itemcode\": \"CA64240402\",\r\n            \"quantity\": \"50\",\r\n            \"warehouse\": \"01\"\r\n        },\r\n        {\r\n            \"itemcode\": \"SU10700557\",\r\n            \"quantity\": \"20\",\r\n            \"warehouse\": \"01\"\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://devclientsws.gorfactory.es:2096/api/v1.0/order",
+									"protocol": "https",
+									"host": [
+										"devclientsws",
+										"gorfactory",
+										"es"
+									],
+									"port": "2096",
+									"path": [
+										"api",
+										"v1.0",
+										"order"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Version",
+					"item": [
+						{
+							"name": "DEV_Version_v1.0",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://devclientsws.gorfactory.es:2096/api/v1.0/version",
+									"protocol": "https",
+									"host": [
+										"devclientsws",
+										"gorfactory",
+										"es"
+									],
+									"port": "2096",
+									"path": [
+										"api",
+										"v1.0",
+										"version"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DEV_Version_v1.1",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://devclientsws.gorfactory.es:2096/api/v1.1/version",
+									"protocol": "https",
+									"host": [
+										"devclientsws",
+										"gorfactory",
+										"es"
+									],
+									"port": "2096",
+									"path": [
+										"api",
+										"v1.1",
+										"version"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DEV_Version_v2.0",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://devclientsws.gorfactory.es:2096/api/v2.0/version",
+									"protocol": "https",
+									"host": [
+										"devclientsws",
+										"gorfactory",
+										"es"
+									],
+									"port": "2096",
+									"path": [
+										"api",
+										"v2.0",
+										"version"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Doc",
+			"item": [
+				{
+					"name": "PRO_GetAll_v1.0",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "doctype",
+									"value": "",
+									"description": "Required. Values: invoice, order, deliverynote, payment, expiration, 347report, tracking",
+									"type": "default"
+								},
+								{
+									"key": "datefrom",
+									"value": "",
+									"description": "Optional. Format: yyyy-MM-dd",
+									"type": "default"
+								},
+								{
+									"key": "dateto",
+									"value": "",
+									"description": "Optional. Format: yyyy-MM-dd",
+									"type": "default"
+								},
+								{
+									"key": "docnum",
+									"value": "",
+									"description": "Optional",
+									"type": "default"
+								},
+								{
+									"key": "numatcard",
+									"value": "",
+									"description": "Optional. Client's reference",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://clientsws.gorfactory.es:2096/api/v1.0/doc/getall",
+							"protocol": "https",
+							"host": [
+								"clientsws",
+								"gorfactory",
+								"es"
+							],
+							"port": "2096",
+							"path": [
+								"api",
+								"v1.0",
+								"doc",
+								"getall"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PRO_Get_v1.0",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "doctype",
+									"value": "",
+									"description": "Required. Values: invoice, order, deliverynote, payment, expiration, 347report, tracking",
+									"type": "default"
+								},
+								{
+									"key": "docnum",
+									"value": "",
+									"description": "Required",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://clientsws.gorfactory.es:2096/api/v1.0/doc/get",
+							"protocol": "https",
+							"host": [
+								"clientsws",
+								"gorfactory",
+								"es"
+							],
+							"port": "2096",
+							"path": [
+								"api",
+								"v1.0",
+								"doc",
+								"get"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PRO_Print_v1.0",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "doctype",
+									"value": "",
+									"description": "Required. Values: invoice, order, deliverynote, payment, expiration, 347report, tracking",
+									"type": "default"
+								},
+								{
+									"key": "docnum",
+									"value": "",
+									"description": "Required",
+									"type": "default"
+								},
+								{
+									"key": "lang",
+									"value": "",
+									"description": "Required. Format: xx-XX. Example: es-ES, en-GB",
+									"type": "default"
+								},
+								{
+									"key": "format",
+									"value": "",
+									"description": "Required. Values: xml, json. Default: xml",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://clientsws.gorfactory.es:2096/api/v1.0/doc/print",
+							"protocol": "https",
+							"host": [
+								"clientsws",
+								"gorfactory",
+								"es"
+							],
+							"port": "2096",
+							"path": [
+								"api",
+								"v1.0",
+								"doc",
+								"print"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Item",
+			"item": [
+				{
+					"name": "PRO_Get_v1.0",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://clientsws.gorfactory.es:2096/api/v1.0/item/get?itemcode=CA65020260&lang=es-ES",
+							"protocol": "https",
+							"host": [
+								"clientsws",
+								"gorfactory",
+								"es"
+							],
+							"port": "2096",
+							"path": [
+								"api",
+								"v1.0",
+								"item",
+								"get"
+							],
+							"query": [
+								{
+									"key": "itemcode",
+									"value": "CA65020260",
+									"description": "Required. Item code. Example: CA64240402"
+								},
+								{
+									"key": "lang",
+									"value": "es-ES",
+									"description": "Required. Format: xx-XX. Example: es-ES"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PRO_GetCatalog_v1.0",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://clientsws.gorfactory.es:2096/api/v1.0/item/getcatalog?lang=es-ES&brand=roly",
+							"protocol": "https",
+							"host": [
+								"clientsws",
+								"gorfactory",
+								"es"
+							],
+							"port": "2096",
+							"path": [
+								"api",
+								"v1.0",
+								"item",
+								"getcatalog"
+							],
+							"query": [
+								{
+									"key": "lang",
+									"value": "es-ES",
+									"description": "Required. Format: xx-XX. Example: es-ES"
+								},
+								{
+									"key": "brand",
+									"value": "roly",
+									"description": "Required. Values: roly, stamina, roly_stamina"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PRO_Pricelist_v1.0",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "brand",
+								"value": "",
+								"type": "default"
+							},
+							{
+								"key": "category",
+								"value": "",
+								"type": "default"
+							},
+							{
+								"key": "model",
+								"value": "",
+								"type": "default"
+							},
+							{
+								"key": "color",
+								"value": "",
+								"type": "default"
+							},
+							{
+								"key": "size",
+								"value": "",
+								"type": "default"
+							},
+							{
+								"key": "includeoutlet",
+								"value": "",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "https://clientsws.gorfactory.es:2096/api/v1.0/item/pricelist?brand&category&model&color&size&includeoutlet",
+							"protocol": "https",
+							"host": [
+								"clientsws",
+								"gorfactory",
+								"es"
+							],
+							"port": "2096",
+							"path": [
+								"api",
+								"v1.0",
+								"item",
+								"pricelist"
+							],
+							"query": [
+								{
+									"key": "brand",
+									"value": null
+								},
+								{
+									"key": "category",
+									"value": null
+								},
+								{
+									"key": "model",
+									"value": null
+								},
+								{
+									"key": "color",
+									"value": null
+								},
+								{
+									"key": "size",
+									"value": null
+								},
+								{
+									"key": "includeoutlet",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PRO_Categories_v1.0",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://clientsws.gorfactory.es:2096/api/v1.0/item/categories?lang=es-ES&brand=roly",
+							"protocol": "https",
+							"host": [
+								"clientsws",
+								"gorfactory",
+								"es"
+							],
+							"port": "2096",
+							"path": [
+								"api",
+								"v1.0",
+								"item",
+								"categories"
+							],
+							"query": [
+								{
+									"key": "lang",
+									"value": "es-ES",
+									"description": "Required. Format: xx-XX. Example: es-ES"
+								},
+								{
+									"key": "brand",
+									"value": "roly",
+									"description": "Required. Values: roly, stamina, roly_stamina"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PRO_Categories/tree_v1.0",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://clientsws.gorfactory.es:2096/api/v1.0/item/categories/tree?lang=es-ES&brand=roly&category",
+							"protocol": "https",
+							"host": [
+								"clientsws",
+								"gorfactory",
+								"es"
+							],
+							"port": "2096",
+							"path": [
+								"api",
+								"v1.0",
+								"item",
+								"categories",
+								"tree"
+							],
+							"query": [
+								{
+									"key": "lang",
+									"value": "es-ES",
+									"description": "Required. Format: xx-XX. Example: es-ES"
+								},
+								{
+									"key": "brand",
+									"value": "roly",
+									"description": "Required. Values: roly, stamina, roly_stamina"
+								},
+								{
+									"key": "category",
+									"value": null,
+									"description": "Opcional. Inicio del árbol de id de categoría. Vacío para todo el árbol de categorías"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PRO_Categories/get_v1.0",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://clientsws.gorfactory.es:2096/api/v1.0/item/categories/get?lang=es-ES&brand=roly",
+							"protocol": "https",
+							"host": [
+								"clientsws",
+								"gorfactory",
+								"es"
+							],
+							"port": "2096",
+							"path": [
+								"api",
+								"v1.0",
+								"item",
+								"categories",
+								"get"
+							],
+							"query": [
+								{
+									"key": "lang",
+									"value": "es-ES",
+									"description": "Required. Format: xx-XX. Example: es-ES"
+								},
+								{
+									"key": "brand",
+									"value": "roly",
+									"description": "Required. Values: roly, stamina, roly_stamina"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Stock",
+			"item": [
+				{
+					"name": "PRO_GetUserStock_v1.0",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "whscode",
+									"value": "01",
+									"description": "Required. Warehouse Code",
+									"type": "default"
+								},
+								{
+									"key": "brand",
+									"value": "roly",
+									"description": "Required. Values: roly, stamina, roly_stamina",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://clientsws.gorfactory.es:2096/api/v1.0/stock/getuserstock",
+							"protocol": "https",
+							"host": [
+								"clientsws",
+								"gorfactory",
+								"es"
+							],
+							"port": "2096",
+							"path": [
+								"api",
+								"v1.0",
+								"stock",
+								"getuserstock"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PRO_PutConsignment_v1.0",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    // Fecha y hora asociada a los niveles de stock en consigna\r\n    // Date and time associated with consignment stock levels\r\n    \"date\": \"yyyy-MM-dd HH:mm:ss\",\r\n    \"stock\": [\r\n        {\r\n            // Código facilitado por el comercial \r\n            // Code provided by the sales representative\r\n            \"warehouse\": \"XX\", \r\n            \"sku\": \"sku, productCode\",\r\n            \"onhand\": 0 // Stock actual del cliente en consigna para el sku\r\n        },\r\n        {\r\n            \"warehouse\": \"XX\", // Código facilitado por el comercial\r\n            \"sku\": \"sku, productCode\",\r\n            // stock actual del cliente en consigna para el sku \r\n            // Customer's current consignment stock for the sku\r\n            \"onhand\": 0 \r\n        }\r\n    ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://clientsws.gorfactory.es:2096/api/v1.0/stock/consignment",
+							"protocol": "https",
+							"host": [
+								"clientsws",
+								"gorfactory",
+								"es"
+							],
+							"port": "2096",
+							"path": [
+								"api",
+								"v1.0",
+								"stock",
+								"consignment"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "PRO_Order_v1.0",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"deliveryaddress\":\r\n    {\r\n        \"addressname\": \"name of the address\",\r\n        \"address\": \"False Street, 123\",\r\n        \"city\": \"My City\",\r\n        \"postcode\": \"30100\",\r\n        \"state\": \"My State\",\r\n        \"country\": \"My Country\"\r\n    },\r\n    \"reference\": \"TEST_ref\",\r\n    \"comments\": \"TEST_Address\",\r\n    \"lines\": [\r\n        {\r\n            \"itemcode\": \"CA64240401\",\r\n            \"quantity\": \"20\",\r\n            \"warehouse\": \"01\"\r\n        },\r\n        {\r\n            \"itemcode\": \"CA64240402\",\r\n            \"quantity\": \"50\",\r\n            \"warehouse\": \"01\"\r\n        },\r\n        {\r\n            \"itemcode\": \"SU10700557\",\r\n            \"quantity\": \"20\",\r\n            \"warehouse\": \"01\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://clientsws.gorfactory.es:2096/api/v1.0/order",
+							"protocol": "https",
+							"host": [
+								"clientsws",
+								"gorfactory",
+								"es"
+							],
+							"port": "2096",
+							"path": [
+								"api",
+								"v1.0",
+								"order"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Version",
+			"item": [
+				{
+					"name": "PRO_Version_v1.0",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://clientsws.gorfactory.es:2096/api/v1.0/version",
+							"protocol": "https",
+							"host": [
+								"clientsws",
+								"gorfactory",
+								"es"
+							],
+							"port": "2096",
+							"path": [
+								"api",
+								"v1.0",
+								"version"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PRO_Version_v1.1",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://clientsws.gorfactory.es:2096/api/v1.1/version",
+							"protocol": "https",
+							"host": [
+								"clientsws",
+								"gorfactory",
+								"es"
+							],
+							"port": "2096",
+							"path": [
+								"api",
+								"v1.1",
+								"version"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PRO_Version_v2.0",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://clientsws.gorfactory.es:2096/api/v2.0/version",
+							"protocol": "https",
+							"host": [
+								"clientsws",
+								"gorfactory",
+								"es"
+							],
+							"port": "2096",
+							"path": [
+								"api",
+								"v2.0",
+								"version"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJNZENUbjU4a3ZEajA5WnNFTDIzRGhGM0ZpZ0l2UVpwcTN1dGs4cUttbzZlRjBFdXhrcHc1U25rZTRpemNkWmVrN3VlTjN4Zi9za3BTamQrTWdWVDN4bGNMQkFHbXUzdWNNQURLdWQ5TkxmOGNVRTVKaHhmZzdlRHpzTk84V1NrMzJHMTVWR3BiMFdlRUtsYk5OMjd0ek5Ma2FsS2tkLzIreXp0Y0dtNVV4az0iLCJjbGllbnRJZCI6InI3VnhxV0ppRnZvOUlBK29RRTJaQ21sa1BURGVjVmRGcDFndVVVT2hJT01TYlAxSENqQTlIR0pkaXVibmpwNjAyd2lPU1ZPWjV0dG1aRm0yMkxwS0s4Yi9sMlJKM1AwbXZtRnBvVjlhZFcvUkJsR0pENEdWVkc1MmNDbDFIRUJETTJiTm5xSFFSbWRSZWtmRllsdnpUUzh4K2pqNEZUaUlFKzE1VnpVOXpuMD0iLCJ1c2VyTG9naW4iOiJGQzVXcUZUWktrb0dZV0R4UFY0Qkd6UTRDOG13YmN0eVdNYlZVaENtRUNqZ0dxd3dWRGZ4Y1pUbW5UWktmZWxPQjlyUmYwMUpGODcrdEVOMVRJQXhJNm5yZ1h3MDJsbTVmRGttSXAvdDhBZXp6ZUlCWXhpMjc1M3hkVldhWkhPb0dDMEtRblFLSWlqTWNBVXlYeEhCYllqWnByam8wU1pleHo1RjhxU1F4OEU9IiwicGFzc3dvcmQiOiJaVnI5Q1pXcXB1Zk9FaGw4Vi9VdWdmR0sxK3ZGU0g0RzRKQVdhNDlObXpMK1dKblcwaGszRnRudlczd0t0QldaUkM0RiswcVU0ZE5iUjNTTC9WUnJOZG5nZytURStMODJKR3BlaFVQSXNRN1RZRzl0NWE0YklQcGczZ2ZQaUtmNDJDZkwwcVR6d1RtMmgzdnYrNk1xeVI5akJyVi9aTzV0a2xEWUswaTR0ZlE9IiwiR1VJRCI6IjIxNDAzMmNhLTgwYzEtNDg4Yy1hNDQ1LTA3ZTdiNzQ5YTI3YyIsImV4cCI6MTY4MjU5NjI3NywiaXNzIjoiJDNDUkVUX0szWV9HMFJGNENUMFJZIyMiLCJhdWQiOiJnb3JmYWN0b3J5In0.AgqS5WWIRZIumL1ucfSSpkU0PIBv8Dh0VL0_36rwzIc",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

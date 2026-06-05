@@ -22,8 +22,9 @@ model Product {
   updatedAt DateTime @updatedAt
 
   // Relations
-  cartItems CartItem[]
-  orderItems OrderItem[]
+  cartItems    CartItem[]
+  orderItems   OrderItem[]
+  techniques   ProductTechnique[]
 
   @@index([createdAt])
 }
@@ -71,6 +72,7 @@ model Customer {
 
   // Relations
   orders    Order[]
+  addresses CustomerAddress[]
 
   @@index([email])
 }
@@ -120,19 +122,53 @@ model OrderItem {
 
 // Production engine models
 model ProductionOrder {
-  id           String   @id @default(cuid())
-  externalId   String?  @db.VarChar(255) // e.g., quote or order reference
-  customerId   String?  @db.VarChar(255)
-  status       String   @default("pending")
-  priority     Int      @default(0)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id              String    @id @default(cuid())
+  quoteId         String?   // referencia a la cotización original
+  externalId      String?   @db.VarChar(255) // e.g., quote or order reference
+  customerId      String?   @db.VarChar(255)
+  status          String    @default("pending_review") // pending_review, approved, in_production, completed, shipped
+  priority        Int       @default(0)
+  // Revisión técnica
+  technicianNotes String?   @db.Text
+  reviewedBy      String?   @db.VarChar(255)
+  reviewedAt      DateTime?
+  // Estimación
+  estimatedDeliveryDate DateTime?
+  actualCost      Float?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-  assets       DesignAsset[]
-  tickets      JobTicket[]
+  assets          DesignAsset[]
+  tickets         JobTicket[]
+  lines           ProductionOrderLine[]
+  supplierOrders  SupplierOrder[]
 
   @@index([externalId])
   @@index([status])
+  @@index([quoteId])
+}
+
+// Líneas de producción (qué se fabrica/pide)
+model ProductionOrderLine {
+  id                 String   @id @default(cuid())
+  productionOrderId  String
+  source             String   @db.VarChar(20)  // 'roly', 'stamina', 'own_stock'
+  productSku         String   @db.VarChar(255)
+  productName        String?  @db.VarChar(255)
+  quantity           Int
+  techniqueId        String?  // técnica de estampación aplicada
+  unitPrice          Float?
+  status             String   @default("pending") // pending, ordered, in_production, completed
+  notes              String?  @db.Text
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  productionOrder ProductionOrder  @relation(fields: [productionOrderId], references: [id], onDelete: Cascade)
+  technique       PrintingTechnique? @relation(fields: [techniqueId], references: [id])
+
+  @@index([productionOrderId])
+  @@index([source])
+  @@index([techniqueId])
 }
 
 model DesignAsset {
@@ -191,14 +227,111 @@ model Quote {
   companyName  String   @db.VarChar(255)
   quantity     String   @db.Text // e.g., "50 camisetas", "1000 unidades"
   message      String?  @db.Text // Optional message from client
-  status       String   @default("received") // received, reviewed, quoted, rejected
+  status       String   @default("received") // received, reviewed, quoted, rejected, approved
   responded    Boolean  @default(false)
   respondedAt  DateTime?
   responseNote String?  @db.Text
+  // Técnicas de estampación seleccionadas para esta cotización
+  techniques   String?  @db.Text // JSON array: ["SERIGRAFIA", "BORDADO", ...]
+  // Referencia a la orden de producción generada
+  productionOrderId String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   @@index([email])
   @@index([status])
   @@index([createdAt])
+}
+
+// ============================================================
+// Printing / Production models
+// ============================================================
+
+// Técnicas de estampación disponibles
+model PrintingTechnique {
+  id          String   @id @default(cuid())
+  name        String   @db.VarChar(100)
+  code        String   @db.VarChar(50) @unique // SERIGRAFIA, BORDADO, DTF, VINILO, SUBLIMACION
+  description String?  @db.Text
+  minQuantity Int      @default(1)    // mínimo de unidades para esta técnica
+  maxColors   Int?                      // máx colores (serigrafía)
+  leadTimeDays Int     @default(5)    // días de producción estimados
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  productTechniques ProductTechnique[]
+  productionLines   ProductionOrderLine[]
+
+  @@index([code])
+}
+
+// Relación producto-técnica (qué técnicas aplican a cada producto)
+model ProductTechnique {
+  productId   String
+  techniqueId String
+  isDefault   Boolean @default(false)
+  notes       String? @db.Text
+  createdAt   DateTime @default(now())
+
+  product    Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
+  technique  PrintingTechnique @relation(fields: [techniqueId], references: [id], onDelete: Cascade)
+
+  @@id([productId, techniqueId])
+}
+
+// Direcciones de envío del cliente
+model CustomerAddress {
+  id         String   @id @default(cuid())
+  customerId String
+  label      String   @db.VarChar(100) // "Oficina", "Almacén", etc.
+  name       String   @db.VarChar(255)
+  address    String   @db.Text
+  city       String   @db.VarChar(100)
+  postcode   String   @db.VarChar(20)
+  state      String?  @db.VarChar(100)
+  country    String   @db.VarChar(100) @default("España")
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+}
+
+// Pedidos a proveedores externos (Roly, Stamina)
+model SupplierOrder {
+  id            String   @id @default(cuid())
+  supplier      String   @db.VarChar(50)  // 'roly' | 'stamina'
+  productionOrderId String?
+  status        String   @default("pending") // pending, placed, confirmed, shipped, received
+  supplierRef   String?  @db.VarChar(255) // nº pedido en el proveedor
+  totalAmount   Float?
+  notes         String?  @db.Text
+  placedAt      DateTime?
+  receivedAt    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  productionOrder ProductionOrder? @relation(fields: [productionOrderId], references: [id])
+  lines SupplierOrderLine[]
+
+  @@index([supplier])
+  @@index([productionOrderId])
+  @@index([status])
+}
+
+model SupplierOrderLine {
+  id               String   @id @default(cuid())
+  supplierOrderId  String
+  productSku       String   @db.VarChar(255) // SKU del artículo en el proveedor
+  productName      String?  @db.VarChar(255)
+  quantity         Int
+  unitPrice        Float?
+  createdAt        DateTime @default(now())
+
+  supplierOrder SupplierOrder @relation(fields: [supplierOrderId], references: [id], onDelete: Cascade)
+
+  @@index([supplierOrderId])
 }

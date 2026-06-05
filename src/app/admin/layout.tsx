@@ -2,8 +2,23 @@
 
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { AdminAuthGate } from './auth-gate';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const isLoginPage = pathname === '/admin/login';
+
+  // Protegemos toda la sección admin con el AuthGate
+  return (
+    <AdminAuthGate>
+      <AdminLayoutInner>{children}</AdminLayoutInner>
+    </AdminAuthGate>
+  );
+}
+
+function AdminLayoutInner({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
