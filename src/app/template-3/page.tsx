@@ -8,6 +8,7 @@ const THREE_LOADER_SRC = '/three-loader.js';
 const THREE_LOADER_ID = 'camiart-three-loader';
 
 type PlacementZone = 'chest-large' | 'back-large' | 'chest-small-left';
+type ShirtColorId = 'white' | 'red' | 'black';
 
 type UploadedDesign = {
   id: string;
@@ -68,6 +69,12 @@ const zoneProjectionNormal: Record<PlacementZone, [number, number, number]> = {
   'back-large': [0, 0, -1],
   'chest-small-left': [0, 0, 1],
 };
+
+const shirtColors: Array<{ id: ShirtColorId; label: string; hex: string; border: string }> = [
+  { id: 'white', label: 'Blanco', hex: '#ffffff', border: 'border-white/70' },
+  { id: 'red', label: 'Rojo', hex: '#c81f25', border: 'border-red-300/70' },
+  { id: 'black', label: 'Negro', hex: '#0b0b0d', border: 'border-white/25' },
+];
 
 const disposeMaterial = (material: any) => {
   if (!material) return;
@@ -158,6 +165,22 @@ const readFileAsDataUrl = (file: File) => {
   });
 };
 
+const applyShirtColor = (runtime: RuntimeState | null, colorHex: string) => {
+  if (!runtime?.targetMesh) return;
+
+  const applyMaterialColor = (material: any) => {
+    if (!material?.color) return;
+    material.color.set(colorHex);
+    material.needsUpdate = true;
+  };
+
+  if (Array.isArray(runtime.targetMesh.material)) {
+    runtime.targetMesh.material.forEach((material: any) => applyMaterialColor(material));
+  } else {
+    applyMaterialColor(runtime.targetMesh.material);
+  }
+};
+
 const Template3Page = () => {
   const canvasHostRef = useRef<HTMLDivElement>(null);
   const runtimeRef = useRef<RuntimeState | null>(null);
@@ -173,6 +196,7 @@ const Template3Page = () => {
   const [status, setStatus] = useState('Cargando Three.js...');
   const [isReady, setIsReady] = useState(false);
   const [selectedZone, setSelectedZone] = useState<PlacementZone>('chest-large');
+  const [shirtColor, setShirtColor] = useState<ShirtColorId>('white');
   const [uploadedDesign, setUploadedDesign] = useState<UploadedDesign | null>(null);
   const [fixedDesigns, setFixedDesigns] = useState<FixedDesign[]>([]);
   const [isReviewMode, setIsReviewMode] = useState(false);
@@ -332,6 +356,15 @@ const Template3Page = () => {
     setControlsEnabled(false);
     focusZone(selectedZoneRef.current);
     setStatus('Diseños eliminados. Empieza de nuevo seleccionando zona e imagen.');
+  };
+
+  const selectShirtColor = (colorId: ShirtColorId) => {
+    const color = shirtColors.find((item) => item.id === colorId);
+    if (!color) return;
+
+    setShirtColor(colorId);
+    applyShirtColor(runtimeRef.current, color.hex);
+    setStatus(`Camiseta en color ${color.label.toLowerCase()}.`);
   };
 
   useEffect(() => {
@@ -563,6 +596,7 @@ const Template3Page = () => {
       };
 
       runtimeRef.current = runtime;
+      applyShirtColor(runtime, shirtColors.find((color) => color.id === shirtColor)?.hex ?? '#ffffff');
       currentTextureRef.current = fallbackTexture;
       currentDesignNameRef.current = 'Logo CamiArt';
       setUploadedDesign({
@@ -670,7 +704,32 @@ const Template3Page = () => {
           </p>
 
           <div className="mt-6 grid grid-cols-1 gap-3 rounded-2xl border border-white/10 bg-[#0c0e11] p-4">
-            <p className="text-xs uppercase tracking-[0.16em] text-orange-200">1. Área de estampado</p>
+            <p className="text-xs uppercase tracking-[0.16em] text-orange-200">1. Color de camiseta</p>
+            <div className="flex gap-3">
+              {shirtColors.map((color) => (
+                <button
+                  key={color.id}
+                  type="button"
+                  title={color.label}
+                  onClick={() => selectShirtColor(color.id)}
+                  className={`h-9 w-9 rounded-full border-2 transition-all ${
+                    shirtColor === color.id
+                      ? 'scale-110 border-orange-400 ring-2 ring-orange-400/40'
+                      : `${color.border} hover:scale-105`
+                  }`}
+                  style={{ backgroundColor: color.hex }}
+                  aria-label={color.label}
+                  aria-pressed={shirtColor === color.id}
+                />
+              ))}
+              <span className="self-center text-xs text-white/50">
+                {shirtColors.find((c) => c.id === shirtColor)?.label}
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-4 grid grid-cols-1 gap-3 rounded-2xl border border-white/10 bg-[#0c0e11] p-4">
+            <p className="text-xs uppercase tracking-[0.16em] text-orange-200">2. Área de estampado</p>
             <div className="grid grid-cols-1 gap-2">
               {(['chest-large', 'back-large', 'chest-small-left'] as PlacementZone[]).map((zone) => (
                 <button
@@ -691,7 +750,7 @@ const Template3Page = () => {
 
           <div className="mt-4 grid grid-cols-1 gap-4 rounded-2xl border border-white/10 bg-[#0c0e11] p-4">
             <label className="grid gap-3 text-xs uppercase tracking-[0.16em] text-orange-200">
-              2. Imagen
+              3. Imagen
               <input
                 type="file"
                 accept="image/png,image/jpeg,image/webp,image/svg+xml"
@@ -716,7 +775,7 @@ const Template3Page = () => {
           </div>
 
           <div className="mt-4 grid grid-cols-1 gap-4 rounded-2xl border border-white/10 bg-[#0c0e11] p-4">
-            <p className="text-xs uppercase tracking-[0.16em] text-orange-200">3. Ajuste y fijado</p>
+            <p className="text-xs uppercase tracking-[0.16em] text-orange-200">4. Ajuste y fijado</p>
             <label className="text-xs uppercase tracking-[0.16em] text-orange-200">
               Tamaño
               <input
