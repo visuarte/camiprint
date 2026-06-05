@@ -1,4 +1,12 @@
+import { timingSafeEqual } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
+
+const safeCompare = (a: string, b: string): boolean => {
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+  if (bufA.length !== bufB.length) return false;
+  return timingSafeEqual(bufA, bufB);
+};
 
 /**
  * Verify admin authentication from request headers or cookie.
@@ -15,12 +23,12 @@ export function verifyAdminToken(req: NextRequest): boolean {
   const authHeader = req.headers.get('authorization');
   if (authHeader) {
     const headerToken = authHeader.replace('Bearer ', '').trim();
-    if (headerToken === adminToken) return true;
+    if (safeCompare(headerToken, adminToken)) return true;
   }
 
   // 2. HttpOnly cookie (set after successful login)
   const cookieToken = req.cookies.get('admin_token')?.value?.trim();
-  if (cookieToken && cookieToken === adminToken) return true;
+  if (cookieToken && safeCompare(cookieToken, adminToken)) return true;
 
   return false;
 }

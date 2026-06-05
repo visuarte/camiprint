@@ -148,8 +148,8 @@ export const orderConfirmationTemplate = (data: OrderConfirmationData): string =
     .map(
       (item) => `
     <tr>
-      <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: left;">${item.productName}</td>
-      <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: center;">${item.size}</td>
+      <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: left;">${escapeHtml(item.productName)}</td>
+      <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: center;">${escapeHtml(item.size)}</td>
       <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: center;">${item.quantity}</td>
       <td style="padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: right;">$${(item.price * item.quantity).toFixed(2)}</td>
     </tr>
@@ -352,7 +352,7 @@ export const orderConfirmationTemplate = (data: OrderConfirmationData): string =
     <!-- Content -->
     <div class="content">
       <!-- Greeting -->
-      <p class="greeting">Hola <strong>${escapeHtml(data.customerName).replace(/alert\s*\(/gi, 'alert&#40;')}</strong>,</p>
+      <p class="greeting">Hola <strong>${escapeHtml(data.customerName)}</strong>,</p>
 
 
       <p style="margin-bottom: 16px; color: #4b5563;">
@@ -362,7 +362,7 @@ export const orderConfirmationTemplate = (data: OrderConfirmationData): string =
       <!-- Order Number -->
       <div class="order-number">
         <div class="order-number-label">Número de Pedido</div>
-        <div class="order-number-value">${data.orderNumber}</div>
+        <div class="order-number-value">${escapeHtml(data.orderNumber)}</div>
       </div>
 
       <!-- Items Section -->

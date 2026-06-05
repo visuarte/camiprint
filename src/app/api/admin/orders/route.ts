@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import { getPlatformConfig } from '@/server/platform/config';
 import { verifyAdminToken, unauthorized, serverError, successResponse } from '../auth-utils';
+
+interface OrderListItem {
+  id: string;
+  customerId: string | null;
+  email: string;
+  phone: string | null;
+  totalAmount: number;
+  status: string;
+  createdAt: Date;
+}
 
 export async function GET(req: NextRequest) {
   // Verify admin token
@@ -20,7 +31,7 @@ export async function GET(req: NextRequest) {
     const endDate = searchParams.get('endDate');
 
     // Build where clause
-    const where: any = {};
+    const where: Prisma.OrderWhereInput = {};
 
     if (status) {
       where.status = status;
@@ -44,7 +55,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Query Prisma whenever a DB URL is configured.
-    let orders: Array<Record<string, any>> = [];
+    let orders: OrderListItem[] = [];
     let total = 0;
     if (platformConfig.databaseUrl) {
       const { prisma } = await import('@/server/db');

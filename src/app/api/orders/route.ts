@@ -16,9 +16,17 @@ export async function POST(req: NextRequest) {
 
   let rawBody: unknown;
   try {
-    rawBody = await req.json();
-  } catch {
-    return jsonError(422, requestId, 'INVALID_JSON', 'El body no es JSON válido.');
+    const clone = req.clone();
+    const text = await clone.text();
+    if (text.length > 50_000) {
+      return jsonError(413, requestId, 'PAYLOAD_TOO_LARGE', 'El payload supera el límite permitido.');
+    }
+    rawBody = JSON.parse(text);
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      return jsonError(422, requestId, 'INVALID_JSON', 'El body no es JSON válido.');
+    }
+    return jsonError(500, requestId, 'INTERNAL_ERROR', 'Error al leer el body.');
   }
 
   const parsed = CreateOrderSchema.safeParse(rawBody);

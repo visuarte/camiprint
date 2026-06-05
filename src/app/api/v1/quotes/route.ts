@@ -22,9 +22,16 @@ import { getQuotesServiceFactory } from './_service-factory';
 
 const MAX_BODY_SIZE_BYTES = 32_000;
 
+const getByteLength = (str: string): number => {
+  if (typeof TextEncoder !== 'undefined') {
+    return new TextEncoder().encode(str).length;
+  }
+  return Buffer.byteLength(str, 'utf-8');
+};
+
 const parseBody = async (request: Request): Promise<unknown> => {
   const rawText = await request.text();
-  const bodySizeBytes = new TextEncoder().encode(rawText).length;
+  const bodySizeBytes = getByteLength(rawText);
 
   if (bodySizeBytes > MAX_BODY_SIZE_BYTES) {
     const error = new Error('PAYLOAD_TOO_LARGE');

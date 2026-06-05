@@ -55,7 +55,5 @@ export async function GET(
   } catch (error) {
     const errorResponse = createErrorResponse(error);
     return NextResponse.json(errorResponse.body, { status: errorResponse.status });
-  } finally {
-    await prisma.$disconnect();
   }
 }

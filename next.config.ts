@@ -3,10 +3,9 @@ import type { NextConfig } from "next";
 const securityHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'X-Frame-Options', value: 'DENY' },
-  { key: 'X-XSS-Protection', value: '1; mode=block' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
-  { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://unpkg.com https://va.vercel-scripts.com https://cdn.jsdelivr.net; script-src-elem 'self' 'unsafe-inline' https://vercel.live https://unpkg.com https://va.vercel-scripts.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://vercel.live; connect-src 'self' https://api.stripe.com https://js.stripe.com https://vercel.live https://unpkg.com https://cdn.jsdelivr.net" },
+  { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self' https://vercel.live https://va.vercel-scripts.com; script-src-elem 'self' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://vercel.live; connect-src 'self' https://api.stripe.com https://js.stripe.com https://vercel.live" },
 ];
 
 const nextConfig: NextConfig = {
@@ -25,12 +24,8 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      {
-        source: '/',
-        destination: '/template-2',
-        permanent: false,
-      },
       // Redirecciones de dominio camiprint.com → camiart.com (301 permanentes para SEO)
+      // Deben ir ANTES de / → /template-2 para que / en camiprint.com redirija a camiart.com
       {
         source: '/:path*',
         has: [
@@ -52,6 +47,11 @@ const nextConfig: NextConfig = {
         ],
         destination: 'https://camiart.com/:path*',
         permanent: true,
+      },
+      {
+        source: '/',
+        destination: '/template-2',
+        permanent: false,
       },
       // Rutas legacy → actuales (permanentes, se ejecutan en el borde)
       {

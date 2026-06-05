@@ -27,7 +27,7 @@ interface SendResult {
 }
 
 export class EmailService {
-  private resend: Resend;
+  private resend?: Resend;
   private isConfigured: boolean = false;
   private fromEmail: string;
   private fromName: string;
@@ -40,12 +40,9 @@ export class EmailService {
     if (apiKey) {
       this.resend = new Resend(apiKey);
       this.isConfigured = true;
-      console.log('[EmailService] Resend configured successfully');
     } else {
       console.warn('[EmailService] RESEND_API_KEY not configured. Using console logging for development.');
       this.isConfigured = false;
-      // Create a dummy Resend instance to avoid runtime errors
-      this.resend = new Resend('dummy_key_for_dev');
     }
   }
 
@@ -63,21 +60,17 @@ export class EmailService {
       console.log(`Subject: ${payload.subject}`);
       console.log(`From: ${this.fromName} <${this.fromEmail}>`);
       console.log(`Reply-To: ${payload.replyTo || brandConfig.supportEmail}`);
-      console.log(`HTML Preview: ${payload.html.substring(0, 200)}...`);
       return { success: true, id: `dev-${Date.now()}` };
     }
 
     try {
-      const data = await this.resend.emails.send({
+      const data = await this.resend!.emails.send({
         from: `${this.fromName} <${this.fromEmail}>`,
         to: payload.to,
         subject: payload.subject,
         html: payload.html,
         replyTo: payload.replyTo || brandConfig.supportEmail,
       });
-
-      // Log full response for debugging
-      console.log('[EmailService] Resend response:', data);
 
       // Resend SDK returns { data: { id } } on success, { error: ... } on failure
       const resendData = data as Record<string, unknown>;
@@ -94,7 +87,7 @@ export class EmailService {
 
       if (!msgId) {
         const warn = '[EmailService] No message id returned by Resend, attempting SMTP fallback if configured';
-        console.warn(warn, { to: payload.to, subject: payload.subject, data });
+        console.warn(warn, { to: payload.to, subject: payload.subject });
 
         // Attempt SMTP fallback if SMTP is configured or RESEND_API_KEY exists
         const smtpResult: SendResult = await this.sendViaSmtp(payload).catch((e): SendResult => ({ success: false, error: String(e) }));
@@ -170,8 +163,6 @@ export class EmailService {
         html: payload.html,
         replyTo: payload.replyTo || brandConfig.supportEmail,
       });
-
-      console.log('[EmailService] nodemailer sendMail info:', info);
 
       const messageId = info?.messageId || (info?.response && String(info.response));
       return { success: true, id: messageId };

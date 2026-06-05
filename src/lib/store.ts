@@ -66,16 +66,16 @@ export const useCart = create<CartStore>()(
       },
       
       updateQuantity: (itemId, quantity) => {
-        if (quantity <= 0) {
-          get().removeFromCart(itemId);
-          return;
-        }
-        
-        set((state) => ({
-          items: state.items.map((item) =>
-            item.id === itemId ? { ...item, quantity } : item
-          ),
-        }));
+        set((state) => {
+          if (quantity <= 0) {
+            return { items: state.items.filter((item) => item.id !== itemId) };
+          }
+          return {
+            items: state.items.map((item) =>
+              item.id === itemId ? { ...item, quantity } : item
+            ),
+          };
+        });
       },
       
       clearCart: () => {

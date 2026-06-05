@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { adminFetch } from './auth-client';
 
@@ -77,7 +77,7 @@ export default function AdminDashboard() {
   const [error, setError] = useState('');
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const fetchMetrics = async (days: number) => {
+  const fetchMetrics = useCallback(async (days: number) => {
     try {
       const response = await adminFetch(`/api/admin/metrics?days=${days}`);
       if (response.status === 401) {
@@ -93,9 +93,9 @@ export default function AdminDashboard() {
       setError('Error al cargar métricas');
       console.error(err);
     }
-  };
+  }, []);
 
-  const fetchQuotes = async () => {
+  const fetchQuotes = useCallback(async () => {
     try {
       setQuotesLoading(true);
       const response = await adminFetch('/api/admin/quotes');
@@ -107,7 +107,7 @@ export default function AdminDashboard() {
     } finally {
       setQuotesLoading(false);
     }
-  };
+  }, []);
 
   // Load settings first, then kick off metrics + auto-refresh
   useEffect(() => {
@@ -133,8 +133,7 @@ export default function AdminDashboard() {
     init();
     fetchQuotes();
     return () => { cancelled = true; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchMetrics, fetchQuotes]);
 
   // Auto-refresh whenever refreshIntervalSeconds changes
   useEffect(() => {
@@ -146,8 +145,7 @@ export default function AdminDashboard() {
       );
     }
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settings.refreshIntervalSeconds, settings.metricsWindowDays]);
+  }, [settings.refreshIntervalSeconds, settings.metricsWindowDays, fetchMetrics]);
 
   if (isLoading) {
     return (

@@ -296,17 +296,13 @@ export class QuotesService {
       };
     }
 
-    logOperationalEvent('error', 'Quote accepted without persistence or email delivery', {
+    logOperationalEvent('error', 'Quote failed — no persistence and no email delivery', {
       quoteId: fallbackQuoteId,
       failedEmailCount,
       persistenceError: persistenceError instanceof Error ? persistenceError.message : 'unknown',
     });
 
-    return {
-      id: fallbackQuoteId,
-      status: 'received',
-      createdAt,
-    };
+    throw new Error('No se pudo procesar la solicitud. Intenta de nuevo más tarde.');
   }
 }
 
