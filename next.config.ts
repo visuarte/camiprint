@@ -1,11 +1,25 @@
 import type { NextConfig } from "next";
 
+const isDev = process.env.NODE_ENV !== 'production';
+
+const cspBase = "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://vercel.live";
+
+// En desarrollo: permitimos CDN para Three.js + unsafe-eval para React Refresh
+// En producción: también CDN para three-loader.js (migrando a npm)
+const cspScript = isDev
+  ? "script-src 'self' 'unsafe-eval' https://vercel.live https://va.vercel-scripts.com https://cdn.jsdelivr.net; script-src-elem 'self' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com https://cdn.jsdelivr.net"
+  : "script-src 'self' https://vercel.live https://va.vercel-scripts.com https://cdn.jsdelivr.net; script-src-elem 'self' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com https://cdn.jsdelivr.net";
+
+const cspConnect = isDev
+  ? "connect-src 'self' https://api.stripe.com https://js.stripe.com https://vercel.live https://cdn.jsdelivr.net"
+  : "connect-src 'self' https://api.stripe.com https://js.stripe.com https://vercel.live https://cdn.jsdelivr.net";
+
 const securityHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'X-Frame-Options', value: 'DENY' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
-  { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self' https://vercel.live https://va.vercel-scripts.com; script-src-elem 'self' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://vercel.live; connect-src 'self' https://api.stripe.com https://js.stripe.com https://vercel.live" },
+  { key: 'Content-Security-Policy', value: `${cspBase}; ${cspScript}; ${cspConnect}` },
 ];
 
 const nextConfig: NextConfig = {

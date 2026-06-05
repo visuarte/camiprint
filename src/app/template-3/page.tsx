@@ -1,11 +1,23 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { ensureThreeModules } from '@/lib/three-modules';
+
+// ─── Detección de entorno (cliente) ────────────────────────────────────
+// Nota: se inicializa como 'server' porque SSR no tiene window.
+// El useEffect en el componente la corrige al montar en cliente.
+function detectEnv(): { label: string; css: string; isLocal: boolean } {
+  if (typeof window === 'undefined') return { label: '☁️ Server', css: 'border-sky-500/40 text-sky-300', isLocal: false };
+  const local = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.includes('.local');
+  return {
+    label: local ? '🖥️ Local' : '☁️ Server',
+    css: local ? 'border-lime-500/40 text-lime-300' : 'border-sky-500/40 text-sky-300',
+    isLocal: local,
+  };
+}
 
 const MODEL_SRC = '/models/camiseta-camiart.glb';
 const FALLBACK_LOGO_SRC = '/textures/camiart-logo.png';
-const THREE_LOADER_SRC = '/three-loader.js';
-const THREE_LOADER_ID = 'camiart-three-loader';
 
 type PlacementZone = 'chest-large' | 'back-large' | 'chest-small-left';
 type ShirtColorId = 'white' | 'red' | 'black';
@@ -18,6 +30,7 @@ type UploadedDesign = {
 
 type DecalDraft = {
   mesh: any;
+  shadowMesh?: any;
   point: any;
   normal: any;
   texture: any;
@@ -41,6 +54,7 @@ type RuntimeState = {
   raycaster: any;
   mouse: any;
   targetMesh: any;
+  allMeshes: any[];
   modelRoot: any;
   draft: DecalDraft | null;
   fixedDecals: DecalDraft[];
@@ -53,21 +67,35 @@ const zoneLabels: Record<PlacementZone, string> = {
 };
 
 const zoneCamera: Record<PlacementZone, [number, number, number]> = {
-  'chest-large': [0, 1.05, 5.8],
-  'back-large': [0, 1.05, -5.8],
-  'chest-small-left': [0, 1.05, 5.8],
+  'chest-large': [0, 1.05, -5.8],
+  'back-large': [0, 1.05, 5.8],
+  'chest-small-left': [0, 1.05, -5.8],
 };
 
 const zoneRay: Record<PlacementZone, [number, number]> = {
   'chest-large': [0, 0.15],
-  'back-large': [0, 0.1],
+  'back-large': [0, 0.0],
   'chest-small-left': [-0.34, 0.12],
 };
 
 const zoneProjectionNormal: Record<PlacementZone, [number, number, number]> = {
-  'chest-large': [0, 0, 1],
-  'back-large': [0, 0, -1],
-  'chest-small-left': [0, 0, 1],
+  'chest-large': [0, 0, -1],
+  'back-large': [0, 0, 1],
+  'chest-small-left': [0, 0, -1],
+};
+
+/** Proporción del decal respecto al ancho de la zona (0-1) */
+const zoneProportion: Record<PlacementZone, number> = {
+  'chest-large': 0.28,
+  'back-large': 0.28,
+  'chest-small-left': 0.18,
+};
+
+/** Rango del slider de tamaño por zona [min, max] */
+const zoneSizeRange: Record<PlacementZone, [number, number]> = {
+  'chest-large': [0.08, 0.60],
+  'back-large': [0.08, 0.60],
+  'chest-small-left': [0.06, 0.42],
 };
 
 const shirtColors: Array<{ id: ShirtColorId; label: string; hex: string; border: string }> = [
@@ -84,10 +112,11 @@ const disposeMaterial = (material: any) => {
   }
 
   if (material.map) material.map.dispose();
+  if (material.alphaMap) material.alphaMap.dispose();
   if (material.normalMap) material.normalMap.dispose();
   if (material.roughnessMap) material.roughnessMap.dispose();
   if (material.metalnessMap) material.metalnessMap.dispose();
-  if (material.alphaMap) material.alphaMap.dispose();
+  if (material.envMap) material.envMap.dispose();
   material.dispose();
 };
 
@@ -96,7 +125,93 @@ const disposeDecal = (runtime: RuntimeState, decal: DecalDraft | null) => {
   runtime.scene.remove(decal.mesh);
   decal.mesh.geometry.dispose();
   disposeMaterial(decal.mesh.material);
+  // Limpiar sombra si existe
+  if (decal.shadowMesh) {
+    runtime.scene.remove(decal.shadowMesh);
+    decal.shadowMesh.geometry.dispose();
+    decal.shadowMesh.material.dispose();
+  }
 };
+
+/** Genera una textura de máscara circular con bordes súper suaves (feathering).
+ *  Transición gradual: 70% sólido → 30% fundido para integración natural con la tela. */
+function createFeatherMask(THREE: any, size: number): any {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d')!;
+
+  const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+  gradient.addColorStop(0.0, 'rgba(255,255,255,1)');
+  gradient.addColorStop(0.55, 'rgba(255,255,255,1)');
+  gradient.addColorStop(0.72, 'rgba(255,255,255,0.92)');
+  gradient.addColorStop(0.85, 'rgba(255,255,255,0.50)');
+  gradient.addColorStop(0.95, 'rgba(255,255,255,0.15)');
+  gradient.addColorStop(1.0, 'rgba(255,255,255,0)');
+
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, size, size);
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.needsUpdate = true;
+  return tex;
+}
+
+/** Genera un mapa de normales procedural de tela (lienzo/canvas).
+ *  Crea micro-arrugas aleatorias para simular textil real. */
+function createFabricNormalMap(THREE: any, size: number): any {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d')!;
+
+  // Ruido base
+  const imageData = ctx.createImageData(size, size);
+  const data = imageData.data;
+  for (let i = 0; i < data.length; i += 4) {
+    const x = (i / 4) % size;
+    const y = Math.floor((i / 4) / size);
+    // Ruido Perlin simplificado con ondas
+    const n1 = Math.sin(x * 0.15) * Math.cos(y * 0.12) * 20;
+    const n2 = Math.sin(x * 0.3 + y * 0.25) * Math.cos(y * 0.2 - x * 0.18) * 12;
+    const n3 = Math.random() * 8;
+    const val = 128 + n1 + n2 + n3;
+    data[i] = val;     // R → normal X
+    data[i + 1] = val; // G → normal Y
+    data[i + 2] = 255; // B → normal Z
+    data[i + 3] = 255; // A
+  }
+  ctx.putImageData(imageData, 0, 0);
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.needsUpdate = true;
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(4, 4);
+  return tex;
+}
+
+/** Genera un environment map simple (gradiente circular) para reflejos suaves. */
+function createSoftEnvMap(THREE: any): any {
+  const size = 64;
+  const data = new Uint8Array(size * size * 4);
+  const cx = size / 2, cy = size / 2;
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const dx = (x - cx) / cx, dy = (y - cy) / cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const i = (y * size + x) * 4;
+      const brightness = Math.max(0, 1 - dist * 0.7) * 255;
+      data[i] = brightness;
+      data[i + 1] = brightness * 0.9;
+      data[i + 2] = brightness * 0.8;
+      data[i + 3] = 255;
+    }
+  }
+  const texture = new THREE.DataTexture(data, size, size);
+  texture.needsUpdate = true;
+  return texture;
+}
 
 const createDecalMap = (sourceTexture: any, isFlipped: boolean) => {
   const texture = sourceTexture.clone();
@@ -120,34 +235,82 @@ const createDecal = (
   sizeValue: number,
   opacityValue: number,
   isFlipped: boolean,
+  rotationDeg?: number,
+  customTarget?: any,
 ) => {
-  const { THREE, DecalGeometry, targetMesh } = runtime;
-  const projectorDirection = normal.clone().normalize();
-  const quaternion = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), projectorDirection);
-  const orientation = new THREE.Euler().setFromQuaternion(quaternion);
+  const { THREE, DecalGeometry } = runtime;
+  const targetMesh = customTarget || runtime.targetMesh;
+  if (!targetMesh) throw new Error('No target mesh for decal');
+
+  const projDir = normal.clone().normalize();
+  const up = new THREE.Vector3(0, 0, 1);
+  const q = new THREE.Quaternion().setFromUnitVectors(up, projDir);
+  const orientation = new THREE.Euler().setFromQuaternion(q);
+
+  // Aplicar rotación adicional sobre el eje de proyección
+  if (rotationDeg) {
+    const rotRad = THREE.MathUtils.degToRad(rotationDeg);
+    const rotQ = new THREE.Quaternion().setFromAxisAngle(projDir, rotRad);
+    q.multiply(rotQ);
+    orientation.setFromQuaternion(q);
+  }
+
   const size = new THREE.Vector3(sizeValue, sizeValue, 2.0);
   const decalMap = createDecalMap(texture, isFlipped);
 
   const geometry = new DecalGeometry(targetMesh, point, orientation, size);
-  const material = new THREE.MeshPhongMaterial({
+
+  // Máscara de feathering para bordes suaves
+  const featherMask = createFeatherMask(THREE, 512);
+
+  const material = new THREE.MeshStandardMaterial({
     map: decalMap,
+    alphaMap: featherMask,
     transparent: true,
     opacity: opacityValue,
     depthTest: true,
     depthWrite: false,
     polygonOffset: true,
-    polygonOffsetFactor: -4,
-    polygonOffsetUnits: -4,
+    polygonOffsetFactor: -1,
+    polygonOffsetUnits: -1,
     side: THREE.DoubleSide,
-    flatShading: false,
+    roughness: 0.65,
+    metalness: 0.0,
+    envMap: createSoftEnvMap(THREE),
+    envMapIntensity: 0.35,
   });
 
   const mesh = new THREE.Mesh(geometry, material);
   mesh.position.copy(point);
   runtime.scene.add(mesh);
 
+  // ─── Sombra del decal (decal oscuro ligeramente desplazado) ─────
+  let shadowMesh: any = null;
+  try {
+    const shadowSize = new THREE.Vector3(sizeValue * 1.04, sizeValue * 1.04, 2.0);
+    const shadowGeo = new DecalGeometry(targetMesh, point, orientation, shadowSize);
+    const shadowMat = new THREE.MeshBasicMaterial({
+      color: 0x000000,
+      transparent: true,
+      opacity: opacityValue * 0.12,
+      depthTest: true,
+      depthWrite: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -3,
+      polygonOffsetUnits: -3,
+      side: THREE.DoubleSide,
+    });
+    shadowMesh = new THREE.Mesh(shadowGeo, shadowMat);
+    const shadowOffset = projDir.clone().multiplyScalar(-0.001);
+    shadowMesh.position.copy(point.clone().add(shadowOffset));
+    runtime.scene.add(shadowMesh);
+  } catch (e) {
+    // sombra opcional — no crítica
+  }
+
   return {
     mesh,
+    shadowMesh,
     point: point.clone(),
     normal: normal.clone(),
     texture,
@@ -189,17 +352,28 @@ const Template3Page = () => {
   const draggingRef = useRef(false);
   const decalScaleRef = useRef(0.62);
   const decalOpacityRef = useRef(0.95);
+  const decalRotationRef = useRef(0);
   const selectedZoneRef = useRef<PlacementZone>('chest-large');
   const isReviewModeRef = useRef(false);
   const [decalScale, setDecalScale] = useState(0.62);
   const [decalOpacity, setDecalOpacity] = useState(0.95);
-  const [status, setStatus] = useState('Cargando Three.js...');
+  const [decalRotation, setDecalRotation] = useState(0);
+  const [status, setStatus] = useState('Inicializando editor 3D...');
   const [isReady, setIsReady] = useState(false);
   const [selectedZone, setSelectedZone] = useState<PlacementZone>('chest-large');
   const [shirtColor, setShirtColor] = useState<ShirtColorId>('white');
   const [uploadedDesign, setUploadedDesign] = useState<UploadedDesign | null>(null);
   const [fixedDesigns, setFixedDesigns] = useState<FixedDesign[]>([]);
   const [isReviewMode, setIsReviewMode] = useState(false);
+  const [showContour, setShowContour] = useState(false);
+  // SSR siempre renderiza 'server'; cliente corrige en useEffect
+  const [envInfo, setEnvInfo] = useState({ label: '☁️ Server', css: 'border-sky-500/40 text-sky-300', isLocal: false });
+  const contourRef = useRef<any>(null);
+
+  // Corregir detección de entorno en cliente (SSR → always 'server')
+  useEffect(() => {
+    setEnvInfo(detectEnv());
+  }, []);
 
   const setControlsEnabled = (enabled: boolean) => {
     const runtime = runtimeRef.current;
@@ -220,25 +394,71 @@ const Template3Page = () => {
 
   const getPlacementFromZone = (zone: PlacementZone) => {
     const runtime = runtimeRef.current;
-    if (!runtime?.targetMesh) return null;
+    if (!runtime?.modelRoot) return null;
 
-    const [x, y] = zoneRay[zone];
-    runtime.raycaster.setFromCamera(new runtime.THREE.Vector2(x, y), runtime.camera);
-    const hits = runtime.raycaster.intersectObject(runtime.targetMesh, true);
-    if (!hits.length) return null;
+    runtime.scene.updateMatrixWorld(true);
+
+    const { THREE } = runtime;
+    const box = new THREE.Box3().setFromObject(runtime.modelRoot);
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+
+    // 1. Calcular punto aproximado desde la caja de la zona
+    const normalDir = new THREE.Vector3(...zoneProjectionNormal[zone]).normalize();
+    let approxPoint: THREE.Vector3;
+
+    if (zone === 'back-large') {
+      approxPoint = new THREE.Vector3(center.x, center.y + size.y * 0.04, box.max.z);
+    } else if (zone === 'chest-small-left') {
+      approxPoint = new THREE.Vector3(center.x - size.x * 0.20, center.y + size.y * 0.04, box.min.z);
+      normalDir.set(-1, 0, 0);
+    } else {
+      approxPoint = new THREE.Vector3(center.x, center.y + size.y * 0.04, box.min.z);
+    }
+
+    // 2. Disparar rayo DESDE FUERA del modelo hacia la superficie
+    //    Esto nos da el punto EXACTO sobre la malla y su normal real
+    const rayOrigin = approxPoint.clone().add(normalDir.clone().multiplyScalar(3.0));
+    const rayDir = normalDir.clone().negate();
+    const raycaster = new THREE.Raycaster(rayOrigin, rayDir, 0, 6.0);
+    const hits = raycaster.intersectObjects(runtime.scene.children, true);
+
+    if (!hits.length) {
+      // Fallback: usar punto aproximado y normal fija
+      return { point: approxPoint, normal: normalDir, targetObject: runtime.targetMesh };
+    }
 
     const hit = hits[0];
-    const normal = new runtime.THREE.Vector3(...zoneProjectionNormal[zone]);
+    const hitPoint = hit.point.clone();
 
-    return { point: hit.point, normal };
+    // Obtener normal real de la superficie en coordenadas del mundo
+    let hitNormal = normalDir.clone();
+    if (hit.face?.normal) {
+      const worldNormal = hit.face.normal
+        .clone()
+        .transformDirection(hit.object.matrixWorld)
+        .normalize();
+      if (worldNormal.length() > 0.1) {
+        hitNormal.copy(worldNormal);
+      }
+    }
+
+    // Usar la malla específica que fue impactada como target del DecalGeometry
+    const targetObject = hit.object;
+
+    return { point: hitPoint, normal: hitNormal, targetObject };
   };
 
-  const rebuildDraft = (point?: any, normal?: any) => {
+  const rebuildDraft = (point?: any, normal?: any, zoneWidth?: number, customTarget?: any) => {
     const runtime = runtimeRef.current;
     const texture = currentTextureRef.current;
-    if (!runtime?.targetMesh || !texture) return;
+    if (!runtime?.scene || !texture) return;
 
-    const placement = point && normal ? { point, normal } : getPlacementFromZone(selectedZoneRef.current);
+    const placement =
+      point && normal
+        ? { point, normal, targetObject: customTarget }
+        : getPlacementFromZone(selectedZoneRef.current);
+
     if (!placement) {
       setStatus('No se encontró superficie de camiseta para esa zona.');
       return;
@@ -255,6 +475,8 @@ const Template3Page = () => {
       decalScaleRef.current,
       decalOpacityRef.current,
       false,
+      decalRotationRef.current,
+      placement.targetObject,
     );
     setStatus(`Borrador colocado en ${zoneLabels[selectedZoneRef.current]}`);
   };
@@ -262,6 +484,27 @@ const Template3Page = () => {
   const selectZone = (zone: PlacementZone) => {
     selectedZoneRef.current = zone;
     setSelectedZone(zone);
+
+    // Calcular tamaño proporcional al ancho de la zona
+    const runtime = runtimeRef.current;
+    if (runtime?.modelRoot) {
+      runtime.scene.updateMatrixWorld(true);
+      const totalBox = new runtime.THREE.Box3().setFromObject(runtime.modelRoot);
+      const totalSize = totalBox.getSize(new runtime.THREE.Vector3());
+      const proposedSize = totalSize.x * zoneProportion[zone];
+      // Ajustar al rango permitido
+      const [minVal, maxVal] = zoneSizeRange[zone];
+      const clampedSize = Math.max(minVal, Math.min(maxVal, proposedSize));
+      decalScaleRef.current = clampedSize;
+      setDecalScale(clampedSize);
+    } else {
+      const defaultSize = 0.40;
+      decalScaleRef.current = defaultSize;
+      setDecalScale(defaultSize);
+    }
+
+    decalRotationRef.current = 0;
+    setDecalRotation(0);
     setIsReviewMode(false);
     isReviewModeRef.current = false;
     setControlsEnabled(false);
@@ -358,12 +601,63 @@ const Template3Page = () => {
     setStatus('Diseños eliminados. Empieza de nuevo seleccionando zona e imagen.');
   };
 
+  const toggleContour = () => {
+    const runtime = runtimeRef.current;
+    if (!runtime?.modelRoot) return;
+
+    const next = !showContour;
+    setShowContour(next);
+
+    if (next) {
+      // Crear malla de contorno (EdgesGeometry) para visualizar los pliegues
+      const { THREE } = runtime;
+      const contourGroup = new THREE.Group();
+      contourGroup.name = 'contour-overlay';
+
+      runtime.modelRoot.traverse((child: any) => {
+        if (!child.isMesh || !child.geometry) return;
+        const edges = new THREE.EdgesGeometry(child.geometry, 30);
+        const lineMat = new THREE.LineBasicMaterial({
+          color: 0xff6600,
+          transparent: true,
+          opacity: 0.35,
+          depthTest: true,
+        });
+        const wireframe = new THREE.LineSegments(edges, lineMat);
+        wireframe.position.copy(child.position);
+        wireframe.quaternion.copy(child.quaternion);
+        wireframe.scale.copy(child.scale);
+        contourGroup.add(wireframe);
+      });
+
+      runtime.scene.add(contourGroup);
+      contourRef.current = contourGroup;
+      setStatus('🔲 Contorno de malla activado — guía visual de pliegues.');
+    } else {
+      // Eliminar contorno
+      if (contourRef.current) {
+        const group = contourRef.current;
+        runtime.scene.remove(group);
+        group.traverse((obj: any) => {
+          if (obj.geometry) obj.geometry.dispose();
+          if (obj.material) obj.material.dispose();
+        });
+        contourRef.current = null;
+      }
+      setStatus('Contorno de malla desactivado.');
+    }
+  };
+
   const selectShirtColor = (colorId: ShirtColorId) => {
     const color = shirtColors.find((item) => item.id === colorId);
     if (!color) return;
 
     setShirtColor(colorId);
     applyShirtColor(runtimeRef.current, color.hex);
+    // Reconstruir borrador si había uno activo
+    if (!isReviewModeRef.current) {
+      rebuildDraft();
+    }
     setStatus(`Camiseta en color ${color.label.toLowerCase()}.`);
   };
 
@@ -382,6 +676,13 @@ const Template3Page = () => {
   }, [decalOpacity]);
 
   useEffect(() => {
+    decalRotationRef.current = decalRotation;
+    if (!isReviewModeRef.current) {
+      rebuildDraft();
+    }
+  }, [decalRotation]);
+
+  useEffect(() => {
     let cancelled = false;
     const disposers: Array<() => void> = [];
 
@@ -389,14 +690,15 @@ const Template3Page = () => {
       if (isReviewModeRef.current || !runtime.draft) return;
 
       const host = canvasHostRef.current;
-      if (!host || !runtime.targetMesh) return;
+      if (!host || !runtime.scene) return;
 
       const rect = host.getBoundingClientRect();
       runtime.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       runtime.mouse.y = -(((event.clientY - rect.top) / rect.height) * 2 - 1);
+      runtime.scene.updateMatrixWorld(true);
       runtime.raycaster.setFromCamera(runtime.mouse, runtime.camera);
 
-      const hits = runtime.raycaster.intersectObject(runtime.targetMesh, true);
+      const hits = runtime.raycaster.intersectObjects(runtime.scene.children, true);
       if (!hits.length) return;
 
       const hit = hits[0];
@@ -411,62 +713,16 @@ const Template3Page = () => {
         return;
       }
 
-      rebuildDraft(hit.point, fixedProjectionNormal);
+      rebuildDraft(hit.point, fixedProjectionNormal, undefined, hit.object);
       setStatus(`Borrador movido en ${zoneLabels[selectedZoneRef.current]}`);
       if (shouldDrag) {
         draggingRef.current = true;
       }
     };
 
-    const loadScript = (src: string): Promise<void> => {
-      return new Promise((resolve, reject) => {
-        if ((window as any).THREE_READY) {
-          resolve();
-          return;
-        }
-
-        if ((window as any).THREE_ERROR) {
-          reject((window as any).THREE_ERROR);
-          return;
-        }
-
-        const existingScript = document.getElementById(THREE_LOADER_ID);
-        if (existingScript) {
-          resolve();
-          return;
-        }
-
-        const script = document.createElement('script');
-        script.id = THREE_LOADER_ID;
-        script.src = src;
-        script.type = 'module';
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error(`Failed to load ${src}`));
-        document.head.appendChild(script);
-      });
-    };
-
     const initialize = async () => {
-      await loadScript(THREE_LOADER_SRC);
-
-      let attempts = 0;
-      while (!((window as any).THREE_READY) && attempts < 100) {
-        if ((window as any).THREE_ERROR) {
-          throw (window as any).THREE_ERROR;
-        }
-
-        await new Promise((resolve) => setTimeout(resolve, 50));
-        attempts++;
-      }
-
-      const THREE = (window as any).THREE;
-      const GLTFLoader = (window as any).GLTFLoader;
-      const OrbitControls = (window as any).OrbitControls;
-      const DecalGeometry = (window as any).DecalGeometry;
-
-      if (!THREE || !GLTFLoader || !OrbitControls || !DecalGeometry) {
-        throw new Error('Three.js modules failed to load');
-      }
+      setStatus('Cargando Three.js...');
+      const { THREE, GLTFLoader, OrbitControls, DecalGeometry } = await ensureThreeModules();
 
       if (cancelled) return;
 
@@ -474,8 +730,20 @@ const Template3Page = () => {
       if (!host) return;
 
       const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x0c0e11);
-      scene.fog = new THREE.Fog(0x0c0e11, 8, 15);
+      // Fondo degradado suave en vez de color plano
+      const bgCanvas = document.createElement('canvas');
+      bgCanvas.width = 2;
+      bgCanvas.height = 256;
+      const bgCtx = bgCanvas.getContext('2d')!;
+      const bgGrad = bgCtx.createLinearGradient(0, 0, 0, 256);
+      bgGrad.addColorStop(0, '#1a1d24');
+      bgGrad.addColorStop(0.5, '#0c0e11');
+      bgGrad.addColorStop(1, '#050608');
+      bgCtx.fillStyle = bgGrad;
+      bgCtx.fillRect(0, 0, 2, 256);
+      const bgTexture = new THREE.CanvasTexture(bgCanvas);
+      scene.background = bgTexture;
+      // Sin fog — el fondo degradado ya da profundidad
 
       const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
       camera.position.set(...zoneCamera['chest-large']);
@@ -501,19 +769,27 @@ const Template3Page = () => {
       controls.enableZoom = false;
       controls.autoRotate = false;
 
-      scene.add(new THREE.AmbientLight(0xffffff, 1.55));
+      scene.add(new THREE.AmbientLight(0xffffff, 1.25));
 
-      const keyLight = new THREE.DirectionalLight(0xffffff, 2.8);
-      keyLight.position.set(3, 5, 4);
+      // Luz principal — más suave y desde arriba (simula luz de estudio)
+      const keyLight = new THREE.DirectionalLight(0xfff5e6, 2.4);
+      keyLight.position.set(2.5, 6, 3.5);
       scene.add(keyLight);
 
-      const fillLight = new THREE.DirectionalLight(0xff8a3d, 1.05);
-      fillLight.position.set(-4, 2, 2);
+      // Luz de relleno cálida — simula rebote de superficie
+      const fillLight = new THREE.DirectionalLight(0xffd599, 0.9);
+      fillLight.position.set(-3.5, 1.5, 2.5);
       scene.add(fillLight);
 
-      const rimLight = new THREE.DirectionalLight(0x9ec7ff, 0.8);
-      rimLight.position.set(0, 3, -4);
+      // Luz de contraste / rim — fría, desde atrás
+      const rimLight = new THREE.DirectionalLight(0x88ccff, 0.7);
+      rimLight.position.set(0.5, 2.5, -4);
       scene.add(rimLight);
+
+      // Luz desde abajo para iluminar pliegues inferiores
+      const bottomLight = new THREE.DirectionalLight(0xccd9ff, 0.3);
+      bottomLight.position.set(0, -3, 0);
+      scene.add(bottomLight);
 
       const fallbackTexture = await new Promise<any>((resolve, reject) => {
         const loader = new THREE.TextureLoader();
@@ -545,6 +821,7 @@ const Template3Page = () => {
       if (cancelled) return;
 
       const modelRoot = gltf.scene;
+      const fabricNormalMap = createFabricNormalMap(THREE, 128);
       modelRoot.traverse((child: any) => {
         if (!child.isMesh) return;
         child.frustumCulled = false;
@@ -552,9 +829,17 @@ const Template3Page = () => {
         if (Array.isArray(child.material)) {
           child.material.forEach((material: any) => {
             if (material?.map) material.map.colorSpace = THREE.SRGBColorSpace;
+            if (material) {
+              material.normalMap = fabricNormalMap;
+              material.normalScale = new THREE.Vector2(0.15, 0.15);
+              material.needsUpdate = true;
+            }
           });
-        } else if (child.material?.map) {
-          child.material.map.colorSpace = THREE.SRGBColorSpace;
+        } else if (child.material) {
+          if (child.material.map) child.material.map.colorSpace = THREE.SRGBColorSpace;
+          child.material.normalMap = fabricNormalMap;
+          child.material.normalScale = new THREE.Vector2(0.15, 0.15);
+          child.material.needsUpdate = true;
         }
       });
 
@@ -569,8 +854,10 @@ const Template3Page = () => {
 
       let shirtMesh: any = null;
       let biggestVolume = -Infinity;
+      const allMeshes: any[] = [];
       modelRoot.traverse((child: any) => {
         if (!child.isMesh || !child.geometry) return;
+        allMeshes.push(child);
         const childBox = new THREE.Box3().setFromObject(child);
         const childSize = childBox.getSize(new THREE.Vector3());
         const volume = childSize.x * childSize.y * childSize.z;
@@ -590,12 +877,15 @@ const Template3Page = () => {
         raycaster: new THREE.Raycaster(),
         mouse: new THREE.Vector2(),
         targetMesh: shirtMesh,
+        allMeshes,
         modelRoot,
         draft: null,
         fixedDecals: [],
       };
 
       runtimeRef.current = runtime;
+      // Forzar actualización de matrices para que el raycaster funcione desde el primer frame
+      scene.updateMatrixWorld(true);
       applyShirtColor(runtime, shirtColors.find((color) => color.id === shirtColor)?.hex ?? '#ffffff');
       currentTextureRef.current = fallbackTexture;
       currentDesignNameRef.current = 'Logo CamiArt';
@@ -604,8 +894,49 @@ const Template3Page = () => {
         name: 'Logo CamiArt',
         source: FALLBACK_LOGO_SRC,
       });
+
+      // ─── Colocar diseño por defecto en las 3 zonas automáticamente ───
+      const defaultZones: PlacementZone[] = ['chest-large', 'back-large', 'chest-small-left'];
+      const fixedDecalsList: FixedDesign[] = [];
+
+      for (const zone of defaultZones) {
+        const placement = getPlacementFromZone(zone);
+        if (!placement) continue;
+
+        const zoneSize = zoneProportion[zone];
+        const totalBox = new THREE.Box3().setFromObject(modelRoot);
+        const totalSz = totalBox.getSize(new THREE.Vector3());
+        const proposedSize = totalSz.x * zoneSize;
+        const [minVal, maxVal] = zoneSizeRange[zone];
+        const clampedSize = Math.max(minVal, Math.min(maxVal, proposedSize));
+
+        const decal = createDecal(
+          runtime,
+          fallbackTexture,
+          'Logo CamiArt',
+          zone,
+          placement.point,
+          placement.normal,
+          clampedSize,
+          0.95,
+          false,
+          0,
+          placement.targetObject,
+        );
+
+        runtime.fixedDecals.push(decal);
+        fixedDecalsList.push({ id: `default-${zone}`, name: 'Logo CamiArt', zone });
+      }
+
+      setFixedDesigns(fixedDecalsList);
+
+      // Dejar el draft en Pecho grande (zona activa por defecto)
+      selectedZoneRef.current = 'chest-large';
+      setSelectedZone('chest-large');
       setIsReady(true);
-      setStatus('Selecciona un área, sube una imagen y fija el diseño.');
+      isReviewModeRef.current = true;
+      setControlsEnabled(true);
+      setStatus(`Diseño colocado en las 3 zonas. Selecciona una para ajustar.`);
 
       const updateSize = () => {
         const width = Math.max(host.clientWidth, 1);
@@ -667,6 +998,20 @@ const Template3Page = () => {
         renderer.domElement.removeEventListener('webglcontextlost', onContextLost);
         window.removeEventListener('resize', updateSize);
         controls.dispose();
+        // Limpiar contorno si existe
+        if (contourRef.current) {
+          const group = contourRef.current;
+          scene.remove(group);
+          group.traverse((obj: any) => {
+            if (obj.geometry) obj.geometry.dispose();
+            if (obj.material) obj.material.dispose();
+          });
+          contourRef.current = null;
+        }
+        // Limpiar fondo degradado
+        if (scene.background && typeof scene.background.dispose === 'function') {
+          scene.background.dispose();
+        }
         scene.traverse((object: any) => {
           if (object.geometry) object.geometry.dispose();
           if (object.material) disposeMaterial(object.material);
@@ -777,11 +1122,11 @@ const Template3Page = () => {
           <div className="mt-4 grid grid-cols-1 gap-4 rounded-2xl border border-white/10 bg-[#0c0e11] p-4">
             <p className="text-xs uppercase tracking-[0.16em] text-orange-200">4. Ajuste y fijado</p>
             <label className="text-xs uppercase tracking-[0.16em] text-orange-200">
-              Tamaño
+              Tamaño ({(decalScale * 100).toFixed(0)}% del ancho)
               <input
                 type="range"
-                min="0.18"
-                max="1.15"
+                min={zoneSizeRange[selectedZone][0]}
+                max={zoneSizeRange[selectedZone][1]}
                 step="0.01"
                 value={decalScale}
                 onChange={(event) => setDecalScale(Number(event.target.value))}
@@ -798,6 +1143,19 @@ const Template3Page = () => {
                 step="0.01"
                 value={decalOpacity}
                 onChange={(event) => setDecalOpacity(Number(event.target.value))}
+                className="mt-3 w-full accent-orange-400"
+              />
+            </label>
+
+            <label className="text-xs uppercase tracking-[0.16em] text-orange-200">
+              Rotación {decalRotation}°
+              <input
+                type="range"
+                min="-180"
+                max="180"
+                step="1"
+                value={decalRotation}
+                onChange={(event) => setDecalRotation(Number(event.target.value))}
                 className="mt-3 w-full accent-orange-400"
               />
             </label>
@@ -831,6 +1189,21 @@ const Template3Page = () => {
             >
               Ver en 3D
             </button>
+
+            <div className="mt-2 border-t border-white/5 pt-3">
+              <button
+                type="button"
+                onClick={toggleContour}
+                className={`flex w-full items-center justify-center gap-2 rounded-lg border px-4 py-2 text-xs font-semibold transition ${
+                  showContour
+                    ? 'border-orange-400/60 bg-orange-500/15 text-orange-200'
+                    : 'border-white/10 text-white/55 hover:border-white/20 hover:text-white/75'
+                }`}
+              >
+                <span>{showContour ? '◉' : '○'}</span>
+                Malla de contorno (pliegues)
+              </button>
+            </div>
           </div>
 
           <div className="mt-4 rounded-2xl border border-white/10 bg-[#0c0e11] p-4">
@@ -861,9 +1234,23 @@ const Template3Page = () => {
         <div className="relative min-h-[620px] overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-3 md:p-4">
           <div ref={canvasHostRef} className="h-[620px] w-full overflow-hidden rounded-xl bg-[#0c0e11]" />
 
+          {/* Badge de entorno — esquina superior izquierda */}
+          {isReady && (
+            <div
+              className={`pointer-events-none absolute left-4 top-4 z-10 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider backdrop-blur-sm ${envInfo.css}`}
+            >
+              {envInfo.label}
+            </div>
+          )}
+
           {!isReady && (
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-2xl bg-[#0c0e11]/80 backdrop-blur-sm">
-              <p className="text-sm uppercase tracking-[0.18em] text-orange-300">Cargando modelo 3D...</p>
+              <div className="text-center">
+                <p className="text-sm uppercase tracking-[0.18em] text-orange-300">Cargando modelo 3D...</p>
+                <p className="mt-2 text-[10px] uppercase tracking-widest text-white/30">
+                  Entorno: {envInfo.label} · Three.js v0.178
+                </p>
+              </div>
             </div>
           )}
 
