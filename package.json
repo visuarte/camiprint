@@ -81,6 +81,9 @@
     "zod": "^4.4.3",
     "zustand": "^4.4.1"
   },
+  "optionalDependencies": {
+    "@rolldown/binding-win32-x64-msvc": "^1.0.3"
+  },
   "devDependencies": {
     "@playwright/test": "^1.54.0",
     "@tailwindcss/postcss": "^4",
