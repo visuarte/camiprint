@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Script from 'next/script';
 import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google';
 import ContactSection from '@/app/components/ContactSection';
 
@@ -203,10 +204,23 @@ export default function TemplateNuevoPage() {
 
           <div className="relative">
             <div className="absolute -inset-8 rounded-full bg-[#ff4f00]/20 blur-[120px]" />
-            <img
-              src="https://lh3.googleusercontent.com/aida/AP1WRLuHB4IklFXGvFxBa4PCSD-vG4HVQABBeP9W3qzJnmKb8DWPUI9xdxzbEzFP7qaogaanIe5Cn1DhrLpfIQRd2-gGJhgGHpcfjQ_0i2JrL6EdGdB6YTSFKYDI1x0Z2Hk19uOzozwwZM81Ff7F5_usrNhKJh_KN62g4I_F5aH3suO3dFGjlL2p42mcynLntyyggbV6LfUqgyZo0sLGYljHmhclSM_pH8hNynMDR0hIef8l2wzSvoetne_LuBR-"
-              alt="CamiArt Premium T-Shirt"
-              className="animate-float relative z-10 w-full drop-shadow-[0_25px_50px_rgba(0,0,0,0.8)]"
+            <Script
+              type="module"
+              src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
+              strategy="afterInteractive"
+            />
+            <model-viewer
+              src="/models/camiseta-camiart.glb"
+              alt="Camiseta personalizable CamiArt"
+              auto-rotate
+              auto-rotate-delay="0"
+              rotation-per-second="18deg"
+              camera-orbit="20deg 78deg 115%"
+              field-of-view="32deg"
+              shadow-intensity="1"
+              exposure="0.9"
+              className="animate-float relative z-10 w-full pointer-events-none select-none"
+              style={{ ['--poster-color' as string]: 'transparent' }}
             />
           </div>
         </div>
