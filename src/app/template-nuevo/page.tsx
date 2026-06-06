@@ -14,6 +14,7 @@ const navItems = [
   { label: 'PROCESO', href: '#proceso' },
   { label: 'TESTIMONIOS', href: '#testimonios' },
   { label: 'FAQ', href: '#faq' },
+  { label: 'CONTACTO', href: '#contacto' },
 ];
 
 const processSteps = [
@@ -76,6 +77,14 @@ const faqItems = [
 
 export default function TemplateNuevoPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    document.title = 'CAMIART | Camisetas Personalizadas DTF, Sublimación y Bordado — Envío a Todo México';
+    const meta = document.createElement('meta');
+    meta.name = 'description';
+    meta.content = 'Fabricamos camisetas personalizadas con DTF, sublimación, vinilo textil y bordado profesional. Desde 1 pieza hasta pedidos corporativos. Envío a todo México en 3-7 días.';
+    document.head.appendChild(meta);
+  }, []);
 
   useEffect(() => {
     if (!isMenuOpen) return;
@@ -187,14 +196,16 @@ export default function TemplateNuevoPage() {
               CAMISETAS PERSONALIZADAS
             </div>
             <h1 className={`${montserrat.className} text-4xl font-black leading-tight md:text-7xl`}>
-              Tu idea, tu marca, <span className="text-[#ff4f00]">tu camiseta</span> sin límites de cantidad
+              Camisetas personalizadas{' '}
+              <span className="text-[#ff4f00]">DTF, sublimación y bordado</span>
+              {' '}— desde 1 pieza, envío a todo México
             </h1>
             <p className="max-w-xl text-lg text-[#e2e2e2]/80">
-              Desde una pieza hasta pedidos corporativos de miles. DTF, sublimación, vinilo textil y bordado profesional. Envíos a todo México con tracking.
+              Transformamos tus ideas en camisetas personalizadas con estampado DTF de alta resistencia, sublimación full color, vinilo textil premium y bordado computarizado. Desde pedidos individuales hasta uniformes corporativos por miles. Entregamos en Guadalajara, Ciudad de México y todo el país con número de guía.
             </p>
             <div className="flex flex-wrap gap-4 pt-2">
               <button className={`${montserrat.className} bg-[#ff4f00] px-10 py-4 text-sm font-bold text-[#0A0A0A]`}>
-                DISEÑA LA TUYA
+                SOLICITAR COTIZACIÓN
               </button>
               <a href="#proceso" className={`${montserrat.className} border border-[#e2e2e2]/20 px-10 py-4 text-sm font-bold text-[#e2e2e2]`}>
                 VER PROCESO
@@ -226,6 +237,27 @@ export default function TemplateNuevoPage() {
         </div>
       </section>
 
+      <section className="border-y border-[#5c4037]/25 bg-[#0e0e0e] py-10">
+        <div className="mx-auto grid w-full max-w-[1440px] grid-cols-2 gap-6 px-5 text-center md:grid-cols-4 md:px-16">
+          <div>
+            <p className={`${montserrat.className} text-3xl font-black text-[#ff4f00] md:text-4xl`}>+2,800</p>
+            <p className="mt-1 text-xs tracking-[0.1em] text-[#e2e2e2]/60 uppercase">diseños entregados</p>
+          </div>
+          <div>
+            <p className={`${montserrat.className} text-3xl font-black text-[#ff4f00] md:text-4xl`}>4</p>
+            <p className="mt-1 text-xs tracking-[0.1em] text-[#e2e2e2]/60 uppercase">técnicas de impresión</p>
+          </div>
+          <div>
+            <p className={`${montserrat.className} text-3xl font-black text-[#ff4f00] md:text-4xl`}>3-7</p>
+            <p className="mt-1 text-xs tracking-[0.1em] text-[#e2e2e2]/60 uppercase">días hábiles de entrega</p>
+          </div>
+          <div>
+            <p className={`${montserrat.className} text-3xl font-black text-[#ff4f00] md:text-4xl`}>100%</p>
+            <p className="mt-1 text-xs tracking-[0.1em] text-[#e2e2e2]/60 uppercase">satisfacción garantizada</p>
+          </div>
+        </div>
+      </section>
+
       <section id="proceso" className="mx-auto w-full max-w-[1440px] px-5 py-24 md:px-16">
         <div className="mb-16 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
           <div>
@@ -246,6 +278,15 @@ export default function TemplateNuevoPage() {
               <p className="text-[#e2e2e2]/70">{item.body}</p>
             </article>
           ))}
+        </div>
+
+        <div className="mt-12 text-center">
+          <a
+            href="#contacto"
+            className={`${montserrat.className} inline-block bg-[#ff4f00] px-12 py-4 text-sm font-bold text-[#0A0A0A] transition hover:scale-105`}
+          >
+            SOLICITAR COTIZACIÓN GRATIS
+          </a>
         </div>
       </section>
 
@@ -268,13 +309,22 @@ export default function TemplateNuevoPage() {
               </article>
             ))}
           </div>
+
+          <div className="mt-12 text-center">
+            <a
+              href="#contacto"
+              className={`${montserrat.className} inline-block border border-[#ff4f00] px-12 py-4 text-sm font-bold text-[#ff4f00] transition hover:bg-[#ff4f00] hover:text-[#0A0A0A]`}
+            >
+              EMPIEZA TU PEDIDO — TE COTIZAMOS EN MINUTOS
+            </a>
+          </div>
         </div>
       </section>
 
       <section id="faq" className="mx-auto w-full max-w-[1000px] px-5 py-24 md:px-16">
         <div className="mb-12 flex items-center gap-4">
           <div className="h-[2px] flex-grow bg-[#5c4037]/40" />
-          <h3 className={`${montserrat.className} px-4 text-2xl font-bold uppercase tracking-widest`}>Consultas Tecnicas</h3>
+          <h3 className={`${montserrat.className} px-4 text-2xl font-bold uppercase tracking-widest`}>DTF, sublimación, bordado — preguntas frecuentes</h3>
           <div className="h-[2px] flex-grow bg-[#5c4037]/40" />
         </div>
 
