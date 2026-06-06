@@ -5,14 +5,14 @@ import path from 'path';
 describe('Tarea 13.4: Tests de animaciones', () => {
   const globalsPath = path.join(process.cwd(), 'src', 'app', 'globals.css');
   const navPath = path.join(process.cwd(), 'src', 'app', 'components', 'Navigation.tsx');
-  const pagePath = path.join(process.cwd(), 'src', 'app', 'page.tsx');
+  const pagePath = path.join(process.cwd(), 'src', 'app', 'template-nuevo', 'page.tsx');
 
   it('elementos se animan al entrar en viewport', () => {
     const page = fs.readFileSync(pagePath, 'utf-8');
     const globals = fs.readFileSync(globalsPath, 'utf-8');
 
-    expect(page).toContain("import ViewportAnimator from './components/ViewportAnimator'");
-    expect(page).toContain('<ViewportAnimator />');
+    expect(page).toContain('animate-float');
+    expect(page).toContain('@keyframes float');
     expect(globals).toContain("[data-motion='enabled'] [data-reveal]");
     expect(globals).toContain("[data-motion='enabled'] [data-reveal].is-visible");
   });

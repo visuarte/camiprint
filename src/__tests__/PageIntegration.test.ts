@@ -3,35 +3,26 @@ import fs from 'fs';
 import path from 'path';
 
 describe('Tarea 12: Integracion pagina principal', () => {
-  const pagePath = path.join(process.cwd(), 'src', 'app', 'page.tsx');
+  const pagePath = path.join(process.cwd(), 'src', 'app', 'template-nuevo', 'page.tsx');
   const navigationPath = path.join(process.cwd(), 'src', 'app', 'components', 'Navigation.tsx');
   const pricingPath = path.join(process.cwd(), 'src', 'app', 'components', 'Pricing.tsx');
 
-  it('page.tsx importa y renderiza todos los componentes principales en orden', () => {
+  it('template-nuevo incluye todas las secciones en orden', () => {
     const page = fs.readFileSync(pagePath, 'utf-8');
 
-    expect(page).toContain("import Navigation from './components/Navigation'");
-    expect(page).toContain("import Hero from './components/Hero'");
-    expect(page).toContain("import Pricing from './components/Pricing'");
-    expect(page).toContain("import Process from './components/Process'");
-    expect(page).toContain("import TestimonialsSection from './components/TestimonialsSection'");
-    expect(page).toContain("import FAQSection from './components/FAQSection'");
-    expect(page).toContain("import ContactSection from './components/ContactSection'");
-    expect(page).toContain("import Footer from './components/Footer'");
+    expect(page).toContain("import ContactSection from '@/app/components/ContactSection'");
 
-    const expectedOrder = [
-      '<Navigation />',
-      '<Hero />',
-      '<Pricing />',
-      '<Process />',
-      '<TestimonialsSection />',
-      '<FAQSection />',
-      '<ContactSection />',
-      '<Footer />',
+    const expectedSections = [
+      'id="inicio"',
+      'id="proceso"',
+      'id="testimonios"',
+      'id="faq"',
+      '<ContactSection',
+      '<footer',
     ];
 
     let lastIndex = -1;
-    for (const fragment of expectedOrder) {
+    for (const fragment of expectedSections) {
       const index = page.indexOf(fragment);
       expect(index).toBeGreaterThan(lastIndex);
       lastIndex = index;
@@ -49,9 +40,9 @@ describe('Tarea 12: Integracion pagina principal', () => {
     expect(navigation).toContain("{ href: '#contacto', label: 'Contacto' }");
   });
 
-  it('cta de pricing enlaza al formulario con parametro quantity', () => {
+  it('cta de pricing pasa parametro quantity via history API', () => {
     const pricing = fs.readFileSync(pricingPath, 'utf-8');
 
-    expect(pricing).toContain('href={`#contacto?quantity=${tier.id}`}');
+    expect(pricing).toContain('?quantity=${tierId}');
   });
 });

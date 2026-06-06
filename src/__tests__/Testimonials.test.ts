@@ -5,7 +5,7 @@ import path from 'path';
 describe('Tarea 7: Testimonials Section', () => {
   const componentPath = path.join(process.cwd(), 'src', 'app', 'components', 'TestimonialsSection.tsx');
   const dataPath = path.join(process.cwd(), 'src', 'app', 'data', 'testimonials.ts');
-  const pagePath = path.join(process.cwd(), 'src', 'app', 'page.tsx');
+  const templatePath = path.join(process.cwd(), 'src', 'app', 'template-nuevo', 'page.tsx');
 
   it('renderiza al menos 3 testimonios en datos', () => {
     const data = fs.readFileSync(dataPath, 'utf-8');
@@ -15,7 +15,7 @@ describe('Tarea 7: Testimonials Section', () => {
 
   it('muestra rating visual en estrellas', () => {
     const component = fs.readFileSync(componentPath, 'utf-8');
-    expect(component).toContain('Rating 5 de 5');
+    expect(component).toContain('Valoración 5 de 5');
     expect(component).toContain('★');
   });
 
@@ -24,13 +24,13 @@ describe('Tarea 7: Testimonials Section', () => {
     const data = fs.readFileSync(dataPath, 'utf-8');
     expect(component).toContain('customerName');
     expect(component).toContain('companyName');
-    expect(data).toContain('Marina Gomez');
+    expect(data).toContain('Marina Gómez');
     expect(data).toContain('Nexo Logistics');
   });
 
-  it('esta integrado en page.tsx', () => {
-    const page = fs.readFileSync(pagePath, 'utf-8');
-    expect(page).toContain("import TestimonialsSection from './components/TestimonialsSection'");
-    expect(page).toContain('<TestimonialsSection />');
+  it('testimonials estan en el template activo', () => {
+    const page = fs.readFileSync(templatePath, 'utf-8');
+    expect(page).toContain('id="testimonios"');
+    expect(page).toContain('testimonials.map');
   });
 });

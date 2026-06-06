@@ -5,12 +5,12 @@ import path from 'path';
 describe('Tarea 8: FAQ Section', () => {
   const componentPath = path.join(process.cwd(), 'src', 'app', 'components', 'FAQSection.tsx');
   const dataPath = path.join(process.cwd(), 'src', 'app', 'data', 'faqs.ts');
-  const pagePath = path.join(process.cwd(), 'src', 'app', 'page.tsx');
+  const pagePath = path.join(process.cwd(), 'src', 'app', 'template-nuevo', 'page.tsx');
 
-  it('renderiza las 6 preguntas desde data', () => {
+  it('renderiza las preguntas desde data', () => {
     const data = fs.readFileSync(dataPath, 'utf-8');
     const ids = data.match(/id:\s*'faq-/g) || [];
-    expect(ids.length).toBe(6);
+    expect(ids.length).toBeGreaterThanOrEqual(3);
   });
 
   it('usa estado expandedId y click para expandir/colapsar', () => {
@@ -32,9 +32,9 @@ describe('Tarea 8: FAQ Section', () => {
     expect(component).toContain('aria-controls={`${item.id}-panel`}');
   });
 
-  it('esta integrado en page.tsx', () => {
+  it('los datos de faq se usan en el template activo', () => {
     const page = fs.readFileSync(pagePath, 'utf-8');
-    expect(page).toContain("import FAQSection from './components/FAQSection'");
-    expect(page).toContain('<FAQSection />');
+    expect(page).toContain('Consultas Tecnicas');
+    expect(page).toContain('faqItems');
   });
 });

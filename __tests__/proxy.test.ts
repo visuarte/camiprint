@@ -22,6 +22,10 @@ vi.mock('next/server', () => {
   return { NextResponse: NextResponseMock }
 })
 
+vi.mock('@/utils/supabase/middleware', () => ({
+  updateSession: async (req: any) => ({ __type: 'next' }),
+}))
+
 describe('proxy middleware', () => {
   let originalEnv: any
 
@@ -42,7 +46,7 @@ describe('proxy middleware', () => {
       cookies: { get: () => undefined },
       url: 'http://localhost/api/admin/foo',
     }
-    const res = proxy(req)
+    const res = await proxy(req)
     expect(res).toEqual({ __type: 'next' })
   })
 
@@ -54,7 +58,7 @@ describe('proxy middleware', () => {
       cookies: { get: () => undefined },
       url: 'http://localhost/api/admin/foo',
     }
-    const res = proxy(req)
+    const res = await proxy(req)
     // unauthorized path returns an instance with status 401
     expect(res.status).toBe(401)
     expect(res.body).toContain('Unauthorized')
@@ -68,7 +72,7 @@ describe('proxy middleware', () => {
       cookies: { get: (k: string) => ({ value: 'cookie-val' }) },
       url: 'http://localhost/admin/settings',
     }
-    const res = proxy(req)
+    const res = await proxy(req)
     expect(res).toEqual({ __type: 'next' })
   })
 
@@ -80,7 +84,7 @@ describe('proxy middleware', () => {
       cookies: { get: () => undefined },
       url: 'http://localhost/admin/settings',
     }
-    const res = proxy(req)
+    const res = await proxy(req)
     expect(res).toEqual({ __type: 'next' })
   })
 
@@ -92,7 +96,7 @@ describe('proxy middleware', () => {
       cookies: { get: () => undefined },
       url: 'http://localhost/admin/settings',
     }
-    const res = proxy(req)
+    const res = await proxy(req)
     expect(res.__type).toBe('redirect')
     expect(res.location).toContain('/admin/login')
   })

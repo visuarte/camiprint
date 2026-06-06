@@ -20,56 +20,56 @@ const processSteps = [
     step: '01',
     icon: 'palette',
     title: 'Diseño personalizado',
-    body: 'Nos cuentas tu marca, concepto y presupuesto. Creamos diseños únicos adaptados a tu camiseta.',
+    body: 'Compartes tu idea, logotipo o referencia. Nuestro equipo de diseño gráfico la convierte en un arte digital listo para estampar, optimizado para DTF, sublimación o bordado.',
   },
   {
     step: '02',
     icon: 'check_circle',
     title: 'Validación y ajustes',
-    body: 'Revisa el arte, hacemos cambios hasta que quede perfecto. Aprobación final antes de producir.',
+    body: 'Recibes una prueba virtual en tu tela y color elegidos. Hasta 3 modificaciones gratuitas. Solo cuando des el visto bueno, lanzamos la orden de producción.',
   },
   {
     step: '03',
     icon: 'local_shipping',
     title: 'Impresión y envío',
-    body: 'Producción con máxima calidad, seguimiento en tiempo real y entrega segura a tu puerta.',
+    body: 'Fabricamos con tintas ecológicas de alta resistencia y maquinaria industrial. Empaque seguro y envío con número de guía a todo México en 3–7 días hábiles.',
   },
 ];
 
 const testimonials = [
   {
-    quote: 'Mis camisetas llegaron perfectas. El diseño quedó tal como lo pedí, muy buen acabado y envío rápido.',
-    author: 'Carlos M.',
-    role: 'EMPRENDEDOR, ROPA DEPORTIVA',
+    quote: 'Encargué 20 playeras para mi tienda de ropa urbana. El estampado DTF quedó nítido, los colores exactos al diseño. En 5 días las tenía en Guadalajara.',
+    author: 'Andrea R.',
+    role: 'DISEÑADORA, MARCA INDEPENDIENTE',
   },
   {
-    quote: 'Hicimos 50 camisetas para nuestro equipo. La calidad es increíble y el equipo fue muy profesional.',
-    author: 'Beatriz L.',
-    role: 'GERENTE RR.HH., AGENCIA DIGITAL',
+    quote: 'Necesitábamos 80 uniformes para un evento de lanzamiento en dos semanas. Cumplieron en 8 días, con bordado impecable y tallas exactas. Muy profesionales.',
+    author: 'Luis M.',
+    role: 'COORDINADOR DE EVENTOS, EMPRESA TECNOLÓGICA',
   },
   {
-    quote: 'Repetidor seguro. Calidad, comunicación clara y cumplen los plazos. Muy recomendado.',
-    author: 'Javier P.',
-    role: 'PRODUCTOR, MÚSICA EN VIVO',
+    quote: 'Ya van cuatro pedidos para mi banda. La calidad del vinilo textil es superior, no se despega ni se cuartea después de lavados. Precio justo y entrega puntual.',
+    author: 'Sofía G.',
+    role: 'MÚSICA, BANDA DE ROCK',
   },
 ];
 
 const faqItems = [
   {
-    q: 'Cuál es el mínimo de camisetas?',
-    a: 'Puedes pedir desde 1 camiseta. A partir de 10 unidades del mismo diseño, ofrecemos descuentos por volumen.',
+    q: '¿Cuál es el mínimo de camisetas por pedido?',
+    a: 'Aceptamos desde 1 pieza sin costo extra. De 10 a 49 unidades iguales obtenés 15% de descuento. Para 50 o más, te armamos una cotización con precio por volumen y envío preferencial.',
   },
   {
     q: '¿Cuánto tarda una camiseta personalizada?',
-    a: 'Entre 3 y 7 días hábiles desde la aprobación del diseño. Tenemos opciones express si lo necesitas urgente.',
+    a: 'El tiempo regular es de 3 a 7 días hábiles después de aprobar la prueba. Si tenés urgencia, ofrecemos servicio exprés en 48 horas con un recargo del 20% sobre el total.',
   },
   {
     q: '¿Qué técnicas de impresión usan?',
-    a: 'Usamos serigrafía (DTF), estampado directo y bordado. Cada técnica tiene ventajas según el diseño.',
+    a: 'Trabajamos con DTF (transfer directo al film), vinilo textil de corte, sublimación full color para poliéster y bordado computarizado. Te recomendamos la mejor según tu diseño, tela y cantidad.',
   },
   {
     q: '¿Puedo cambiar el diseño después de encargar?',
-    a: 'Sí, mientras no haya comenzado la impresión. Te confirmamos los cambios rápidamente.',
+    a: 'Podés modificar el diseño sin costo si la producción aún no comenzó. Te avisamos por WhatsApp si estás a tiempo. Una vez impreso, cualquier cambio requiere reposición con costo de material.',
   },
 ];
 
@@ -186,10 +186,10 @@ export default function TemplateNuevoPage() {
               CAMISETAS PERSONALIZADAS
             </div>
             <h1 className={`${montserrat.className} text-4xl font-black leading-tight md:text-7xl`}>
-              Camisetas <span className="text-[#ff4f00]">personalizadas</span> con tu diseño
+              Tu idea, tu marca, <span className="text-[#ff4f00]">tu camiseta</span> sin límites de cantidad
             </h1>
             <p className="max-w-xl text-lg text-[#e2e2e2]/80">
-              Crea camisetas únicas con tus propios diseños. Impresión de calidad, proceso rápido y envío seguro a cualquier lugar.
+              Desde una pieza hasta pedidos corporativos de miles. DTF, sublimación, vinilo textil y bordado profesional. Envíos a todo México con tracking.
             </p>
             <div className="flex flex-wrap gap-4 pt-2">
               <button className={`${montserrat.className} bg-[#ff4f00] px-10 py-4 text-sm font-bold text-[#0A0A0A]`}>
@@ -216,7 +216,7 @@ export default function TemplateNuevoPage() {
         <div className="mb-16 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
           <div>
             <h2 className={`${spaceGrotesk.className} mb-2 text-sm tracking-[0.1em] text-[#ff4f00]`}>COMO FUNCIONA</h2>
-            <h3 className={`${montserrat.className} text-4xl font-extrabold md:text-5xl`}>De idea a camiseta lista.</h3>
+            <h3 className={`${montserrat.className} text-4xl font-extrabold md:text-5xl`}>De tu idea a camiseta lista.</h3>
           </div>
           <div className="mb-2 h-1 w-24 bg-[#ff4f00]" />
         </div>
@@ -239,7 +239,7 @@ export default function TemplateNuevoPage() {
         <div className="mx-auto w-full max-w-[1440px] px-5 md:px-16">
           <div className="mb-16 text-center">
             <h3 className={`${montserrat.className} text-4xl font-extrabold md:text-5xl`}>Clientes satisfechos</h3>
-            <p className="mt-4 text-[#e2e2e2]/60">Lo que dicen quienes ya tienen sus camisetas personalizadas.</p>
+            <p className="mt-4 text-[#e2e2e2]/60">Lo que dicen quienes ya tienen sus camisetas personalizadas con nosotros.</p>
           </div>
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">

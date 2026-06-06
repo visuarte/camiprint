@@ -4,7 +4,7 @@ import path from 'path';
 
 describe('Tarea 11.3: Footer tests', () => {
   const footerPath = path.join(process.cwd(), 'src', 'app', 'components', 'Footer.tsx');
-  const pagePath = path.join(process.cwd(), 'src', 'app', 'page.tsx');
+  const pagePath = path.join(process.cwd(), 'src', 'app', 'template-nuevo', 'page.tsx');
 
   it('renderiza secciones principales de footer', () => {
     const footer = fs.readFileSync(footerPath, 'utf-8');
@@ -42,7 +42,7 @@ describe('Tarea 11.3: Footer tests', () => {
     const footer = fs.readFileSync(footerPath, 'utf-8');
 
     expect(footer).toContain('brandConfig.supportEmail');
-    expect(footer).toContain('brandConfig.phoneHref');
+    expect(footer).toContain('PublicPhoneLink');
     expect(footer).toContain('brandConfig.postalAddress');
 
     expect(footer).toContain('aria-label={social.label}');
@@ -51,10 +51,10 @@ describe('Tarea 11.3: Footer tests', () => {
     expect(footer).toContain('LinkedIn');
   });
 
-  it('esta integrado en page.tsx', () => {
+  it('footer esta presente en el template activo', () => {
     const page = fs.readFileSync(pagePath, 'utf-8');
 
-    expect(page).toContain("import Footer from './components/Footer'");
-    expect(page).toContain('<Footer />');
+    expect(page).toContain('CAMIART');
+    expect(page).toContain('footer');
   });
 });

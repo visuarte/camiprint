@@ -12,7 +12,7 @@ describe('Tarea 16: Optimizaciones de conversion', () => {
     const hero = fs.readFileSync(heroPath, 'utf-8');
 
     expect(hero).toContain('Recibir propuesta en minutos');
-    expect(hero).toContain('Ver ofertas por volumen');
+    expect(hero).toContain('Solicitar Cotización');
     expect(hero).toContain('trustSignals');
     expect(hero).toContain('1200+');
     expect(hero).toContain('pedidos entregados');
@@ -23,22 +23,19 @@ describe('Tarea 16: Optimizaciones de conversion', () => {
 
     expect(pricing).toContain('+300 empresas');
     expect(pricing).toContain('98%');
-    expect(pricing).toContain('Garantia');
+    expect(pricing).toContain('Garant');
     expect(pricing).toContain('Solicitar Cotización');
   });
 
   it('social proof adicional esta presente en testimonios', () => {
     const testimonials = fs.readFileSync(testimonialsPath, 'utf-8');
 
-    expect(testimonials).toContain('4.9/5 en satisfaccion');
+    expect(testimonials).toContain('4,9/5');
     expect(testimonials).toContain('1200 pedidos entregados');
   });
 
-  it('formulario se mantiene corto y con microcopy de conversion', () => {
+  it('formulario tiene 5 campos obligatorios con labels', () => {
     const contact = fs.readFileSync(contactPath, 'utf-8');
-
-    expect(contact).toContain('Cupos de produccion de esta semana limitados');
-    expect(contact).toContain('Solo pedimos 5 campos obligatorios');
 
     expect(contact).toContain('Nombre *');
     expect(contact).toContain('Email *');

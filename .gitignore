@@ -53,3 +53,11 @@ next-env.d.ts
 
 # local cert artifacts
 /public/prod-ca-2021.crt
+
+# MAPICP
+skills/
+plugins/
+!plugins/.gitkeep
+mapicp.json
+data/
+tmp/

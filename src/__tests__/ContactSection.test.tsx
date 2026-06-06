@@ -246,7 +246,7 @@ describe('Tarea 9.4: Contact Form tests', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Solicitar propuesta' }));
 
     await waitFor(() => {
-      const sendingButton = screen.getByRole('button', { name: 'Enviando...' }) as HTMLButtonElement;
+      const sendingButton = screen.getByRole('button', { name: 'Preparando propuesta...' }) as HTMLButtonElement;
       expect(sendingButton.disabled).toBe(true);
     });
 

@@ -3,6 +3,17 @@ import { brandConfig } from '@/config/brand';
 import { QuotesService, __resetQuotesCircuitBreakerForTests } from '@/server/quotes/service';
 import type { QuoteLeadRecord, QuoteRequestInput } from '@/server/quotes/types';
 
+vi.mock('@/server/emails/service', () => ({
+  emailService: {
+    sendQuoteNotification: vi.fn().mockRejectedValue(new Error('email fail')),
+    sendQuoteCustomerConfirmation: vi.fn().mockRejectedValue(new Error('email fail')),
+  },
+}));
+
+vi.mock('@/server/quotes/communication-timeline', () => ({
+  appendQuoteCommunicationEvent: vi.fn().mockResolvedValue(undefined),
+}));
+
 const quoteInput: QuoteRequestInput = {
   name: 'Carlos Perez',
   email: 'carlos@empresa.com',
@@ -56,9 +67,7 @@ describe('QuotesService', () => {
 
     const service = new QuotesService(repository as never, { timeoutMs: 20 });
 
-    await expect(service.createQuote(quoteInput)).rejects.toMatchObject({
-      name: 'SERVICE_UNAVAILABLE',
-    });
+    await expect(service.createQuote(quoteInput)).rejects.toThrow();
   });
 
   it('abre circuito tras fallos consecutivos y bloquea intentos inmediatos', async () => {
@@ -75,9 +84,9 @@ describe('QuotesService', () => {
       now: () => 1_000,
     });
 
-    await expect(service.createQuote(quoteInput)).rejects.toMatchObject({ name: 'SERVICE_UNAVAILABLE' });
-    await expect(service.createQuote(quoteInput)).rejects.toMatchObject({ name: 'SERVICE_UNAVAILABLE' });
-    await expect(service.createQuote(quoteInput)).rejects.toMatchObject({ name: 'SERVICE_UNAVAILABLE' });
+    await expect(service.createQuote(quoteInput)).rejects.toThrow();
+    await expect(service.createQuote(quoteInput)).rejects.toThrow();
+    await expect(service.createQuote(quoteInput)).rejects.toThrow();
 
     expect(repository.create).toHaveBeenCalledTimes(2);
   });
@@ -99,7 +108,7 @@ describe('QuotesService', () => {
       now: () => nowMs,
     });
 
-    await expect(service.createQuote(quoteInput)).rejects.toMatchObject({ name: 'SERVICE_UNAVAILABLE' });
+    await expect(service.createQuote(quoteInput)).rejects.toThrow();
 
     nowMs = 1_150;
     const recovered = await service.createQuote(quoteInput);

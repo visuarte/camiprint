@@ -12,6 +12,10 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
+    env: {
+      NEXT_PUBLIC_SUPABASE_URL: 'https://madcsrixjqvnlaqsovuo.supabase.co',
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_-t3j7EVoPOsgZLJxiTZ7-Q_iT3g5Gie',
+    },
     setupFiles: [],
     include: ['src/__tests__/**/*.{test,spec}.{ts,tsx}', '__tests__/**/*.{test,spec}.{ts,tsx}'],
     exclude: [

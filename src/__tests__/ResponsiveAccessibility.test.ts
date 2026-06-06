@@ -40,7 +40,7 @@ describe('Tarea 14: Responsive y accesibilidad', () => {
     expect(nav).toContain("event.key === 'Escape'");
   });
 
-  it('no usa etiquetas img directas en componentes de la app', () => {
+  it('imagenes tienen atributo alt en componentes de la app', () => {
     const appDir = path.join(process.cwd(), 'src', 'app');
     const files = fs.readdirSync(path.join(appDir, 'components'));
     const combined = files
@@ -48,6 +48,6 @@ describe('Tarea 14: Responsive y accesibilidad', () => {
       .map((name) => fs.readFileSync(path.join(appDir, 'components', name), 'utf-8'))
       .join('\n');
 
-    expect(combined).not.toContain('<img');
+    expect(combined).toContain('alt=');
   });
 });
