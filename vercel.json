@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "buildCommand": "npm run build",
-  "installCommand": "npm install --legacy-peer-deps --omit=optional",
+  "installCommand": "npm install --legacy-peer-deps",
   "regions": ["iad1"],
   "env": {
     "QUOTES_REPOSITORY_DRIVER": "postgres",
