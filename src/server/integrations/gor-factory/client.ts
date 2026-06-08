@@ -137,6 +137,12 @@ export class GorFactoryClient {
         };
       }
 
+      // Dev log para depurar estructura de respuesta
+      if (process.env.NODE_ENV === 'development') {
+        const typeInfo = Array.isArray(data) ? `array[${data.length}]` : typeof data;
+        console.debug(`[GOR] ${method} ${path} → ${typeInfo}`, JSON.stringify(data).slice(0, 300));
+      }
+
       return { success: true, data, raw: text };
     } catch (error) {
       return {

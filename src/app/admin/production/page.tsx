@@ -20,13 +20,20 @@ type QueueApiResponse = {
 };
 
 const departmentLabels: Record<QueueApiItem['department'], string> = {
-  PREPRESS: 'PREPRESS',
-  PRINTING: 'PRINTING',
-  QA: 'QA',
-  SHIPPING: 'SHIPPING',
+  PREPRESS: 'PREIMPRESIÓN',
+  PRINTING: 'IMPRESIÓN',
+  QA: 'CALIDAD',
+  SHIPPING: 'ENVÍO',
 };
 
 const departmentOrder: QueueApiItem['department'][] = ['PREPRESS', 'PRINTING', 'QA', 'SHIPPING'];
+
+const statusLabels: Record<QueueApiItem['queueStatus'], string> = {
+  WAITING: 'EN ESPERA',
+  ACTIVE: 'ACTIVO',
+  BLOCKED: 'BLOQUEADO',
+  DONE: 'COMPLETADO',
+};
 
 export default function AdminProductionPage() {
   const [queueItems, setQueueItems] = useState<QueueApiItem[]>([]);
@@ -131,16 +138,16 @@ export default function AdminProductionPage() {
           <div className="absolute inset-x-0 top-0 h-1 bg-hazard-orange" />
           <div className="flex items-end justify-between gap-4 mb-6">
             <div>
-              <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">PRODUCTION LINE</p>
+              <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">LÍNEA DE PRODUCCIÓN</p>
               <h1 className="font-headline-md text-[28px] md:text-[34px] text-white leading-none">
-                REAL QUEUE STATUS
+                ESTADO DE LA COLA REAL
               </h1>
             </div>
             <Link
               href="/admin/orders"
               className="h-9 inline-flex items-center px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] leading-none hover:bg-surface-container-high transition-colors"
             >
-              VIEW ORDERS →
+              VER PEDIDOS →
             </Link>
           </div>
 
@@ -156,7 +163,7 @@ export default function AdminProductionPage() {
                   {String(stage.count).padStart(2, '0')}
                 </p>
                 <p className="mt-2 text-[#D8DEE8] text-[12px]">
-                  {stage.count === 0 ? 'No real tickets yet' : `${stage.count} real ticket${stage.count === 1 ? '' : 's'} in queue`}
+                  {stage.count === 0 ? 'Sin tickets aún' : `${stage.count} ticket${stage.count === 1 ? '' : 's'} en cola`}
                 </p>
               </div>
             ))}
@@ -164,13 +171,13 @@ export default function AdminProductionPage() {
         </div>
 
         <aside className="xl:col-span-4 border border-muted-steel/10 bg-surface-charcoal p-6 md:p-7 flex flex-col gap-4">
-          <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em]">QUEUE HEALTH</p>
+          <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em]">SALUD DE LA COLA</p>
           <div className="space-y-3">
             {[
-              { label: 'WAITING', value: summary.waiting, percent: summary.total ? (summary.waiting / summary.total) * 100 : 0, tone: 'bg-surface-bright' },
-              { label: 'ACTIVE', value: summary.active, percent: summary.total ? (summary.active / summary.total) * 100 : 0, tone: 'bg-hazard-orange' },
-              { label: 'BLOCKED', value: summary.blocked, percent: summary.total ? (summary.blocked / summary.total) * 100 : 0, tone: 'bg-red-500' },
-              { label: 'DONE', value: summary.done, percent: summary.total ? (summary.done / summary.total) * 100 : 0, tone: 'bg-green-500' },
+              { label: 'EN ESPERA', value: summary.waiting, percent: summary.total ? (summary.waiting / summary.total) * 100 : 0, tone: 'bg-surface-bright' },
+              { label: 'ACTIVO', value: summary.active, percent: summary.total ? (summary.active / summary.total) * 100 : 0, tone: 'bg-hazard-orange' },
+              { label: 'BLOQUEADO', value: summary.blocked, percent: summary.total ? (summary.blocked / summary.total) * 100 : 0, tone: 'bg-red-500' },
+              { label: 'COMPLETADO', value: summary.done, percent: summary.total ? (summary.done / summary.total) * 100 : 0, tone: 'bg-green-500' },
             ].map((entry) => (
               <div key={entry.label}>
                 <div className="flex justify-between items-center mb-2 text-[#D8DEE8] text-[11px] font-label-caps">
@@ -185,7 +192,7 @@ export default function AdminProductionPage() {
           </div>
 
           <div className="mt-2 border-t border-muted-steel/10 pt-4">
-            <p className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em] mb-3">REAL SOURCE</p>
+            <p className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em] mb-3">FUENTE REAL</p>
             <ul className="space-y-3 text-[#D8DEE8] text-[13px] leading-5">
               <li>• Departamentos leídos desde <span className="text-white">/api/v1/production/queues</span>.</li>
               <li>• La prioridad se deriva del estado y la posición reales.</li>
@@ -199,9 +206,9 @@ export default function AdminProductionPage() {
         <div className="xl:col-span-8 border border-muted-steel/10 bg-surface-charcoal p-6 md:p-7">
           <div className="flex items-end justify-between gap-4 mb-5">
             <h2 className="font-headline-md text-[22px] md:text-[26px] leading-none text-white">
-              PRODUCTION QUEUE
+              COLA DE PRODUCCIÓN
             </h2>
-            <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">LIVE VIEW</span>
+            <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">VISTA EN VIVO</span>
           </div>
 
           {isLoading ? (
@@ -234,7 +241,7 @@ export default function AdminProductionPage() {
                     <div className="flex flex-col items-end gap-2">
                       <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">{departmentLabels[item.department]}</span>
                       <span className={`inline-flex items-center px-2.5 py-1 border text-[10px] font-label-caps tracking-[0.08em] ${queueTone(item.queueStatus)}`}>
-                        {item.queueStatus}
+                        {statusLabels[item.queueStatus]}
                       </span>
                     </div>
                   </div>
@@ -256,9 +263,9 @@ export default function AdminProductionPage() {
 
         <div className="xl:col-span-4 border border-muted-steel/10 bg-surface-charcoal p-6 md:p-7">
           <div className="flex items-end justify-between gap-4 mb-5">
-            <h2 className="font-headline-md text-[22px] md:text-[26px] leading-none text-white">
-              PRIORITY ORDER
-            </h2>
+              <h2 className="font-headline-md text-[22px] md:text-[26px] leading-none text-white">
+                ÓRDEN DE PRIORIDAD
+              </h2>
           </div>
 
           <div className="space-y-3">
@@ -288,13 +295,13 @@ export default function AdminProductionPage() {
           </div>
 
           <div className="mt-6 border-t border-muted-steel/10 pt-4">
-            <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">REAL ACTIONS</p>
+            <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">ACCIONES REALES</p>
             <div className="space-y-2">
               <Link href="/admin/orders" className="block h-10 px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] tracking-[0.08em] hover:bg-surface-container-high transition-colors leading-[40px]">
-                REVIEW ORDERS →
+                REVISAR PEDIDOS →
               </Link>
               <Link href="/admin/inventory" className="block h-10 px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] tracking-[0.08em] hover:bg-surface-container-high transition-colors leading-[40px]">
-                CHECK INVENTORY →
+                VER INVENTARIO →
               </Link>
             </div>
           </div>

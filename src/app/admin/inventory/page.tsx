@@ -135,10 +135,10 @@ export default function AdminInventoryPage() {
   };
 
   const stockLabel = (quantity: number) => {
-    if (quantity === 0) return 'OUT OF STOCK';
-    if (quantity <= 25) return 'CRITICAL RESTOCK';
-    if (quantity <= 100) return 'LOW STOCK';
-    return 'IN STOCK';
+    if (quantity === 0) return 'SIN STOCK';
+    if (quantity <= 25) return 'REPOSICIÓN CRÍTICA';
+    if (quantity <= 100) return 'STOCK BAJO';
+    return 'EN STOCK';
   };
 
   const patchProduct = async (productId: string, payload: Record<string, unknown>) => {
@@ -300,25 +300,25 @@ export default function AdminInventoryPage() {
     <div className="p-8 md:p-14 flex flex-col gap-10">
       <section className="grid grid-cols-1 md:grid-cols-4 gap-4 items-stretch">
         <div className="md:col-span-2 border border-hazard-orange/30 bg-surface-charcoal p-6 md:p-7">
-          <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">INVENTORY</p>
+          <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">INVENTARIO</p>
           <h1 className="font-headline-md text-[28px] md:text-[34px] text-white leading-none mb-4">
-            PRODUCT STOCK CONTROL
+            CONTROL DE STOCK
           </h1>
           <p className="max-w-2xl text-[#D8DEE8] text-[15px] leading-6">
             Vista de stock real de los productos creados en la base de datos. Aquí puedes detectar rápido qué líneas necesitan reposición.
           </p>
           <div className="mt-6 flex flex-wrap gap-2">
             <Link href="/admin/orders" className="h-9 inline-flex items-center px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] leading-none hover:bg-surface-container-high transition-colors">
-              VIEW ORDERS →
+              VER PEDIDOS →
             </Link>
             <Link href="/admin/production" className="h-9 inline-flex items-center px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] leading-none hover:bg-surface-container-high transition-colors">
-              PRODUCTION →
+              PRODUCCIÓN →
             </Link>
           </div>
         </div>
 
         <div className="border border-muted-steel/10 bg-surface-charcoal p-6 md:p-7">
-          <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">TOTAL PRODUCTS</p>
+          <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">TOTAL PRODUCTOS</p>
           <p className="font-display-lg text-[36px] md:text-[42px] text-white leading-none font-black">
             {metrics.totalProducts}
           </p>
@@ -326,7 +326,7 @@ export default function AdminInventoryPage() {
         </div>
 
         <div className="border border-muted-steel/10 bg-surface-charcoal p-6 md:p-7">
-          <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">TOTAL UNITS</p>
+          <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">TOTAL UNIDADES</p>
           <p className="font-display-lg text-[36px] md:text-[42px] text-white leading-none font-black">
             {metrics.totalUnits}
           </p>
@@ -334,7 +334,7 @@ export default function AdminInventoryPage() {
         </div>
 
         <div className="border border-muted-steel/10 bg-surface-charcoal p-6 md:p-7">
-          <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">LOW STOCK</p>
+          <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">STOCK BAJO</p>
           <p className="font-display-lg text-[36px] md:text-[42px] text-white leading-none font-black">
             {metrics.lowStock}
           </p>
@@ -347,7 +347,7 @@ export default function AdminInventoryPage() {
           <div className="flex items-end justify-between gap-4 mb-5">
             <div>
               <h2 className="font-headline-md text-[22px] md:text-[26px] leading-none text-white">
-                PRODUCT TABLE
+                TABLA DE PRODUCTOS
               </h2>
               <p className="mt-2 text-xs text-[#D8DEE8]">{totalProducts} productos en total</p>
             </div>
@@ -366,7 +366,7 @@ export default function AdminInventoryPage() {
                 onClick={handleOpenCreate}
                 className="h-10 px-4 border border-hazard-orange bg-hazard-orange text-black font-label-caps text-[11px] tracking-[0.08em] hover:brightness-110 transition-colors"
               >
-                NEW PRODUCT
+                NUEVO PRODUCTO
               </button>
             </div>
           </div>
@@ -400,7 +400,7 @@ export default function AdminInventoryPage() {
                           />
                         ) : (
                           <div className="w-14 h-14 border border-muted-steel/20 bg-surface-charcoal flex items-center justify-center text-[9px] text-[#D8DEE8]/70 font-label-caps tracking-[0.08em]">
-                            NO IMG
+                            SIN IMG
                           </div>
                         )}
                         <div className="min-w-0">
@@ -463,14 +463,14 @@ export default function AdminInventoryPage() {
                       onClick={() => handleOpenEdit(product)}
                       className="h-8 px-3 border border-hazard-orange/40 text-hazard-orange font-label-caps text-[10px] tracking-[0.08em] hover:bg-hazard-orange hover:text-black transition-colors"
                     >
-                      EDIT
+                      EDITAR
                     </button>
                     <button
                       onClick={() => handleDelete(product)}
                       disabled={isDeletingId === product.id}
                       className="h-8 px-3 border border-red-500/40 text-red-300 font-label-caps text-[10px] tracking-[0.08em] hover:bg-red-500 hover:text-black transition-colors disabled:opacity-50"
                     >
-                      DELETE
+                      ELIMINAR
                     </button>
                   </div>
                 </article>
@@ -503,33 +503,33 @@ export default function AdminInventoryPage() {
 
         <div className="xl:col-span-4 border border-muted-steel/10 bg-surface-charcoal p-6 md:p-7 flex flex-col gap-4">
           <h2 className="font-headline-md text-[22px] md:text-[26px] leading-none text-white">
-            INVENTORY SUMMARY
+            RESUMEN DE INVENTARIO
           </h2>
 
           <div className="space-y-3">
             <div className="flex items-center justify-between border-b border-muted-steel/10 pb-2">
-              <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">OUT OF STOCK</span>
+              <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">SIN STOCK</span>
               <span className="font-headline-md text-[18px] text-white font-bold">{metrics.outOfStock}</span>
             </div>
             <div className="flex items-center justify-between border-b border-muted-steel/10 pb-2">
-              <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">LOW STOCK</span>
+              <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">STOCK BAJO</span>
               <span className="font-headline-md text-[18px] text-white font-bold">{metrics.lowStock}</span>
             </div>
             <div className="flex items-center justify-between border-b border-muted-steel/10 pb-2">
-              <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">REGISTERED</span>
+              <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">REGISTRADOS</span>
               <span className="font-headline-md text-[18px] text-white font-bold">{metrics.totalProducts}</span>
             </div>
           </div>
 
           <div className="mt-2 border-t border-muted-steel/10 pt-4">
-            <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">ACTION</p>
+            <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">ACCIÓN</p>
             <p className="text-[#D8DEE8] text-[13px] leading-5">
               Gestiona catálogo completo desde esta pantalla: alta, edición y borrado, además de ajustes rápidos de stock.
             </p>
           </div>
 
           <div className="border-t border-muted-steel/10 pt-4">
-            <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-3">PRODUCTION CONSUMPTION ORDER</p>
+            <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-3">ORDEN DE CONSUMO</p>
             <div className="space-y-3">
               {priorityProducts.map((product, index) => (
                 <button
@@ -561,7 +561,7 @@ export default function AdminInventoryPage() {
             <div className="flex items-start justify-between gap-4 mb-5">
               <div>
                 <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">
-                  {selectedProduct ? 'EDIT PRODUCT' : 'CREATE PRODUCT'}
+                  {selectedProduct ? 'EDITAR PRODUCTO' : 'CREAR PRODUCTO'}
                 </p>
                 <h3 className="text-white text-[18px] md:text-[20px] font-semibold leading-snug">
                   {selectedProduct ? selectedProduct.name : 'Nuevo producto'}
@@ -582,7 +582,7 @@ export default function AdminInventoryPage() {
 
             <form className="grid grid-cols-1 md:grid-cols-2 gap-3" onSubmit={handleSubmit}>
               <label className="block md:col-span-2">
-                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">NAME</span>
+                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">NOMBRE</span>
                 <input
                   type="text"
                   required
@@ -593,7 +593,7 @@ export default function AdminInventoryPage() {
               </label>
 
               <label className="block">
-                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">PRICE</span>
+                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">PRECIO</span>
                 <input
                   type="number"
                   step="0.01"
@@ -606,7 +606,7 @@ export default function AdminInventoryPage() {
               </label>
 
               <label className="block">
-                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">QUANTITY</span>
+                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">CANTIDAD</span>
                 <input
                   type="number"
                   min="0"
@@ -618,7 +618,7 @@ export default function AdminInventoryPage() {
               </label>
 
               <label className="block">
-                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">SIZE</span>
+                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">TALLA</span>
                 <input
                   type="text"
                   value={formState.size}
@@ -628,7 +628,7 @@ export default function AdminInventoryPage() {
               </label>
 
               <label className="block">
-                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">IMAGE URL</span>
+                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">URL DE IMAGEN</span>
                 <input
                   type="text"
                   value={formState.imageUrl}
@@ -638,7 +638,7 @@ export default function AdminInventoryPage() {
               </label>
 
               <label className="block md:col-span-2">
-                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">UPLOAD IMAGE FILE</span>
+                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">SUBIR ARCHIVO</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -662,7 +662,7 @@ export default function AdminInventoryPage() {
               </label>
 
               <label className="block md:col-span-2">
-                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">DESCRIPTION</span>
+                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">DESCRIPCIÓN</span>
                 <textarea
                   rows={3}
                   value={formState.description}
@@ -677,14 +677,14 @@ export default function AdminInventoryPage() {
                   disabled={Boolean(savingId) || isCreating || isUploadingImage}
                   className="h-10 px-4 border border-hazard-orange bg-hazard-orange text-black font-label-caps text-[11px] tracking-[0.08em] hover:brightness-110 transition-colors disabled:opacity-50"
                 >
-                  {selectedProduct ? 'SAVE PRODUCT' : 'CREATE PRODUCT'}
+                  {selectedProduct ? 'GUARDAR PRODUCTO' : 'CREAR PRODUCTO'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsFormOpen(false)}
                   className="h-10 px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] tracking-[0.08em] hover:bg-surface-container-high transition-colors"
                 >
-                  CANCEL
+                  CANCELAR
                 </button>
               </div>
             </form>

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import { brandConfig } from '@/config/brand';
 
 export const metadata: Metadata = {
@@ -30,6 +31,7 @@ export default function StoreLayout({
     <>
       <Header />
       {children}
+      <Footer />
     </>
   );
 }

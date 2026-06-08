@@ -33,9 +33,9 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { label: 'Dashboard',   href: '/admin',            icon: 'dashboard',             active: true },
-    { label: 'Production',  href: '/admin/production', icon: 'factory',               active: false },
-    { label: 'Orders',      href: '/admin/orders',     icon: 'receipt_long',          active: false },
-    { label: 'Inventory',   href: '/admin/inventory',  icon: 'inventory_2',           active: false },
+    { label: 'Producción',  href: '/admin/production', icon: 'factory',               active: false },
+    { label: 'Pedidos',     href: '/admin/orders',     icon: 'receipt_long',          active: false },
+    { label: 'Inventario',  href: '/admin/inventory',  icon: 'inventory_2',           active: false },
     { label: 'Clientes',    href: '/admin/clients',    icon: 'group',                 active: false },
   ];
 
@@ -57,7 +57,7 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
             className="w-[170px] h-[46px] bg-[url('/icons/logo.svg')] bg-contain bg-no-repeat bg-left block"
           />
           <p className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.3em] mt-2">
-            OPERATIONS CENTER
+            CENTRO DE OPERACIONES
           </p>
         </div>
 
@@ -84,7 +84,7 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
                 <span className="material-symbols-outlined text-[22px]">{item.icon}</span>
                 <span className="font-label-caps text-label-caps">{item.label}</span>
                 {disabled && (
-                  <span className="ml-auto text-[9px] font-label-caps text-[#D8DEE8]/50 tracking-wider">SOON</span>
+                  <span className="ml-auto text-[9px] font-label-caps text-[#D8DEE8]/50 tracking-wider">PRÓXIMAMENTE</span>
                 )}
               </Link>
             );
@@ -94,7 +94,7 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
         {/* System Load */}
         <div className="px-5">
           <div className="p-4 border border-muted-steel/20 rounded-lg bg-surface-container-lowest">
-            <p className="font-label-caps text-[10px] text-[#D8DEE8] mb-2">SYSTEM LOAD</p>
+            <p className="font-label-caps text-[10px] text-[#D8DEE8] mb-2">CARGA DEL SISTEMA</p>
             <div className="w-full bg-surface-bright h-1">
               <div className="bg-hazard-orange h-1 w-[42%] shadow-[0_0_8px_rgba(255,79,0,0.5)]" />
             </div>
@@ -104,13 +104,13 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
             className="mt-4 flex items-center gap-3 w-full py-3 px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[12px] tracking-widest hover:border-hazard-orange hover:text-hazard-orange transition-all duration-200"
           >
             <span className="material-symbols-outlined text-[20px]">settings</span>
-            <span>SETTINGS</span>
+            <span>CONFIGURACIÓN</span>
           </Link>
           <button
             onClick={handleLogout}
             className="mt-4 w-full py-3 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[12px] tracking-widest hover:border-hazard-orange hover:text-hazard-orange transition-all duration-200"
           >
-            LOGOUT
+            CERRAR SESIÓN
           </button>
         </div>
       </aside>
@@ -120,11 +120,11 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
         {/* Top Bar */}
         <header className="sticky top-0 z-[70] h-20 border-b border-muted-steel/20 bg-[#0A0A0A] supports-[backdrop-filter]:bg-[#0A0A0A]/95 backdrop-blur-md flex justify-between items-center px-8 md:px-16">
           <h2 className="font-headline-md text-headline-md font-black text-hazard-orange tracking-tighter">
-            CAMIART OPERATIONS
+            CAMIART OPERACIONES
           </h2>
           <div className="flex items-center gap-4">
             <div className="hidden md:flex flex-col items-end">
-              <span className="font-label-caps text-[12px] text-white">CHIEF OPERATOR</span>
+              <span className="font-label-caps text-[12px] text-white">OPERADOR PRINCIPAL</span>
               <span className="font-label-caps text-[10px] text-[#D8DEE8]">camiart.com</span>
             </div>
             <div className="w-10 h-10 rounded-full border-2 border-hazard-orange bg-surface-container-high flex items-center justify-center">
@@ -141,11 +141,11 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
         {/* Footer */}
         <footer className="border-t border-hazard-orange/20 bg-surface-charcoal flex justify-between items-center px-8 md:px-16 py-6">
           <span className="font-label-caps text-[10px] text-[#D8DEE8]">
-            © {new Date().getFullYear()} CAMIART INDUSTRIAL. ALL SYSTEMS OPERATIONAL.
+            © {new Date().getFullYear()} CAMIART INDUSTRIAL. TODOS LOS SISTEMAS OPERATIVOS.
           </span>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="font-label-caps text-[10px] text-green-500 tracking-tighter">SECURE NODE</span>
+            <span className="font-label-caps text-[10px] text-green-500 tracking-tighter">NODO SEGURO</span>
           </div>
         </footer>
       </div>

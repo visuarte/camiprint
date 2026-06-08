@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Script from 'next/script';
 import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google';
+import { brandConfig } from '@/config/brand';
 import ContactSection from '@/app/components/ContactSection';
 
 const montserrat = Montserrat({ subsets: ['latin'], weight: ['700', '800', '900'] });
@@ -11,8 +12,8 @@ const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], weight: ['700'] });
 
 const navItems = [
   { label: 'INICIO', href: '#inicio' },
+  { label: 'PRODUCTOS', href: '/catalog' },
   { label: 'PROCESO', href: '#proceso' },
-  { label: 'TESTIMONIOS', href: '#testimonios' },
   { label: 'FAQ', href: '#faq' },
   { label: 'CONTACTO', href: '#contacto' },
 ];
@@ -34,13 +35,13 @@ const processSteps = [
     step: '03',
     icon: 'local_shipping',
     title: 'Impresión y envío',
-    body: 'Fabricamos con tintas ecológicas de alta resistencia y maquinaria industrial. Empaque seguro y envío con número de guía a todo México en 3–7 días hábiles.',
+    body: 'Fabricamos con tintas ecológicas de alta resistencia y maquinaria industrial. Empaque seguro y envío con número de guía a toda España peninsular en 3–7 días hábiles.',
   },
 ];
 
 const testimonials = [
   {
-    quote: 'Encargué 20 playeras para mi tienda de ropa urbana. El estampado DTF quedó nítido, los colores exactos al diseño. En 5 días las tenía en Guadalajara.',
+    quote: 'Encargué 20 playeras para mi tienda de ropa urbana. El estampado DTF quedó nítido, los colores exactos al diseño. En 5 días las tenía en Alicante.',
     author: 'Andrea R.',
     role: 'DISEÑADORA, MARCA INDEPENDIENTE',
   },
@@ -59,7 +60,7 @@ const testimonials = [
 const faqItems = [
   {
     q: '¿Cuál es el mínimo de camisetas por pedido?',
-    a: 'Aceptamos desde 1 pieza sin costo extra. De 10 a 49 unidades iguales obtenés 15% de descuento. Para 50 o más, te armamos una cotización con precio por volumen y envío preferencial.',
+    a: 'Aceptamos desde 10 unidades. De 10 a 49 unidades iguales obtenés 15% de descuento. Para 50 o más, te armamos una cotización con precio por volumen y envío preferencial.',
   },
   {
     q: '¿Cuánto tarda una camiseta personalizada?',
@@ -79,10 +80,10 @@ export default function TemplateNuevoPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    document.title = 'CAMIART | Camisetas Personalizadas DTF, Sublimación y Bordado — Envío a Todo México';
+    document.title = 'CAMIART | Camisetas Personalizadas DTF, Sublimación y Bordado — Envío a Toda España';
     const meta = document.createElement('meta');
     meta.name = 'description';
-    meta.content = 'Fabricamos camisetas personalizadas con DTF, sublimación, vinilo textil y bordado profesional. Desde 1 pieza hasta pedidos corporativos. Envío a todo México en 3-7 días.';
+    meta.content = 'Fabricamos camisetas personalizadas con DTF, sublimación, vinilo textil y bordado profesional. Desde 10 unidades hasta pedidos corporativos. Envío a toda España peninsular en 3-7 días.';
     document.head.appendChild(meta);
   }, []);
 
@@ -198,17 +199,17 @@ export default function TemplateNuevoPage() {
             <h1 className={`${montserrat.className} text-4xl font-black leading-tight md:text-7xl`}>
               Camisetas personalizadas{' '}
               <span className="text-[#ff4f00]">DTF, sublimación y bordado</span>
-              {' '}— desde 1 pieza, envío a todo México
+              {' '}— desde 10 unidades, envío a toda España
             </h1>
             <p className="max-w-xl text-lg text-[#e2e2e2]/80">
-              Transformamos tus ideas en camisetas personalizadas con estampado DTF de alta resistencia, sublimación full color, vinilo textil premium y bordado computarizado. Desde pedidos individuales hasta uniformes corporativos por miles. Entregamos en Guadalajara, Ciudad de México y todo el país con número de guía.
+              Transformamos tus ideas en camisetas personalizadas con estampado DTF de alta resistencia, sublimación full color, vinilo textil premium y bordado computarizado. Desde pedidos desde 10 unidades hasta uniformes corporativos por miles. Entregamos en Alicante, Madrid, Barcelona y toda España peninsular con número de guía.
             </p>
             <div className="flex flex-wrap gap-4 pt-2">
-              <button className={`${montserrat.className} bg-[#ff4f00] px-10 py-4 text-sm font-bold text-[#0A0A0A]`}>
+              <a href="/catalog" className={`${montserrat.className} inline-block bg-[#ff4f00] px-10 py-4 text-sm font-bold text-[#0A0A0A] transition hover:scale-105`}>
+                VER CATÁLOGO
+              </a>
+              <a href="#contacto" className={`${montserrat.className} border border-[#e2e2e2]/20 px-10 py-4 text-sm font-bold text-[#e2e2e2]`}>
                 SOLICITAR COTIZACIÓN
-              </button>
-              <a href="#proceso" className={`${montserrat.className} border border-[#e2e2e2]/20 px-10 py-4 text-sm font-bold text-[#e2e2e2]`}>
-                VER PROCESO
               </a>
             </div>
           </div>
@@ -281,12 +282,20 @@ export default function TemplateNuevoPage() {
         </div>
 
         <div className="mt-12 text-center">
-          <a
-            href="#contacto"
-            className={`${montserrat.className} inline-block bg-[#ff4f00] px-12 py-4 text-sm font-bold text-[#0A0A0A] transition hover:scale-105`}
-          >
-            SOLICITAR COTIZACIÓN GRATIS
-          </a>
+          <div className="flex flex-wrap justify-center gap-4">
+            <a
+              href="/catalog"
+              className={`${montserrat.className} inline-block bg-[#ff4f00] px-12 py-4 text-sm font-bold text-[#0A0A0A] transition hover:scale-105`}
+            >
+              VER MODELOS
+            </a>
+            <a
+              href="#contacto"
+              className={`${montserrat.className} inline-block border border-[#e2e2e2]/20 px-12 py-4 text-sm font-bold text-[#e2e2e2] transition hover:border-[#ff4f00]`}
+            >
+              SOLICITAR COTIZACIÓN GRATIS
+            </a>
+          </div>
         </div>
       </section>
 
@@ -346,19 +355,41 @@ export default function TemplateNuevoPage() {
       <footer className="relative w-full border-t-4 border-[#ff4f00] bg-[#0e0e0e] py-12">
         <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 items-center gap-8 px-5 md:grid-cols-2 md:px-16">
           <div>
-            <div className="mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-2xl text-[#ff4f00]">precision_manufacturing</span>
-              <span className={`${montserrat.className} text-lg font-extrabold text-[#e2e2e2]`}>CAMIART</span>
-            </div>
-            <p className="text-sm text-[#CBD5E1]">© 2026 CAMIART INDUSTRIAL. PRECISION ENGINEERED.</p>
-          </div>
+        <div className="mb-4 flex items-center gap-2">
+          <span className="material-symbols-outlined text-2xl text-[#ff4f00]">precision_manufacturing</span>
+          <span className={`${montserrat.className} text-lg font-extrabold text-[#e2e2e2]`}>CAMIART</span>
+        </div>
+        <p className="text-sm text-[#CBD5E1]">© 2026 CAMIART — Alicante, España</p>
+        <div className="mt-3 flex flex-col gap-1 text-xs text-[#CBD5E1]/70">
+          <span className="flex items-center gap-1">
+            <span className="material-symbols-outlined text-sm text-[#ff4f00]">call</span> {brandConfig.phoneDisplay}
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="material-symbols-outlined text-sm text-[#ff4f00]">mail</span> {brandConfig.supportEmail}
+          </span>
+        </div>
+      </div>
 
-          <div className={`${spaceGrotesk.className} flex flex-wrap gap-x-8 gap-y-4 text-xs tracking-[0.1em] md:justify-end`}>
-            <a className="text-[#CBD5E1] transition-colors hover:text-[#ff4f00]" href="#">TECNOLOGIA</a>
-            <a className="text-[#CBD5E1] transition-colors hover:text-[#ff4f00]" href="#">PROCESOS</a>
-            <a className="text-[#CBD5E1] transition-colors hover:text-[#ff4f00]" href="#">SEGURIDAD</a>
-            <a className="text-[#CBD5E1] transition-colors hover:text-[#ff4f00]" href="#">PRIVACIDAD</a>
-          </div>
+      <div className="flex flex-col gap-6 md:items-end">
+        <div className={`${spaceGrotesk.className} flex flex-wrap gap-x-8 gap-y-4 text-xs tracking-[0.1em] md:justify-end`}>
+          <a className="text-[#CBD5E1] transition-colors hover:text-[#ff4f00]" href="/aviso-legal">AVISO LEGAL</a>
+          <a className="text-[#CBD5E1] transition-colors hover:text-[#ff4f00]" href="/terminos-y-condiciones">TÉRMINOS</a>
+          <a className="text-[#CBD5E1] transition-colors hover:text-[#ff4f00]" href="/politica-privacidad">PRIVACIDAD</a>
+          <a className="text-[#CBD5E1] transition-colors hover:text-[#ff4f00]" href="/politica-de-cookies">COOKIES</a>
+          <a className="text-[#CBD5E1] transition-colors hover:text-[#ff4f00]" href="/politica-de-envios">ENVÍOS</a>
+        </div>
+        <div className="flex gap-4">
+          <a href={brandConfig.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-[#CBD5E1] transition-colors hover:text-[#ff4f00]" aria-label="Instagram">
+            <span className="material-symbols-outlined">photo_camera</span>
+          </a>
+          <a href={brandConfig.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="text-[#CBD5E1] transition-colors hover:text-[#ff4f00]" aria-label="Facebook">
+            <span className="material-symbols-outlined">groups</span>
+          </a>
+          <a href={brandConfig.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-[#CBD5E1] transition-colors hover:text-[#ff4f00]" aria-label="LinkedIn">
+            <span className="material-symbols-outlined">business</span>
+          </a>
+        </div>
+      </div>
         </div>
         <div className="hazard-pattern mt-12 h-2 w-full opacity-30" />
       </footer>

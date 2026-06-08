@@ -91,7 +91,7 @@ export default function AdminOrdersPage() {
             <label className="block text-sm font-medium mb-2">Búsqueda</label>
             <input
               type="text"
-              placeholder="Order ID o email..."
+              placeholder="ID de pedido o email..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -156,7 +156,7 @@ export default function AdminOrdersPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-neutral-800 bg-neutral-900">
-                  <th className="px-4 py-3 text-left font-medium">Order ID</th>
+                  <th className="px-4 py-3 text-left font-medium">ID Pedido</th>
                   <th className="px-4 py-3 text-left font-medium">Cliente</th>
                   <th className="px-4 py-3 text-left font-medium">Email</th>
                   <th className="px-4 py-3 text-left font-medium">Total</th>

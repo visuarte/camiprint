@@ -484,6 +484,26 @@ const ContactSection = () => {
             <p className="mt-1 text-4xl font-bold text-white">15 min</p>
             <p className="mt-4 text-sm text-cami-300">Soporte para uniformidad, activaciones de marca, reposicion de stock y eventos corporativos.</p>
           </div>
+
+          <div className="mt-6 space-y-3 rounded-2xl border border-white/10 bg-cami-800/30 p-6">
+            <p className="text-xs font-bold uppercase tracking-widest text-[#ff4f00]">Contacto directo</p>
+            <a href="tel:+34900111222" className="flex items-center gap-3 text-sm text-cami-200 transition-colors hover:text-white">
+              <span className="material-symbols-outlined text-[#ff4f00]">call</span>
+              +34 900 111 222
+            </a>
+            <a href="mailto:hola@camiart.com" className="flex items-center gap-3 text-sm text-cami-200 transition-colors hover:text-white">
+              <span className="material-symbols-outlined text-[#ff4f00]">mail</span>
+              hola@camiart.com
+            </a>
+            <a href="https://wa.me/34900111222" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-cami-200 transition-colors hover:text-white">
+              <span className="material-symbols-outlined text-[#ff4f00]">chat</span>
+              WhatsApp
+            </a>
+            <div className="flex items-center gap-3 text-sm text-cami-200">
+              <span className="material-symbols-outlined text-[#ff4f00]">location_on</span>
+              Alicante, España
+            </div>
+          </div>
         </div>
 
         <form

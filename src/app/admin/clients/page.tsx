@@ -154,17 +154,17 @@ export default function AdminClientsPage() {
     <div className="p-8 md:p-14 flex flex-col gap-10">
       <section className="grid grid-cols-1 xl:grid-cols-3 gap-4">
         <div className="border border-hazard-orange/30 bg-surface-charcoal p-4 md:p-5 relative overflow-hidden min-h-[150px] flex flex-col justify-between">
-          <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">TOTAL CLIENTS</p>
+          <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">TOTAL CLIENTES</p>
           <p className="font-display-lg text-[32px] md:text-[36px] leading-none font-black text-white">{summary.total.toLocaleString()}</p>
           <p className="mt-2 text-[#D8DEE8] text-xs md:text-sm leading-5">Clientes reales registrados en la base de datos.</p>
         </div>
         <div className="border border-muted-steel/10 bg-surface-charcoal p-4 md:p-5 min-h-[150px] flex flex-col justify-between">
-          <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">TOTAL ORDERS</p>
+          <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">TOTAL PEDIDOS</p>
           <p className="font-display-lg text-[32px] md:text-[36px] leading-none font-black text-white">{summary.totalOrders.toLocaleString()}</p>
           <p className="mt-2 text-[#D8DEE8] text-xs md:text-sm leading-5">Pedidos asociados a los clientes filtrados.</p>
         </div>
         <div className="border border-muted-steel/10 bg-surface-charcoal p-4 md:p-5 min-h-[150px] flex flex-col justify-between">
-          <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">REVENUE</p>
+          <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">INGRESOS</p>
           <p className="font-display-lg text-[32px] md:text-[36px] leading-none font-black text-white">
             €{summary.totalRevenue.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
           </p>
@@ -176,14 +176,14 @@ export default function AdminClientsPage() {
         <div className="xl:col-span-8 border border-muted-steel/10 bg-surface-charcoal p-6 md:p-7">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-5">
             <div>
-              <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">CUSTOMERS DATABASE</p>
+              <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">BASE DE DATOS</p>
               <h1 className="font-headline-md text-[28px] md:text-[34px] text-white leading-none">CLIENTES REALES</h1>
             </div>
             <Link
               href="/admin/orders"
               className="h-9 inline-flex items-center px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] leading-none hover:bg-surface-container-high transition-colors"
             >
-              VIEW ORDERS →
+              VER PEDIDOS →
             </Link>
           </div>
 
@@ -203,7 +203,7 @@ export default function AdminClientsPage() {
                 onClick={handleReset}
                 className="h-11 px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] tracking-[0.08em] hover:border-hazard-orange hover:text-hazard-orange transition-colors"
               >
-                RESET FILTERS
+                LIMPIAR FILTROS
               </button>
             </div>
           </div>
@@ -239,15 +239,15 @@ export default function AdminClientsPage() {
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-3 min-w-[280px]">
                       <div className="border border-muted-steel/10 bg-surface-charcoal p-3">
-                        <p className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">ORDERS</p>
+                        <p className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">PEDIDOS</p>
                         <p className="text-white text-lg font-bold mt-1">{client.orderCount}</p>
                       </div>
                       <div className="border border-muted-steel/10 bg-surface-charcoal p-3">
-                        <p className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">SPENT</p>
+                        <p className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">GASTADO</p>
                         <p className="text-white text-lg font-bold mt-1">€{client.totalSpent.toFixed(2)}</p>
                       </div>
                       <div className="border border-muted-steel/10 bg-surface-charcoal p-3 col-span-2 sm:col-span-1 lg:col-span-2">
-                        <p className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">LAST ORDER</p>
+                        <p className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">ÚLTIMO PEDIDO</p>
                         <p className={`inline-flex mt-1 px-2.5 py-1 border text-[10px] font-label-caps tracking-[0.08em] ${statusTone(client.lastOrderStatus)}`}>
                           {client.lastOrderStatus ?? 'SIN PEDIDOS'}
                         </p>
@@ -297,7 +297,7 @@ export default function AdminClientsPage() {
 
         <aside className="xl:col-span-4 border border-muted-steel/10 bg-surface-charcoal p-6 md:p-7">
           <div className="border border-muted-steel/10 bg-surface-container-lowest p-4 mb-5">
-            <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-3">MANUAL CLIENT</p>
+            <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-3">CLIENTE MANUAL</p>
             <form className="space-y-3" onSubmit={handleCreateClient}>
               <input
                 type="text"
@@ -339,7 +339,7 @@ export default function AdminClientsPage() {
           </div>
 
           <div className="flex items-end justify-between gap-4 mb-5">
-            <h2 className="font-headline-md text-[22px] md:text-[26px] leading-none text-white">RECENT CLIENTS</h2>
+            <h2 className="font-headline-md text-[22px] md:text-[26px] leading-none text-white">CLIENTES RECIENTES</h2>
           </div>
 
           <div className="space-y-3">
@@ -366,7 +366,7 @@ export default function AdminClientsPage() {
           </div>
 
           <div className="mt-6 border-t border-muted-steel/10 pt-4">
-            <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">REAL ACTIONS</p>
+            <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">ACCIONES</p>
             <div className="space-y-2">
               <Link href="/admin/orders" className="block h-10 px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] tracking-[0.08em] hover:bg-surface-container-high transition-colors leading-[40px]">
                 REVISAR PEDIDOS →
