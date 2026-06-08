@@ -23,7 +23,7 @@ export async function ensureThreeModules(): Promise<ThreeModules> {
     const { OrbitControls } = await import('three/examples/jsm/controls/OrbitControls.js');
     const { DecalGeometry } = await import('three/examples/jsm/geometries/DecalGeometry.js');
 
-    cache = { THREE: THREE.default || THREE, GLTFLoader, OrbitControls, DecalGeometry };
+    cache = { THREE, GLTFLoader, OrbitControls, DecalGeometry };
     console.log('[three] ✅ Cargado desde npm');
     return cache;
   } catch (err) {

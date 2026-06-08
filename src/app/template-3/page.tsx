@@ -405,7 +405,7 @@ const Template3Page = () => {
 
     // 1. Calcular punto aproximado desde la caja de la zona
     const normalDir = new THREE.Vector3(...zoneProjectionNormal[zone]).normalize();
-    let approxPoint: THREE.Vector3;
+    let approxPoint: any;
 
     if (zone === 'back-large') {
       approxPoint = new THREE.Vector3(center.x, center.y + size.y * 0.04, box.max.z);
