@@ -1,12 +1,13 @@
 /**
  * POST /api/orders/[id]/send-email
  * Resend confirmation email for an order
- * Admin-only endpoint (requires ADMIN_AUTH_TOKEN header)
+ * Admin-only endpoint
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/server/db';
 import { emailService } from '@/server/emails/service';
+import { verifyAdminToken } from '@/app/api/admin/auth-utils';
 
 export async function POST(
   req: NextRequest,
@@ -15,32 +16,10 @@ export async function POST(
   try {
     const { id: orderId } = await params;
 
-    // Verify admin authentication
-    const authHeader = req.headers.get('authorization');
-    const adminToken = process.env.ADMIN_AUTH_TOKEN;
-
-    if (!adminToken) {
-      console.error('ADMIN_AUTH_TOKEN not configured');
-      return NextResponse.json(
-        { error: 'Admin authentication not configured' },
-        { status: 500 }
-      );
-    }
-
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json(
-        { error: 'Missing or invalid authorization header' },
-        { status: 401 }
-      );
-    }
-
-    const token = authHeader.substring(7);
-
-    if (token !== adminToken) {
-      console.warn(`Invalid admin token attempt for order ${orderId}`);
+    if (!(await verifyAdminToken(req))) {
       return NextResponse.json(
         { error: 'Unauthorized' },
-        { status: 403 }
+        { status: 401 }
       );
     }
 

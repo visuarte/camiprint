@@ -6,12 +6,6 @@ const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await req.json();
-
-    if (!email || !password) {
-      return NextResponse.json({ error: 'Email y contraseña requeridos' }, { status: 400 });
-    }
-
     const response = NextResponse.json({ success: true });
 
     const supabase = createServerClient(supabaseUrl, supabaseKey, {
@@ -26,21 +20,10 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
-    if (error || !data.user) {
-      return NextResponse.json({ error: 'Credenciales inválidas' }, { status: 401 });
-    }
-
-    const adminEmail = process.env.ADMIN_EMAIL;
-    if (adminEmail && data.user.email !== adminEmail) {
-      await supabase.auth.signOut();
-      return NextResponse.json({ error: 'Acceso denegado' }, { status: 403 });
-    }
-
+    await supabase.auth.signOut();
     return response;
   } catch (error) {
-    console.error('Auth error:', error);
-    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
+    console.error('Logout error:', error);
+    return NextResponse.json({ error: 'Error al cerrar sesión' }, { status: 500 });
   }
 }

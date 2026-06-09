@@ -27,8 +27,16 @@
   ],
   "git": {
     "deploymentEnabled": {
-      "main": true
+      "main": true,
+      "staging": true
     }
+  },
+  "github": {
+    "silent": false,
+    "autoJobCancelation": true
+  },
+  "preview": {
+    "minimumCacheAge": 3600
   },
   "crons": [
     {

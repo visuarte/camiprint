@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { prisma } from '@/server/db';
 import { jsonError, jsonSuccess } from '@/server/http/errors';
 import { getOrCreateRequestId } from '@/server/http/request-id';
+import { verifyAdminToken } from '@/app/api/admin/auth-utils';
 
 const RespondSchema = z.object({
   message: z.string().min(1),
@@ -12,11 +13,7 @@ const RespondSchema = z.object({
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const requestId = getOrCreateRequestId(req);
 
-  // simple admin auth using ADMIN_AUTH_TOKEN
-  const authHeader = req.headers.get('authorization');
-  const token = authHeader?.match(/^Bearer\s+(.+)$/i)?.[1]?.trim();
-  const expectedToken = process.env.ADMIN_AUTH_TOKEN?.trim();
-  if (!token || !expectedToken || token !== expectedToken) {
+  if (!(await verifyAdminToken(req))) {
     return jsonError(401, requestId, 'UNAUTHORIZED', 'Token de autorización inválido o ausente.');
   }
 

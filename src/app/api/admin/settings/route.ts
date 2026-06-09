@@ -19,7 +19,7 @@ const ALLOWED_TIMEZONES = [
 ] as const;
 
 export async function GET(req: NextRequest) {
-  if (!verifyAdminToken(req)) return unauthorized();
+  if (!(await verifyAdminToken(req))) return unauthorized();
 
   try {
     const settings = await getDashboardSettingsFromStore();
@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!verifyAdminToken(req)) return unauthorized();
+  if (!(await verifyAdminToken(req))) return unauthorized();
 
   try {
     const body = await req.json();

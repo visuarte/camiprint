@@ -4,9 +4,17 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
-# Deploy workflow
+# Staging environment
 
-Después de cada cambio importante (feature, fix, refactor), cuando el build pase y los tests estén verdes, ofrecer al usuario el comando para commit + push + Vercel:
+- **Branch:** `staging` → despliegue automático en <https://staging.camiart.com>
+- **Preview deploys:** cada PR a `main` genera una URL de preview automática (Vercel native + GH Action)
+- **Staging alias** se asigna automáticamente via GH Action al pushear a `staging`
+- **Variables de entorno staging:** configuradas en Vercel Dashboard con scope `Preview`
+- **Base de datos staging:** independiente de producción (usar `DATABASE_URL_STAGING` en secrets)
+
+# Deploy workflow (production)
+
+Después de cada cambio importante (feature, fix, refactor), cuando el build pase, los tests estén verdes y se haya validado en staging:
 
 ```powershell
 Set-Location -LiteralPath "C:\camiprint"
@@ -16,4 +24,13 @@ git push
 vercel --prod
 ```
 
-No ejecutar el comando, solo mostrarlo. El usuario lo pega en su terminal.
+# Staging deploy (manual, when not using PR)
+
+```powershell
+git checkout -b staging main
+git push origin staging
+```
+
+Esto dispara el workflow `vercel-preview-deploy.yml` que despliega y asigna el alias `staging.camiart.com`.
+
+No ejecutar los comandos, solo mostrarlos. El usuario los pega en su terminal.

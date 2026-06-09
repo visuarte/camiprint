@@ -43,7 +43,7 @@ function parsePositiveInteger(value: string | null, fallback: number): number {
 }
 
 export async function GET(req: NextRequest) {
-  if (!verifyAdminToken(req)) {
+  if (!(await verifyAdminToken(req))) {
     return unauthorized();
   }
 
@@ -122,7 +122,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!verifyAdminToken(req)) {
+  if (!(await verifyAdminToken(req))) {
     return unauthorized();
   }
 

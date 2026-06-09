@@ -3,6 +3,7 @@
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { AdminAuthGate } from './auth-gate';
+import { clearAdminToken } from './auth-client';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -24,8 +25,8 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
 
   const isLoginPage = pathname === '/admin/login';
 
-  const handleLogout = () => {
-    document.cookie = 'admin_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+  const handleLogout = async () => {
+    await clearAdminToken();
     router.push('/admin/login');
   };
 

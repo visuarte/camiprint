@@ -3,12 +3,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 
-/**
- * AuthGate: protege las rutas /admin (excepto /admin/login).
- * - Verifica la sesión contra /api/admin/auth/verify (lee la cookie httpOnly)
- * - Si no hay sesión, redirige a /admin/login
- * - Muestra un loading mientras verifica
- */
 export function AdminAuthGate({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -28,7 +22,7 @@ export function AdminAuthGate({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (isLoginPage) {
-      setAuthState('authenticated'); // no gateamos la página de login
+      setAuthState('authenticated');
       return;
     }
     checkAuth();
@@ -40,7 +34,6 @@ export function AdminAuthGate({ children }: { children: React.ReactNode }) {
     }
   }, [authState, isLoginPage, router]);
 
-  // Loading state
   if (authState === 'loading' && !isLoginPage) {
     return (
       <div className="min-h-screen bg-[#131313] flex items-center justify-center">
@@ -52,7 +45,6 @@ export function AdminAuthGate({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // Si no está autenticado y no es login, no renderizar nada (la redirección está en el efecto)
   if (authState === 'unauthenticated' && !isLoginPage) {
     return (
       <div className="min-h-screen bg-[#131313] flex items-center justify-center">

@@ -15,7 +15,7 @@ function parseBoolean(value: string | null, fallback = false): boolean {
 }
 
 export async function POST(req: NextRequest) {
-  if (!verifyAdminToken(req)) {
+  if (!(await verifyAdminToken(req))) {
     return unauthorized();
   }
 

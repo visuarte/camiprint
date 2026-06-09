@@ -8,7 +8,8 @@ export async function register() {
 
   const REQUIRED: string[] = [
     'DATABASE_URL',
-    'ADMIN_AUTH_TOKEN',
+    'NEXT_PUBLIC_SUPABASE_URL',
+    'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY',
     'STRIPE_SECRET_KEY',
     'STRIPE_WEBHOOK_SECRET',
     'RESEND_API_KEY',

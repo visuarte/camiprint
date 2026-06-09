@@ -10,7 +10,7 @@ function isAuditSort(value: string): value is AuditSort {
 }
 
 export async function GET(req: NextRequest) {
-  if (!verifyAdminToken(req)) return unauthorized();
+  if (!(await verifyAdminToken(req))) return unauthorized();
 
   try {
     const { searchParams } = new URL(req.url);

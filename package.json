@@ -47,6 +47,7 @@
     "vuln:monitor": "node scripts/monitor-vulnerabilities.mjs",
     "vuln:monitor:strict": "node scripts/monitor-vulnerabilities.mjs --strict",
     "vuln:history": "node scripts/monitor-vulnerabilities.mjs --history",
+    "deploy:staging": "vercel --prod --yes",
     "predeploy": "node scripts/check-vercel-env.mjs",
     "db:orders": "node scripts/list-orders.mjs",
     "db:order": "node scripts/query-order.mjs"

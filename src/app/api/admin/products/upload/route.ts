@@ -13,7 +13,7 @@ function shouldUseBlobStorage(): boolean {
 }
 
 export async function POST(req: NextRequest) {
-  if (!verifyAdminToken(req)) {
+  if (!(await verifyAdminToken(req))) {
     return unauthorized();
   }
 

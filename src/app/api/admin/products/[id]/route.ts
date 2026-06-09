@@ -38,7 +38,7 @@ function parseOptionalNonNegativeInteger(value: unknown): number | undefined {
 }
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  if (!verifyAdminToken(req)) {
+  if (!(await verifyAdminToken(req))) {
     return unauthorized();
   }
 
@@ -69,7 +69,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  if (!verifyAdminToken(req)) {
+  if (!(await verifyAdminToken(req))) {
     return unauthorized();
   }
 
@@ -160,7 +160,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  if (!verifyAdminToken(req)) {
+  if (!(await verifyAdminToken(req))) {
     return unauthorized();
   }
 

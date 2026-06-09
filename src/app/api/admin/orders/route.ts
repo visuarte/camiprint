@@ -15,7 +15,7 @@ interface OrderListItem {
 
 export async function GET(req: NextRequest) {
   // Verify admin token
-  if (!verifyAdminToken(req)) {
+  if (!(await verifyAdminToken(req))) {
     return unauthorized();
   }
 

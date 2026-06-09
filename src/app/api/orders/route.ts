@@ -5,6 +5,7 @@ import { stripe } from '@/lib/stripe';
 import { CreateOrderSchema, type CreateOrderRequest } from '@/lib/validation';
 import { jsonError, jsonSuccess } from '@/server/http/errors';
 import { getOrCreateRequestId } from '@/server/http/request-id';
+import { verifyAdminToken, unauthorized } from '@/app/api/admin/auth-utils';
 
 export async function POST(req: NextRequest) {
   const requestId = getOrCreateRequestId(req);
@@ -110,9 +111,7 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   const requestId = getOrCreateRequestId(req);
 
-  const authHeader = req.headers.get('authorization');
-  const token = authHeader?.replace('Bearer ', '');
-  if (!token || token !== process.env.ADMIN_AUTH_TOKEN) {
+  if (!(await verifyAdminToken(req))) {
     return jsonError(401, requestId, 'UNAUTHORIZED', 'Token de autorización inválido o ausente.');
   }
 

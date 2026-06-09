@@ -4,7 +4,7 @@ import { readFileSync } from 'fs';
 import path from 'path';
 
 export async function GET(req: NextRequest) {
-  if (!verifyAdminToken(req)) return unauthorized();
+  if (!(await verifyAdminToken(req))) return unauthorized();
 
   try {
     const scriptPath = path.resolve(process.cwd(), 'scripts', 'setup-stripe-secrets.ps1');

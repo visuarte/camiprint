@@ -1,45 +1,68 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { updateSession } from '@/utils/supabase/middleware'
+import { createServerClient } from '@supabase/ssr'
 
-/**
- * Proxy: protección server-side de rutas de UI Admin y API admin.
- * - UI pages (/admin/*): exige cookie `admin_token` o redirect a /admin/login
- * - API routes (/api/admin/*): exige header `Authorization: Bearer <ADMIN_AUTH_TOKEN>`
- */
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || ''
+
+async function isAdminSession(req: NextRequest): Promise<boolean> {
+  if (supabaseUrl && supabaseKey) {
+    try {
+      const supabase = createServerClient(supabaseUrl, supabaseKey, {
+        cookies: {
+          getAll() { return req.cookies.getAll() },
+          setAll() {},
+        },
+      })
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user?.email) {
+        const adminEmail = process.env.ADMIN_EMAIL
+        return !adminEmail || user.email === adminEmail
+      }
+    } catch {
+      // fall through
+    }
+  }
+
+  // Legacy fallback: ADMIN_AUTH_TOKEN
+  const adminToken = process.env.ADMIN_AUTH_TOKEN || ''
+  if (!adminToken) return false
+
+  const authHeader = req.headers.get('authorization') || ''
+  if (authHeader === `Bearer ${adminToken}`) return true
+
+  const cookies = req.cookies.getAll()
+  const hasAdminCookie = cookies.some((c) => c.name === 'admin_token' && c.value === adminToken)
+  if (hasAdminCookie) return true
+
+  return false
+}
+
 export async function proxy(req: NextRequest) {
   const sessionResponse = await updateSession(req)
   const { pathname } = req.nextUrl
 
-  // No nos ocupamos de otras rutas
   if (!pathname.startsWith('/admin') && !pathname.startsWith('/api/admin')) {
     return sessionResponse
   }
 
-  // Allow the login endpoint so users can obtain the admin cookie/token.
   if (pathname === '/api/admin/auth/login') {
     return sessionResponse
   }
 
-  // API admin: validar header Bearer
   if (pathname.startsWith('/api/admin')) {
-    const authHeader = req.headers.get('authorization') || ''
-    const cookieToken = req.cookies.get('admin_token')?.value?.trim()
-    const expected = process.env.ADMIN_AUTH_TOKEN || ''
-    if (authHeader === `Bearer ${expected}` || cookieToken === expected) return sessionResponse
+    const authed = await isAdminSession(req)
+    if (authed) return sessionResponse
     return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), {
       status: 401,
       headers: { 'content-type': 'application/json' },
     })
   }
 
-  // UI admin pages (except login): permitir si existe cookie admin_token
   if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
-    const cookieToken = req.cookies.get('admin_token')?.value?.trim()
-    const expected = process.env.ADMIN_AUTH_TOKEN || ''
-    const authHeader = req.headers.get('authorization') || ''
-    // permitir si existe cookie válida o header Authorization válido
-    if (cookieToken || authHeader === `Bearer ${expected}`) return sessionResponse
+    const authed = await isAdminSession(req)
+    if (authed) return sessionResponse
 
     const loginUrl = req.nextUrl.clone()
     loginUrl.pathname = '/admin/login'

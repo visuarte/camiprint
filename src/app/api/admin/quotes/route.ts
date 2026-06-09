@@ -3,7 +3,7 @@ import { verifyAdminToken, unauthorized } from '@/app/api/admin/auth-utils';
 import { createQuoteRepository } from '@/server/quotes/repository.factory';
 
 export async function GET(req: NextRequest) {
-  if (!verifyAdminToken(req)) {
+  if (!(await verifyAdminToken(req))) {
     return unauthorized();
   }
 
