@@ -2,6 +2,17 @@ import { describe, expect, it, vi } from 'vitest';
 import { brandConfig } from '@/config/brand';
 import { PostgresQuotesRepository } from '@/server/quotes/postgres.repository';
 import type { QuoteRequestInput } from '@/server/quotes/types';
+import { prisma } from '@/server/db';
+
+vi.mock('@/server/db', () => ({
+  prisma: {
+    quote: {
+      create: vi.fn(),
+      findMany: vi.fn(),
+    },
+    $queryRaw: vi.fn(),
+  },
+}));
 
 const quoteInput: QuoteRequestInput = {
   name: 'Carlos Perez',
@@ -14,43 +25,33 @@ const quoteInput: QuoteRequestInput = {
 
 describe('PostgresQuotesRepository', () => {
   it('inserta un registro y devuelve el mapeo de la fila', async () => {
-    const query = vi.fn().mockResolvedValue({
-      rows: [
-        {
-          id: 'q_postgres_1',
-          source: 'landing-contact-form',
-          status: 'received',
-          name: quoteInput.name,
-          email: quoteInput.email,
-          phone: quoteInput.phone,
-          company_name: quoteInput.companyName,
-          quantity: quoteInput.quantity,
-          message: quoteInput.message,
-          created_at: '2026-05-18T10:00:00.000Z',
-          updated_at: '2026-05-18T10:00:00.000Z',
-        },
-      ],
-    });
+    vi.mocked(prisma.quote.create).mockResolvedValue({
+      id: 'q_postgres_1',
+      source: 'landing-contact-form',
+      status: 'received',
+      name: quoteInput.name,
+      email: quoteInput.email,
+      phone: quoteInput.phone,
+      companyName: quoteInput.companyName,
+      quantity: quoteInput.quantity,
+      message: quoteInput.message,
+      createdAt: new Date('2026-05-18T10:00:00.000Z'),
+      updatedAt: new Date('2026-05-18T10:00:00.000Z'),
+    } as never);
 
-    const repository = new PostgresQuotesRepository({ query });
+    const repository = new PostgresQuotesRepository();
     const created = await repository.create(quoteInput);
 
-    expect(query).toHaveBeenCalledTimes(1);
-    expect(query.mock.calls[0][0]).toContain('INSERT INTO quotes');
-    expect(query.mock.calls[0][1]).toEqual([
-      expect.stringMatching(/^q_/),
-      'landing-contact-form',
-      'received',
-      quoteInput.name,
-      quoteInput.email,
-      quoteInput.phone,
-      quoteInput.companyName,
-      quoteInput.quantity,
-      quoteInput.message,
-      expect.any(String),
-      expect.any(String),
-      null,
-    ]);
+    expect(prisma.quote.create).toHaveBeenCalledTimes(1);
+    expect(vi.mocked(prisma.quote.create).mock.calls[0][0].data).toMatchObject({
+      name: quoteInput.name,
+      email: quoteInput.email,
+      phone: quoteInput.phone,
+      companyName: quoteInput.companyName,
+      quantity: quoteInput.quantity,
+      message: quoteInput.message,
+      status: 'received',
+    });
     expect(created).toEqual({
       id: 'q_postgres_1',
       source: 'landing-contact-form',
@@ -67,29 +68,26 @@ describe('PostgresQuotesRepository', () => {
   });
 
   it('lista registros y mapea company_name y message null', async () => {
-    const query = vi.fn().mockResolvedValue({
-      rows: [
-        {
-          id: 'q_postgres_2',
-          source: 'landing-contact-form',
-          status: 'received',
-          name: quoteInput.name,
-          email: quoteInput.email,
-          phone: quoteInput.phone,
-          company_name: quoteInput.companyName,
-          quantity: quoteInput.quantity,
-          message: null,
-          created_at: '2026-05-18T10:05:00.000Z',
-          updated_at: '2026-05-18T10:05:00.000Z',
-        },
-      ],
-    });
+    vi.mocked(prisma.quote.findMany).mockResolvedValue([
+      {
+        id: 'q_postgres_2',
+        source: 'landing-contact-form',
+        status: 'received',
+        name: quoteInput.name,
+        email: quoteInput.email,
+        phone: quoteInput.phone,
+        companyName: quoteInput.companyName,
+        quantity: quoteInput.quantity,
+        message: null,
+        createdAt: new Date('2026-05-18T10:05:00.000Z'),
+        updatedAt: new Date('2026-05-18T10:05:00.000Z'),
+      },
+    ] as never);
 
-    const repository = new PostgresQuotesRepository({ query });
+    const repository = new PostgresQuotesRepository();
     const records = await repository.list();
 
-    expect(query).toHaveBeenCalledTimes(1);
-    expect(query.mock.calls[0][0]).toContain('SELECT id, source, status');
+    expect(prisma.quote.findMany).toHaveBeenCalledTimes(1);
     expect(records).toEqual([
       {
         id: 'q_postgres_2',
@@ -107,10 +105,10 @@ describe('PostgresQuotesRepository', () => {
   });
 
   it('reporta unhealthy cuando el ping a postgres falla', async () => {
-    const query = vi.fn().mockRejectedValue(new Error('db down'));
-    const repository = new PostgresQuotesRepository({ query });
+    vi.mocked(prisma.$queryRaw).mockRejectedValue(new Error('db down'));
+    const repository = new PostgresQuotesRepository();
 
     await expect(repository.isHealthy()).resolves.toBe(false);
-    expect(query).toHaveBeenCalledWith('SELECT 1');
+    expect(prisma.$queryRaw).toHaveBeenCalled();
   });
 });

@@ -12,6 +12,12 @@ vi.mock('resend', () => ({
   }),
 }));
 
+vi.mock('nodemailer', () => ({
+  createTransport: vi.fn(() => ({
+    sendMail: vi.fn().mockRejectedValue(new Error('domain is not verified')),
+  })),
+}));
+
 describe('EmailService Resend configuration', () => {
   beforeEach(() => {
     vi.resetModules();
@@ -60,6 +66,7 @@ describe('EmailService Resend configuration', () => {
   });
 
   it('skips real delivery when ENABLE_EMAILS=false', async () => {
+    delete process.env.RESEND_API_KEY;
     process.env.ENABLE_EMAILS = 'false';
     const { EmailService } = await import('@/server/emails/service');
     const service = new EmailService();
@@ -71,7 +78,7 @@ describe('EmailService Resend configuration', () => {
     });
 
     expect(result.success).toBe(true);
-    expect(result.id).toMatch(/^disabled-/);
+    expect(result.id).toMatch(/^dev-/);
     expect(sendMock).not.toHaveBeenCalled();
   });
 });

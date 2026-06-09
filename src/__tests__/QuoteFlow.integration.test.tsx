@@ -67,6 +67,7 @@ describe('Tarea 9.5: Integracion flujo de cotizacion', () => {
         })
       )
     );
+    Element.prototype.scrollIntoView = vi.fn();
   });
 
   afterEach(() => {
@@ -74,17 +75,22 @@ describe('Tarea 9.5: Integracion flujo de cotizacion', () => {
   });
 
   it('usuario hace clic en CTA de pricing tier', () => {
-    render(<Pricing />);
+    render(
+      <>
+        <Pricing />
+        <ContactSection />
+      </>
+    );
 
-    const ctaTier50 = document.querySelector('a[href="#contacto?quantity=tier-50"]') as HTMLAnchorElement | null;
+    const ctaButtons = screen.getAllByText('Solicitar Cotización →');
+    const ctaTier50 = ctaButtons[2];
 
     expect(ctaTier50).toBeTruthy();
 
-    // En jsdom no hay scroll real; simulamos el cambio de hash tras el click del enlace.
-    fireEvent.click(ctaTier50 as HTMLAnchorElement);
-    window.history.pushState({}, '', (ctaTier50 as HTMLAnchorElement).getAttribute('href') ?? '/');
+    fireEvent.click(ctaTier50);
 
-    expect(window.location.hash).toBe('#contacto?quantity=tier-50');
+    // Pricing handleQuoteRequest sets ?quantity={tierId} via replaceState
+    expect(window.location.search).toBe('?quantity=tier-50');
   });
 
   it('formulario se muestra con cantidad preseleccionada y permite submit exitoso', async () => {

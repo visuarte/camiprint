@@ -34,7 +34,7 @@ describe('Tarea 8: FAQ Section', () => {
 
   it('los datos de faq se usan en el template activo', () => {
     const page = fs.readFileSync(pagePath, 'utf-8');
-    expect(page).toContain('Consultas Tecnicas');
+    expect(page).toContain('¿Cuál es el mínimo de camisetas por pedido?');
     expect(page).toContain('faqItems');
   });
 });

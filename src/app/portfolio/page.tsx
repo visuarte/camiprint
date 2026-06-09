@@ -1,6 +1,6 @@
 import { brandConfig } from '@/config/brand';
 import Navigation from '../components/Navigation';
-import Footer from '../components/Footer';
+import Footer from '@/components/Footer';
 
 export const metadata = {
   title: 'Portfolio — Trabajos reales | CamiArt',

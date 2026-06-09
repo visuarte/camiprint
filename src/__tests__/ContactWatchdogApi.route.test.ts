@@ -1,11 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { POST } from '@/app/api/v1/watchdog/contact-form/route';
 
-const logOperationalEvent = vi.fn();
+const logOperationalEvent = vi.hoisted(() => vi.fn());
 
 vi.mock('@/server/observability/logger', () => ({
   logOperationalEvent,
 }));
+
+import { POST } from '@/app/api/v1/watchdog/contact-form/route';
 
 describe('POST /api/v1/watchdog/contact-form', () => {
   beforeEach(() => {

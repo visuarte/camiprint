@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-const getQuoteStatusById = vi.fn();
+const getQuoteStatusById = vi.hoisted(() => vi.fn());
 
 vi.mock('@/server/quotes/status.service', () => ({
   getQuoteStatusById,

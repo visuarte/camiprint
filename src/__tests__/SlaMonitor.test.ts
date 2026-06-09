@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { QuoteLeadRecord } from '@/server/quotes/types';
 
-const createQuoteRepository = vi.fn();
-const hasQuoteCommunicationEvent = vi.fn();
-const appendQuoteCommunicationEvent = vi.fn();
-const sendEmail = vi.fn();
-const logOperationalEvent = vi.fn();
+const createQuoteRepository = vi.hoisted(() => vi.fn());
+const hasQuoteCommunicationEvent = vi.hoisted(() => vi.fn());
+const appendQuoteCommunicationEvent = vi.hoisted(() => vi.fn());
+const sendEmail = vi.hoisted(() => vi.fn());
+const logOperationalEvent = vi.hoisted(() => vi.fn());
 
 vi.mock('@/server/quotes/repository.factory', () => ({
   createQuoteRepository,

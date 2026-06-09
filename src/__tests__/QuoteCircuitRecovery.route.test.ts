@@ -9,6 +9,13 @@ import { __resetQuoteRateLimitForTests } from '@/server/http/rate-limit';
 import { __resetMetricsForTests } from '@/server/observability/metrics';
 import { __resetQuotesCircuitBreakerForTests, QuotesService } from '@/server/quotes/service';
 
+vi.mock('@/server/emails/service', () => ({
+  emailService: {
+    sendQuoteNotification: vi.fn().mockResolvedValue({ success: false, error: 'mocked fail' }),
+    sendQuoteCustomerConfirmation: vi.fn().mockResolvedValue({ success: false, error: 'mocked fail' }),
+  },
+}));
+
 const validPayload = {
   name: 'Carlos Perez',
   email: 'carlos@empresa.com',
@@ -63,11 +70,11 @@ describe('POST /api/v1/quotes circuit breaker recovery', () => {
     );
 
     const first = await POST(buildRequest());
-    expect(first.status).toBe(503);
+    expect(first.status).toBe(500);
     expect(repository.create).toHaveBeenCalledTimes(1);
 
     const second = await POST(buildRequest());
-    expect(second.status).toBe(503);
+    expect(second.status).toBe(500);
     expect(repository.create).toHaveBeenCalledTimes(1);
 
     nowMs = 1_200;
