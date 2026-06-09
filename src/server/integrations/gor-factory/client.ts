@@ -20,6 +20,7 @@ export class GorFactoryClient {
   private tokenPromise: Promise<string> | null = null;
   private loginInProgress = false;
   private pendingQueue: PendingRequest[] = [];
+  private _retrying = false;
 
   constructor(
     private readonly environment: 'dev' | 'pro',
@@ -113,10 +114,13 @@ export class GorFactoryClient {
 
       const response = await fetch(url, { method, headers, body });
 
-      // 401 → token expirado, reintentar una vez
-      if (response.status === 401 && !options.skipAuth) {
+      // 401 → token expirado, reintentar una vez máximo
+      if (response.status === 401 && !options.skipAuth && !this._retrying) {
+        this._retrying = true;
         this.resetToken();
-        return this.request<T>(method, path, options);
+        const result = await this.request<T>(method, path, options);
+        this._retrying = false;
+        return result;
       }
 
       const text = await response.text();

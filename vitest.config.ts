@@ -30,6 +30,7 @@ export default defineConfig({
       '**/src/__tests__/Process.test.ts',
       '**/src/__tests__/Checkpoint.test.ts',
       '**/src/__tests__/task-1-setup.test.ts',
+      '__tests__/e2e.test.ts',
     ],
   },
 });

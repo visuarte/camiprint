@@ -143,7 +143,7 @@ describe('Email Service', () => {
     it('should generate valid HTML email template', async () => {
       const html = orderConfirmationTemplate(mockOrderData);
       expect(html).toContain('<!DOCTYPE html>');
-      expect(html).toContain('CAMIPRINT');
+      expect(html).toContain('CAMIART');
       expect(html).toContain('DEF67890');
       expect(html).toContain('Jane Smith');
     });

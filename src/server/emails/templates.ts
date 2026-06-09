@@ -37,7 +37,9 @@ const escapeHtml = (value: string): string =>
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+    .replace(/'/g, '&#039;')
+    .replace(/\(/g, '&#40;')
+    .replace(/\)/g, '&#41;');
 
 const dataProtectionBlock = `
 <div style="margin-top:28px;padding:14px 16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;font-size:11px;color:#64748b;line-height:1.6;">

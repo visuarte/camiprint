@@ -1,4 +1,4 @@
-> Nota de migracion (2026-06-03): este documento fue normalizado a marca CamiArt y dominio can�nico camiart.com. Se mantienen identificadores tecnicos historicos cuando aportan trazabilidad.
+> Nota de migracion (2026-06-03): este documento fue normalizado a marca CamiArt y dominio can�nico camiart.com. Se mantienen identificadores tecnicos historicos cuando aportan trazabilidad.
 # 🚀 CAMIART MVP - Go-Live Documentation
 
 **Version:** 1.0.0-MVP  
@@ -172,7 +172,7 @@ In Stripe Dashboard:
 1. Go to: Stripe Dashboard → Developers → Webhooks
 2. Click `+ Add endpoint`
 3. **Endpoint URL (canónica):** `https://camiart.com/api/webhook/stripe`
-4. **Compatibilidad:** `https://camiart.com/api/webhook/stripe` y `https://camiart.com/api/webhooks/stripe` siguen funcionando para evitar 404 por rutas antiguas.
+4. **Compatibilidad:** Solo `https://camiart.com/api/webhook/stripe` (ruta plural `/api/webhooks/stripe` eliminada — ya no es duplicado).
 5. **Events to send:**
    - `payment_intent.succeeded`
    - `payment_intent.payment_failed`

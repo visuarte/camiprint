@@ -2,7 +2,7 @@
 
 - [x] Build Preview validado en Vercel sin exigir `DATABASE_URL`, `ADMIN_AUTH_TOKEN` ni `RESEND_API_KEY`.
 - [x] Build Production mantiene validacion estricta de variables criticas.
-- [x] Compatibilidad webhook Stripe activa en rutas singular y plural (`/api/webhook/stripe` y `/api/webhooks/stripe`).
+- [x] Compatibilidad webhook Stripe activa en ruta singular (`/api/webhook/stripe`). Ruta plural `/api/webhooks/stripe` eliminada (era duplicado).
 - [x] Endpoint obsoleto con 404 eliminado en Stripe CLI.
 - [x] Endpoint legacy duplicado eliminado en Stripe CLI.
 - [x] Endpoint webhook final activo: `https://camiart.com/api/webhook/stripe`.

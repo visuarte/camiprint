@@ -1,10 +1,9 @@
 import { GorFactoryClient } from '@/server/integrations/gor-factory/client';
+import { getRedisClient } from '@/server/platform/redis/client';
 
-const priceCache: { data: { itemcode: string; price: number }[] | null; ts: number } = {
-  data: null,
-  ts: 0,
-};
-const PRICE_TTL = 3600_000; // 1 hour
+const REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
+const PRICE_CACHE_KEY = 'gor:pricecache';
+const PRICE_TTL_SEC = 3600; // 1 hour
 
 export async function GET(request: Request) {
   try {
@@ -98,11 +97,12 @@ export async function GET(request: Request) {
     };
 
     if (includePrices) {
-      const now = Date.now();
+      const redis = getRedisClient(REDIS_URL);
       let priceItems: { itemcode: string; price: number }[] = [];
 
-      if (priceCache.data && now - priceCache.ts < PRICE_TTL) {
-        priceItems = priceCache.data;
+      const cached = await redis.get(PRICE_CACHE_KEY);
+      if (cached) {
+        priceItems = JSON.parse(cached);
       } else {
         try {
           const priceResult = await client.postForm<unknown>(
@@ -117,12 +117,10 @@ export async function GET(request: Request) {
               if (Array.isArray(pd.item)) priceItems = pd.item as { itemcode: string; price: number }[];
               else if (Array.isArray(pd.items)) priceItems = pd.items as { itemcode: string; price: number }[];
             }
-            priceCache.data = priceItems;
-            priceCache.ts = now;
+            await redis.setex(PRICE_CACHE_KEY, PRICE_TTL_SEC, JSON.stringify(priceItems));
           }
         } catch {
-          // pricelist errors are non-fatal; use stale cache if available
-          if (priceCache.data) priceItems = priceCache.data;
+          // pricelist errors are non-fatal; serve empty prices
         }
       }
 
