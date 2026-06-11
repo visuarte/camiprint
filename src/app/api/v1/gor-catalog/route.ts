@@ -25,9 +25,8 @@ export async function GET(request: Request) {
     const password = process.env.GOR_PASSWORD || '';
 
     const client = getClient(env, username, password);
-    let token;
     try {
-      token = await client.getToken();
+      await client.getToken();
     } catch (err) {
       const detail = err instanceof Error ? `${err.message}` : 'Unknown error';
       return Response.json({ error: 'Login failed', detail }, { status: 401 });
