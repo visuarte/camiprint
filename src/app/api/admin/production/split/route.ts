@@ -2,10 +2,12 @@
 // API: Split de pedido a proveedores (Roly / Stamina)
 // =============================================================================
 
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { splitOrderToSuppliers } from '@/server/production/workflow';
+import { verifyAdminToken, unauthorized } from '../../auth-utils';
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  if (!(await verifyAdminToken(req))) return unauthorized();
   try {
     const { productionOrderId } = await req.json();
 
