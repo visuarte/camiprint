@@ -21,8 +21,12 @@ export async function GET(req: Request) {
   const brand = searchParams.get('brand') || 'roly';
   const whscode = searchParams.get('whscode') || '01';
 
-  const username = searchParams.get('username') || process.env.GOR_USERNAME || 'it09@gorfactory.es';
-  const password = searchParams.get('password') || process.env.GOR_PASSWORD || 'Test1234';
+  const username = searchParams.get('username') || process.env.GOR_USERNAME;
+  const password = searchParams.get('password') || process.env.GOR_PASSWORD;
+
+  if (!username || !password) {
+    return NextResponse.json({ error: 'GOR_USERNAME y GOR_PASSWORD requeridos (env o query param)' }, { status: 400 });
+  }
 
   const client = new GorFactoryClient('dev', username, password);
   const catalog = new GorCatalogModule(client);

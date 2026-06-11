@@ -3,7 +3,17 @@ import { getRedisClient } from '@/server/platform/redis/client';
 
 const REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
 const PRICE_CACHE_KEY = 'gor:pricecache';
-const PRICE_TTL_SEC = 3600; // 1 hour
+const PRICE_TTL_SEC = 3600;
+
+const CLIENTS = new Map<string, GorFactoryClient>();
+
+function getClient(env: 'dev' | 'pro', username: string, password: string): GorFactoryClient {
+  const key = `${env}:${username}`;
+  if (!CLIENTS.has(key)) {
+    CLIENTS.set(key, new GorFactoryClient(env, username, password));
+  }
+  return CLIENTS.get(key)!;
+}
 
 export async function GET(request: Request) {
   try {
@@ -14,7 +24,7 @@ export async function GET(request: Request) {
     const username = process.env.GOR_USERNAME || '';
     const password = process.env.GOR_PASSWORD || '';
 
-    const client = new GorFactoryClient(env, username, password);
+    const client = getClient(env, username, password);
     const token = await client.getToken().catch(() => null);
     if (!token) {
       return Response.json({ error: 'Login failed' }, { status: 401 });
