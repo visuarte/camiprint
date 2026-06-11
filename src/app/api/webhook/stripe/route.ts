@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/server/db';
 import Stripe from 'stripe';
+import pino from 'pino';
 import { stripe } from '@/lib/stripe';
 import { emailService } from '@/server/emails/service';
+
+const webhookLog = pino({ name: 'stripe-webhook', level: process.env.LOG_LEVEL || 'info' });
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,7 +22,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (!process.env.STRIPE_WEBHOOK_SECRET) {
-      console.error('STRIPE_WEBHOOK_SECRET is not set');
+      webhookLog.error('STRIPE_WEBHOOK_SECRET is not set');
       return NextResponse.json(
         {
           error: 'Webhook secret not configured',
@@ -38,7 +41,7 @@ export async function POST(req: NextRequest) {
       );
     } catch (error) {
       const err = error as Error;
-      console.error('Webhook signature verification failed:', err.message);
+      webhookLog.error({ error: err.message }, 'Webhook signature verification failed');
       return NextResponse.json(
         {
           error: 'Invalid signature',
@@ -53,7 +56,7 @@ export async function POST(req: NextRequest) {
       const orderId = paymentIntent.metadata?.orderId;
 
       if (!orderId) {
-        console.warn('Payment intent succeeded but no orderId in metadata');
+        webhookLog.warn('Payment intent succeeded but no orderId in metadata');
         return NextResponse.json({ ok: true, id: event.id });
       }
 
@@ -71,19 +74,16 @@ export async function POST(req: NextRequest) {
       });
 
       if (!orderData) {
-        console.warn(`Order ${orderId} not found`);
+        webhookLog.warn({ orderId }, 'Order not found for payment');
         return NextResponse.json({ ok: true, id: event.id });
       }
 
-      // Update order status to "paid"
       await prisma.order.update({
         where: { id: orderId },
-        data: {
-          status: 'paid',
-        },
+        data: { status: 'paid' },
       });
 
-      console.log(`Order ${orderId} marked as paid`);
+      webhookLog.info({ orderId }, 'Order marked as paid');
 
       // Prepare order data for email template
       const orderConfirmationData = {
@@ -108,13 +108,13 @@ export async function POST(req: NextRequest) {
         );
 
         if (emailSent) {
-          console.log(`Confirmation email sent to ${orderData.email} for order ${orderId}`);
+          webhookLog.info({ orderId, email: orderData.email }, 'Confirmation email sent');
         } else {
-          console.warn(`Failed to send confirmation email for order ${orderId}, but payment was successful`);
+          webhookLog.warn({ orderId }, 'Confirmation email send returned failure');
         }
       } catch (emailError) {
         const err = emailError as Error;
-        console.error(`Error sending confirmation email for order ${orderId}:`, err.message);
+        webhookLog.error({ orderId, error: err.message }, 'Confirmation email send threw');
         // Don't throw - email is best-effort
       }
     }
@@ -132,20 +132,20 @@ export async function POST(req: NextRequest) {
           },
         });
 
-        console.log(`Order ${orderId} marked as cancelled due to payment failure`);
+        webhookLog.info({ orderId }, 'Order marked as cancelled due to payment failure');
       }
     }
 
     // Handle unknown events - log but don't fail
     if (event.type !== 'payment_intent.succeeded' && event.type !== 'payment_intent.payment_failed') {
-      console.info(`Received webhook event: ${event.type} (not handled, but acknowledged)`);
+      webhookLog.info({ eventType: event.type }, 'Unhandled webhook event type');
     }
 
     // Return 200 OK to acknowledge webhook receipt to Stripe
     return NextResponse.json({ ok: true, id: event.id });
   } catch (error) {
     const err = error as Error;
-    console.error('Webhook error:', err.message);
+    webhookLog.error({ error: err.message }, 'Unhandled webhook error');
     return NextResponse.json(
       {
         error: 'Internal server error',

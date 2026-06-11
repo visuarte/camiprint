@@ -14,6 +14,26 @@
 
 - [ ] Revisar en 24h el panel de Stripe para confirmar que no se reabren fallos por reintentos historicos.
 
+## Staging environment + Preview deploys automáticos
+
+- [x] `vercel.json`: git.deploymentEnabled (main + staging), preview.minimumCacheAge (3600), github.autoJobCancelation
+- [x] `.github/workflows/vercel-preview-deploy.yml`: 3 jobs (deploy-preview, smoke-test, build-check)
+- [x] `AGENTS.md`: sección Staging environment documentada
+- [ ] **Dashboard Vercel**: Generar VERCEL_TOKEN (Settings → Tokens)
+- [ ] **GitHub Secrets**: Añadir VERCEL_ORG_ID, VERCEL_PROJECT_ID, VERCEL_TOKEN
+- [x] **Supabase**: Proyecto `camiart-staging` creado (`yqcyhpyrjxfzpbrxhohv`)
+- [ ] **Supabase staging**: Crear usuario admin en Auth Dashboard (email+password) — **ahora**
+- [x] **Supabase staging**: Project URL + anon key copiadas
+- [ ] **Vercel Dashboard (scope Preview)**: Configurar `NEXT_PUBLIC_SUPABASE_URL` → URL del proyecto staging
+- [ ] **Vercel Dashboard (scope Preview)**: Configurar `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` → anon key de staging
+- [ ] **Vercel Dashboard (scope Preview)**: Configurar `ADMIN_EMAIL` → email del admin en staging
+- [ ] **GitHub Secrets**: Añadir `NEXT_PUBLIC_SUPABASE_URL_STAGING`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY_STAGING`, `ADMIN_EMAIL_STAGING` (para build-check job)
+- [ ] **Vercel Dashboard (scope Production)**: Mantener variables apuntando al proyecto Supabase de producción
+- [ ] **Vercel Dashboard**: Configurar staging.camiart.com como dominio
+- [ ] **Prueba**: Hacer push a staging → verificar deploy automático + alias staging.camiart.com
+- [ ] **Prueba**: Login admin en staging.camiart.com/admin con credenciales de staging Supabase
+- [ ] **Prueba**: Crear PR a main → verificar preview URL en comment
+
 ## Template 3 - mapeo 3D publicado
 
 - [x] Publicar online la version inicial de `template-3` con mapeo de imagen sobre el modelo 3D.

@@ -11,6 +11,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - **Staging alias** se asigna automáticamente via GH Action al pushear a `staging`
 - **Variables de entorno staging:** configuradas en Vercel Dashboard con scope `Preview`
 - **Base de datos staging:** independiente de producción (usar `DATABASE_URL_STAGING` en secrets)
+- **Supabase staging:** proyecto separado de producción (`camiart-staging`). Variables `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` apuntan al proyecto staging en deploys Preview. Producción usa su propio proyecto Supabase.
 
 # Deploy workflow (production)
 

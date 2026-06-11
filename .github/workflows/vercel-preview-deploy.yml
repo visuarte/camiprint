@@ -136,7 +136,9 @@ jobs:
         run: npm run build:turbo
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_TEST }}
-          ADMIN_AUTH_TOKEN: ${{ secrets.ADMIN_AUTH_TOKEN_TEST }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL_STAGING }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY_STAGING }}
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL_STAGING }}
           QUOTES_REPOSITORY_DRIVER: json
           RATE_LIMIT_STORE_DRIVER: memory
           REDIS_URL: ${{ secrets.REDIS_URL_TEST }}

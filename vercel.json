@@ -8,7 +8,7 @@
     "QUOTES_REPOSITORY_DRIVER": "postgres",
     "RATE_LIMIT_STORE_DRIVER": "memory",
     "LOG_LEVEL": "info",
-    "TRUSTED_PROXY_COUNT": "1",
+    "TRUSTED_PROXY_COUNT": "2",
     "NEXT_PUBLIC_QUOTES_API_ENABLED": "true",
     "NODE_ENV": "production",
     "QUOTES_NOTIFICATION_EMAIL": "hola@camiprint.com",

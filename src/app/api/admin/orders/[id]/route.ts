@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/server/db';
+import { verifyAdminToken, unauthorized, serverError, successResponse } from '../../auth-utils';
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (!(await verifyAdminToken(req))) return unauthorized();
   try {
     const { id } = await params;
 
@@ -31,12 +33,8 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(order);
+    return successResponse(order);
   } catch (error) {
-    console.error('Error fetching order:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch order' },
-      { status: 500 }
-    );
+    return serverError(error, 'Failed to fetch order');
   }
 }
