@@ -2,15 +2,24 @@ import type { QuoteLeadRecord, QuoteRequestInput } from '@/server/quotes/types';
 import type { QuoteRepository } from '@/server/quotes/contracts';
 import { promises as fs } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { tmpdir } from 'node:os';
 
 interface QuotesStore {
   records: QuoteLeadRecord[];
 }
 
+const getDataDir = () => {
+  // Vercel serverless (preview/development): only /tmp is writable
+  if (process.env.VERCEL_ENV === 'preview' || process.env.VERCEL_ENV === 'development') {
+    return tmpdir();
+  }
+  return join(/* turbopackIgnore: true */ process.cwd(), 'data');
+};
+
 const DATA_FILE_PATH =
   process.env.NODE_ENV === 'test'
-    ? join(/* turbopackIgnore: true */ process.cwd(), 'data', `quotes.${process.pid}.json`)
-    : join(/* turbopackIgnore: true */ process.cwd(), 'data', 'quotes.json');
+    ? join(tmpdir(), `quotes.${process.pid}.json`)
+    : join(getDataDir(), 'quotes.json');
 const GLOBAL_STORAGE_LOCK_KEY = '__camiart_quotes_storage_lock__';
 
 const withStorageLock = async <T>(operation: () => Promise<T>): Promise<T> => {
