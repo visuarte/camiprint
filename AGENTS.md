@@ -4,18 +4,30 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
-# Staging environment
+# Git Flow: 3 entornos
 
-- **Branch:** `staging` → despliegue automático en <https://staging.camiart.com>
-- **Preview deploys:** cada PR a `main` genera una URL de preview automática (Vercel native + GH Action)
-- **Staging alias** se asigna automáticamente via GH Action al pushear a `staging`
-- **Variables de entorno staging:** configuradas en Vercel Dashboard con scope `Preview`
-- **Base de datos staging:** independiente de producción (usar `DATABASE_URL_STAGING` en secrets)
-- **Supabase staging:** proyecto separado de producción (`camiart-staging`). Variables `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` apuntan al proyecto staging en deploys Preview. Producción usa su propio proyecto Supabase.
+## Ramas
+- `main` → **producción** (<https://camiart.com>)
+- `develop` → **staging** (<https://staging.camiart.com>)
+- `feature/*` → desarrollo **local**
 
-# Deploy workflow (production)
+## Flujo diario
+1. `git checkout -b feature/lo-que-sea develop` — trabajas local, `npm run build` pasa
+2. `git push origin feature/lo-que-sea` + **PR a `develop`** → preview deploy automático + tests smoke
+3. Se valida en <https://staging.camiart.com>
+4. **PR a `main`** → deploy a producción automático
 
-Después de cada cambio importante (feature, fix, refactor), cuando el build pase, los tests estén verdes y se haya validado en staging:
+## Preview deploys automáticos
+- Push a `develop` → deploy + alias `staging.camiart.com` via GH Action
+- PR a `main` → preview URL comment automático en el PR + smoke tests
+- PR a `develop` → preview URL comment automático
+
+## Variables de entorno
+- Scope **Production** → proyecto Supabase de producción
+- Scope **Preview** → proyecto Supabase staging (`yqcyhpyrjxfzpbrxhohv`)
+- Scope **Development** (local) → `.env.local`
+
+# Deploy manual (producción)
 
 ```powershell
 Set-Location -LiteralPath "C:\camiprint"
@@ -25,13 +37,19 @@ git push
 vercel --prod
 ```
 
-# Staging deploy (manual, when not using PR)
+# Comandos útiles
 
 ```powershell
-git checkout -b staging main
-git push origin staging
+# Crear develop si no existe
+git checkout -b develop main
+git push origin develop
+
+# Pull + rebase develop sobre main
+git checkout develop
+git pull --rebase origin main
+
+# Feature branch desde develop
+git checkout -b feature/mi-cambio develop
 ```
 
-Esto dispara el workflow `vercel-preview-deploy.yml` que despliega y asigna el alias `staging.camiart.com`.
-
-No ejecutar los comandos, solo mostrarlos. El usuario los pega en su terminal.
+No ejecutar los comandos automáticamente, solo mostrarlos. El usuario los pega en su terminal.

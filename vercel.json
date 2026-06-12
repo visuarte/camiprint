@@ -28,7 +28,7 @@
   "git": {
     "deploymentEnabled": {
       "main": true,
-      "staging": true
+      "develop": true
     }
   },
   "github": {

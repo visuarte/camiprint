@@ -30,9 +30,10 @@
 - [ ] **GitHub Secrets**: Añadir `NEXT_PUBLIC_SUPABASE_URL_STAGING`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY_STAGING`, `ADMIN_EMAIL_STAGING` (para build-check job)
 - [ ] **Vercel Dashboard (scope Production)**: Mantener variables apuntando al proyecto Supabase de producción
 - [ ] **Vercel Dashboard**: Configurar staging.camiart.com como dominio
-- [ ] **Prueba**: Hacer push a staging → verificar deploy automático + alias staging.camiart.com
+- [ ] **Prueba**: Hacer push a develop → verificar deploy automático + alias staging.camiart.com
 - [ ] **Prueba**: Login admin en staging.camiart.com/admin con credenciales de staging Supabase
-- [ ] **Prueba**: Crear PR a main → verificar preview URL en comment
+- [ ] **Prueba**: Crear PR a develop → verificar preview URL en comment
+- [ ] **Prueba**: Crear PR a main → verificar preview URL en comment + despliegue producción
 
 ## Template 3 - mapeo 3D publicado
 
