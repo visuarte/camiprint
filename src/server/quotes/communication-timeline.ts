@@ -1,5 +1,6 @@
 import { promises as fs } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { prisma } from '@/server/db';
 import { getPlatformConfig } from '@/server/platform/config';
 
@@ -34,10 +35,17 @@ interface QuoteCommunicationRow {
   created_at: Date | string;
 }
 
+const getDataDir = () => {
+  if (process.env.VERCEL_ENV === 'preview' || process.env.VERCEL_ENV === 'development') {
+    return tmpdir();
+  }
+  return join(process.cwd(), 'data');
+};
+
 const DATA_FILE_PATH =
   process.env.NODE_ENV === 'test'
-    ? join(process.cwd(), 'data', `quote-communication.${process.pid}.json`)
-    : join(process.cwd(), 'data', 'quote-communication.json');
+    ? join(tmpdir(), `quote-communication.${process.pid}.json`)
+    : join(getDataDir(), 'quote-communication.json');
 
 const GLOBAL_STORAGE_LOCK_KEY = '__camiart_quote_communication_storage_lock__';
 const GLOBAL_TIMELINE_TABLE_READY_KEY = '__camiart_quote_communication_table_ready__';
