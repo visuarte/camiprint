@@ -57,8 +57,9 @@ await check('GET /api/v1/health → 200 con status ok', async () => {
   });
   assert(res.status === 200, `status esperado 200, recibido ${res.status}`);
   const body = await res.json();
-  assert(body.status === 'ok', `status esperado 'ok', recibido '${body.status}'`);
-  assert(Array.isArray(body.checks), 'body.checks debe ser un array');
+  const data = body.data ?? body;
+  assert(data.status === 'ok', `status esperado 'ok', recibido '${data.status}'`);
+  assert(Array.isArray(data.checks), 'body.checks debe ser un array');
 });
 
 await check('GET /api/v1/health tiene X-Request-Id en respuesta', async () => {
