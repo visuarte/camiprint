@@ -1,5 +1,8 @@
 name: Vercel Preview Deploy
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 on:
   pull_request:
     branches: [main]
@@ -53,6 +56,7 @@ jobs:
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
         env:
           STRIPE_SECRET_KEY: sk_test_placeholder_for_ci
+          QUOTES_REPOSITORY_DRIVER: json
 
       - name: Deploy Preview to Vercel
         id: deploy
