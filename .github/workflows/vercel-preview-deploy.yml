@@ -11,14 +11,14 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
 jobs:
   deploy-preview:
     name: 🚀 Deploy Preview
     runs-on: ubuntu-latest
+    environment: Preview
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     outputs:
       preview_url: ${{ steps.deploy.outputs.preview_url }}
 
@@ -76,6 +76,7 @@ jobs:
     name: 🔥 Smoke Tests
     needs: deploy-preview
     runs-on: ubuntu-latest
+    environment: Preview
 
     steps:
       - name: Checkout code
@@ -114,6 +115,7 @@ jobs:
   build-check:
     name: 🏗️ Build Verification
     runs-on: ubuntu-latest
+    environment: Preview
 
     steps:
       - name: Checkout code
