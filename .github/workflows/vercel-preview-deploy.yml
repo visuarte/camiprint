@@ -107,7 +107,7 @@ jobs:
           URL=${{ needs.deploy-preview.outputs.preview_url }}
           echo "Waiting for $URL to be ready..."
           for i in $(seq 1 30); do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL/api/health" || echo "000")
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL/api/v1/health" || echo "000")
             if [ "$STATUS" = "200" ]; then
               echo "✅ Deployment ready (HTTP $STATUS)"
               exit 0
