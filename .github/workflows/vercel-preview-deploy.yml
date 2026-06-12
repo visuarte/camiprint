@@ -99,7 +99,9 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          pnpm config set onlyBuiltDependencies "@prisma/engines" "prisma" "sharp" "unrs-resolver" --location project
+          pnpm install --frozen-lockfile
 
       - name: Wait for deployment to be ready
         run: |
