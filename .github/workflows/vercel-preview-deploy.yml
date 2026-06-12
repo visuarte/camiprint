@@ -51,6 +51,8 @@ jobs:
 
       - name: Build Project Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          STRIPE_SECRET_KEY: sk_test_placeholder_for_ci
 
       - name: Deploy Preview to Vercel
         id: deploy
