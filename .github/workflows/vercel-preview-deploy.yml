@@ -38,7 +38,10 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Generate Prisma Client
+        run: pnpm run postinstall
 
       - name: Install Vercel CLI
         run: pnpm add -g vercel@latest
@@ -99,7 +102,10 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Generate Prisma Client
+        run: pnpm run postinstall
 
       - name: Wait for deployment to be ready
         run: |
@@ -143,7 +149,10 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Generate Prisma Client
+        run: pnpm run postinstall
 
       - name: TypeScript Check
         run: npx tsc --noEmit
