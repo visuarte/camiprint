@@ -23,7 +23,6 @@
 /build
 
 # pnpm
-pnpm-workspace.yaml
 
 # misc
 .DS_Store
