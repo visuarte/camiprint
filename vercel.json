@@ -35,9 +35,6 @@
     "silent": false,
     "autoJobCancelation": true
   },
-  "preview": {
-    "minimumCacheAge": 3600
-  },
   "crons": [
     {
       "path": "/api/cron/products-image-cleanup",
