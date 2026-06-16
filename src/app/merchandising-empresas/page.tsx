@@ -33,7 +33,7 @@ export default function Page() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(offers) }} />
       <section className="prose mx-auto max-w-4xl py-12 px-4 text-cami-200">
-        <h1 className="text-3xl font-bold text-white">Merchandising para empresas</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Merchandising para empresas</h1>
         <p>
           Diseñamos y producimos merchandising corporativo con control de calidad y envíos a medida. Ideal para eventos, regalos y campañas promocionales.
         </p>

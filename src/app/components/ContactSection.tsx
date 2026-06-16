@@ -260,7 +260,7 @@ const ContactSection = () => {
   }, []);
 
   const inputErrorClass = (field: keyof ContactFormData) =>
-    errors[field] && state.touched[field] ? 'border-red-300 ring-red-300' : 'border-white/15 ring-accent-400';
+    errors[field] && state.touched[field] ? 'border-red-300 ring-red-300' : 'border-gray-200/15 ring-accent-400';
 
   const setField = <K extends keyof ContactFormData>(key: K, value: ContactFormData[K]) => {
     setState((prev) => ({
@@ -474,28 +474,28 @@ const ContactSection = () => {
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-12">
         <div>
           <span className="section-eyebrow">Equipo comercial</span>
-          <h2 className="text-3xl font-bold text-white md:text-4xl lg:text-5xl">Hablemos de tu pedido</h2>
+          <h2 className="text-3xl font-bold text-gray-900 md:text-4xl lg:text-5xl">Hablemos de tu pedido</h2>
           <p className="mt-4 max-w-xl text-base text-cami-300 md:text-lg">
             Completa el briefing y te devolvemos una propuesta clara con precio, tecnica recomendada y ventana de entrega.
           </p>
 
-          <div className="mt-8 rounded-2xl border border-white/10 bg-cami-800/50 p-6 shadow-glow">
+          <div className="mt-8 rounded-2xl border border-gray-200/10 bg-cami-800/50 p-6 shadow-glow">
             <p className="text-sm text-cami-200">Respuesta promedio</p>
-            <p className="mt-1 text-4xl font-bold text-white">15 min</p>
+            <p className="mt-1 text-4xl font-bold text-gray-900">15 min</p>
             <p className="mt-4 text-sm text-cami-300">Soporte para uniformidad, activaciones de marca, reposicion de stock y eventos corporativos.</p>
           </div>
 
-          <div className="mt-6 space-y-3 rounded-2xl border border-white/10 bg-cami-800/30 p-6">
+          <div className="mt-6 space-y-3 rounded-2xl border border-gray-200/10 bg-cami-800/30 p-6">
             <p className="text-xs font-bold uppercase tracking-widest text-[#ff4f00]">Contacto directo</p>
-            <a href="tel:+34900111222" className="flex items-center gap-3 text-sm text-cami-200 transition-colors hover:text-white">
+            <a href="tel:+34900111222" className="flex items-center gap-3 text-sm text-cami-200 transition-colors hover:text-gray-900">
               <span className="material-symbols-outlined text-[#ff4f00]">call</span>
               +34 900 111 222
             </a>
-            <a href="mailto:hola@camiart.com" className="flex items-center gap-3 text-sm text-cami-200 transition-colors hover:text-white">
+            <a href="mailto:hola@camiart.com" className="flex items-center gap-3 text-sm text-cami-200 transition-colors hover:text-gray-900">
               <span className="material-symbols-outlined text-[#ff4f00]">mail</span>
               hola@camiart.com
             </a>
-            <a href="https://wa.me/34900111222" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-cami-200 transition-colors hover:text-white">
+            <a href="https://wa.me/34900111222" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm text-cami-200 transition-colors hover:text-gray-900">
               <span className="material-symbols-outlined text-[#ff4f00]">chat</span>
               WhatsApp
             </a>
@@ -509,7 +509,7 @@ const ContactSection = () => {
         <form
           ref={formContainerRef}
           onSubmit={handleSubmit}
-          className="rounded-2xl border border-white/12 bg-gradient-to-b from-cami-800 to-cami-900 p-6 shadow-glow md:p-8"
+          className="rounded-2xl border border-gray-200/12 bg-gradient-to-b from-cami-800 to-cami-900 p-6 shadow-glow md:p-8"
         >
           <div className="grid grid-cols-1 gap-4">
             <p className="rounded-lg border border-accent-400/30 bg-accent-400/10 px-3 py-2 text-xs font-medium text-cami-100">
@@ -523,7 +523,7 @@ const ContactSection = () => {
                 value={formData.name}
                 onChange={(e) => setField('name', e.target.value)}
                   onBlur={() => handleBlur('name')}
-                  className={`w-full rounded-lg border bg-cami-950/60 px-3 py-2 text-white outline-none placeholder:text-cami-700 focus:ring-2 ${inputErrorClass('name')}`}
+                  className={`w-full rounded-lg border bg-white/60 px-3 py-2 text-gray-900 outline-none placeholder:text-gray-400 focus:ring-2 ${inputErrorClass('name')}`}
                 placeholder="Tu nombre"
               />
                 {errors.name && state.touched.name && <p className="mt-1 text-xs text-red-300">{errors.name}</p>}
@@ -538,7 +538,7 @@ const ContactSection = () => {
                   value={formData.email}
                   onChange={(e) => setField('email', e.target.value)}
                   onBlur={() => handleBlur('email')}
-                  className={`w-full rounded-lg border bg-cami-950/60 px-3 py-2 text-white outline-none placeholder:text-cami-700 focus:ring-2 ${inputErrorClass('email')}`}
+                  className={`w-full rounded-lg border bg-white/60 px-3 py-2 text-gray-900 outline-none placeholder:text-gray-400 focus:ring-2 ${inputErrorClass('email')}`}
                   placeholder="empresa@correo.com"
                 />
                 {errors.email && state.touched.email && <p className="mt-1 text-xs text-red-300">{errors.email}</p>}
@@ -551,7 +551,7 @@ const ContactSection = () => {
                   value={formData.phone}
                   onChange={(e) => setField('phone', e.target.value)}
                   onBlur={() => handleBlur('phone')}
-                  className={`w-full rounded-lg border bg-cami-950/60 px-3 py-2 text-white outline-none placeholder:text-cami-700 focus:ring-2 ${inputErrorClass('phone')}`}
+                  className={`w-full rounded-lg border bg-white/60 px-3 py-2 text-gray-900 outline-none placeholder:text-gray-400 focus:ring-2 ${inputErrorClass('phone')}`}
                   placeholder="+34 600 000 000"
                 />
                 {errors.phone && state.touched.phone && <p className="mt-1 text-xs text-red-300">{errors.phone}</p>}
@@ -566,7 +566,7 @@ const ContactSection = () => {
                   value={formData.companyName}
                   onChange={(e) => setField('companyName', e.target.value)}
                   onBlur={() => handleBlur('companyName')}
-                  className={`w-full rounded-lg border bg-cami-950/60 px-3 py-2 text-white outline-none placeholder:text-cami-700 focus:ring-2 ${inputErrorClass('companyName')}`}
+                  className={`w-full rounded-lg border bg-white/60 px-3 py-2 text-gray-900 outline-none placeholder:text-gray-400 focus:ring-2 ${inputErrorClass('companyName')}`}
                   placeholder="Nombre de tu empresa"
                 />
                 {errors.companyName && state.touched.companyName && <p className="mt-1 text-xs text-red-300">{errors.companyName}</p>}
@@ -579,7 +579,7 @@ const ContactSection = () => {
                   value={formData.quantity}
                   onChange={(e) => setField('quantity', e.target.value)}
                   onBlur={() => handleBlur('quantity')}
-                  className={`w-full rounded-lg border bg-cami-950/60 px-3 py-2 text-white outline-none focus:ring-2 ${inputErrorClass('quantity')}`}
+                  className={`w-full rounded-lg border bg-white/60 px-3 py-2 text-gray-900 outline-none focus:ring-2 ${inputErrorClass('quantity')}`}
                 >
                   {quantityOptions.map((option) => (
                     <option key={option} value={option}>{option}</option>
@@ -596,7 +596,7 @@ const ContactSection = () => {
                 rows={4}
                 value={formData.message}
                 onChange={(e) => setField('message', e.target.value)}
-                className="w-full resize-none rounded-lg border border-white/15 bg-cami-950/60 px-3 py-2 text-white outline-none ring-accent-400 placeholder:text-cami-700 focus:ring-2"
+                className="w-full resize-none rounded-lg border border-gray-200/15 bg-white/60 px-3 py-2 text-gray-900 outline-none ring-accent-400 placeholder:text-gray-400 focus:ring-2"
                 placeholder="Cuentanos brevemente tu idea, tejido y colores."
               />
             </div>
@@ -611,7 +611,7 @@ const ContactSection = () => {
             <button
               type="submit"
               disabled={isDisabled}
-              className="mt-2 inline-flex items-center justify-center rounded-lg border border-white/20 bg-metal-button px-6 py-3 font-semibold text-cami-100 shadow-metal transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
+              className="mt-2 inline-flex items-center justify-center rounded-lg border border-gray-200/20 bg-metal-button px-6 py-3 font-semibold text-cami-100 shadow-metal transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
             >
               {isSubmitting ? 'Preparando propuesta...' : 'Solicitar propuesta'}
             </button>
@@ -637,7 +637,7 @@ const ContactSection = () => {
                   <button
                     type="button"
                     onClick={() => { void handleRetry(); }}
-                    className="mt-2 text-sm font-medium text-cami-200 underline hover:text-white"
+                    className="mt-2 text-sm font-medium text-cami-200 underline hover:text-gray-900"
                   >
                     Reintentar
                   </button>
@@ -650,7 +650,7 @@ const ContactSection = () => {
                     <button
                       type="button"
                       onClick={handleCopySupportId}
-                      className="rounded border border-white/25 px-2 py-0.5 text-[11px] font-medium text-cami-100 hover:bg-white/10"
+                      className="rounded border border-gray-200/25 px-2 py-0.5 text-[11px] font-medium text-cami-100 hover:bg-white/10"
                     >
                       {state.isSupportIdCopied ? 'Copiado' : 'Copiar'}
                     </button>

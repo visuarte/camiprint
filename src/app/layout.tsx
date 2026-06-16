@@ -6,6 +6,7 @@ import { Manrope, Space_Grotesk, Montserrat } from "next/font/google";
 import { brandConfig } from "@/config/brand";
 import CookieBanner from "@/app/components/CookieBanner";
 import WhatsAppFloating from '@/app/components/WhatsAppFloating';
+import AnalyticsProvider from "@/components/AnalyticsProvider";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -139,11 +140,14 @@ export default function RootLayout({
         />
       </head>
       <body className="flex min-h-full flex-col overflow-x-hidden bg-neutral-950 text-neutral-100">
+        <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1298743625320608&ev=PageView&noscript=1" alt=""/></noscript>
         <a href="#main-content" className="skip-link">Saltar al contenido principal</a>
-        <main id="main-content" className="flex flex-1 flex-col">{children}</main>
-        <WhatsAppFloating />
-        <Analytics />
-        <CookieBanner />
+        <AnalyticsProvider>
+          <main id="main-content" className="flex flex-1 flex-col">{children}</main>
+          <WhatsAppFloating />
+          <Analytics />
+          <CookieBanner />
+        </AnalyticsProvider>
       </body>
     </html>
   );

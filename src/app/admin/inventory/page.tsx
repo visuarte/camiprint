@@ -301,17 +301,17 @@ export default function AdminInventoryPage() {
       <section className="grid grid-cols-1 md:grid-cols-4 gap-4 items-stretch">
         <div className="md:col-span-2 border border-hazard-orange/30 bg-surface-charcoal p-6 md:p-7">
           <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">INVENTARIO</p>
-          <h1 className="font-headline-md text-[28px] md:text-[34px] text-white leading-none mb-4">
+          <h1 className="font-headline-md text-[28px] md:text-[34px] text-gray-900 leading-none mb-4">
             CONTROL DE STOCK
           </h1>
-          <p className="max-w-2xl text-[#D8DEE8] text-[15px] leading-6">
+          <p className="max-w-2xl text-gray-600 text-[15px] leading-6">
             Vista de stock real de los productos creados en la base de datos. Aquí puedes detectar rápido qué líneas necesitan reposición.
           </p>
           <div className="mt-6 flex flex-wrap gap-2">
-            <Link href="/admin/orders" className="h-9 inline-flex items-center px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] leading-none hover:bg-surface-container-high transition-colors">
+            <Link href="/admin/orders" className="h-9 inline-flex items-center px-4 border border-muted-steel/20 text-gray-600 font-label-caps text-[11px] leading-none hover:bg-surface-container-high transition-colors">
               VER PEDIDOS →
             </Link>
-            <Link href="/admin/production" className="h-9 inline-flex items-center px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] leading-none hover:bg-surface-container-high transition-colors">
+            <Link href="/admin/production" className="h-9 inline-flex items-center px-4 border border-muted-steel/20 text-gray-600 font-label-caps text-[11px] leading-none hover:bg-surface-container-high transition-colors">
               PRODUCCIÓN →
             </Link>
           </div>
@@ -319,26 +319,26 @@ export default function AdminInventoryPage() {
 
         <div className="border border-muted-steel/10 bg-surface-charcoal p-6 md:p-7">
           <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">TOTAL PRODUCTOS</p>
-          <p className="font-display-lg text-[36px] md:text-[42px] text-white leading-none font-black">
+          <p className="font-display-lg text-[36px] md:text-[42px] text-gray-900 leading-none font-black">
             {metrics.totalProducts}
           </p>
-          <p className="mt-2 text-[#D8DEE8] text-[12px]">Productos registrados</p>
+          <p className="mt-2 text-gray-600 text-[12px]">Productos registrados</p>
         </div>
 
         <div className="border border-muted-steel/10 bg-surface-charcoal p-6 md:p-7">
           <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">TOTAL UNIDADES</p>
-          <p className="font-display-lg text-[36px] md:text-[42px] text-white leading-none font-black">
+          <p className="font-display-lg text-[36px] md:text-[42px] text-gray-900 leading-none font-black">
             {metrics.totalUnits}
           </p>
-          <p className="mt-2 text-[#D8DEE8] text-[12px]">Unidades en almacén</p>
+          <p className="mt-2 text-gray-600 text-[12px]">Unidades en almacén</p>
         </div>
 
         <div className="border border-muted-steel/10 bg-surface-charcoal p-6 md:p-7">
           <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">STOCK BAJO</p>
-          <p className="font-display-lg text-[36px] md:text-[42px] text-white leading-none font-black">
+          <p className="font-display-lg text-[36px] md:text-[42px] text-gray-900 leading-none font-black">
             {metrics.lowStock}
           </p>
-          <p className="mt-2 text-[#D8DEE8] text-[12px]">Productos en reposición</p>
+          <p className="mt-2 text-gray-600 text-[12px]">Productos en reposición</p>
         </div>
       </section>
 
@@ -346,10 +346,10 @@ export default function AdminInventoryPage() {
         <div className="xl:col-span-8 border border-muted-steel/10 bg-surface-charcoal p-6 md:p-7">
           <div className="flex items-end justify-between gap-4 mb-5">
             <div>
-              <h2 className="font-headline-md text-[22px] md:text-[26px] leading-none text-white">
+              <h2 className="font-headline-md text-[22px] md:text-[26px] leading-none text-gray-900">
                 TABLA DE PRODUCTOS
               </h2>
-              <p className="mt-2 text-xs text-[#D8DEE8]">{totalProducts} productos en total</p>
+              <p className="mt-2 text-xs text-gray-600">{totalProducts} productos en total</p>
             </div>
             <div className="flex gap-2 w-full max-w-lg">
               <input
@@ -360,7 +360,7 @@ export default function AdminInventoryPage() {
                   setPage(1);
                 }}
                 placeholder="Buscar producto..."
-                className="h-10 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 text-sm text-white placeholder:text-[#D8DEE8]/60 focus:outline-none focus:border-hazard-orange"
+                className="h-10 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 text-sm text-gray-900 placeholder:text-gray-600/60 focus:outline-none focus:border-hazard-orange"
               />
               <button
                 onClick={handleOpenCreate}
@@ -382,7 +382,7 @@ export default function AdminInventoryPage() {
               {error}
             </div>
           ) : filteredProducts.length === 0 ? (
-            <div className="border border-muted-steel/10 bg-surface-container-lowest p-6 text-[#D8DEE8] text-sm">
+            <div className="border border-muted-steel/10 bg-surface-container-lowest p-6 text-gray-600 text-sm">
               No hay productos que coincidan con la búsqueda.
             </div>
           ) : (
@@ -399,7 +399,7 @@ export default function AdminInventoryPage() {
                             className="w-14 h-14 object-cover border border-muted-steel/20 bg-surface-charcoal"
                           />
                         ) : (
-                          <div className="w-14 h-14 border border-muted-steel/20 bg-surface-charcoal flex items-center justify-center text-[9px] text-[#D8DEE8]/70 font-label-caps tracking-[0.08em]">
+                          <div className="w-14 h-14 border border-muted-steel/20 bg-surface-charcoal flex items-center justify-center text-[9px] text-gray-600/70 font-label-caps tracking-[0.08em]">
                             SIN IMG
                           </div>
                         )}
@@ -407,10 +407,10 @@ export default function AdminInventoryPage() {
                       <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">
                         {product.size} · {product.id.slice(0, 8).toUpperCase()}
                       </p>
-                      <h3 className="text-[15px] md:text-[16px] text-white font-semibold leading-snug truncate">
+                      <h3 className="text-[15px] md:text-[16px] text-gray-900 font-semibold leading-snug truncate">
                         {product.name}
                       </h3>
-                      <p className="mt-1 text-[#D8DEE8] text-[12px] leading-5 line-clamp-2">
+                      <p className="mt-1 text-gray-600 text-[12px] leading-5 line-clamp-2">
                         {product.description || 'Sin descripción'}
                       </p>
                       {product.quantity <= 25 && (
@@ -426,7 +426,7 @@ export default function AdminInventoryPage() {
                       <span className={`inline-flex items-center px-2.5 py-1 border text-[10px] font-label-caps tracking-[0.08em] ${stockTone(product.quantity)}`}>
                         {stockLabel(product.quantity)}
                       </span>
-                      <p className="font-display-lg text-[26px] text-white font-black leading-none">
+                      <p className="font-display-lg text-[26px] text-gray-900 font-black leading-none">
                         {product.quantity}
                       </p>
                     </div>
@@ -439,7 +439,7 @@ export default function AdminInventoryPage() {
                         style={{ width: `${Math.min(product.quantity / 5, 100)}%` }}
                       />
                     </div>
-                    <p className="w-20 text-right font-label-caps text-[11px] text-[#D8DEE8]">
+                    <p className="w-20 text-right font-label-caps text-[11px] text-gray-600">
                       ${product.price.toFixed(2)}
                     </p>
                   </div>
@@ -448,14 +448,14 @@ export default function AdminInventoryPage() {
                     <button
                       onClick={() => patchProduct(product.id, { quantity: product.quantity + 10 })}
                       disabled={savingId === product.id}
-                      className="h-8 px-3 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[10px] tracking-[0.08em] hover:bg-surface-container-high transition-colors disabled:opacity-50"
+                      className="h-8 px-3 border border-muted-steel/20 text-gray-600 font-label-caps text-[10px] tracking-[0.08em] hover:bg-surface-container-high transition-colors disabled:opacity-50"
                     >
                       +10
                     </button>
                     <button
                       onClick={() => patchProduct(product.id, { quantity: Math.max(0, product.quantity - 10) })}
                       disabled={savingId === product.id}
-                      className="h-8 px-3 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[10px] tracking-[0.08em] hover:bg-surface-container-high transition-colors disabled:opacity-50"
+                      className="h-8 px-3 border border-muted-steel/20 text-gray-600 font-label-caps text-[10px] tracking-[0.08em] hover:bg-surface-container-high transition-colors disabled:opacity-50"
                     >
                       -10
                     </button>
@@ -502,28 +502,28 @@ export default function AdminInventoryPage() {
         </div>
 
         <div className="xl:col-span-4 border border-muted-steel/10 bg-surface-charcoal p-6 md:p-7 flex flex-col gap-4">
-          <h2 className="font-headline-md text-[22px] md:text-[26px] leading-none text-white">
+          <h2 className="font-headline-md text-[22px] md:text-[26px] leading-none text-gray-900">
             RESUMEN DE INVENTARIO
           </h2>
 
           <div className="space-y-3">
             <div className="flex items-center justify-between border-b border-muted-steel/10 pb-2">
-              <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">SIN STOCK</span>
-              <span className="font-headline-md text-[18px] text-white font-bold">{metrics.outOfStock}</span>
+              <span className="font-label-caps text-[10px] text-gray-600 tracking-[0.08em]">SIN STOCK</span>
+              <span className="font-headline-md text-[18px] text-gray-900 font-bold">{metrics.outOfStock}</span>
             </div>
             <div className="flex items-center justify-between border-b border-muted-steel/10 pb-2">
-              <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">STOCK BAJO</span>
-              <span className="font-headline-md text-[18px] text-white font-bold">{metrics.lowStock}</span>
+              <span className="font-label-caps text-[10px] text-gray-600 tracking-[0.08em]">STOCK BAJO</span>
+              <span className="font-headline-md text-[18px] text-gray-900 font-bold">{metrics.lowStock}</span>
             </div>
             <div className="flex items-center justify-between border-b border-muted-steel/10 pb-2">
-              <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">REGISTRADOS</span>
-              <span className="font-headline-md text-[18px] text-white font-bold">{metrics.totalProducts}</span>
+              <span className="font-label-caps text-[10px] text-gray-600 tracking-[0.08em]">REGISTRADOS</span>
+              <span className="font-headline-md text-[18px] text-gray-900 font-bold">{metrics.totalProducts}</span>
             </div>
           </div>
 
           <div className="mt-2 border-t border-muted-steel/10 pt-4">
             <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">ACCIÓN</p>
-            <p className="text-[#D8DEE8] text-[13px] leading-5">
+            <p className="text-gray-600 text-[13px] leading-5">
               Gestiona catálogo completo desde esta pantalla: alta, edición y borrado, además de ajustes rápidos de stock.
             </p>
           </div>
@@ -539,12 +539,12 @@ export default function AdminInventoryPage() {
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em] mb-1">
+                      <p className="font-label-caps text-[10px] text-gray-600 tracking-[0.08em] mb-1">
                         #{index + 1} · {product.size}
                       </p>
-                      <p className="text-[13px] text-white font-semibold truncate">{product.name}</p>
+                      <p className="text-[13px] text-gray-900 font-semibold truncate">{product.name}</p>
                     </div>
-                    <span className="font-headline-md text-[18px] text-white font-bold">
+                    <span className="font-headline-md text-[18px] text-gray-900 font-bold">
                       {product.quantity}
                     </span>
                   </div>
@@ -563,10 +563,10 @@ export default function AdminInventoryPage() {
                 <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">
                   {selectedProduct ? 'EDITAR PRODUCTO' : 'CREAR PRODUCTO'}
                 </p>
-                <h3 className="text-white text-[18px] md:text-[20px] font-semibold leading-snug">
+                <h3 className="text-gray-900 text-[18px] md:text-[20px] font-semibold leading-snug">
                   {selectedProduct ? selectedProduct.name : 'Nuevo producto'}
                 </h3>
-                <p className="text-[#D8DEE8] text-[12px] mt-1">
+                <p className="text-gray-600 text-[12px] mt-1">
                   {selectedProduct
                     ? `Talla ${selectedProduct.size} · stock actual ${selectedProduct.quantity}`
                     : 'Completa los campos para publicar una nueva referencia'}
@@ -574,7 +574,7 @@ export default function AdminInventoryPage() {
               </div>
               <button
                 onClick={() => setIsFormOpen(false)}
-                className="text-[#D8DEE8] text-sm hover:text-white"
+                className="text-gray-600 text-sm hover:text-gray-900"
               >
                 Cerrar
               </button>
@@ -582,18 +582,18 @@ export default function AdminInventoryPage() {
 
             <form className="grid grid-cols-1 md:grid-cols-2 gap-3" onSubmit={handleSubmit}>
               <label className="block md:col-span-2">
-                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">NOMBRE</span>
+                <span className="font-label-caps text-[10px] text-gray-600 tracking-[0.08em]">NOMBRE</span>
                 <input
                   type="text"
                   required
                   value={formState.name}
                   onChange={(e) => setFormState((current) => ({ ...current, name: e.target.value }))}
-                  className="mt-2 h-11 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 text-white focus:outline-none focus:border-hazard-orange"
+                  className="mt-2 h-11 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 text-gray-900 focus:outline-none focus:border-hazard-orange"
                 />
               </label>
 
               <label className="block">
-                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">PRECIO</span>
+                <span className="font-label-caps text-[10px] text-gray-600 tracking-[0.08em]">PRECIO</span>
                 <input
                   type="number"
                   step="0.01"
@@ -601,59 +601,59 @@ export default function AdminInventoryPage() {
                   required
                   value={formState.price}
                   onChange={(e) => setFormState((current) => ({ ...current, price: e.target.value }))}
-                  className="mt-2 h-11 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 text-white focus:outline-none focus:border-hazard-orange"
+                  className="mt-2 h-11 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 text-gray-900 focus:outline-none focus:border-hazard-orange"
                 />
               </label>
 
               <label className="block">
-                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">CANTIDAD</span>
+                <span className="font-label-caps text-[10px] text-gray-600 tracking-[0.08em]">CANTIDAD</span>
                 <input
                   type="number"
                   min="0"
                   required
                   value={formState.quantity}
                   onChange={(e) => setFormState((current) => ({ ...current, quantity: e.target.value }))}
-                  className="mt-2 h-11 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 text-white focus:outline-none focus:border-hazard-orange"
+                  className="mt-2 h-11 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 text-gray-900 focus:outline-none focus:border-hazard-orange"
                 />
               </label>
 
               <label className="block">
-                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">TALLA</span>
+                <span className="font-label-caps text-[10px] text-gray-600 tracking-[0.08em]">TALLA</span>
                 <input
                   type="text"
                   value={formState.size}
                   onChange={(e) => setFormState((current) => ({ ...current, size: e.target.value }))}
-                  className="mt-2 h-11 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 text-white focus:outline-none focus:border-hazard-orange"
+                  className="mt-2 h-11 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 text-gray-900 focus:outline-none focus:border-hazard-orange"
                 />
               </label>
 
               <label className="block">
-                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">URL DE IMAGEN</span>
+                <span className="font-label-caps text-[10px] text-gray-600 tracking-[0.08em]">URL DE IMAGEN</span>
                 <input
                   type="text"
                   value={formState.imageUrl}
                   onChange={(e) => setFormState((current) => ({ ...current, imageUrl: e.target.value }))}
-                  className="mt-2 h-11 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 text-white focus:outline-none focus:border-hazard-orange"
+                  className="mt-2 h-11 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 text-gray-900 focus:outline-none focus:border-hazard-orange"
                 />
               </label>
 
               <label className="block md:col-span-2">
-                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">SUBIR ARCHIVO</span>
+                <span className="font-label-caps text-[10px] text-gray-600 tracking-[0.08em]">SUBIR ARCHIVO</span>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={(e) => handleImageFileChange(e.target.files?.[0] ?? null)}
-                  className="mt-2 block w-full text-sm text-[#D8DEE8] file:mr-4 file:py-2 file:px-4 file:border file:border-muted-steel/20 file:bg-surface-container-lowest file:text-[#D8DEE8] hover:file:bg-surface-container-high"
+                  className="mt-2 block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:border file:border-muted-steel/20 file:bg-surface-container-lowest file:text-gray-600 hover:file:bg-surface-container-high"
                 />
-                <p className="mt-2 text-[11px] text-[#D8DEE8]/75">JPG, PNG, WEBP, GIF o AVIF. Máximo 6MB.</p>
+                <p className="mt-2 text-[11px] text-gray-600/75">JPG, PNG, WEBP, GIF o AVIF. Máximo 6MB.</p>
                 {isUploadingImage && <p className="mt-1 text-[11px] text-hazard-orange">Subiendo imagen...</p>}
                 {imageUploadError && <p className="mt-1 text-[11px] text-red-300">{imageUploadError}</p>}
                 {formState.imageUrl && !imageUploadError && (
                   <div className="mt-2 flex items-center gap-3">
                     <img src={formState.imageUrl} alt="Preview" className="w-16 h-16 object-cover border border-muted-steel/20 bg-surface-container-lowest" />
                     <div className="min-w-0">
-                      <span className="text-[11px] text-[#D8DEE8]/80 break-all block">{formState.imageUrl}</span>
-                      <span className="text-[10px] text-[#D8DEE8]/60">
+                      <span className="text-[11px] text-gray-600/80 break-all block">{formState.imageUrl}</span>
+                      <span className="text-[10px] text-gray-600/60">
                         {formState.imageUrl.startsWith('http') ? 'Persistida en Blob (producción)' : 'Guardada en public/uploads (local)'}
                       </span>
                     </div>
@@ -662,12 +662,12 @@ export default function AdminInventoryPage() {
               </label>
 
               <label className="block md:col-span-2">
-                <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">DESCRIPCIÓN</span>
+                <span className="font-label-caps text-[10px] text-gray-600 tracking-[0.08em]">DESCRIPCIÓN</span>
                 <textarea
                   rows={3}
                   value={formState.description}
                   onChange={(e) => setFormState((current) => ({ ...current, description: e.target.value }))}
-                  className="mt-2 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 py-2 text-white focus:outline-none focus:border-hazard-orange"
+                  className="mt-2 w-full border border-muted-steel/20 bg-surface-container-lowest px-3 py-2 text-gray-900 focus:outline-none focus:border-hazard-orange"
                 />
               </label>
 
@@ -682,7 +682,7 @@ export default function AdminInventoryPage() {
                 <button
                   type="button"
                   onClick={() => setIsFormOpen(false)}
-                  className="h-10 px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] tracking-[0.08em] hover:bg-surface-container-high transition-colors"
+                  className="h-10 px-4 border border-muted-steel/20 text-gray-600 font-label-caps text-[11px] tracking-[0.08em] hover:bg-surface-container-high transition-colors"
                 >
                   CANCELAR
                 </button>

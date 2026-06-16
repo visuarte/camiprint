@@ -100,7 +100,7 @@ export default function AdminSettingsPage() {
     <div className="p-6 md:p-8">
       <div className="mb-4 flex items-center justify-between gap-3">
         <h1 className="text-2xl font-bold">Ajustes del Dashboard</h1>
-        <Link href="/admin/settings/history" className="px-3 py-2 bg-neutral-700 text-white rounded text-sm">
+        <Link href="/admin/settings/history" className="px-3 py-2 bg-neutral-700 text-gray-900 rounded text-sm">
           Ver historial
         </Link>
       </div>
@@ -256,7 +256,7 @@ export default function AdminSettingsPage() {
                 setScriptLoading(false);
               }
             }}
-            className="px-4 py-2 bg-gray-700 text-white rounded"
+            className="px-4 py-2 bg-gray-700 text-gray-900 rounded"
           >
             {scriptLoading ? 'Cargando...' : 'Obtener script Vercel'}
           </button>
@@ -280,7 +280,7 @@ export default function AdminSettingsPage() {
                       setCopySuccess(false);
                     }
                   }}
-                  className="px-3 py-1 bg-green-600 text-white rounded text-sm flex items-center gap-2"
+                  className="px-3 py-1 bg-green-600 text-gray-900 rounded text-sm flex items-center gap-2"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
@@ -300,7 +300,7 @@ export default function AdminSettingsPage() {
                     a.remove();
                     URL.revokeObjectURL(url);
                   }}
-                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm"
+                  className="px-3 py-1 bg-blue-600 text-gray-900 rounded text-sm"
                 >Descargar</button>
                 <button onClick={() => setScriptOpen(false)} className="px-3 py-1 bg-gray-200 rounded text-sm">Cerrar</button>
               </div>
@@ -310,7 +310,7 @@ export default function AdminSettingsPage() {
             {/* Accessible toast for copy feedback */}
             <div aria-live="polite" aria-atomic="true">
               {copySuccess && (
-                <div className="fixed bottom-6 right-6 bg-black text-white px-4 py-2 rounded shadow" role="status">
+                <div className="fixed bottom-6 right-6 bg-black text-gray-900 px-4 py-2 rounded shadow" role="status">
                   Script copiado al portapapeles
                 </div>
               )}

@@ -13,14 +13,14 @@ export default function Portfolio() {
     <div className="flex flex-col min-h-screen">
       <Navigation />
       <section className="mx-auto max-w-6xl py-12 px-4 text-cami-200 flex-1">
-      <h1 className="text-3xl font-bold text-white">Portfolio — Trabajos reales</h1>
+      <h1 className="text-3xl font-bold text-gray-900">Portfolio — Trabajos reales</h1>
       <p className="mt-4">A continuación mostramos ejemplos reales de producción, acabados y envíos. Sustituye las imágenes por fotos reales antes de publicar.</p>
 
       <p className="mt-4 text-cami-300 max-w-2xl">Galería de trabajos reales: fotos de producción, acabados y entregas. Haz click en una imagen para verla en su tamaño real. Si necesitas más ejemplos por sector, solicita un presupuesto — respondemos en 24h.</p>
 
       <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {[1, 2, 3, 4, 5, 6].map((n) => (
-          <figure key={n} className="overflow-hidden rounded-2xl border border-white/8 bg-cami-900 p-2">
+          <figure key={n} className="overflow-hidden rounded-2xl border border-white/8 bg-white p-2">
             <div className="h-48 w-full">
               <img
                 src={`/portfolio/real-${n}.jpg`}
@@ -39,7 +39,7 @@ export default function Portfolio() {
 
       <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
         <div className="text-left">
-          <h2 className="text-lg font-semibold text-white">¿Te interesa un presupuesto?</h2>
+          <h2 className="text-lg font-semibold text-gray-900">¿Te interesa un presupuesto?</h2>
           <p className="mt-1 text-sm text-cami-300">Envíanos tu idea y número de unidades, te damos precio en 24h.</p>
         </div>
         <div className="mt-2 sm:mt-0">

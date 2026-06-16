@@ -36,10 +36,10 @@ export function AdminAuthGate({ children }: { children: React.ReactNode }) {
 
   if (authState === 'loading' && !isLoginPage) {
     return (
-      <div className="min-h-screen bg-[#131313] flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-8 h-8 border-2 border-hazard-orange border-t-transparent rounded-full animate-spin" />
-          <p className="text-[#D8DEE8] text-sm">Verificando sesión...</p>
+          <p className="text-gray-600 text-sm">Verificando sesión...</p>
         </div>
       </div>
     );
@@ -47,8 +47,8 @@ export function AdminAuthGate({ children }: { children: React.ReactNode }) {
 
   if (authState === 'unauthenticated' && !isLoginPage) {
     return (
-      <div className="min-h-screen bg-[#131313] flex items-center justify-center">
-        <p className="text-[#D8DEE8] text-sm">Redirigiendo al login...</p>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <p className="text-gray-600 text-sm">Redirigiendo al login...</p>
       </div>
     );
   }

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <section className="mb-8">
-    <h2 className="mb-3 text-xl font-semibold text-white">{title}</h2>
+    <h2 className="mb-3 text-xl font-semibold text-gray-900">{title}</h2>
     <div className="space-y-3 text-sm leading-relaxed text-cami-300">{children}</div>
   </section>
 );
@@ -22,10 +22,10 @@ export default function PoliticaDeCookiesPage() {
     <main className="mx-auto max-w-3xl px-4 py-16 md:px-6">
       {/* Header */}
       <div className="mb-10">
-        <Link href="/" className="mb-8 inline-block text-sm text-cami-400 transition-colors hover:text-white">
+        <Link href="/" className="mb-8 inline-block text-sm text-cami-400 transition-colors hover:text-gray-900">
           ← Volver al inicio
         </Link>
-        <h1 className="text-3xl font-extrabold tracking-tight text-white md:text-4xl">
+        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 md:text-4xl">
           Política de Cookies
         </h1>
         <p className="mt-2 text-sm text-cami-400">
@@ -41,12 +41,12 @@ export default function PoliticaDeCookiesPage() {
 
       <Section title="2. Responsable del tratamiento">
         <p>
-          <strong className="text-white">Razón social:</strong> {brandConfig.displayName}<br />
-          <strong className="text-white">Email de contacto:</strong>{' '}
-          <a href={`mailto:${brandConfig.privacyEmail}`} className="text-cami-200 underline underline-offset-2 hover:text-white">
+          <strong className="text-gray-900">Razón social:</strong> {brandConfig.displayName}<br />
+          <strong className="text-gray-900">Email de contacto:</strong>{' '}
+          <a href={`mailto:${brandConfig.privacyEmail}`} className="text-cami-200 underline underline-offset-2 hover:text-gray-900">
             {brandConfig.privacyEmail}
           </a><br />
-          <strong className="text-white">Dirección:</strong> {brandConfig.postalAddress}
+          <strong className="text-gray-900">Dirección:</strong> {brandConfig.postalAddress}
         </p>
       </Section>
 
@@ -66,7 +66,7 @@ export default function PoliticaDeCookiesPage() {
             <tbody className="divide-y divide-white/5">
               {/* Técnicas */}
               <tr>
-                <td className="px-4 py-3 font-mono text-xs text-white">admin_token</td>
+                <td className="px-4 py-3 font-mono text-xs text-gray-900">admin_token</td>
                 <td className="px-4 py-3">{brandConfig.displayName}</td>
                 <td className="px-4 py-3">
                   <span className="rounded-full bg-blue-900/40 px-2 py-0.5 text-xs text-blue-300">Técnica</span>
@@ -75,7 +75,7 @@ export default function PoliticaDeCookiesPage() {
                 <td className="px-4 py-3">Autenticación del panel de administración. Solo se activa si accedes al área privada.</td>
               </tr>
               <tr>
-                <td className="px-4 py-3 font-mono text-xs text-white">__vercel_toolbar</td>
+                <td className="px-4 py-3 font-mono text-xs text-gray-900">__vercel_toolbar</td>
                 <td className="px-4 py-3">Vercel</td>
                 <td className="px-4 py-3">
                   <span className="rounded-full bg-blue-900/40 px-2 py-0.5 text-xs text-blue-300">Técnica</span>
@@ -85,7 +85,7 @@ export default function PoliticaDeCookiesPage() {
               </tr>
               {/* Analítica */}
               <tr>
-                <td className="px-4 py-3 font-mono text-xs text-white">_va</td>
+                <td className="px-4 py-3 font-mono text-xs text-gray-900">_va</td>
                 <td className="px-4 py-3">Vercel Analytics</td>
                 <td className="px-4 py-3">
                   <span className="rounded-full bg-amber-900/40 px-2 py-0.5 text-xs text-amber-300">Analítica</span>
@@ -95,7 +95,7 @@ export default function PoliticaDeCookiesPage() {
               </tr>
               {/* Pago */}
               <tr>
-                <td className="px-4 py-3 font-mono text-xs text-white">__stripe_mid, __stripe_sid</td>
+                <td className="px-4 py-3 font-mono text-xs text-gray-900">__stripe_mid, __stripe_sid</td>
                 <td className="px-4 py-3">Stripe</td>
                 <td className="px-4 py-3">
                   <span className="rounded-full bg-purple-900/40 px-2 py-0.5 text-xs text-purple-300">Necesaria (pago)</span>
@@ -110,10 +110,10 @@ export default function PoliticaDeCookiesPage() {
 
       <Section title="4. Base legal">
         <p>
-          El uso de cookies <strong className="text-white">técnicas y necesarias</strong> se basa en el <strong className="text-white">interés legítimo</strong> del responsable y en el artículo 22.2 de la LSSI, que exime del consentimiento previo a las cookies estrictamente necesarias para la prestación del servicio solicitado.
+          El uso de cookies <strong className="text-gray-900">técnicas y necesarias</strong> se basa en el <strong className="text-gray-900">interés legítimo</strong> del responsable y en el artículo 22.2 de la LSSI, que exime del consentimiento previo a las cookies estrictamente necesarias para la prestación del servicio solicitado.
         </p>
         <p>
-          Las cookies de <strong className="text-white">analítica</strong> se instalan únicamente con tu <strong className="text-white">consentimiento previo</strong>, que puedes otorgar o revocar en cualquier momento a través del panel de preferencias de este sitio.
+          Las cookies de <strong className="text-gray-900">analítica</strong> se instalan únicamente con tu <strong className="text-gray-900">consentimiento previo</strong>, que puedes otorgar o revocar en cualquier momento a través del panel de preferencias de este sitio.
         </p>
       </Section>
 
@@ -123,20 +123,20 @@ export default function PoliticaDeCookiesPage() {
         </p>
         <ul className="list-inside list-disc space-y-1 pl-2">
           <li>
-            <strong className="text-white">Vercel (alojamiento y analítica):</strong>{' '}
-            <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noreferrer" className="text-cami-200 underline underline-offset-2 hover:text-white">
+            <strong className="text-gray-900">Vercel (alojamiento y analítica):</strong>{' '}
+            <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noreferrer" className="text-cami-200 underline underline-offset-2 hover:text-gray-900">
               vercel.com/legal/privacy-policy
             </a>
           </li>
           <li>
-            <strong className="text-white">Stripe (pasarela de pago):</strong>{' '}
-            <a href="https://stripe.com/es/privacy" target="_blank" rel="noreferrer" className="text-cami-200 underline underline-offset-2 hover:text-white">
+            <strong className="text-gray-900">Stripe (pasarela de pago):</strong>{' '}
+            <a href="https://stripe.com/es/privacy" target="_blank" rel="noreferrer" className="text-cami-200 underline underline-offset-2 hover:text-gray-900">
               stripe.com/es/privacy
             </a>
           </li>
           <li>
-            <strong className="text-white">Resend (envío de correo transaccional):</strong>{' '}
-            <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noreferrer" className="text-cami-200 underline underline-offset-2 hover:text-white">
+            <strong className="text-gray-900">Resend (envío de correo transaccional):</strong>{' '}
+            <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noreferrer" className="text-cami-200 underline underline-offset-2 hover:text-gray-900">
               resend.com/legal/privacy-policy
             </a>
           </li>
@@ -149,16 +149,16 @@ export default function PoliticaDeCookiesPage() {
         </p>
         <ul className="list-inside list-disc space-y-1 pl-2">
           <li>
-            <a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noreferrer" className="text-cami-200 underline underline-offset-2 hover:text-white">Google Chrome</a>
+            <a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noreferrer" className="text-cami-200 underline underline-offset-2 hover:text-gray-900">Google Chrome</a>
           </li>
           <li>
-            <a href="https://support.mozilla.org/es/kb/habilitar-y-deshabilitar-cookies-sitios-web-rastrear-preferencias" target="_blank" rel="noreferrer" className="text-cami-200 underline underline-offset-2 hover:text-white">Mozilla Firefox</a>
+            <a href="https://support.mozilla.org/es/kb/habilitar-y-deshabilitar-cookies-sitios-web-rastrear-preferencias" target="_blank" rel="noreferrer" className="text-cami-200 underline underline-offset-2 hover:text-gray-900">Mozilla Firefox</a>
           </li>
           <li>
-            <a href="https://support.apple.com/es-es/guide/safari/sfri11471/mac" target="_blank" rel="noreferrer" className="text-cami-200 underline underline-offset-2 hover:text-white">Apple Safari</a>
+            <a href="https://support.apple.com/es-es/guide/safari/sfri11471/mac" target="_blank" rel="noreferrer" className="text-cami-200 underline underline-offset-2 hover:text-gray-900">Apple Safari</a>
           </li>
           <li>
-            <a href="https://support.microsoft.com/es-es/windows/eliminar-y-administrar-cookies-168dab11-0753-043d-7c16-ede5947fc64d" target="_blank" rel="noreferrer" className="text-cami-200 underline underline-offset-2 hover:text-white">Microsoft Edge</a>
+            <a href="https://support.microsoft.com/es-es/windows/eliminar-y-administrar-cookies-168dab11-0753-043d-7c16-ede5947fc64d" target="_blank" rel="noreferrer" className="text-cami-200 underline underline-offset-2 hover:text-gray-900">Microsoft Edge</a>
           </li>
         </ul>
         <p>
@@ -168,18 +168,18 @@ export default function PoliticaDeCookiesPage() {
 
       <Section title="7. Transferencias internacionales">
         <p>
-          Vercel, Inc. y Stripe, Inc. están establecidos en los Estados Unidos. Las transferencias de datos se realizan al amparo de las <strong className="text-white">Cláusulas Contractuales Tipo</strong> aprobadas por la Comisión Europea y, en el caso de Stripe, conforme al Marco de Privacidad de Datos UE-EE.UU. (DPF).
+          Vercel, Inc. y Stripe, Inc. están establecidos en los Estados Unidos. Las transferencias de datos se realizan al amparo de las <strong className="text-gray-900">Cláusulas Contractuales Tipo</strong> aprobadas por la Comisión Europea y, en el caso de Stripe, conforme al Marco de Privacidad de Datos UE-EE.UU. (DPF).
         </p>
       </Section>
 
       <Section title="8. Tus derechos">
         <p>
           Tienes derecho a acceder, rectificar, suprimir, limitar el tratamiento, oponerte y solicitar la portabilidad de tus datos relacionados con el uso de cookies. Puedes ejercer estos derechos escribiendo a{' '}
-          <a href={`mailto:${brandConfig.privacyEmail}`} className="text-cami-200 underline underline-offset-2 hover:text-white">
+          <a href={`mailto:${brandConfig.privacyEmail}`} className="text-cami-200 underline underline-offset-2 hover:text-gray-900">
             {brandConfig.privacyEmail}
           </a>{' '}
           adjuntando copia de tu DNI/NIE. También puedes presentar una reclamación ante la{' '}
-          <a href="https://www.aepd.es" target="_blank" rel="noreferrer" className="text-cami-200 underline underline-offset-2 hover:text-white">
+          <a href="https://www.aepd.es" target="_blank" rel="noreferrer" className="text-cami-200 underline underline-offset-2 hover:text-gray-900">
             Agencia Española de Protección de Datos (AEPD)
           </a>.
         </p>
@@ -193,11 +193,11 @@ export default function PoliticaDeCookiesPage() {
 
       {/* Back to top */}
       <div className="mt-12 border-t border-white/10 pt-6 text-center text-sm text-cami-400">
-        <Link href="/" className="transition-colors hover:text-white">← Volver al inicio</Link>
+        <Link href="/" className="transition-colors hover:text-gray-900">← Volver al inicio</Link>
         <span className="mx-3">·</span>
-        <Link href="/politica-privacidad" className="transition-colors hover:text-white">Política de Privacidad</Link>
+        <Link href="/politica-privacidad" className="transition-colors hover:text-gray-900">Política de Privacidad</Link>
         <span className="mx-3">·</span>
-        <Link href="/terminos-y-condiciones" className="transition-colors hover:text-white">Términos y Condiciones</Link>
+        <Link href="/terminos-y-condiciones" className="transition-colors hover:text-gray-900">Términos y Condiciones</Link>
       </div>
     </main>
   );

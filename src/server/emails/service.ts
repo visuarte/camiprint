@@ -8,6 +8,7 @@ import {
   orderConfirmationTemplate,
   quoteCustomerConfirmationTemplate,
   quoteNotificationTemplate,
+  abandonedCartTemplate,
   OrderConfirmationData,
   QuoteEmailData,
 } from './templates';
@@ -269,7 +270,28 @@ export class EmailService {
       return { success: false, error: err.message };
     }
   }
+
+  async sendAbandonedCartEmail(data: {
+    email: string; name: string; items: { name: string; quantity: number; price: number }[]; total: number; checkoutUrl: string;
+  }) {
+    const htmlTemplate = abandonedCartTemplate({
+      customerName: data.name, email: data.email, items: data.items, total: data.total, checkoutUrl: data.checkoutUrl,
+    });
+    try {
+      const result = await this.sendEmail({
+        to: data.email, subject: `🛒 ${brandConfig.displayName} — ¡Tu pedido te está esperando!`, html: htmlTemplate,
+      });
+      if (result.success) console.log('[EmailService] Abandoned cart email sent:', { email: data.email });
+      return result;
+    } catch (error) {
+      const err = error as Error;
+      console.error('[EmailService] Error sending abandoned cart email:', { email: data.email, error: err.message });
+      return { success: false, error: err.message };
+    }
+  }
 }
 
 // Export singleton instance
 export const emailService = new EmailService();
+export const sendAbandonedCartEmail = (data: Parameters<typeof emailService.sendAbandonedCartEmail>[0]) =>
+  emailService.sendAbandonedCartEmail(data);

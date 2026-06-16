@@ -210,13 +210,13 @@ export default function AdminDashboard() {
         <div className="min-h-[204px] p-5 border border-muted-steel/10 bg-surface-charcoal flex flex-col justify-between">
           <div>
             <p className="font-label-caps text-[10px] text-hazard-orange mb-2 tracking-[0.08em]">PAID ORDERS</p>
-            <h3 className="font-headline-md text-[27px] md:text-[31px] text-white leading-none">
+            <h3 className="font-headline-md text-[27px] md:text-[31px] text-gray-900 leading-none">
               {paidOrders.toLocaleString(locale)} / {totalOrders.toLocaleString(locale)}
             </h3>
           </div>
           <div className="mt-4">
             <div className="flex justify-between items-center font-label-caps text-[10px] mb-2 gap-2">
-              <span className="text-[#D8DEE8]">CONVERSION</span>
+              <span className="text-gray-600">CONVERSION</span>
               <span className="text-hazard-orange">
                 {totalOrders > 0 ? ((paidOrders / totalOrders) * 100).toFixed(0) : 0}%
               </span>
@@ -243,16 +243,16 @@ export default function AdminDashboard() {
           <p className="font-label-caps text-[10px] text-hazard-orange mb-2 tracking-[0.08em]">TOTAL REVENUE</p>
           <div>
             <p
-              className="font-display-lg text-[35px] md:text-[39px] font-black text-white leading-none"
+              className="font-display-lg text-[35px] md:text-[39px] font-black text-gray-900 leading-none"
             >
               {formatCurrency(revenue)}
             </p>
-            <p className="font-label-caps text-[10px] text-[#D8DEE8] mt-1.5">
+            <p className="font-label-caps text-[10px] text-gray-600 mt-1.5">
               ÚLTIMOS {settings.metricsWindowDays} DÍAS
             </p>
           </div>
           {lastUpdated && (
-            <p className="font-label-caps text-[10px] text-[#D8DEE8]/70 mt-3">
+            <p className="font-label-caps text-[10px] text-gray-600/70 mt-3">
               ↻ {lastUpdated.toLocaleTimeString(locale, { timeZone })}
             </p>
           )}
@@ -278,13 +278,13 @@ export default function AdminDashboard() {
             <div className="flex items-end gap-2">
               <button
                 onClick={fetchQuotes}
-                className="h-9 px-4 border border-muted-steel/20 hover:bg-surface-container-high transition-colors font-label-caps text-[11px] text-[#D8DEE8] leading-none"
+                className="h-9 px-4 border border-muted-steel/20 hover:bg-surface-container-high transition-colors font-label-caps text-[11px] text-gray-600 leading-none"
               >
                 ↻ RELOAD
               </button>
               <Link
                 href="/admin/orders"
-                className="h-9 px-4 inline-flex items-center border border-muted-steel/20 hover:bg-surface-container-high transition-colors font-label-caps text-[11px] text-[#D8DEE8] leading-none"
+                className="h-9 px-4 inline-flex items-center border border-muted-steel/20 hover:bg-surface-container-high transition-colors font-label-caps text-[11px] text-gray-600 leading-none"
               >
                 ALL ORDERS →
               </Link>
@@ -294,7 +294,7 @@ export default function AdminDashboard() {
           <div className="overflow-x-auto border border-muted-steel/10">
             <table className="w-full border-collapse">
               <thead>
-                <tr className="border-b border-muted-steel/10 text-left font-label-caps text-[#D8DEE8] text-[11px]">
+                <tr className="border-b border-muted-steel/10 text-left font-label-caps text-gray-600 text-[11px]">
                   <th className="py-4 px-4">ID</th>
                   <th className="py-4 px-4">CLIENT</th>
                   <th className="py-4 px-4">UNITS</th>
@@ -305,13 +305,13 @@ export default function AdminDashboard() {
               <tbody>
                 {quotesLoading ? (
                   <tr>
-                    <td colSpan={5} className="py-8 text-center text-[#D8DEE8] font-label-caps text-[12px]">
+                    <td colSpan={5} className="py-8 text-center text-gray-600 font-label-caps text-[12px]">
                       LOADING…
                     </td>
                   </tr>
                 ) : quotes.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="py-8 text-center text-[#D8DEE8]/70 font-label-caps text-[12px]">
+                    <td colSpan={5} className="py-8 text-center text-gray-600/70 font-label-caps text-[12px]">
                       NO QUOTE LEADS YET
                     </td>
                   </tr>
@@ -321,20 +321,20 @@ export default function AdminDashboard() {
                       key={q.id}
                       className="border-b border-muted-steel/5 hover:bg-surface-container-low transition-colors group"
                     >
-                      <td className="py-5 px-4 font-label-caps text-[11px] text-white">
+                      <td className="py-5 px-4 font-label-caps text-[11px] text-gray-900">
                         #{q.id.slice(0, 8).toUpperCase()}
                       </td>
                       <td className="py-5 px-4">
                         <div className="flex flex-col">
                           <span className="font-bold text-[14px]">{q.companyName || q.name}</span>
-                          <span className="text-[11px] text-[#D8DEE8]">{q.name}</span>
+                          <span className="text-[11px] text-gray-600">{q.name}</span>
                         </div>
                       </td>
                       <td className="py-5 px-4 font-label-caps text-[13px]">{q.quantity}</td>
                       <td className="py-5 px-4">
                         <StatusBadge status={q.status} />
                       </td>
-                      <td className="py-5 px-4 text-right font-label-caps text-[11px] text-[#D8DEE8]">
+                      <td className="py-5 px-4 text-right font-label-caps text-[11px] text-gray-600">
                         {new Date(q.createdAt).toLocaleDateString(locale, {
                           timeZone,
                           day: '2-digit', month: 'short',
@@ -368,9 +368,9 @@ export default function AdminDashboard() {
             <div key={s.label} className="flex items-center justify-between gap-2 border-b border-muted-steel/10 pb-1.5 last:border-b-0 last:pb-0">
               <div className="flex items-center gap-1.5 min-w-0">
                 <span className="material-symbols-outlined text-hazard-orange text-[15px] leading-none">{s.icon}</span>
-                <p className="font-label-caps text-[9px] text-[#D8DEE8] tracking-[0.06em] truncate">{s.label}</p>
+                <p className="font-label-caps text-[9px] text-gray-600 tracking-[0.06em] truncate">{s.label}</p>
               </div>
-              <p className="font-headline-md text-[16px] text-white font-bold leading-none">{String(s.value)}</p>
+              <p className="font-headline-md text-[16px] text-gray-900 font-bold leading-none">{String(s.value)}</p>
             </div>
           ))}
 

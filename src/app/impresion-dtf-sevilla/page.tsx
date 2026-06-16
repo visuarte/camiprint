@@ -33,7 +33,7 @@ export default function Page() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(offers) }} />
       <section className="prose mx-auto max-w-4xl py-12 px-4 text-cami-200">
-        <h1 className="text-3xl font-bold text-white">Impresión DTF en Sevilla</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Impresión DTF en Sevilla</h1>
         <p>
           La técnica DTF te permite imprimir diseños a todo color con gran definición y durabilidad. Perfecto para merchandising y prendas deportivas.
         </p>

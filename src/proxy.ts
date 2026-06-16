@@ -25,7 +25,6 @@ async function isAdminSession(req: NextRequest): Promise<boolean> {
     }
   }
 
-  // Legacy fallback: ADMIN_AUTH_TOKEN
   const adminToken = process.env.ADMIN_AUTH_TOKEN || ''
   if (!adminToken) return false
 
@@ -47,7 +46,7 @@ export async function proxy(req: NextRequest) {
     return sessionResponse
   }
 
-  if (pathname === '/api/admin/auth/login') {
+  if (pathname === '/api/admin/auth/login' || pathname === '/api/admin/auth/token-login') {
     return sessionResponse
   }
 

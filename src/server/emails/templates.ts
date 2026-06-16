@@ -145,6 +145,49 @@ export const quoteCustomerConfirmationTemplate = (data: QuoteEmailData): string 
 </html>
 `;
 
+export interface AbandonedCartData {
+  customerName: string;
+  email: string;
+  items: { name: string; quantity: number; price: number }[];
+  total: number;
+  checkoutUrl: string;
+}
+
+export const abandonedCartTemplate = (data: AbandonedCartData): string => {
+  const itemsHtml = data.items.map(item =>
+    `<tr><td style="padding:8px;border-bottom:1px solid #eee">${item.name}</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:center">${item.quantity}</td><td style="padding:8px;border-bottom:1px solid #eee;text-align:right">${item.price.toFixed(2)} €</td></tr>`
+  ).join('');
+  return `
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#f5f5f5;font-family:Arial,sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:40px 20px">
+    <table width="600" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:12px;overflow:hidden">
+      <tr><td style="background:#ff4f00;padding:30px;text-align:center">
+        <h1 style="color:#fff;margin:0;font-size:24px">¡No olvides tu pedido!</h1>
+      </td></tr>
+      <tr><td style="padding:30px">
+        <p style="color:#333;font-size:16px;line-height:1.5">Hola <strong>${data.customerName}</strong>,</p>
+        <p style="color:#333;font-size:16px;line-height:1.5">Tienes un pedido pendiente en <strong>${brandConfig.displayName}</strong>. ¿Quieres terminarlo?</p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0">
+          <tr><th style="padding:8px;border-bottom:2px solid #ff4f00;text-align:left">Producto</th><th style="padding:8px;border-bottom:2px solid #ff4f00;text-align:center">Cant.</th><th style="padding:8px;border-bottom:2px solid #ff4f00;text-align:right">Precio</th></tr>
+          ${itemsHtml}
+          <tr><td colspan="2" style="padding:12px 8px;text-align:right;font-weight:bold">Total:</td><td style="padding:12px 8px;text-align:right;font-weight:bold;color:#ff4f00">${data.total.toFixed(2)} €</td></tr>
+        </table>
+        <div style="text-align:center;margin:30px 0">
+          <a href="${data.checkoutUrl}" style="background:#ff4f00;color:#fff;padding:14px 40px;text-decoration:none;border-radius:8px;font-size:16px;font-weight:bold;display:inline-block">RECUPERAR PEDIDO</a>
+        </div>
+        <p style="color:#666;font-size:14px;line-height:1.5">Si tienes cualquier duda, responde a este correo o escríbenos a <a href="mailto:${brandConfig.supportEmail}" style="color:#ff4f00">${brandConfig.supportEmail}</a>.</p>
+      </td></tr>
+      <tr><td style="background:#fafafa;padding:20px;text-align:center;color:#999;font-size:12px">
+        <p style="margin:0">${brandConfig.displayName} — ${brandConfig.postalAddress}</p>
+        <p style="margin:5px 0 0">Este correo se envió porque iniciaste un pedido en nuestra tienda.</p>
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body></html>`;
+};
+
 export const orderConfirmationTemplate = (data: OrderConfirmationData): string => {
   const itemsHtml = data.items
     .map(

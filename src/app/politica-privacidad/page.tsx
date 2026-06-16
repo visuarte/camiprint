@@ -20,7 +20,7 @@ const Section = ({
   children: React.ReactNode;
 }) => (
   <section id={id} className="mb-10 scroll-mt-8">
-    <h2 className="mb-3 text-xl font-semibold text-white">{title}</h2>
+    <h2 className="mb-3 text-xl font-semibold text-gray-900">{title}</h2>
     <div className="space-y-3 text-sm leading-relaxed text-cami-300">{children}</div>
   </section>
 );
@@ -45,23 +45,23 @@ export default function PoliticaPrivacidadPage() {
       <div className="mb-10">
         <Link
           href="/"
-          className="mb-8 inline-block text-sm text-cami-400 transition-colors hover:text-white"
+          className="mb-8 inline-block text-sm text-cami-400 transition-colors hover:text-gray-900"
         >
           ← Volver al inicio
         </Link>
-        <h1 className="text-3xl font-extrabold tracking-tight text-white md:text-4xl">
+        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 md:text-4xl">
           Política de Privacidad y Tratamiento de Datos
         </h1>
         <p className="mt-2 text-sm text-cami-400">Última actualización: {updated}</p>
         <p className="mt-4 text-sm leading-relaxed text-cami-300">
-          En <strong className="text-white">{brandConfig.displayName}</strong> nos comprometemos a
+          En <strong className="text-gray-900">{brandConfig.displayName}</strong> nos comprometemos a
           proteger la privacidad de nuestros clientes y a tratar sus datos personales de forma
           transparente, leal y conforme al{' '}
-          <strong className="text-white">
+          <strong className="text-gray-900">
             Reglamento (UE) 2016/679 (RGPD)
           </strong>{' '}
           y la{' '}
-          <strong className="text-white">
+          <strong className="text-gray-900">
             Ley Orgánica 3/2018 (LOPDGDD)
           </strong>
           .
@@ -90,7 +90,7 @@ export default function PoliticaPrivacidadPage() {
             ['cambios', '10. Cambios en esta política'],
           ].map(([id, label]) => (
             <li key={id}>
-              <a href={`#${id}`} className="hover:text-white">
+              <a href={`#${id}`} className="hover:text-gray-900">
                 {label}
               </a>
             </li>
@@ -110,7 +110,7 @@ export default function PoliticaPrivacidadPage() {
               <a
                 key="email"
                 href={`mailto:${brandConfig.privacyEmail}`}
-                className="text-cami-200 underline underline-offset-2 hover:text-white"
+                className="text-cami-200 underline underline-offset-2 hover:text-gray-900"
               >
                 {brandConfig.privacyEmail}
               </a>,
@@ -141,22 +141,22 @@ export default function PoliticaPrivacidadPage() {
             </thead>
             <tbody className="divide-y divide-white/5">
               <tr>
-                <td className="px-4 py-3 font-medium text-white">Identificación</td>
+                <td className="px-4 py-3 font-medium text-gray-900">Identificación</td>
                 <td className="px-4 py-3">Nombre completo, empresa, cargo</td>
                 <td className="px-4 py-3">El propio interesado</td>
               </tr>
               <tr>
-                <td className="px-4 py-3 font-medium text-white">Contacto</td>
+                <td className="px-4 py-3 font-medium text-gray-900">Contacto</td>
                 <td className="px-4 py-3">Correo electrónico, teléfono</td>
                 <td className="px-4 py-3">El propio interesado</td>
               </tr>
               <tr>
-                <td className="px-4 py-3 font-medium text-white">Pedido / cotización</td>
+                <td className="px-4 py-3 font-medium text-gray-900">Pedido / cotización</td>
                 <td className="px-4 py-3">Productos, cantidades, tallas, diseños, dirección de entrega</td>
                 <td className="px-4 py-3">El propio interesado</td>
               </tr>
               <tr>
-                <td className="px-4 py-3 font-medium text-white">Pago</td>
+                <td className="px-4 py-3 font-medium text-gray-900">Pago</td>
                 <td className="px-4 py-3">
                   Datos de tarjeta (procesados exclusivamente por Stripe — no accedemos a ellos),
                   confirmación de pago, referencia de transacción
@@ -164,7 +164,7 @@ export default function PoliticaPrivacidadPage() {
                 <td className="px-4 py-3">Stripe (encargado)</td>
               </tr>
               <tr>
-                <td className="px-4 py-3 font-medium text-white">Navegación</td>
+                <td className="px-4 py-3 font-medium text-gray-900">Navegación</td>
                 <td className="px-4 py-3">Dirección IP anonimizada, páginas visitadas, dispositivo, país</td>
                 <td className="px-4 py-3">Vercel Analytics (agregado)</td>
               </tr>
@@ -172,7 +172,7 @@ export default function PoliticaPrivacidadPage() {
           </table>
         </div>
         <p>
-          <strong className="text-white">No tratamos datos especiales</strong> (salud, ideología,
+          <strong className="text-gray-900">No tratamos datos especiales</strong> (salud, ideología,
           origen racial, etc.) ni datos de menores de forma deliberada (ver sección 8).
         </p>
       </Section>
@@ -243,25 +243,25 @@ export default function PoliticaPrivacidadPage() {
             </thead>
             <tbody className="divide-y divide-white/5">
               <tr>
-                <td className="px-4 py-3 font-medium text-white">Vercel, Inc.</td>
+                <td className="px-4 py-3 font-medium text-gray-900">Vercel, Inc.</td>
                 <td className="px-4 py-3">Alojamiento web y analítica agregada</td>
                 <td className="px-4 py-3">EE.UU. / UE (CDN)</td>
                 <td className="px-4 py-3">Cláusulas Contractuales Tipo (CCT)</td>
               </tr>
               <tr>
-                <td className="px-4 py-3 font-medium text-white">Stripe, Inc.</td>
+                <td className="px-4 py-3 font-medium text-gray-900">Stripe, Inc.</td>
                 <td className="px-4 py-3">Procesamiento de pagos</td>
                 <td className="px-4 py-3">EE.UU. / UE</td>
                 <td className="px-4 py-3">CCT + Marco DPF UE-EE.UU.</td>
               </tr>
               <tr>
-                <td className="px-4 py-3 font-medium text-white">Resend, Inc.</td>
+                <td className="px-4 py-3 font-medium text-gray-900">Resend, Inc.</td>
                 <td className="px-4 py-3">Envío de correo transaccional</td>
                 <td className="px-4 py-3">EE.UU.</td>
                 <td className="px-4 py-3">CCT</td>
               </tr>
               <tr>
-                <td className="px-4 py-3 font-medium text-white">Supabase, Inc.</td>
+                <td className="px-4 py-3 font-medium text-gray-900">Supabase, Inc.</td>
                 <td className="px-4 py-3">Base de datos (pedidos y cotizaciones)</td>
                 <td className="px-4 py-3">EE.UU. / AWS us-east-1</td>
                 <td className="px-4 py-3">CCT</td>
@@ -334,11 +334,11 @@ export default function PoliticaPrivacidadPage() {
         </p>
         <ul className="list-inside list-disc space-y-1 pl-2">
           <li>
-            <strong className="text-white">Cláusulas Contractuales Tipo (CCT)</strong> aprobadas por
+            <strong className="text-gray-900">Cláusulas Contractuales Tipo (CCT)</strong> aprobadas por
             la Decisión de Ejecución (UE) 2021/914 de la Comisión Europea.
           </li>
           <li>
-            <strong className="text-white">Marco de Privacidad de Datos UE-EE.UU. (DPF)</strong>,
+            <strong className="text-gray-900">Marco de Privacidad de Datos UE-EE.UU. (DPF)</strong>,
             para los prestadores adheridos (Stripe).
           </li>
         </ul>
@@ -346,7 +346,7 @@ export default function PoliticaPrivacidadPage() {
           Puedes solicitar una copia de las garantías aplicables escribiéndonos a{' '}
           <a
             href={`mailto:${brandConfig.privacyEmail}`}
-            className="text-cami-200 underline underline-offset-2 hover:text-white"
+            className="text-cami-200 underline underline-offset-2 hover:text-gray-900"
           >
             {brandConfig.privacyEmail}
           </a>
@@ -370,43 +370,43 @@ export default function PoliticaPrivacidadPage() {
             </thead>
             <tbody className="divide-y divide-white/5">
               <tr>
-                <td className="px-4 py-3 font-medium text-white">Acceso</td>
+                <td className="px-4 py-3 font-medium text-gray-900">Acceso</td>
                 <td className="px-4 py-3">Conocer qué datos tenemos sobre ti y cómo los tratamos.</td>
               </tr>
               <tr>
-                <td className="px-4 py-3 font-medium text-white">Rectificación</td>
+                <td className="px-4 py-3 font-medium text-gray-900">Rectificación</td>
                 <td className="px-4 py-3">Corregir datos inexactos o incompletos.</td>
               </tr>
               <tr>
-                <td className="px-4 py-3 font-medium text-white">Supresión («derecho al olvido»)</td>
+                <td className="px-4 py-3 font-medium text-gray-900">Supresión («derecho al olvido»)</td>
                 <td className="px-4 py-3">
                   Solicitar la eliminación de tus datos cuando ya no sean necesarios (salvo
                   obligaciones legales de conservación).
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-3 font-medium text-white">Limitación del tratamiento</td>
+                <td className="px-4 py-3 font-medium text-gray-900">Limitación del tratamiento</td>
                 <td className="px-4 py-3">
                   Solicitar que bloqueemos el tratamiento de tus datos mientras se resuelve una
                   impugnación o reclamación.
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-3 font-medium text-white">Portabilidad</td>
+                <td className="px-4 py-3 font-medium text-gray-900">Portabilidad</td>
                 <td className="px-4 py-3">
                   Recibir tus datos en formato estructurado y de uso común para transferirlos a otro
                   responsable (cuando el tratamiento se base en contrato o consentimiento).
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-3 font-medium text-white">Oposición</td>
+                <td className="px-4 py-3 font-medium text-gray-900">Oposición</td>
                 <td className="px-4 py-3">
                   Oponerte al tratamiento basado en interés legítimo o con fines de marketing
                   directo.
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-3 font-medium text-white">Retirada del consentimiento</td>
+                <td className="px-4 py-3 font-medium text-gray-900">Retirada del consentimiento</td>
                 <td className="px-4 py-3">
                   Retirar el consentimiento prestado en cualquier momento, sin que ello afecte a la
                   licitud del tratamiento previo.
@@ -417,17 +417,17 @@ export default function PoliticaPrivacidadPage() {
         </div>
 
         <div className="rounded-lg border border-white/10 bg-white/5 px-5 py-4">
-          <p className="mb-1 font-semibold text-white">Cómo ejercer tus derechos</p>
+          <p className="mb-1 font-semibold text-gray-900">Cómo ejercer tus derechos</p>
           <p>
             Envía un correo a{' '}
             <a
               href={`mailto:${brandConfig.privacyEmail}`}
-              className="text-cami-200 underline underline-offset-2 hover:text-white"
+              className="text-cami-200 underline underline-offset-2 hover:text-gray-900"
             >
               {brandConfig.privacyEmail}
             </a>{' '}
             indicando el derecho que deseas ejercer e incluyendo copia de tu DNI/NIE u otro documento
-            identificativo. Responderemos en el plazo máximo de <strong className="text-white">1 mes</strong>{' '}
+            identificativo. Responderemos en el plazo máximo de <strong className="text-gray-900">1 mes</strong>{' '}
             (prorrogable 2 meses adicionales en casos complejos, con comunicación previa).
           </p>
           <p className="mt-2">
@@ -437,7 +437,7 @@ export default function PoliticaPrivacidadPage() {
               href="https://www.aepd.es/es/derechos-y-deberes/conoce-tus-derechos/reclamacion-ante-la-aepd"
               target="_blank"
               rel="noreferrer"
-              className="text-cami-200 underline underline-offset-2 hover:text-white"
+              className="text-cami-200 underline underline-offset-2 hover:text-gray-900"
             >
               Agencia Española de Protección de Datos (AEPD)
             </a>
@@ -455,7 +455,7 @@ export default function PoliticaPrivacidadPage() {
           Si eres padre/madre o tutor y crees que tu hijo ha facilitado datos, contacta con nosotros en{' '}
           <a
             href={`mailto:${brandConfig.privacyEmail}`}
-            className="text-cami-200 underline underline-offset-2 hover:text-white"
+            className="text-cami-200 underline underline-offset-2 hover:text-gray-900"
           >
             {brandConfig.privacyEmail}
           </a>
@@ -469,7 +469,7 @@ export default function PoliticaPrivacidadPage() {
           Aplicamos medidas técnicas y organizativas adecuadas al nivel de riesgo, entre ellas:
         </p>
         <ul className="list-inside list-disc space-y-1 pl-2">
-          <li>Transmisión cifrada mediante <strong className="text-white">TLS 1.2+</strong> en todas las comunicaciones.</li>
+          <li>Transmisión cifrada mediante <strong className="text-gray-900">TLS 1.2+</strong> en todas las comunicaciones.</li>
           <li>Almacenamiento de contraseñas y tokens mediante funciones de hash resistentes (bcrypt / SHA-256).</li>
           <li>Acceso al panel de administración protegido por token secreto y cookie HttpOnly.</li>
           <li>Control de acceso basado en roles. Solo el personal autorizado accede a los datos de clientes.</li>
@@ -478,7 +478,7 @@ export default function PoliticaPrivacidadPage() {
         </ul>
         <p>
           En caso de brecha de seguridad que implique riesgo para tus derechos y libertades,
-          notificaremos a la AEPD en el plazo de <strong className="text-white">72 horas</strong> y a
+          notificaremos a la AEPD en el plazo de <strong className="text-gray-900">72 horas</strong> y a
           los afectados sin dilación indebida.
         </p>
       </Section>
@@ -489,13 +489,13 @@ export default function PoliticaPrivacidadPage() {
           Podemos actualizar esta política cuando sea necesario (cambios legislativos, nuevos
           servicios, etc.). Cuando los cambios sean sustanciales, lo comunicaremos por correo
           electrónico a los clientes afectados y/o mediante un aviso destacado en el sitio web con al
-          menos <strong className="text-white">30 días de antelación</strong>.
+          menos <strong className="text-gray-900">30 días de antelación</strong>.
         </p>
         <p>
           La versión vigente siempre estará disponible en{' '}
           <Link
             href="/politica-privacidad"
-            className="text-cami-200 underline underline-offset-2 hover:text-white"
+            className="text-cami-200 underline underline-offset-2 hover:text-gray-900"
           >
             {brandConfig.siteUrl}/politica-privacidad
           </Link>
@@ -505,15 +505,15 @@ export default function PoliticaPrivacidadPage() {
 
       {/* Footer nav */}
       <div className="mt-12 border-t border-white/10 pt-6 text-center text-sm text-cami-400">
-        <Link href="/" className="transition-colors hover:text-white">
+        <Link href="/" className="transition-colors hover:text-gray-900">
           ← Volver al inicio
         </Link>
         <span className="mx-3">·</span>
-        <Link href="/politica-de-cookies" className="transition-colors hover:text-white">
+        <Link href="/politica-de-cookies" className="transition-colors hover:text-gray-900">
           Política de Cookies
         </Link>
         <span className="mx-3">·</span>
-        <Link href="/terminos-y-condiciones" className="transition-colors hover:text-white">
+        <Link href="/terminos-y-condiciones" className="transition-colors hover:text-gray-900">
           Términos y Condiciones
         </Link>
       </div>

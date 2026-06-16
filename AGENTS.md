@@ -1,6 +1,12 @@
+# Protocolo Universal de Ingeniería
+Ver `C:\Users\DIEGO\Desktop\mapicp\mapicp\AGENTS.md` o pregúntame por él.
+
+No empieces a tocar código sin pasar por el checklist de la Fase 1.
+
+---
+
 <!-- BEGIN:nextjs-agent-rules -->
 # This is NOT the Next.js you know
-
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
@@ -40,15 +46,10 @@ vercel --prod
 # Comandos útiles
 
 ```powershell
-# Crear develop si no existe
 git checkout -b develop main
 git push origin develop
-
-# Pull + rebase develop sobre main
 git checkout develop
 git pull --rebase origin main
-
-# Feature branch desde develop
 git checkout -b feature/mi-cambio develop
 ```
 

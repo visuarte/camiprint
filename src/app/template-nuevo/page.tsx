@@ -1,413 +1,168 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Script from 'next/script';
-import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google';
-import { brandConfig } from '@/config/brand';
-import ContactSection from '@/app/components/ContactSection';
+import Image from 'next/image';
+import { Montserrat, Manrope } from 'next/font/google';
+import Link from 'next/link';
+import AppHeader from '@/components/AppHeader';
+import Footer from '@/components/Footer';
 
 const montserrat = Montserrat({ subsets: ['latin'], weight: ['700', '800', '900'] });
-const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500'] });
-const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], weight: ['700'] });
+const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600'] });
 
-const navItems = [
-  { label: 'INICIO', href: '#inicio' },
-  { label: 'PRODUCTOS', href: '/catalog' },
-  { label: 'PROCESO', href: '#proceso' },
-  { label: 'FAQ', href: '#faq' },
-  { label: 'CONTACTO', href: '#contacto' },
+const categories = [
+  { name: 'Camisetas', href: '/catalog', img: '/portfolio/real-1.jpg', desc: 'DTF, vinilo y sublimación' },
+  { name: 'Polos', href: '/catalog', img: '/portfolio/real-2.jpg', desc: 'Bordado computarizado' },
+  { name: 'Sudaderas', href: '/catalog', img: '/portfolio/real-3.jpg', desc: 'Personalización completa' },
+  { name: 'Uniformes', href: '/catalog', img: '/portfolio/real-4.jpg', desc: 'Corporativos y eventos' },
 ];
 
-const processSteps = [
-  {
-    step: '01',
-    icon: 'palette',
-    title: 'Diseño personalizado',
-    body: 'Compartes tu idea, logotipo o referencia. Nuestro equipo de diseño gráfico la convierte en un arte digital listo para estampar, optimizado para DTF, sublimación o bordado.',
-  },
-  {
-    step: '02',
-    icon: 'check_circle',
-    title: 'Validación y ajustes',
-    body: 'Recibes una prueba virtual en tu tela y color elegidos. Hasta 3 modificaciones gratuitas. Solo cuando des el visto bueno, lanzamos la orden de producción.',
-  },
-  {
-    step: '03',
-    icon: 'local_shipping',
-    title: 'Impresión y envío',
-    body: 'Fabricamos con tintas ecológicas de alta resistencia y maquinaria industrial. Empaque seguro y envío con número de guía a toda España peninsular en 3–7 días hábiles.',
-  },
+const features = [
+  { title: 'Sin mínimo', desc: 'Desde 10 unidades. Sin abusos.' },
+  { title: 'Presupuesto en 24h', desc: 'Te respondemos en un día.' },
+  { title: 'DTF propio', desc: 'Estampación de alta calidad.' },
+  { title: 'Envío 3-7 días', desc: 'A toda España peninsular.' },
 ];
 
-const testimonials = [
-  {
-    quote: 'Encargué 20 playeras para mi tienda de ropa urbana. El estampado DTF quedó nítido, los colores exactos al diseño. En 5 días las tenía en Alicante.',
-    author: 'Andrea R.',
-    role: 'DISEÑADORA, MARCA INDEPENDIENTE',
-  },
-  {
-    quote: 'Necesitábamos 80 uniformes para un evento de lanzamiento en dos semanas. Cumplieron en 8 días, con bordado impecable y tallas exactas. Muy profesionales.',
-    author: 'Luis M.',
-    role: 'COORDINADOR DE EVENTOS, EMPRESA TECNOLÓGICA',
-  },
-  {
-    quote: 'Ya van cuatro pedidos para mi banda. La calidad del vinilo textil es superior, no se despega ni se cuartea después de lavados. Precio justo y entrega puntual.',
-    author: 'Sofía G.',
-    role: 'MÚSICA, BANDA DE ROCK',
-  },
-];
-
-const faqItems = [
-  {
-    q: '¿Cuál es el mínimo de camisetas por pedido?',
-    a: 'Aceptamos desde 10 unidades. De 10 a 49 unidades iguales obtenés 15% de descuento. Para 50 o más, te armamos una cotización con precio por volumen y envío preferencial.',
-  },
-  {
-    q: '¿Cuánto tarda una camiseta personalizada?',
-    a: 'El tiempo regular es de 3 a 7 días hábiles después de aprobar la prueba. Si tenés urgencia, ofrecemos servicio exprés en 48 horas con un recargo del 20% sobre el total.',
-  },
-  {
-    q: '¿Qué técnicas de impresión usan?',
-    a: 'Trabajamos con DTF (transfer directo al film), vinilo textil de corte, sublimación full color para poliéster y bordado computarizado. Te recomendamos la mejor según tu diseño, tela y cantidad.',
-  },
-  {
-    q: '¿Puedo cambiar el diseño después de encargar?',
-    a: 'Podés modificar el diseño sin costo si la producción aún no comenzó. Te avisamos por WhatsApp si estás a tiempo. Una vez impreso, cualquier cambio requiere reposición con costo de material.',
-  },
-];
-
-export default function TemplateNuevoPage() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+export default function LightLanding() {
+  const [heroImg, setHeroImg] = useState(1);
 
   useEffect(() => {
-    document.title = 'CAMIART | Camisetas Personalizadas DTF, Sublimación y Bordado — Envío a Toda España';
-    const meta = document.createElement('meta');
-    meta.name = 'description';
-    meta.content = 'Fabricamos camisetas personalizadas con DTF, sublimación, vinilo textil y bordado profesional. Desde 10 unidades hasta pedidos corporativos. Envío a toda España peninsular en 3-7 días.';
-    document.head.appendChild(meta);
+    document.title = 'CAMIART | Camisetas personalizadas para tu negocio';
+    const interval = setInterval(() => setHeroImg(p => p >= 6 ? 1 : p + 1), 4000);
+    return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    if (!isMenuOpen) return;
-    const onEsc = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsMenuOpen(false);
-    };
-    document.addEventListener('keydown', onEsc);
-    return () => document.removeEventListener('keydown', onEsc);
-  }, [isMenuOpen]);
-
-  useEffect(() => {
-    if (!isMenuOpen) {
-      document.body.style.overflow = '';
-      return;
-    }
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isMenuOpen]);
-
   return (
-    <main className={`${manrope.className} min-h-screen overflow-x-hidden bg-[#131313] text-[#e2e2e2]`}>
-      <header className="fixed left-0 right-0 top-0 z-50 border-b border-[#ff4f00]/35 bg-[#131313]/92 shadow-[0_6px_26px_rgba(255,79,0,0.18)] backdrop-blur-xl">
-        <nav className="mx-auto flex h-20 w-full max-w-[1440px] items-center justify-between px-5 md:px-16">
-          <a href="#inicio" className="flex items-center gap-3">
-            <img
-              src="/textures/camiart-logo.png"
-              alt="CamiArt Logo"
-              className="h-10 w-10 object-contain"
-            />
-            <span className={`${montserrat.className} text-xl font-extrabold tracking-tight text-[#ff4f00]`}>CAMIART</span>
-          </a>
+    <main className={`${manrope.className} min-h-screen bg-white text-[#1a1a1a]`}>
+      <AppHeader variant="light" />
 
-          <div className={`${spaceGrotesk.className} hidden items-center gap-8 text-sm tracking-[0.1em] md:flex`}>
-            {navItems.map((item, index) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className={index === 0 ? 'font-bold text-[#ff4f00] [text-shadow:0_0_8px_rgba(255,79,0,0.6)]' : 'text-[#e2e2e2]/70 transition-colors hover:text-[#e2e2e2]'}
-              >
-                {item.label}
-              </a>
-            ))}
-            <a href="#contacto" className="bg-[#ff4f00] px-6 py-2 font-bold text-[#0A0A0A] transition hover:scale-105">
-              CONTACTO
-            </a>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setIsMenuOpen((prev) => !prev)}
-            className="rounded-md border border-[#ff4f00]/45 bg-[#ff4f00]/10 p-1.5 text-[#ff4f00] md:hidden"
-            aria-label="Abrir menu"
-            aria-expanded={isMenuOpen}
-            aria-controls="template-v2-mobile-menu"
-          >
-            <span className="material-symbols-outlined text-3xl">menu</span>
-          </button>
-        </nav>
-
-        {isMenuOpen && (
-          <div
-            id="template-v2-mobile-menu"
-            className={`${spaceGrotesk.className} fixed inset-0 z-[120] bg-[#0b0b0b] px-5 pb-8 pt-24 md:hidden`}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Menu movil"
-          >
-            <div className="mb-6 flex items-center justify-between border-b border-[#ff4f00]/35 pb-4">
-              <p className="text-xs font-bold tracking-[0.14em] text-[#ff4f00]">NAVEGACION</p>
-              <button
-                type="button"
-                onClick={() => setIsMenuOpen(false)}
-                className="rounded-md border border-[#ff4f00]/45 bg-[#ff4f00]/10 px-4 py-2 text-xs font-bold tracking-[0.1em] text-[#ff4f00]"
-              >
-                CERRAR
-              </button>
-            </div>
-            <div className="flex flex-col gap-3 text-sm tracking-[0.1em]">
-              {navItems.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setIsMenuOpen(false)}
-                  className="rounded-md border border-[#ff4f00]/30 bg-[#1a1a1a] px-4 py-4 text-[#e2e2e2]"
-                >
-                  {item.label}
-                </a>
-              ))}
-              <a
-                href="#contacto"
-                onClick={() => setIsMenuOpen(false)}
-                className="mt-2 rounded-md bg-[#ff4f00] px-4 py-4 text-center font-bold text-[#0A0A0A]"
-              >
-                CONTACTO
-              </a>
-            </div>
-          </div>
-        )}
-      </header>
-
-      <section id="inicio" className="relative min-h-[90vh] overflow-hidden bg-[#0A0A0A] pt-28">
-        <div className="hazard-pattern absolute inset-0 opacity-10" />
-        <div className="relative z-10 mx-auto grid w-full max-w-[1440px] grid-cols-1 items-center gap-12 px-5 pb-20 md:grid-cols-2 md:px-16">
-          <div className="space-y-8">
-            <div className={`${spaceGrotesk.className} inline-flex items-center gap-2 rounded-full border border-[#ff4f00]/30 bg-[#ff4f00]/10 px-4 py-1 text-xs tracking-[0.1em] text-[#ff4f00]`}>
-              <span className="h-2 w-2 animate-pulse rounded-full bg-[#ff4f00]" />
-              CAMISETAS PERSONALIZADAS
-            </div>
-            <h1 className={`${montserrat.className} text-4xl font-black leading-tight md:text-7xl`}>
-              Camisetas personalizadas{' '}
-              <span className="text-[#ff4f00]">DTF, sublimación y bordado</span>
-              {' '}— desde 10 unidades, envío a toda España
+      {/* HERO - product images, minimal text */}
+      <section className="bg-gray-50">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-5 py-16 md:grid-cols-2 md:px-10 md:py-24">
+          <div>
+            <span className={`${inter.className} inline-block rounded-full bg-[#ff4f00]/10 px-4 py-1.5 text-xs font-bold text-[#ff4f00] uppercase tracking-wider mb-4`}>
+              Desde 10 unidades
+            </span>
+            <h1 className={`${montserrat.className} text-4xl font-black leading-[1.05] md:text-6xl`}>
+              Camisetas personalizadas<br />
+              <span className="text-[#ff4f00]">sin mínimos</span>
             </h1>
-            <p className="max-w-xl text-lg text-[#e2e2e2]/80">
-              Transformamos tus ideas en camisetas personalizadas con estampado DTF de alta resistencia, sublimación full color, vinilo textil premium y bordado computarizado. Desde pedidos desde 10 unidades hasta uniformes corporativos por miles. Entregamos en Alicante, Madrid, Barcelona y toda España peninsular con número de guía.
+            <p className="mt-4 text-lg text-gray-500">
+              DTF, bordado o vinilo. Presupuesto gratis en 24h.
             </p>
-            <div className="flex flex-wrap gap-4 pt-2">
-              <a href="/catalog" className={`${montserrat.className} inline-block bg-[#ff4f00] px-10 py-4 text-sm font-bold text-[#0A0A0A] transition hover:scale-105`}>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link href="/catalog" className={`${inter.className} bg-[#ff4f00] px-8 py-3 text-sm font-bold text-white hover:bg-[#e64500] transition-colors`}>
                 VER CATÁLOGO
-              </a>
-              <a href="#contacto" className={`${montserrat.className} border border-[#e2e2e2]/20 px-10 py-4 text-sm font-bold text-[#e2e2e2]`}>
-                SOLICITAR COTIZACIÓN
-              </a>
+              </Link>
+              <Link href="/#presupuesto" className={`${inter.className} border border-gray-300 px-8 py-3 text-sm font-bold text-gray-700 hover:border-[#ff4f00] hover:text-[#ff4f00] transition-colors`}>
+                PRESUPUESTO GRATIS
+              </Link>
             </div>
           </div>
-
           <div className="relative">
-            <div className="absolute -inset-8 rounded-full bg-[#ff4f00]/20 blur-[120px]" />
-            <Script
-              type="module"
-              src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
-              strategy="afterInteractive"
+            <div className="absolute -inset-4 rounded-full bg-[#ff4f00]/10 blur-3xl" />
+            <Image
+              src={`/portfolio/real-${heroImg}.jpg`}
+              alt="Camiseta personalizada"
+              width={600} height={600}
+              className="relative z-10 w-full rounded-2xl border border-gray-200 object-cover shadow-lg"
+              priority
             />
-            <model-viewer
-              src="/models/camiseta-camiart.glb"
-              alt="Camiseta personalizable CamiArt"
-              auto-rotate
-              auto-rotate-delay="0"
-              rotation-per-second="18deg"
-              camera-orbit="20deg 78deg 115%"
-              field-of-view="32deg"
-              shadow-intensity="1"
-              exposure="0.9"
-              className="animate-float relative z-10 w-full pointer-events-none select-none"
-              style={{ ['--poster-color' as string]: 'transparent' }}
-            />
+            <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
+              {[1,2,3,4,5,6].map(i => (
+                <button key={i} onClick={() => setHeroImg(i)}
+                  className={`h-2 rounded-full transition-all ${i === heroImg ? 'w-6 bg-[#ff4f00]' : 'w-2 bg-gray-300'}`} />
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="border-y border-[#5c4037]/25 bg-[#0e0e0e] py-10">
-        <div className="mx-auto grid w-full max-w-[1440px] grid-cols-2 gap-6 px-5 text-center md:grid-cols-4 md:px-16">
-          <div>
-            <p className={`${montserrat.className} text-3xl font-black text-[#ff4f00] md:text-4xl`}>+2,800</p>
-            <p className="mt-1 text-xs tracking-[0.1em] text-[#e2e2e2]/60 uppercase">diseños entregados</p>
-          </div>
-          <div>
-            <p className={`${montserrat.className} text-3xl font-black text-[#ff4f00] md:text-4xl`}>4</p>
-            <p className="mt-1 text-xs tracking-[0.1em] text-[#e2e2e2]/60 uppercase">técnicas de impresión</p>
-          </div>
-          <div>
-            <p className={`${montserrat.className} text-3xl font-black text-[#ff4f00] md:text-4xl`}>3-7</p>
-            <p className="mt-1 text-xs tracking-[0.1em] text-[#e2e2e2]/60 uppercase">días hábiles de entrega</p>
-          </div>
-          <div>
-            <p className={`${montserrat.className} text-3xl font-black text-[#ff4f00] md:text-4xl`}>100%</p>
-            <p className="mt-1 text-xs tracking-[0.1em] text-[#e2e2e2]/60 uppercase">satisfacción garantizada</p>
-          </div>
-        </div>
-      </section>
-
-      <section id="proceso" className="mx-auto w-full max-w-[1440px] px-5 py-24 md:px-16">
-        <div className="mb-16 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
-          <div>
-            <h2 className={`${spaceGrotesk.className} mb-2 text-sm tracking-[0.1em] text-[#ff4f00]`}>COMO FUNCIONA</h2>
-            <h3 className={`${montserrat.className} text-4xl font-extrabold md:text-5xl`}>De tu idea a camiseta lista.</h3>
-          </div>
-          <div className="mb-2 h-1 w-24 bg-[#ff4f00]" />
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {processSteps.map((item) => (
-            <article key={item.step} className="group relative overflow-hidden border border-[#5c4037]/35 bg-[#1f1f1f] p-8 transition-all hover:border-[#ff4f00]">
-              <span className={`${montserrat.className} absolute right-3 top-2 text-8xl font-black text-white/5 group-hover:text-white/10`}>
-                {item.step}
-              </span>
-              <span className="material-symbols-outlined mb-6 text-5xl text-[#ff4f00]">{item.icon}</span>
-              <h4 className={`${montserrat.className} mb-4 text-2xl font-bold uppercase`}>{item.title}</h4>
-              <p className="text-[#e2e2e2]/70">{item.body}</p>
-            </article>
+      {/* FEATURES - row de iconos */}
+      <section className="border-b border-gray-200 bg-white">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-5 py-10 md:grid-cols-4 md:px-10">
+          {features.map(f => (
+            <div key={f.title} className="text-center">
+              <p className={`${montserrat.className} text-lg font-bold text-[#ff4f00]`}>{f.title}</p>
+              <p className="mt-1 text-sm text-gray-500">{f.desc}</p>
+            </div>
           ))}
         </div>
+      </section>
 
-        <div className="mt-12 text-center">
-          <div className="flex flex-wrap justify-center gap-4">
-            <a
-              href="/catalog"
-              className={`${montserrat.className} inline-block bg-[#ff4f00] px-12 py-4 text-sm font-bold text-[#0A0A0A] transition hover:scale-105`}
-            >
-              VER MODELOS
-            </a>
-            <a
-              href="#contacto"
-              className={`${montserrat.className} inline-block border border-[#e2e2e2]/20 px-12 py-4 text-sm font-bold text-[#e2e2e2] transition hover:border-[#ff4f00]`}
-            >
-              SOLICITAR COTIZACIÓN GRATIS
-            </a>
-          </div>
+      {/* CATEGORIES - image grid like Roly */}
+      <section className="mx-auto max-w-7xl px-5 py-20 md:px-10">
+        <h2 className={`${montserrat.className} text-3xl font-black text-center md:text-4xl`}>Nuestros productos</h2>
+        <div className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-4">
+          {categories.map(cat => (
+            <Link key={cat.name} href={cat.href} className="group">
+              <div className="aspect-[3/4] overflow-hidden rounded-xl bg-gray-100">
+                <Image src={cat.img} alt={cat.name} width={300} height={400}
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              </div>
+              <h3 className={`${montserrat.className} mt-3 text-lg font-bold`}>{cat.name}</h3>
+              <p className="text-sm text-gray-500">{cat.desc}</p>
+            </Link>
+          ))}
         </div>
       </section>
 
-      <section id="testimonios" className="border-y border-[#5c4037]/25 bg-[#0A0A0A] py-24">
-        <div className="mx-auto w-full max-w-[1440px] px-5 md:px-16">
-          <div className="mb-16 text-center">
-            <h3 className={`${montserrat.className} text-4xl font-extrabold md:text-5xl`}>Clientes satisfechos</h3>
-            <p className="mt-4 text-[#e2e2e2]/60">Lo que dicen quienes ya tienen sus camisetas personalizadas con nosotros.</p>
-          </div>
-
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {testimonials.map((item) => (
-              <article key={item.author} className="relative border-l-4 border-[#ff4f00] bg-[#1b1b1b] p-8 shadow-xl">
-                <span className="material-symbols-outlined absolute right-3 top-3 text-6xl text-[#ff4f00]/30" style={{ fontVariationSettings: "'FILL' 1" }}>
-                  format_quote
-                </span>
-                <p className="relative z-10 mb-6 text-lg italic">"{item.quote}"</p>
-                <p className={`${montserrat.className} text-base font-bold`}>{item.author}</p>
-                <p className={`${spaceGrotesk.className} text-xs tracking-[0.1em] text-[#ff4f00]`}>{item.role}</p>
-              </article>
+      {/* HOW IT WORKS - simple 3 steps */}
+      <section id="como-funciona" className="bg-gray-50 py-20">
+        <div className="mx-auto max-w-7xl px-5 md:px-10">
+          <h2 className={`${montserrat.className} text-3xl font-black text-center md:text-4xl`}>Cómo funciona</h2>
+          <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
+            {[
+              { n: '01', t: 'Diseñas', d: 'Nos dices qué quieres. Si no tienes diseño, te lo hacemos gratis.' },
+              { n: '02', t: 'Aprobamos', d: 'Te enviamos la prueba virtual. Hasta 3 cambios sin coste.' },
+              { n: '03', t: 'Recibes', d: 'Producimos y enviamos a toda España en 3-7 días.' },
+            ].map(s => (
+              <div key={s.n} className="rounded-xl border border-gray-200 bg-white p-8 text-center">
+                <span className={`${montserrat.className} text-5xl font-black text-[#ff4f00]/20`}>{s.n}</span>
+                <h3 className={`${montserrat.className} mt-2 text-xl font-bold`}>{s.t}</h3>
+                <p className="mt-2 text-gray-500">{s.d}</p>
+              </div>
             ))}
           </div>
-
-          <div className="mt-12 text-center">
-            <a
-              href="#contacto"
-              className={`${montserrat.className} inline-block border border-[#ff4f00] px-12 py-4 text-sm font-bold text-[#ff4f00] transition hover:bg-[#ff4f00] hover:text-[#0A0A0A]`}
-            >
-              EMPIEZA TU PEDIDO — TE COTIZAMOS EN MINUTOS
-            </a>
-          </div>
         </div>
       </section>
 
-      <section id="faq" className="mx-auto w-full max-w-[1000px] px-5 py-24 md:px-16">
-        <div className="mb-12 flex items-center gap-4">
-          <div className="h-[2px] flex-grow bg-[#5c4037]/40" />
-          <h3 className={`${montserrat.className} px-4 text-2xl font-bold uppercase tracking-widest`}>DTF, sublimación, bordado — preguntas frecuentes</h3>
-          <div className="h-[2px] flex-grow bg-[#5c4037]/40" />
-        </div>
-
-        <div className="space-y-4">
-          {faqItems.map((item) => (
-            <details key={item.q} className="group border border-[#5c4037]/35 bg-[#1b1b1b] p-6 open:border-[#ff4f00]">
-              <summary className={`${montserrat.className} flex list-none items-center justify-between text-lg font-bold`}>
-                {item.q}
-                <span className="material-symbols-outlined text-[#ff4f00] transition-transform group-open:rotate-180">expand_more</span>
-              </summary>
-              <p className="mt-4 border-t border-[#5c4037]/20 pt-4 text-[#e2e2e2]/70">{item.a}</p>
-            </details>
+      {/* TESTIMONIALS */}
+      <section className="mx-auto max-w-7xl px-5 py-24 md:px-10">
+        <h2 className={`${montserrat.className} text-center text-3xl font-black md:text-4xl`}>Lo que dicen nuestros clientes</h2>
+        <p className="mt-3 text-center text-gray-500">Empresas que confían en CAMIART para sus uniformes y ropa corporativa.</p>
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          {[
+            { name: 'Marina Gómez', company: 'Brasa Norte', text: 'Pedimos uniformes para todo el equipo —120 camisetas con 3 tallas distintas— y la calidad superó nuestras expectativas. El proceso fue rápido y sin sorpresas.' },
+            { name: 'Javier Ruiz', company: 'Nexo Logistics', text: 'Necesitábamos 200 camisetas para una campaña corporativa con plazo de 8 días. CAMIART entregó a tiempo, con acabado excelente y soporte constante.' },
+            { name: 'Carlos Mendoza', company: 'Grupo Vértice', text: 'Llevamos 3 pedidos con ellos para distintos departamentos. El precio por volumen es muy competitivo y la atención personalizada marca la diferencia.' },
+            { name: 'Sofía Ramos', company: 'TasteLab', text: 'Necesitaba camisetas para un evento en 10 días. Validación del diseño en 2 horas, entrega en 9 días. Exactamente lo que necesitaba.' },
+            { name: 'Andrés Villar', company: 'Constructora Ibérica', text: 'Pedimos polos técnicos con bordado para todo el personal de obra. La calidad es muy buena para el precio y el proceso de aprobación fue muy cómodo.' },
+            { name: 'Lucía Herrera', company: 'Studio 88', text: 'La propuesta llegó en minutos, ajustes de diseño rápidos y el resultado final fue impecable para nuestro lanzamiento. Repetiremos sin duda.' },
+          ].map(t => (
+            <div key={t.name} className="rounded-xl border border-gray-200 bg-white p-6">
+              <p className="text-gray-600 italic">"{t.text}"</p>
+              <div className="mt-4 border-t border-gray-100 pt-4">
+                <p className={`${inter.className} text-sm font-bold text-[#ff4f00]`}>{t.name}</p>
+                <p className="text-xs text-gray-400">{t.company}</p>
+              </div>
+            </div>
           ))}
         </div>
       </section>
 
-      <ContactSection />
+      {/* PRICE REQUEST - direct CTA */}
+      <section id="presupuesto" className="mx-auto max-w-3xl px-5 py-24 text-center md:px-10">
+        <h2 className={`${montserrat.className} text-3xl font-black md:text-4xl`}>¿Cuánto cuesta tu pedido?</h2>
+        <p className="mt-4 text-lg text-gray-500">Te enviamos presupuesto gratis en 24h. Sin compromiso.</p>
+        <Link href="/#presupuesto" className={`${inter.className} mt-8 inline-block bg-[#ff4f00] px-10 py-4 text-sm font-bold text-white hover:bg-[#e64500] transition-colors`}>
+          PEDIR PRESUPUESTO GRATIS
+        </Link>
+        <p className="mt-3 text-sm text-gray-400">Respondemos en menos de 24h laborables.</p>
+      </section>
 
-      <footer className="relative w-full border-t-4 border-[#ff4f00] bg-[#0e0e0e] py-12">
-        <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 items-center gap-8 px-5 md:grid-cols-2 md:px-16">
-          <div>
-        <div className="mb-4 flex items-center gap-2">
-          <span className="material-symbols-outlined text-2xl text-[#ff4f00]">precision_manufacturing</span>
-          <span className={`${montserrat.className} text-lg font-extrabold text-[#e2e2e2]`}>CAMIART</span>
-        </div>
-        <p className="text-sm text-[#CBD5E1]">© 2026 CAMIART — Alicante, España</p>
-        <div className="mt-3 flex flex-col gap-1 text-xs text-[#CBD5E1]/70">
-          <span className="flex items-center gap-1">
-            <span className="material-symbols-outlined text-sm text-[#ff4f00]">call</span> {brandConfig.phoneDisplay}
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="material-symbols-outlined text-sm text-[#ff4f00]">mail</span> {brandConfig.supportEmail}
-          </span>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-6 md:items-end">
-        <div className={`${spaceGrotesk.className} flex flex-wrap gap-x-8 gap-y-4 text-xs tracking-[0.1em] md:justify-end`}>
-          <a className="text-[#CBD5E1] transition-colors hover:text-[#ff4f00]" href="/aviso-legal">AVISO LEGAL</a>
-          <a className="text-[#CBD5E1] transition-colors hover:text-[#ff4f00]" href="/terminos-y-condiciones">TÉRMINOS</a>
-          <a className="text-[#CBD5E1] transition-colors hover:text-[#ff4f00]" href="/politica-privacidad">PRIVACIDAD</a>
-          <a className="text-[#CBD5E1] transition-colors hover:text-[#ff4f00]" href="/politica-de-cookies">COOKIES</a>
-          <a className="text-[#CBD5E1] transition-colors hover:text-[#ff4f00]" href="/politica-de-envios">ENVÍOS</a>
-        </div>
-        <div className="flex gap-4">
-          <a href={brandConfig.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-[#CBD5E1] transition-colors hover:text-[#ff4f00]" aria-label="Instagram">
-            <span className="material-symbols-outlined">photo_camera</span>
-          </a>
-          <a href={brandConfig.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="text-[#CBD5E1] transition-colors hover:text-[#ff4f00]" aria-label="Facebook">
-            <span className="material-symbols-outlined">groups</span>
-          </a>
-          <a href={brandConfig.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="text-[#CBD5E1] transition-colors hover:text-[#ff4f00]" aria-label="LinkedIn">
-            <span className="material-symbols-outlined">business</span>
-          </a>
-        </div>
-      </div>
-        </div>
-        <div className="hazard-pattern mt-12 h-2 w-full opacity-30" />
-      </footer>
-
-      <style>{`
-        .hazard-pattern {
-          background-image: repeating-linear-gradient(-45deg, #ff4f00, #ff4f00 10px, transparent 10px, transparent 20px);
-        }
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
-        @keyframes float {
-          0% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-20px) rotate(2deg); }
-          100% { transform: translateY(0px) rotate(0deg); }
-        }
-        html { scroll-behavior: smooth; }
-      `}</style>
+      <Footer variant="light" />
     </main>
   );
 }

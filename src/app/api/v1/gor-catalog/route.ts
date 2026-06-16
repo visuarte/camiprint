@@ -1,7 +1,7 @@
 import { GorFactoryClient } from '@/server/integrations/gor-factory/client';
 import { getRedisClient } from '@/server/platform/redis/client';
 
-const REDIS_URL = process.env.REDIS_URL || 'redis://127.0.0.1:6379';
+const REDIS_URL = process.env.REDIS_URL || '';
 const PRICE_CACHE_KEY = 'gor:pricecache';
 const PRICE_TTL_SEC = 3600;
 
@@ -108,14 +108,20 @@ export async function GET(request: Request) {
       total: models.length,
     };
 
-    if (includePrices) {
+    if (includePrices && REDIS_URL) {
       const redis = getRedisClient(REDIS_URL);
       let priceItems: { itemcode: string; price: number }[] = [];
 
-      const cached = await redis.get(PRICE_CACHE_KEY);
-      if (cached) {
-        priceItems = JSON.parse(cached);
-      } else {
+      try {
+        const cached = await redis.get(PRICE_CACHE_KEY);
+        if (cached) {
+          priceItems = JSON.parse(cached);
+        }
+      } catch {
+        // cache errors are non-fatal
+      }
+
+      if (!priceItems.length) {
         try {
           const priceResult = await client.postForm<unknown>(
             '/api/v1.0/item/pricelist',
@@ -129,7 +135,9 @@ export async function GET(request: Request) {
               if (Array.isArray(pd.item)) priceItems = pd.item as { itemcode: string; price: number }[];
               else if (Array.isArray(pd.items)) priceItems = pd.items as { itemcode: string; price: number }[];
             }
-            await redis.setex(PRICE_CACHE_KEY, PRICE_TTL_SEC, JSON.stringify(priceItems));
+            if (redis) {
+              try { await redis.setex(PRICE_CACHE_KEY, PRICE_TTL_SEC, JSON.stringify(priceItems)); } catch {}
+            }
           }
         } catch {
           // pricelist errors are non-fatal; serve empty prices
@@ -153,7 +161,11 @@ export async function GET(request: Request) {
       }
     }
 
-    return Response.json(responseBody);
+    return Response.json(responseBody, {
+      headers: {
+        'Cache-Control': 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400',
+      },
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     return Response.json({ error: message, stack: error instanceof Error ? error.stack : null }, { status: 500 });
