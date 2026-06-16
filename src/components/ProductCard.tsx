@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useCart } from '@/lib/store';
 import Image from 'next/image';
 
@@ -52,6 +52,15 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [quantity, setQuantity] = useState(10);
   const [selectedSize, setSelectedSize] = useState('');
   const [isAdding, setIsAdding] = useState(false);
+  const [multiplier, setMultiplier] = useState(1.5);
+  const [printingCost, setPrintingCost] = useState(2);
+
+  useEffect(() => {
+    fetch('/api/site-settings').then(r => r.json()).then(data => {
+      if (data.priceMultiplier) setMultiplier(data.priceMultiplier);
+      if (data.basePrintingCost != null) setPrintingCost(data.basePrintingCost);
+    }).catch(() => {});
+  }, []);
 
   const currentColor = product.colors.find((c) => c.name === selectedColor);
   const displayImage = currentColor?.image || product.imageUrl;
@@ -95,7 +104,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {product.priceMin != null && (
           <div>
             <p className="text-lg font-bold text-white">
-              Desde {(product.priceMin * 1.5 + 2).toFixed(2)} €
+              Desde {(product.priceMin * multiplier + printingCost).toFixed(2)} €
               <span className="ml-1 text-xs font-normal text-[#e2e2e2]/40">/ud + estampación</span>
             </p>
             <p className="text-[10px] text-[#e2e2e2]/30">Prenda base desde {product.priceMin.toFixed(2)}€ + personalización</p>

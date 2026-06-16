@@ -70,6 +70,8 @@ export async function POST(req: NextRequest) {
     if (typeof body.adminEmail === 'string') patch.adminEmail = body.adminEmail.trim() || null;
     if (typeof body.whatsappPhone === 'string') patch.whatsappPhone = body.whatsappPhone.trim() || null;
     if (typeof body.whatsappMessage === 'string') patch.whatsappMessage = body.whatsappMessage.trim() || null;
+    if (typeof body.priceMultiplier === 'number') patch.priceMultiplier = Math.max(1, body.priceMultiplier);
+    if (typeof body.basePrintingCost === 'number') patch.basePrintingCost = Math.max(0, body.basePrintingCost);
 
     const updatedBy = req.headers.get('x-admin-user')?.trim() || 'admin-token';
     const updated = await updateDashboardSettingsInStore(patch, updatedBy);

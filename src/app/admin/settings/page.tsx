@@ -237,6 +237,27 @@ export default function AdminSettingsPage() {
           <textarea value={settings.whatsappMessage ?? ''} onChange={(e) => setSettings({ ...settings, whatsappMessage: e.target.value })} className="w-full mt-1 h-24" />
         </label>
 
+        <fieldset className="border border-gray-200 rounded-xl p-4 mt-6">
+          <legend className="text-sm font-bold uppercase tracking-wider text-gray-500 px-2">Márgenes y precios</legend>
+          <p className="text-xs text-gray-400 mb-4">Controla cómo se calculan los precios mostrados en el catálogo público.</p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="block">
+              <span>Multiplicador de margen</span>
+              <input type="number" step="0.1" min="1" value={settings.priceMultiplier ?? 1.5}
+                onChange={(e) => setSettings({ ...settings, priceMultiplier: parseFloat(e.target.value) || 1.5 })}
+                className="w-full mt-1" />
+              <p className="text-xs text-neutral-500 mt-1">Precio prenda × este valor. Actual: 1.5</p>
+            </label>
+            <label className="block">
+              <span>Coste base estampación (€)</span>
+              <input type="number" step="0.5" min="0" value={settings.basePrintingCost ?? 2}
+                onChange={(e) => setSettings({ ...settings, basePrintingCost: parseFloat(e.target.value) || 0 })}
+                className="w-full mt-1" />
+              <p className="text-xs text-neutral-500 mt-1">Se suma al precio final. Actual: 2€</p>
+            </label>
+          </div>
+        </fieldset>
+
         <div className="flex items-center gap-3">
           <button onClick={handleSave} className="px-4 py-2 bg-blue-600 rounded">Guardar</button>
           <button
