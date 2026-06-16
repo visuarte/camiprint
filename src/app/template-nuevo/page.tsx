@@ -42,7 +42,7 @@ export default function LightLanding() {
       <section className="bg-gray-50">
         <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-5 py-16 md:grid-cols-2 md:px-10 md:py-24">
           <div>
-            <span className={`${inter.className} inline-block rounded-full bg-[#ff4f00]/10 px-4 py-1.5 text-xs font-bold text-[#ff4f00] uppercase tracking-wider mb-4`}>
+            <span className={`${inter.className} inline-block rounded-full bg-[#ff4f00]/10 px-5 py-2 text-xs font-bold text-[#ff4f00] uppercase tracking-wider mb-5`}>
               Desde 10 unidades
             </span>
             <h1 className={`${montserrat.className} text-4xl font-black leading-[1.05] md:text-6xl`}>
@@ -65,7 +65,7 @@ export default function LightLanding() {
             <div className="absolute -inset-4 rounded-full bg-[#ff4f00]/10 blur-3xl" />
             <Image
               src={`/portfolio/real-${heroImg}.jpg`}
-              alt="Camiseta personalizada"
+              alt={`Camiseta personalizada - Ejemplo ${heroImg} de producción real CAMIART`}
               width={600} height={600}
               className="relative z-10 w-full rounded-2xl border border-gray-200 object-cover shadow-lg"
               priority
@@ -135,19 +135,22 @@ export default function LightLanding() {
         <p className="mt-3 text-center text-gray-500">Empresas que confían en CAMIART para sus uniformes y ropa corporativa.</p>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {[
-            { name: 'Marina Gómez', company: 'Brasa Norte', text: 'Pedimos uniformes para todo el equipo —120 camisetas con 3 tallas distintas— y la calidad superó nuestras expectativas. El proceso fue rápido y sin sorpresas.' },
-            { name: 'Javier Ruiz', company: 'Nexo Logistics', text: 'Necesitábamos 200 camisetas para una campaña corporativa con plazo de 8 días. CAMIART entregó a tiempo, con acabado excelente y soporte constante.' },
-            { name: 'Carlos Mendoza', company: 'Grupo Vértice', text: 'Llevamos 3 pedidos con ellos para distintos departamentos. El precio por volumen es muy competitivo y la atención personalizada marca la diferencia.' },
-            { name: 'Sofía Ramos', company: 'TasteLab', text: 'Necesitaba camisetas para un evento en 10 días. Validación del diseño en 2 horas, entrega en 9 días. Exactamente lo que necesitaba.' },
-            { name: 'Andrés Villar', company: 'Constructora Ibérica', text: 'Pedimos polos técnicos con bordado para todo el personal de obra. La calidad es muy buena para el precio y el proceso de aprobación fue muy cómodo.' },
-            { name: 'Lucía Herrera', company: 'Studio 88', text: 'La propuesta llegó en minutos, ajustes de diseño rápidos y el resultado final fue impecable para nuestro lanzamiento. Repetiremos sin duda.' },
+            { name: 'Marina Gómez', company: 'Brasa Norte', initial: 'MG', text: 'Pedimos uniformes para todo el equipo —120 camisetas con 3 tallas distintas— y la calidad superó nuestras expectativas. El proceso fue rápido y sin sorpresas.' },
+            { name: 'Javier Ruiz', company: 'Nexo Logistics', initial: 'JR', text: 'Necesitábamos 200 camisetas para una campaña corporativa con plazo de 8 días. CAMIART entregó a tiempo, con acabado excelente y soporte constante.' },
+            { name: 'Carlos Mendoza', company: 'Grupo Vértice', initial: 'CM', text: 'Llevamos 3 pedidos con ellos para distintos departamentos. El precio por volumen es muy competitivo y la atención personalizada marca la diferencia.' },
+            { name: 'Sofía Ramos', company: 'TasteLab', initial: 'SR', text: 'Necesitaba camisetas para un evento en 10 días. Validación del diseño en 2 horas, entrega en 9 días. Exactamente lo que necesitaba.' },
+            { name: 'Andrés Villar', company: 'Constructora Ibérica', initial: 'AV', text: 'Pedimos polos técnicos con bordado para todo el personal de obra. La calidad es muy buena para el precio y el proceso de aprobación fue muy cómodo.' },
+            { name: 'Lucía Herrera', company: 'Studio 88', initial: 'LH', text: 'La propuesta llegó en minutos, ajustes de diseño rápidos y el resultado final fue impecable para nuestro lanzamiento. Repetiremos sin duda.' },
           ].map(t => (
             <div key={t.name} className="rounded-xl border border-gray-200 bg-white p-6">
-              <p className="text-gray-600 italic">"{t.text}"</p>
-              <div className="mt-4 border-t border-gray-100 pt-4">
-                <p className={`${inter.className} text-sm font-bold text-[#ff4f00]`}>{t.name}</p>
-                <p className="text-xs text-gray-400">{t.company}</p>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#ff4f00]/10 text-sm font-bold text-[#ff4f00]">{t.initial}</div>
+                <div>
+                  <p className={`${inter.className} text-sm font-bold text-[#ff4f00]`}>{t.name}</p>
+                  <p className="text-xs text-gray-400">{t.company}</p>
+                </div>
               </div>
+              <p className="text-gray-600 italic">"{t.text}"</p>
             </div>
           ))}
         </div>
