@@ -28,6 +28,8 @@ interface Settings {
   updatedBy?: string | null;
   whatsappPhone?: string | null;
   whatsappMessage?: string | null;
+  priceMultiplier?: number;
+  basePrintingCost?: number;
 }
 
 export default function AdminSettingsPage() {
