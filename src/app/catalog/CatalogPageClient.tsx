@@ -101,14 +101,14 @@ export default function CatalogPageClient() {
             <div>
               <div className={`${spaceGrotesk.className} inline-flex items-center gap-2 rounded-full border border-[#ff4f00]/30 bg-[#ff4f00]/10 px-4 py-1 text-xs tracking-[0.1em] text-[#ff4f00]`}>
                 <span className="h-2 w-2 animate-pulse rounded-full bg-[#ff4f00]" />
-                PERSONALIZACIÓN SIN MÍNIMOS
+                PRECIO DESDE 3,83€/UD + ESTAMPACIÓN
               </div>
               <h1 className={`${montserrat.className} mt-6 text-4xl font-black leading-tight md:text-6xl`}>
                 Tu logo, tu equipo,{' '}
                 <span className="text-[#ff4f00]">tu uniforme</span>
               </h1>
               <p className="mt-5 max-w-2xl text-base leading-8 text-gray-700/70">
-                Camisetas, polos y sudaderas corporativas con tu marca. DTF, bordado o serigrafía. Presupuesto gratis en 24h. Desde 10 unidades.
+                Camisetas, polos y sudaderas corporativas con tu marca. DTF, bordado o serigrafía. Presupuesto gratis en 24h. Precios desde 10 unidades, estampación incluida.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link href="/#presupuesto" className={`${spaceGrotesk.className} bg-[#ff4f00] px-8 py-3 text-sm font-bold text-[#0A0A0A] transition hover:scale-105`}>

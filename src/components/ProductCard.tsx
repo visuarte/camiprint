@@ -93,12 +93,13 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {product.priceMin != null && (
-          <p className="text-lg font-bold text-white">
-            {product.priceMax == null || product.priceMin === product.priceMax
-              ? `${product.priceMin.toFixed(2)} €`
-              : `${product.priceMin.toFixed(2)} € – ${product.priceMax.toFixed(2)} €`}
-            <span className="ml-1 text-xs font-normal text-[#e2e2e2]/40">/ud</span>
-          </p>
+          <div>
+            <p className="text-lg font-bold text-white">
+              Desde {(product.priceMin * 1.5 + 2).toFixed(2)} €
+              <span className="ml-1 text-xs font-normal text-[#e2e2e2]/40">/ud + estampación</span>
+            </p>
+            <p className="text-[10px] text-[#e2e2e2]/30">Prenda base desde {product.priceMin.toFixed(2)}€ + personalización</p>
+          </div>
         )}
 
         {/* Color selector - modern pills */}
