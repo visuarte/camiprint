@@ -7,9 +7,9 @@ export const brandConfig = {
   siteUrl: 'https://camiart.com',
   supportEmail: 'hola@camiart.com',
   privacyEmail: 'privacy@camiart.com',
-  phoneDisplay: '+34 900 111 222',
-  phoneHref: 'tel:+34900111222',
-  postalAddress: 'Sevilla, España',
+  phoneDisplay: '',
+  phoneHref: '',
+  postalAddress: 'Alicante, España',
   assets: {
     heroModelSrc: '/models/camiseta-camiart.glb',
   },

@@ -37,12 +37,11 @@ const organizationSchema = {
   logo: `${brandConfig.siteUrl}/icon-512.svg`,
   description: brandConfig.seo.description,
   email: brandConfig.supportEmail,
-  telephone: brandConfig.phoneDisplay,
+  ...(brandConfig.phoneHref ? { telephone: brandConfig.phoneDisplay } : {}),
   address: {
     "@type": "PostalAddress",
-    streetAddress: addressParts[0],
-    ...(addressParts[1] ? { addressLocality: addressParts[1] } : {}),
-    addressCountry: "ES",
+    addressLocality: addressParts[0] || "",
+    addressCountry: addressParts[1] || "ES",
   },
   sameAs: Object.values(brandConfig.socialLinks),
 };

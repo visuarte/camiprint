@@ -21,11 +21,13 @@ export default function Footer({ variant = 'dark' }: FooterProps) {
             <span className="material-symbols-outlined text-2xl text-[#ff4f00]">precision_manufacturing</span>
             <span className={`${montserrat.className} text-lg font-extrabold ${isLight ? 'text-gray-800' : 'text-[#e2e2e2]'}`}>CAMIART</span>
           </div>
-          <p className={`text-sm ${isLight ? 'text-gray-500' : 'text-[#CBD5E1]'}`}>© 2026 CAMIART — Alicante, España</p>
+          <p className={`text-sm ${isLight ? 'text-gray-500' : 'text-[#CBD5E1]'}`}>© {new Date().getFullYear()} {brandConfig.displayName} — {brandConfig.postalAddress}</p>
           <div className={`mt-3 flex flex-col gap-1 text-xs ${isLight ? 'text-gray-400' : 'text-[#CBD5E1]/70'}`}>
-            <span className="flex items-center gap-1">
-              <span className="material-symbols-outlined text-sm text-[#ff4f00]">call</span> {brandConfig.phoneDisplay}
-            </span>
+            {brandConfig.phoneDisplay && (
+              <span className="flex items-center gap-1">
+                <span className="material-symbols-outlined text-sm text-[#ff4f00]">call</span> {brandConfig.phoneDisplay}
+              </span>
+            )}
             <span className="flex items-center gap-1">
               <span className="material-symbols-outlined text-sm text-[#ff4f00]">mail</span> {brandConfig.supportEmail}
             </span>
