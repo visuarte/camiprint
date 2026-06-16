@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { Montserrat, Manrope } from 'next/font/google';
+import { Montserrat, Manrope, Inter } from 'next/font/google';
 import Link from 'next/link';
 import AppHeader from '@/components/AppHeader';
 import Footer from '@/components/Footer';
 
 const montserrat = Montserrat({ subsets: ['latin'], weight: ['700', '800', '900'] });
 const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600'] });
+const inter = Inter({ subsets: ['latin'], weight: ['600', '700'] });
 
 const categories = [
   { name: 'Camisetas', href: '/catalog', img: '/portfolio/real-1.jpg', desc: 'DTF, vinilo y sublimación' },
