@@ -19,6 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: base, lastModified: now, changeFrequency: 'weekly', priority: 1.0 },
     { url: `${base}/catalog`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
     ...locationPages,
+    { url: `${base}/guia-estampacion-y-tallas`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${base}/merchandising-empresas`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${base}/portfolio`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${base}/guia-tallas`, lastModified: now, changeFrequency: 'monthly', priority: 0.5 },

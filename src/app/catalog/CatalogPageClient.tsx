@@ -117,6 +117,9 @@ export default function CatalogPageClient() {
                 <a href="#productos" className={`${spaceGrotesk.className} border border-gray-300 px-8 py-3 text-sm font-bold text-gray-700 transition hover:border-[#ff4f00] hover:text-[#ff4f00]`}>
                   VER CATÁLOGO
                 </a>
+                <Link href="/guia-estampacion-y-tallas" className={`${spaceGrotesk.className} text-sm font-bold text-gray-500 underline underline-offset-4 transition hover:text-[#ff4f00]`}>
+                  Guía de técnicas →
+                </Link>
               </div>
             </div>
             <div className="grid gap-3 self-end">
