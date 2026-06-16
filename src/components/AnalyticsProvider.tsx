@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || '';
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || '';
@@ -9,7 +9,6 @@ const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FB_PIXEL_ID || '';
 
 export default function AnalyticsProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     if (!GA_ID && !GTM_ID && !FB_PIXEL_ID) return;
@@ -53,10 +52,9 @@ export default function AnalyticsProvider({ children }: { children: React.ReactN
 
   // Track page views on route change
   useEffect(() => {
-    const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : '');
-    if ((window as any).gtag) (window as any).gtag('event', 'page_view', { page_path: url });
+    if ((window as any).gtag) (window as any).gtag('event', 'page_view', { page_path: pathname });
     if ((window as any).fbq) (window as any).fbq('track', 'PageView');
-  }, [pathname, searchParams]);
+  }, [pathname]);
 
   return <>{children}</>;
 }
