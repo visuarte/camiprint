@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
+import Link from 'next/link';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google';
 import ProductCard from '@/components/ProductCard';
@@ -92,31 +93,47 @@ export default function CatalogPageClient() {
   return (
     <main className={`${manrope.className} min-h-screen overflow-x-hidden bg-white text-gray-900 pt-24 pb-16`}>
       {/* Hero */}
+      {/* HERO - sales oriented */}
       <section className="relative overflow-hidden bg-gray-50 py-16">
-        <div className="hazard-pattern absolute inset-0 opacity-10" />
+        <div className="hazard-pattern absolute inset-0 opacity-5" />
         <div className="relative z-10 mx-auto max-w-7xl px-5 md:px-16">
           <div className="grid gap-8 lg:grid-cols-[1.3fr_0.7fr]">
             <div>
               <div className={`${spaceGrotesk.className} inline-flex items-center gap-2 rounded-full border border-[#ff4f00]/30 bg-[#ff4f00]/10 px-4 py-1 text-xs tracking-[0.1em] text-[#ff4f00]`}>
                 <span className="h-2 w-2 animate-pulse rounded-full bg-[#ff4f00]" />
-                CATÁLOGO ROLY
+                PERSONALIZACIÓN SIN MÍNIMOS
               </div>
               <h1 className={`${montserrat.className} mt-6 text-4xl font-black leading-tight md:text-6xl`}>
-                Prendas listas para{' '}
-                <span className="text-[#ff4f00]">activar tu imagen</span>
+                Tu logo, tu equipo,{' '}
+                <span className="text-[#ff4f00]">tu uniforme</span>
               </h1>
               <p className="mt-5 max-w-2xl text-base leading-8 text-gray-700/70">
-                Explora camisetas corporativas, polos con logo y referencias preparadas para equipos, eventos y campañas B2B. Precios directos de fábrica Roly.
+                Camisetas, polos y sudaderas corporativas con tu marca. DTF, bordado o serigrafía. Presupuesto gratis en 24h. Desde 10 unidades.
               </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link href="/#presupuesto" className={`${spaceGrotesk.className} bg-[#ff4f00] px-8 py-3 text-sm font-bold text-[#0A0A0A] transition hover:scale-105`}>
+                  PEDIR PRESUPUESTO
+                </Link>
+                <a href="#productos" className={`${spaceGrotesk.className} border border-gray-300 px-8 py-3 text-sm font-bold text-gray-700 transition hover:border-[#ff4f00] hover:text-[#ff4f00]`}>
+                  VER CATÁLOGO
+                </a>
+              </div>
             </div>
             <div className="grid gap-3 self-end">
-              <div className="rounded-2xl border border-[#5c4037]/35 bg-[#1f1f1f] p-4">
-                <p className={`${spaceGrotesk.className} text-[0.7rem] uppercase tracking-[0.18em] text-[#ff4f00]`}>Serie mínima</p>
+              <div className="rounded-2xl border border-gray-200 bg-white p-4 text-center">
+                <p className={`${spaceGrotesk.className} text-[0.65rem] uppercase tracking-[0.18em] text-[#ff4f00]`}>Desde</p>
                 <p className={`${montserrat.className} mt-1 text-3xl font-black text-gray-900`}>10 uds</p>
+                <p className="text-xs text-gray-400">sin mínimo abusivo</p>
               </div>
-              <div className="rounded-2xl border border-[#5c4037]/35 bg-[#1f1f1f] p-4">
-                <p className={`${spaceGrotesk.className} text-[0.7rem] uppercase tracking-[0.18em] text-[#ff4f00]`}>Entrega orientativa</p>
-                <p className={`${montserrat.className} mt-1 text-3xl font-black text-gray-900`}>7-10 días</p>
+              <div className="rounded-2xl border border-gray-200 bg-white p-4 text-center">
+                <p className={`${spaceGrotesk.className} text-[0.65rem] uppercase tracking-[0.18em] text-[#ff4f00]`}>Presupuesto</p>
+                <p className={`${montserrat.className} mt-1 text-3xl font-black text-gray-900`}>24h</p>
+                <p className="text-xs text-gray-400">respuesta gratis</p>
+              </div>
+              <div className="rounded-2xl border border-gray-200 bg-white p-4 text-center">
+                <p className={`${spaceGrotesk.className} text-[0.65rem] uppercase tracking-[0.18em] text-[#ff4f00]`}>Envío</p>
+                <p className={`${montserrat.className} mt-1 text-3xl font-black text-gray-900`}>3-7 días</p>
+                <p className="text-xs text-gray-400">a toda España</p>
               </div>
             </div>
           </div>
@@ -174,7 +191,7 @@ export default function CatalogPageClient() {
       </section>
 
       {/* Grid */}
-      <section className="mx-auto mt-8 max-w-7xl px-5 pb-8 md:px-16">
+      <section id="productos" className="mx-auto mt-8 max-w-7xl px-5 pb-8 md:px-16">
         {loading ? (
           <div>
             <div className="mb-6 text-center">
