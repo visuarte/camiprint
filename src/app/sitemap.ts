@@ -1,15 +1,24 @@
 import type { MetadataRoute } from 'next';
 import { brandConfig } from '@/config/brand';
 
+const locations = [
+  'sevilla', 'alicante', 'valencia', 'murcia', 'madrid',
+  'barcelona', 'malaga', 'bilbao', 'zaragoza', 'palma', 'las-palmas',
+];
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   const base = brandConfig.siteUrl;
 
+  const locationPages = locations.flatMap(city => [
+    { url: `${base}/camisetas-personalizadas-${city}`, lastModified: now, changeFrequency: 'weekly' as const, priority: 0.9 },
+    { url: `${base}/impresion-dtf-${city}`, lastModified: now, changeFrequency: 'weekly' as const, priority: 0.9 },
+  ]);
+
   return [
     { url: base, lastModified: now, changeFrequency: 'weekly', priority: 1.0 },
     { url: `${base}/catalog`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
-    { url: `${base}/camisetas-personalizadas-sevilla`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
-    { url: `${base}/impresion-dtf-sevilla`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
+    ...locationPages,
     { url: `${base}/merchandising-empresas`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${base}/portfolio`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${base}/guia-tallas`, lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
