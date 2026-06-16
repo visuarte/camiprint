@@ -6,6 +6,7 @@ import { Montserrat, Manrope, Inter } from 'next/font/google';
 import Link from 'next/link';
 import AppHeader from '@/components/AppHeader';
 import Footer from '@/components/Footer';
+import ContactSection from '@/app/components/ContactSection';
 
 const montserrat = Montserrat({ subsets: ['latin'], weight: ['700', '800', '900'] });
 const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600'] });
@@ -156,14 +157,9 @@ export default function LightLanding() {
         </div>
       </section>
 
-      {/* PRICE REQUEST - direct CTA */}
-      <section id="presupuesto" className="mx-auto max-w-3xl px-5 py-24 text-center md:px-10">
-        <h2 className={`${montserrat.className} text-3xl font-black md:text-4xl`}>¿Cuánto cuesta tu pedido?</h2>
-        <p className="mt-4 text-lg text-gray-500">Te enviamos presupuesto gratis en 24h. Sin compromiso.</p>
-        <Link href="/#presupuesto" className={`${inter.className} mt-8 inline-block bg-[#ff4f00] px-10 py-4 text-sm font-bold text-white hover:bg-[#e64500] transition-colors`}>
-          PEDIR PRESUPUESTO GRATIS
-        </Link>
-        <p className="mt-3 text-sm text-gray-400">Respondemos en menos de 24h laborables.</p>
+      {/* QUOTE FORM */}
+      <section id="presupuesto">
+        <ContactSection />
       </section>
 
       <Footer variant="light" />
