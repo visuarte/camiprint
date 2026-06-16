@@ -140,7 +140,7 @@ export default function RootLayout({
         />
       </head>
       <body className="flex min-h-full flex-col overflow-x-hidden bg-neutral-950 text-neutral-100">
-        <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1298743625320608&ev=PageView&noscript=1" alt=""/></noscript>
+        <noscript><img height="1" width="1" style={{ display: 'none' }} src="https://www.facebook.com/tr?id=1298743625320608&ev=PageView&noscript=1" alt=""/></noscript>
         <a href="#main-content" className="skip-link">Saltar al contenido principal</a>
         <AnalyticsProvider>
           <main id="main-content" className="flex flex-1 flex-col">{children}</main>
