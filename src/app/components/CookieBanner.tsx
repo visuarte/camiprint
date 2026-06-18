@@ -35,15 +35,15 @@ export default function CookieBanner() {
       role="dialog"
       aria-live="polite"
       aria-label="Aviso de cookies"
-      className="fixed bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-cami-950/95 px-4 py-4 shadow-2xl backdrop-blur-md md:bottom-4 md:left-auto md:right-4 md:max-w-sm md:rounded-xl md:border md:border-white/10"
+      className="fixed bottom-0 left-0 right-0 z-30 border-t border-gray-200/10 bg-white/95 px-4 py-4 shadow-2xl backdrop-blur-md md:bottom-4 md:left-auto md:right-4 md:max-w-sm md:rounded-xl md:border md:border-gray-200/10"
     >
-      <p className="mb-1 text-sm font-semibold text-white">Este sitio usa cookies</p>
+      <p className="mb-1 text-sm font-semibold text-gray-900">Este sitio usa cookies</p>
       <p className="mb-4 text-xs leading-relaxed text-cami-300">
         Usamos cookies técnicas (necesarias) y de analítica (Vercel Analytics) para mejorar tu experiencia.
         Consulta nuestra{' '}
         <a
           href="/politica-de-cookies"
-          className="text-cami-200 underline underline-offset-2 hover:text-white"
+          className="text-cami-200 underline underline-offset-2 hover:text-gray-900"
         >
           Política de Cookies
         </a>{' '}
@@ -58,7 +58,7 @@ export default function CookieBanner() {
         </button>
         <button
           onClick={() => save('rejected')}
-          className="flex-1 rounded-lg border border-white/20 px-3 py-2 text-xs font-semibold text-cami-200 transition-colors hover:border-white/40 hover:text-white"
+          className="flex-1 rounded-lg border border-gray-200/20 px-3 py-2 text-xs font-semibold text-cami-200 transition-colors hover:border-gray-200/40 hover:text-gray-900"
         >
           Solo necesarias
         </button>

@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useCart } from '@/lib/store';
+import { formatEUR } from '@/lib/format';
 import { useRouter } from 'next/navigation';
 import type { StripeCardElementChangeEvent } from '@stripe/stripe-js';
 
@@ -37,6 +38,26 @@ export function CheckoutForm() {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
+  const tracked = useRef(false);
+
+  useEffect(() => {
+    if (tracked.current || !formData.email) return;
+    const id = setTimeout(() => {
+      if (items.length > 0 && formData.email && formData.name) {
+        fetch('/api/abandoned-cart', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: formData.email, name: formData.name,
+            items: items.map(i => ({ name: i.productName, quantity: i.quantity, price: i.price })),
+            total: getTotal(),
+            checkoutUrl: window.location.href,
+          }),
+        }).catch(() => {});
+        tracked.current = true;
+      }
+    }, 10000);
+    return () => clearTimeout(id);
+  }, [formData.email, formData.name, items, getTotal]);
   const [cardError, setCardError] = useState('');
   const [success, setSuccess] = useState(false);
 
@@ -238,7 +259,7 @@ export function CheckoutForm() {
             </svg>
           </div>
           <h3 className="mb-2 text-lg font-semibold text-white">Pago confirmado</h3>
-          <p className="mb-4 text-cami-300">Estamos redirigiendo a la confirmacion de pedido.</p>
+          <p className="mb-4 text-[#e2e2e2]/80">Estamos redirigiendo a la confirmacion de pedido.</p>
           <div className="h-2 overflow-hidden rounded-full bg-cami-800">
             <div className="h-full animate-pulse bg-emerald-300"></div>
           </div>
@@ -258,7 +279,7 @@ export function CheckoutForm() {
         <div className="space-y-4">
           {/* Nombre */}
           <div>
-            <label htmlFor="name" className="mb-2 block text-sm font-medium text-cami-200">
+            <label htmlFor="name" className="mb-2 block text-sm font-medium text-[#e2e2e2]">
               Nombre completo *
             </label>
             <input
@@ -269,7 +290,7 @@ export function CheckoutForm() {
               onChange={handleInputChange}
               placeholder="Tu nombre"
               disabled={loading}
-              className={`w-full rounded-xl border bg-cami-950/70 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-accent-400 ${
+              className={`w-full rounded-xl border bg-cami-950/70 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#ff4f00] ${
                 errors.name ? 'border-red-400' : 'border-white/12'
               } disabled:cursor-not-allowed disabled:bg-cami-800`}
             />
@@ -278,7 +299,7 @@ export function CheckoutForm() {
 
           {/* Email */}
           <div>
-            <label htmlFor="email" className="mb-2 block text-sm font-medium text-cami-200">
+            <label htmlFor="email" className="mb-2 block text-sm font-medium text-[#e2e2e2]">
               Correo electrónico *
             </label>
             <input
@@ -289,7 +310,7 @@ export function CheckoutForm() {
               onChange={handleInputChange}
               placeholder="tu@email.com"
               disabled={loading}
-              className={`w-full rounded-xl border bg-cami-950/70 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-accent-400 ${
+              className={`w-full rounded-xl border bg-cami-950/70 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#ff4f00] ${
                 errors.email ? 'border-red-400' : 'border-white/12'
               } disabled:cursor-not-allowed disabled:bg-cami-800`}
             />
@@ -298,7 +319,7 @@ export function CheckoutForm() {
 
           {/* Teléfono */}
           <div>
-            <label htmlFor="phone" className="mb-2 block text-sm font-medium text-cami-200">
+            <label htmlFor="phone" className="mb-2 block text-sm font-medium text-[#e2e2e2]">
               Teléfono *
             </label>
             <input
@@ -309,7 +330,7 @@ export function CheckoutForm() {
               onChange={handleInputChange}
               placeholder="+34 600 000 000"
               disabled={loading}
-              className={`w-full rounded-xl border bg-cami-950/70 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-accent-400 ${
+              className={`w-full rounded-xl border bg-cami-950/70 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#ff4f00] ${
                 errors.phone ? 'border-red-400' : 'border-white/12'
               } disabled:cursor-not-allowed disabled:bg-cami-800`}
             />
@@ -318,7 +339,7 @@ export function CheckoutForm() {
 
           {/* Dirección */}
           <div>
-            <label htmlFor="address" className="mb-2 block text-sm font-medium text-cami-200">
+            <label htmlFor="address" className="mb-2 block text-sm font-medium text-[#e2e2e2]">
               Dirección de envío (Opcional)
             </label>
             <textarea
@@ -329,7 +350,7 @@ export function CheckoutForm() {
               placeholder="Calle, numero, ciudad y codigo postal"
               rows={3}
               disabled={loading}
-              className="w-full resize-none rounded-xl border border-white/12 bg-cami-950/70 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-accent-400 disabled:cursor-not-allowed disabled:bg-cami-800"
+              className="w-full resize-none rounded-xl border border-white/12 bg-cami-950/70 px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#ff4f00] disabled:cursor-not-allowed disabled:bg-cami-800"
             />
           </div>
         </div>
@@ -340,7 +361,7 @@ export function CheckoutForm() {
         <h3 className="mb-6 font-display text-2xl text-white">Datos de pago</h3>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-cami-200">
+          <label className="mb-2 block text-sm font-medium text-[#e2e2e2]">
             Tarjeta de Crédito *
           </label>
           <div
@@ -389,11 +410,11 @@ export function CheckoutForm() {
 
           <div className="space-y-2 mb-4">
             {items.map((item) => (
-              <div key={item.id} className="flex justify-between text-sm text-cami-300">
+              <div key={item.id} className="flex justify-between text-sm text-[#e2e2e2]/80">
                 <span>
                   {item.productName} ({item.size}) x {item.quantity}
                 </span>
-                <span>${(item.price * item.quantity).toFixed(2)}</span>
+                <span>{formatEUR(item.price * item.quantity)}</span>
               </div>
             ))}
           </div>
@@ -401,7 +422,7 @@ export function CheckoutForm() {
           <div className="mt-4 border-t border-white/10 pt-4">
             <div className="flex justify-between text-lg font-bold text-white">
               <span>Total</span>
-              <span>${total.toFixed(2)}</span>
+              <span>{formatEUR(total)}</span>
             </div>
           </div>
         </div>
@@ -411,8 +432,8 @@ export function CheckoutForm() {
           disabled={loading || !stripe || !elements}
           className={`w-full rounded-full py-3 text-sm font-semibold uppercase tracking-[0.12em] transition-all ${
             loading || !stripe || !elements
-              ? 'cursor-not-allowed border border-white/12 bg-cami-800 text-cami-300'
-              : 'border border-accent-300/30 bg-metal-button text-cami-100 shadow-metal hover:-translate-y-0.5 hover:brightness-110'
+              ? 'cursor-not-allowed border border-white/12 bg-cami-800 text-[#e2e2e2]/80'
+              : 'border border-[#ff4f00]/30 bg-metal-button text-white shadow-metal hover:-translate-y-0.5 hover:brightness-110'
           }`}
         >
           {loading ? (
@@ -423,14 +444,14 @@ export function CheckoutForm() {
               Procesando...
             </span>
           ) : (
-            `Pagar ${total.toFixed(2)} USD`
+            `Pagar ${formatEUR(total)}`
           )}
         </button>
       </div>
 
       {/* Información de tarjetas de prueba */}
-      <div className="rounded-xl border border-white/10 bg-cami-900/45 p-4 text-sm text-cami-300">
-        <p className="mb-2 font-semibold text-cami-100">Tarjetas de prueba:</p>
+      <div className="rounded-xl border border-white/10 bg-cami-900/45 p-4 text-sm text-[#e2e2e2]/80">
+        <p className="mb-2 font-semibold text-white">Tarjetas de prueba:</p>
         <ul className="space-y-1 text-xs">
           <li>✓ Éxito: 4242 4242 4242 4242</li>
           <li>✗ Rechazada: 4000 0000 0000 0002</li>

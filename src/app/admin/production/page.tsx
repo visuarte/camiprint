@@ -128,7 +128,7 @@ export default function AdminProductionPage() {
     if (status === 'ACTIVE') return 'text-hazard-orange border-hazard-orange/40 bg-hazard-orange/10';
     if (status === 'BLOCKED') return 'text-red-300 border-red-500/50 bg-red-500/10';
     if (status === 'DONE') return 'text-green-400 border-green-500/40 bg-green-500/10';
-    return 'text-[#D8DEE8] border-muted-steel/20 bg-surface-container-lowest';
+    return 'text-gray-600 border-muted-steel/20 bg-surface-container-lowest';
   };
 
   return (
@@ -139,19 +139,19 @@ export default function AdminProductionPage() {
           <div className="flex items-end justify-between gap-4 mb-6">
             <div>
               <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">LÍNEA DE PRODUCCIÓN</p>
-              <h1 className="font-headline-md text-[28px] md:text-[34px] text-white leading-none">
+              <h1 className="font-headline-md text-[28px] md:text-[34px] text-gray-900 leading-none">
                 ESTADO DE LA COLA REAL
               </h1>
             </div>
             <Link
               href="/admin/orders"
-              className="h-9 inline-flex items-center px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] leading-none hover:bg-surface-container-high transition-colors"
+              className="h-9 inline-flex items-center px-4 border border-muted-steel/20 text-gray-600 font-label-caps text-[11px] leading-none hover:bg-surface-container-high transition-colors"
             >
               VER PEDIDOS →
             </Link>
           </div>
 
-          <p className="max-w-2xl text-[#D8DEE8] text-[15px] leading-6">
+          <p className="max-w-2xl text-gray-600 text-[15px] leading-6">
             Esta vista se alimenta de la cola real de producción. No hay cifras ni bloques inventados: todo proviene del estado actual de PREPRESS, PRINTING, QA y SHIPPING.
           </p>
 
@@ -159,10 +159,10 @@ export default function AdminProductionPage() {
             {summary.byDepartment.map((stage) => (
               <div key={stage.department} className="border border-muted-steel/10 bg-surface-container-lowest p-4">
                 <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">{departmentLabels[stage.department]}</p>
-                <p className="font-display-lg text-[34px] leading-none font-black text-white">
+                <p className="font-display-lg text-[34px] leading-none font-black text-gray-900">
                   {String(stage.count).padStart(2, '0')}
                 </p>
-                <p className="mt-2 text-[#D8DEE8] text-[12px]">
+                <p className="mt-2 text-gray-600 text-[12px]">
                   {stage.count === 0 ? 'Sin tickets aún' : `${stage.count} ticket${stage.count === 1 ? '' : 's'} en cola`}
                 </p>
               </div>
@@ -180,7 +180,7 @@ export default function AdminProductionPage() {
               { label: 'COMPLETADO', value: summary.done, percent: summary.total ? (summary.done / summary.total) * 100 : 0, tone: 'bg-green-500' },
             ].map((entry) => (
               <div key={entry.label}>
-                <div className="flex justify-between items-center mb-2 text-[#D8DEE8] text-[11px] font-label-caps">
+                <div className="flex justify-between items-center mb-2 text-gray-600 text-[11px] font-label-caps">
                   <span>{entry.label}</span>
                   <span>{entry.value}</span>
                 </div>
@@ -192,9 +192,9 @@ export default function AdminProductionPage() {
           </div>
 
           <div className="mt-2 border-t border-muted-steel/10 pt-4">
-            <p className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em] mb-3">FUENTE REAL</p>
-            <ul className="space-y-3 text-[#D8DEE8] text-[13px] leading-5">
-              <li>• Departamentos leídos desde <span className="text-white">/api/v1/production/queues</span>.</li>
+            <p className="font-label-caps text-[10px] text-gray-600 tracking-[0.08em] mb-3">FUENTE REAL</p>
+            <ul className="space-y-3 text-gray-600 text-[13px] leading-5">
+              <li>• Departamentos leídos desde <span className="text-gray-900">/api/v1/production/queues</span>.</li>
               <li>• La prioridad se deriva del estado y la posición reales.</li>
               <li>• Si no hay cola, la UI muestra un vacío honesto.</li>
             </ul>
@@ -205,10 +205,10 @@ export default function AdminProductionPage() {
       <section className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
         <div className="xl:col-span-8 border border-muted-steel/10 bg-surface-charcoal p-6 md:p-7">
           <div className="flex items-end justify-between gap-4 mb-5">
-            <h2 className="font-headline-md text-[22px] md:text-[26px] leading-none text-white">
+            <h2 className="font-headline-md text-[22px] md:text-[26px] leading-none text-gray-900">
               COLA DE PRODUCCIÓN
             </h2>
-            <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">VISTA EN VIVO</span>
+            <span className="font-label-caps text-[10px] text-gray-600 tracking-[0.08em]">VISTA EN VIVO</span>
           </div>
 
           {isLoading ? (
@@ -222,7 +222,7 @@ export default function AdminProductionPage() {
               {error}
             </div>
           ) : queueItems.length === 0 ? (
-            <div className="border border-muted-steel/10 bg-surface-container-lowest p-6 text-[#D8DEE8] text-sm">
+            <div className="border border-muted-steel/10 bg-surface-container-lowest p-6 text-gray-600 text-sm">
               No hay tickets en cola ahora mismo.
             </div>
           ) : (
@@ -234,12 +234,12 @@ export default function AdminProductionPage() {
                       <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">
                         {item.jobTicketId.slice(0, 8).toUpperCase()}
                       </p>
-                      <h3 className="text-[15px] md:text-[16px] text-white font-semibold leading-snug">
+                      <h3 className="text-[15px] md:text-[16px] text-gray-900 font-semibold leading-snug">
                         Ticket #{item.position}
                       </h3>
                     </div>
                     <div className="flex flex-col items-end gap-2">
-                      <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">{departmentLabels[item.department]}</span>
+                      <span className="font-label-caps text-[10px] text-gray-600 tracking-[0.08em]">{departmentLabels[item.department]}</span>
                       <span className={`inline-flex items-center px-2.5 py-1 border text-[10px] font-label-caps tracking-[0.08em] ${queueTone(item.queueStatus)}`}>
                         {statusLabels[item.queueStatus]}
                       </span>
@@ -253,7 +253,7 @@ export default function AdminProductionPage() {
                         style={{ width: `${item.queueStatus === 'DONE' ? 100 : item.queueStatus === 'ACTIVE' ? 70 : item.queueStatus === 'BLOCKED' ? 40 : 25}%` }}
                       />
                     </div>
-                    <span className="w-12 text-right font-label-caps text-[11px] text-[#D8DEE8]">P{item.position}</span>
+                    <span className="w-12 text-right font-label-caps text-[11px] text-gray-600">P{item.position}</span>
                   </div>
                 </article>
               ))}
@@ -263,14 +263,14 @@ export default function AdminProductionPage() {
 
         <div className="xl:col-span-4 border border-muted-steel/10 bg-surface-charcoal p-6 md:p-7">
           <div className="flex items-end justify-between gap-4 mb-5">
-              <h2 className="font-headline-md text-[22px] md:text-[26px] leading-none text-white">
+              <h2 className="font-headline-md text-[22px] md:text-[26px] leading-none text-gray-900">
                 ÓRDEN DE PRIORIDAD
               </h2>
           </div>
 
           <div className="space-y-3">
             {topPriority.length === 0 ? (
-              <div className="border border-muted-steel/10 bg-surface-container-lowest p-4 text-[#D8DEE8] text-sm">
+              <div className="border border-muted-steel/10 bg-surface-container-lowest p-4 text-gray-600 text-sm">
                 Sin tickets prioritizados todavía.
               </div>
             ) : (
@@ -281,11 +281,11 @@ export default function AdminProductionPage() {
                       <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-1">
                         #{index + 1} · {departmentLabels[item.department]}
                       </p>
-                      <p className="text-[13px] text-white font-semibold truncate">
+                      <p className="text-[13px] text-gray-900 font-semibold truncate">
                         Ticket {item.jobTicketId.slice(0, 8).toUpperCase()}
                       </p>
                     </div>
-                    <span className="font-headline-md text-[18px] text-white font-bold">
+                    <span className="font-headline-md text-[18px] text-gray-900 font-bold">
                       P{item.position}
                     </span>
                   </div>
@@ -297,10 +297,10 @@ export default function AdminProductionPage() {
           <div className="mt-6 border-t border-muted-steel/10 pt-4">
             <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">ACCIONES REALES</p>
             <div className="space-y-2">
-              <Link href="/admin/orders" className="block h-10 px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] tracking-[0.08em] hover:bg-surface-container-high transition-colors leading-[40px]">
+              <Link href="/admin/orders" className="block h-10 px-4 border border-muted-steel/20 text-gray-600 font-label-caps text-[11px] tracking-[0.08em] hover:bg-surface-container-high transition-colors leading-[40px]">
                 REVISAR PEDIDOS →
               </Link>
-              <Link href="/admin/inventory" className="block h-10 px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] tracking-[0.08em] hover:bg-surface-container-high transition-colors leading-[40px]">
+              <Link href="/admin/inventory" className="block h-10 px-4 border border-muted-steel/20 text-gray-600 font-label-caps text-[11px] tracking-[0.08em] hover:bg-surface-container-high transition-colors leading-[40px]">
                 VER INVENTARIO →
               </Link>
             </div>

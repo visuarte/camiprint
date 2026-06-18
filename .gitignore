@@ -22,9 +22,7 @@
 # production
 /build
 
-# pnpm (project uses npm for Vercel compatibility)
-pnpm-lock.yaml
-pnpm-workspace.yaml
+# pnpm
 
 # misc
 .DS_Store

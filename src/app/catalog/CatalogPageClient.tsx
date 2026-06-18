@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
+import Link from 'next/link';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google';
 import ProductCard from '@/components/ProductCard';
@@ -90,33 +91,52 @@ export default function CatalogPageClient() {
   const paginated = filtered.slice((safePage - 1) * PER_PAGE, safePage * PER_PAGE);
 
   return (
-    <main className={`${manrope.className} min-h-screen overflow-x-hidden bg-[#131313] text-[#e2e2e2] pt-24 pb-16`}>
+    <main className={`${manrope.className} min-h-screen overflow-x-hidden bg-white text-gray-900 pt-24 pb-16`}>
       {/* Hero */}
-      <section className="relative overflow-hidden bg-[#0A0A0A] py-16">
-        <div className="hazard-pattern absolute inset-0 opacity-10" />
+      {/* HERO - sales oriented */}
+      <section className="relative overflow-hidden bg-gray-50 py-16">
+        <div className="hazard-pattern absolute inset-0 opacity-5" />
         <div className="relative z-10 mx-auto max-w-7xl px-5 md:px-16">
           <div className="grid gap-8 lg:grid-cols-[1.3fr_0.7fr]">
             <div>
               <div className={`${spaceGrotesk.className} inline-flex items-center gap-2 rounded-full border border-[#ff4f00]/30 bg-[#ff4f00]/10 px-4 py-1 text-xs tracking-[0.1em] text-[#ff4f00]`}>
                 <span className="h-2 w-2 animate-pulse rounded-full bg-[#ff4f00]" />
-                CATÁLOGO ROLY
+                PRECIO DESDE 3,83€/UD + ESTAMPACIÓN
               </div>
               <h1 className={`${montserrat.className} mt-6 text-4xl font-black leading-tight md:text-6xl`}>
-                Prendas listas para{' '}
-                <span className="text-[#ff4f00]">activar tu imagen</span>
+                Tu logo, tu equipo,{' '}
+                <span className="text-[#ff4f00]">tu uniforme</span>
               </h1>
-              <p className="mt-5 max-w-2xl text-base leading-8 text-[#e2e2e2]/70">
-                Explora camisetas corporativas, polos con logo y referencias preparadas para equipos, eventos y campañas B2B. Precios directos de fábrica Roly.
+              <p className="mt-5 max-w-2xl text-base leading-8 text-gray-700/70">
+                Camisetas, polos y sudaderas corporativas con tu marca. DTF, bordado o serigrafía. Presupuesto gratis en 24h. Precios desde 10 unidades, estampación incluida.
               </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link href="/#presupuesto" className={`${spaceGrotesk.className} bg-[#ff4f00] px-8 py-3 text-sm font-bold text-[#0A0A0A] transition hover:scale-105`}>
+                  PEDIR PRESUPUESTO
+                </Link>
+                <a href="#productos" className={`${spaceGrotesk.className} border border-gray-300 px-8 py-3 text-sm font-bold text-gray-700 transition hover:border-[#ff4f00] hover:text-[#ff4f00]`}>
+                  VER CATÁLOGO
+                </a>
+                <Link href="/guia-estampacion-y-tallas" className={`${spaceGrotesk.className} text-sm font-bold text-gray-500 underline underline-offset-4 transition hover:text-[#ff4f00]`}>
+                  Guía de técnicas →
+                </Link>
+              </div>
             </div>
             <div className="grid gap-3 self-end">
-              <div className="rounded-2xl border border-[#5c4037]/35 bg-[#1f1f1f] p-4">
-                <p className={`${spaceGrotesk.className} text-[0.7rem] uppercase tracking-[0.18em] text-[#ff4f00]`}>Serie mínima</p>
-                <p className={`${montserrat.className} mt-1 text-3xl font-black text-white`}>10 uds</p>
+              <div className="rounded-2xl border border-gray-200 bg-white p-4 text-center">
+                <p className={`${spaceGrotesk.className} text-[0.65rem] uppercase tracking-[0.18em] text-[#ff4f00]`}>Desde</p>
+                <p className={`${montserrat.className} mt-1 text-3xl font-black text-gray-900`}>10 uds</p>
+                <p className="text-xs text-gray-400">sin mínimo abusivo</p>
               </div>
-              <div className="rounded-2xl border border-[#5c4037]/35 bg-[#1f1f1f] p-4">
-                <p className={`${spaceGrotesk.className} text-[0.7rem] uppercase tracking-[0.18em] text-[#ff4f00]`}>Entrega orientativa</p>
-                <p className={`${montserrat.className} mt-1 text-3xl font-black text-white`}>7-10 días</p>
+              <div className="rounded-2xl border border-gray-200 bg-white p-4 text-center">
+                <p className={`${spaceGrotesk.className} text-[0.65rem] uppercase tracking-[0.18em] text-[#ff4f00]`}>Presupuesto</p>
+                <p className={`${montserrat.className} mt-1 text-3xl font-black text-gray-900`}>24h</p>
+                <p className="text-xs text-gray-400">respuesta gratis</p>
+              </div>
+              <div className="rounded-2xl border border-gray-200 bg-white p-4 text-center">
+                <p className={`${spaceGrotesk.className} text-[0.65rem] uppercase tracking-[0.18em] text-[#ff4f00]`}>Envío</p>
+                <p className={`${montserrat.className} mt-1 text-3xl font-black text-gray-900`}>3-7 días</p>
+                <p className="text-xs text-gray-400">a toda España</p>
               </div>
             </div>
           </div>
@@ -124,7 +144,7 @@ export default function CatalogPageClient() {
       </section>
 
       {/* Filters bar */}
-      <section className="sticky top-20 z-30 border-b border-[#5c4037]/25 bg-[#131313]/95 backdrop-blur-xl">
+      <section className="sticky top-20 z-30 border-b border-gray-200 bg-gray-50/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-4 md:px-16">
           <div className="overflow-x-auto -mx-5 px-5 md:mx-0 md:px-0">
             <div className="flex flex-nowrap gap-2 w-max md:flex-wrap md:w-auto">
@@ -133,7 +153,7 @@ export default function CatalogPageClient() {
                 className={`${spaceGrotesk.className} shrink-0 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-widest transition-all ${
                   family === 'TODAS'
                     ? 'bg-[#ff4f00] text-[#0A0A0A] shadow-[0_0_12px_rgba(255,79,0,0.4)]'
-                    : 'border border-[#e2e2e2]/15 text-[#e2e2e2]/60 hover:border-[#ff4f00] hover:text-[#e2e2e2]'
+                    : 'border border-[#e2e2e2]/15 text-gray-700/60 hover:border-[#ff4f00] hover:text-gray-700'
                 }`}
               >
                 TODAS
@@ -145,7 +165,7 @@ export default function CatalogPageClient() {
                   className={`${spaceGrotesk.className} shrink-0 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-widest transition-all ${
                     family === f
                       ? 'bg-[#ff4f00] text-[#0A0A0A] shadow-[0_0_12px_rgba(255,79,0,0.4)]'
-                      : 'border border-[#e2e2e2]/15 text-[#e2e2e2]/60 hover:border-[#ff4f00] hover:text-[#e2e2e2]'
+                      : 'border border-[#e2e2e2]/15 text-gray-700/60 hover:border-[#ff4f00] hover:text-gray-700'
                   }`}
                 >
                   {f}
@@ -155,17 +175,17 @@ export default function CatalogPageClient() {
           </div>
           <div className="flex items-center gap-4">
             <div className="relative flex-1 max-w-xs">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-base text-[#e2e2e2]/40">search</span>
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-base text-gray-700/40">search</span>
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setParam('q', e.target.value)}
                 placeholder="Buscar modelo..."
-                className="w-full rounded-xl border border-[#e2e2e2]/12 bg-[#1f1f1f] py-2 pl-9 pr-4 text-sm text-white placeholder:text-[#e2e2e2]/40 focus:border-[#ff4f00]/50 focus:outline-none focus:ring-1 focus:ring-[#ff4f00]/30"
+                className="w-full rounded-xl border border-[#e2e2e2]/12 bg-[#1f1f1f] py-2 pl-9 pr-4 text-sm text-gray-900 placeholder:text-gray-700/40 focus:border-[#ff4f00]/50 focus:outline-none focus:ring-1 focus:ring-[#ff4f00]/30"
               />
             </div>
             {!loading && !error && (
-              <span className={`${spaceGrotesk.className} shrink-0 text-xs tracking-[0.1em] text-[#e2e2e2]/40`}>
+              <span className={`${spaceGrotesk.className} shrink-0 text-xs tracking-[0.1em] text-gray-700/40`}>
                 {filtered.length} modelos
               </span>
             )}
@@ -174,9 +194,16 @@ export default function CatalogPageClient() {
       </section>
 
       {/* Grid */}
-      <section className="mx-auto mt-8 max-w-7xl px-5 pb-8 md:px-16">
+      <section id="productos" className="mx-auto mt-8 max-w-7xl px-5 pb-8 md:px-16">
         {loading ? (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div>
+            <div className="mb-6 text-center">
+              <div className="inline-flex items-center gap-2 text-sm text-gray-400">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-[#ff4f00]" />
+                Cargando catálogo Roly...
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {Array.from({ length: 24 }).map((_, i) => (
               <div key={i} className="animate-pulse overflow-hidden rounded-[1.5rem] border border-[#5c4037]/35 bg-[#1f1f1f]">
                 {/* Image skeleton */}
@@ -209,6 +236,7 @@ export default function CatalogPageClient() {
               </div>
             ))}
           </div>
+          </div>
         ) : error ? (
           <div className="rounded-[1.5rem] border border-red-400/20 bg-red-950/30 p-8 text-center">
             <h2 className={`${montserrat.className} mb-2 text-lg font-bold text-red-200`}>Error al cargar catálogo</h2>
@@ -219,8 +247,8 @@ export default function CatalogPageClient() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="rounded-[1.5rem] border border-[#5c4037]/25 bg-[#1f1f1f] py-16 text-center">
-            <span className="material-symbols-outlined text-5xl text-[#e2e2e2]/20">search_off</span>
-            <p className={`${montserrat.className} mt-4 text-lg font-bold text-[#e2e2e2]/60`}>No hay modelos en esta categoría.</p>
+            <span className="material-symbols-outlined text-5xl text-gray-700/20">search_off</span>
+            <p className={`${montserrat.className} mt-4 text-lg font-bold text-gray-700/60`}>No hay modelos en esta categoría.</p>
           </div>
         ) : (
           <>
@@ -235,7 +263,7 @@ export default function CatalogPageClient() {
                 <button
                   onClick={() => setParam('page', String(safePage - 1))}
                   disabled={safePage <= 1}
-                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#e2e2e2]/15 text-sm text-[#e2e2e2]/60 transition hover:border-[#ff4f00] hover:text-[#ff4f00] disabled:cursor-not-allowed disabled:opacity-30"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#e2e2e2]/15 text-sm text-gray-700/60 transition hover:border-[#ff4f00] hover:text-[#ff4f00] disabled:cursor-not-allowed disabled:opacity-30"
                 >
                   <span className="material-symbols-outlined">chevron_left</span>
                 </button>
@@ -246,7 +274,7 @@ export default function CatalogPageClient() {
                     className={`${spaceGrotesk.className} flex h-10 w-10 items-center justify-center rounded-xl text-xs font-bold transition-all ${
                       p === safePage
                         ? 'bg-[#ff4f00] text-[#0A0A0A]'
-                        : 'border border-[#e2e2e2]/15 text-[#e2e2e2]/60 hover:border-[#ff4f00] hover:text-[#e2e2e2]'
+                        : 'border border-[#e2e2e2]/15 text-gray-700/60 hover:border-[#ff4f00] hover:text-gray-700'
                     }`}
                   >
                     {p}
@@ -255,7 +283,7 @@ export default function CatalogPageClient() {
                 <button
                   onClick={() => setParam('page', String(safePage + 1))}
                   disabled={safePage >= totalPages}
-                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#e2e2e2]/15 text-sm text-[#e2e2e2]/60 transition hover:border-[#ff4f00] hover:text-[#ff4f00] disabled:cursor-not-allowed disabled:opacity-30"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#e2e2e2]/15 text-sm text-gray-700/60 transition hover:border-[#ff4f00] hover:text-[#ff4f00] disabled:cursor-not-allowed disabled:opacity-30"
                 >
                   <span className="material-symbols-outlined">chevron_right</span>
                 </button>

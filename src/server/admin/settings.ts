@@ -26,6 +26,9 @@ export interface DashboardSettings {
   // WhatsApp configuration for public widget (editable in admin)
   whatsappPhone?: string | null;
   whatsappMessage?: string | null;
+  // Pricing for catalog display (editable in admin)
+  priceMultiplier?: number;
+  basePrintingCost?: number;
 }
 
 export interface DashboardSettingsAuditEntry {
@@ -65,6 +68,8 @@ const defaultSettings: DashboardSettings = {
   adminEmail: null,
   whatsappPhone: null,
   whatsappMessage: 'Hola, quiero un presupuesto para camisetas corporativas. Nombre, empresa y cantidad:',
+  priceMultiplier: 1.5,
+  basePrintingCost: 2,
 };
 
 const getSettingsStore = (): DashboardSettings => {
@@ -103,6 +108,8 @@ const mapDbRowToSettings = (row: any): DashboardSettings => ({
   adminEmail: row.admin_email ?? null,
   whatsappPhone: row.whatsapp_phone ?? null,
   whatsappMessage: row.whatsapp_message ?? null,
+  priceMultiplier: row.price_multiplier != null ? Number(row.price_multiplier) : undefined,
+  basePrintingCost: row.base_printing_cost != null ? Number(row.base_printing_cost) : undefined,
   updatedAt: row.updated_at ? new Date(row.updated_at).toISOString() : undefined,
   updatedBy: row.updated_by ?? null,
 });
@@ -117,34 +124,7 @@ export const getDashboardSettingsFromStore = async (): Promise<DashboardSettings
 
   try {
     const pool = await getPostgresPool();
-    const existing = await pool.query(
-      `SELECT
-         show_metrics,
-         refresh_interval_seconds,
-         analytics_enabled,
-         metrics_window_days,
-         language,
-         currency,
-         timezone,
-         admin_email,
-         whatsapp_phone,
-         whatsapp_message,
-         updated_at,
-         updated_by
-       FROM admin_dashboard_settings
-       WHERE id = $1`,
-      [SETTINGS_SINGLETON_ID]
-    );
-
-    if (existing.rows.length === 0) {
-      await pool.query(
-        `INSERT INTO admin_dashboard_settings (id)
-         VALUES ($1)
-         ON CONFLICT (id) DO NOTHING`,
-        [SETTINGS_SINGLETON_ID]
-      );
-
-      const created = await pool.query(
+      const existing = await pool.query(
         `SELECT
            show_metrics,
            refresh_interval_seconds,
@@ -156,12 +136,43 @@ export const getDashboardSettingsFromStore = async (): Promise<DashboardSettings
            admin_email,
            whatsapp_phone,
            whatsapp_message,
+           price_multiplier,
+           base_printing_cost,
            updated_at,
            updated_by
          FROM admin_dashboard_settings
          WHERE id = $1`,
         [SETTINGS_SINGLETON_ID]
       );
+
+      if (existing.rows.length === 0) {
+        await pool.query(
+          `INSERT INTO admin_dashboard_settings (id)
+           VALUES ($1)
+           ON CONFLICT (id) DO NOTHING`,
+          [SETTINGS_SINGLETON_ID]
+        );
+
+        const created = await pool.query(
+          `SELECT
+             show_metrics,
+             refresh_interval_seconds,
+             analytics_enabled,
+             metrics_window_days,
+             language,
+             currency,
+             timezone,
+             admin_email,
+             whatsapp_phone,
+             whatsapp_message,
+             price_multiplier,
+             base_printing_cost,
+             updated_at,
+             updated_by
+           FROM admin_dashboard_settings
+           WHERE id = $1`,
+          [SETTINGS_SINGLETON_ID]
+        );
 
       if (created.rows.length > 0) {
         const mapped = mapDbRowToSettings(created.rows[0]);
@@ -216,6 +227,8 @@ export const updateDashboardSettingsInStore = async (
            admin_email,
            whatsapp_phone,
            whatsapp_message,
+           price_multiplier,
+           base_printing_cost,
            updated_at,
            updated_by
          FROM admin_dashboard_settings
@@ -246,7 +259,9 @@ export const updateDashboardSettingsInStore = async (
            admin_email = $9,
            whatsapp_phone = $10,
            whatsapp_message = $11,
-           updated_by = $12,
+           price_multiplier = $12,
+           base_printing_cost = $13,
+           updated_by = $14,
            updated_at = NOW()
          WHERE id = $1
          RETURNING
@@ -260,6 +275,8 @@ export const updateDashboardSettingsInStore = async (
            admin_email,
            whatsapp_phone,
            whatsapp_message,
+           price_multiplier,
+           base_printing_cost,
            updated_at,
            updated_by`,
         [
@@ -274,6 +291,8 @@ export const updateDashboardSettingsInStore = async (
           next.adminEmail,
           next.whatsappPhone ?? null,
           next.whatsappMessage ?? null,
+          next.priceMultiplier ?? null,
+          next.basePrintingCost ?? null,
           updatedBy,
         ]
       );

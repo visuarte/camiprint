@@ -47,18 +47,14 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#131313] text-[#e2e2e2] flex">
+    <div className="min-h-screen bg-gray-50 text-gray-800 flex">
       {/* ── Sidebar ───────────────────────────────────────────────── */}
-      <aside className="hidden md:flex h-screen w-56 fixed left-0 top-0 bg-surface-charcoal border-r border-muted-steel/10 flex-col py-8 gap-4 z-50">
+      <aside className="hidden md:flex h-screen w-56 fixed left-0 top-0 bg-white border-r border-gray-200 flex-col py-8 gap-4 z-50">
         {/* Brand */}
         <div className="px-5 mb-8">
-          <div
-            role="img"
-            aria-label="Camiart"
-            className="w-[170px] h-[46px] bg-[url('/icons/logo.svg')] bg-contain bg-no-repeat bg-left block"
-          />
-          <p className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.3em] mt-2">
-            CENTRO DE OPERACIONES
+          <span className={`text-xl font-extrabold text-[#ff4f00]`}>CAMIART</span>
+          <p className="text-[10px] font-semibold text-gray-400 tracking-[0.3em] mt-2 uppercase">
+            Centro de operaciones
           </p>
         </div>
 
@@ -73,45 +69,34 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
                 href={item.href}
                 aria-disabled={disabled}
                 onClick={disabled ? (e) => e.preventDefault() : undefined}
-                className={[
-                  'flex items-center gap-3 px-5 py-4 transition-all duration-200 ease-in-out',
+                className={`flex items-center gap-3 px-5 py-3 transition-all text-sm font-medium ${
                   active
-                    ? 'bg-hazard-orange/10 text-hazard-orange border-r-4 border-hazard-orange font-bold'
+                    ? 'bg-[#ff4f00]/10 text-[#ff4f00] border-r-4 border-[#ff4f00]'
                     : disabled
-                    ? 'text-[#D8DEE8]/45 cursor-not-allowed'
-                    : 'text-[#D8DEE8] hover:bg-surface-container-high hover:text-white',
-                ].join(' ')}
+                    ? 'text-gray-300 cursor-not-allowed'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                }`}
               >
                 <span className="material-symbols-outlined text-[22px]">{item.icon}</span>
-                <span className="font-label-caps text-label-caps">{item.label}</span>
+                <span>{item.label}</span>
                 {disabled && (
-                  <span className="ml-auto text-[9px] font-label-caps text-[#D8DEE8]/50 tracking-wider">PRÓXIMAMENTE</span>
+                  <span className="ml-auto text-[9px] text-gray-400 tracking-wider uppercase">Próximamente</span>
                 )}
               </Link>
             );
           })}
         </nav>
 
-        {/* System Load */}
-        <div className="px-5">
-          <div className="p-4 border border-muted-steel/20 rounded-lg bg-surface-container-lowest">
-            <p className="font-label-caps text-[10px] text-[#D8DEE8] mb-2">CARGA DEL SISTEMA</p>
-            <div className="w-full bg-surface-bright h-1">
-              <div className="bg-hazard-orange h-1 w-[42%] shadow-[0_0_8px_rgba(255,79,0,0.5)]" />
-            </div>
-          </div>
-          <Link
-            href="/admin/settings"
-            className="mt-4 flex items-center gap-3 w-full py-3 px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[12px] tracking-widest hover:border-hazard-orange hover:text-hazard-orange transition-all duration-200"
-          >
+        {/* Settings & Logout */}
+        <div className="px-5 space-y-2">
+          <Link href="/admin/settings"
+            className="flex items-center gap-3 w-full py-3 px-4 border border-gray-200 text-gray-600 text-sm font-medium hover:border-[#ff4f00] hover:text-[#ff4f00] transition-all rounded-lg">
             <span className="material-symbols-outlined text-[20px]">settings</span>
-            <span>CONFIGURACIÓN</span>
+            <span>Configuración</span>
           </Link>
-          <button
-            onClick={handleLogout}
-            className="mt-4 w-full py-3 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[12px] tracking-widest hover:border-hazard-orange hover:text-hazard-orange transition-all duration-200"
-          >
-            CERRAR SESIÓN
+          <button onClick={handleLogout}
+            className="w-full py-3 border border-gray-200 text-gray-500 text-sm font-medium hover:border-red-300 hover:text-red-500 transition-all rounded-lg">
+            Cerrar sesión
           </button>
         </div>
       </aside>
@@ -119,34 +104,34 @@ function AdminLayoutInner({ children }: { children: React.ReactNode }) {
       {/* ── Content area ──────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col md:ml-56 min-h-screen">
         {/* Top Bar */}
-        <header className="sticky top-0 z-[70] h-20 border-b border-muted-steel/20 bg-[#0A0A0A] supports-[backdrop-filter]:bg-[#0A0A0A]/95 backdrop-blur-md flex justify-between items-center px-8 md:px-16">
-          <h2 className="font-headline-md text-headline-md font-black text-hazard-orange tracking-tighter">
+        <header className="sticky top-0 z-[70] h-16 border-b border-gray-200 bg-white/95 backdrop-blur-md flex justify-between items-center px-6 md:px-10">
+          <h2 className="text-lg font-black text-[#ff4f00] tracking-tight uppercase">
             CAMIART OPERACIONES
           </h2>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <div className="hidden md:flex flex-col items-end">
-              <span className="font-label-caps text-[12px] text-white">OPERADOR PRINCIPAL</span>
-              <span className="font-label-caps text-[10px] text-[#D8DEE8]">camiart.com</span>
+              <span className="text-xs font-semibold text-gray-800">Operador principal</span>
+              <span className="text-[10px] text-gray-400">camiart.com</span>
             </div>
-            <div className="w-10 h-10 rounded-full border-2 border-hazard-orange bg-surface-container-high flex items-center justify-center">
-              <span className="material-symbols-outlined text-hazard-orange text-[20px]">person</span>
+            <div className="w-9 h-9 rounded-full border-2 border-[#ff4f00] bg-gray-100 flex items-center justify-center">
+              <span className="material-symbols-outlined text-[#ff4f00] text-[18px]">person</span>
             </div>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="relative z-0 flex-1 overflow-auto">
+        <main className="relative z-0 flex-1 overflow-auto bg-gray-50 p-6 md:p-10">
           {children}
         </main>
 
         {/* Footer */}
-        <footer className="border-t border-hazard-orange/20 bg-surface-charcoal flex justify-between items-center px-8 md:px-16 py-6">
-          <span className="font-label-caps text-[10px] text-[#D8DEE8]">
-            © {new Date().getFullYear()} CAMIART INDUSTRIAL. TODOS LOS SISTEMAS OPERATIVOS.
+        <footer className="border-t border-gray-200 bg-white flex justify-between items-center px-6 md:px-10 py-4">
+          <span className="text-[10px] font-medium text-gray-400">
+            © {new Date().getFullYear()} CAMIART
           </span>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="font-label-caps text-[10px] text-green-500 tracking-tighter">NODO SEGURO</span>
+            <span className="text-[10px] font-medium text-green-600">Sistema operativo</span>
           </div>
         </footer>
       </div>

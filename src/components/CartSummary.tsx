@@ -1,6 +1,7 @@
 'use client';
 
 import { useCart } from '@/lib/store';
+import { formatEUR } from '@/lib/format';
 import Link from 'next/link';
 
 export default function CartSummary() {
@@ -29,8 +30,8 @@ export default function CartSummary() {
           <span className="text-sm font-semibold text-white">
             {itemCount} {itemCount === 1 ? 'prenda' : 'prendas'}
           </span>
-          <span className="text-xs text-cami-300">
-            ${total.toFixed(2)}
+          <span className="text-xs text-orange-300">
+            {formatEUR(total)}
           </span>
         </div>
       </div>

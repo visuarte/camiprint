@@ -1,16 +1,37 @@
 import type { QuoteLeadRecord, QuoteRequestInput } from '@/server/quotes/types';
 import type { QuoteRepository } from '@/server/quotes/contracts';
-import { promises as fs } from 'node:fs';
+import { promises as fs, writeFileSync, unlinkSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { tmpdir } from 'node:os';
 
 interface QuotesStore {
   records: QuoteLeadRecord[];
 }
 
+let _dataDir: string | null = null;
+
+const getDataDir = (): string => {
+  if (_dataDir) return _dataDir;
+
+  // Always try /tmp first on any platform — it's writable everywhere
+  // Fall back to cwd/data for local development
+  const tmp = tmpdir();
+  try {
+    const testPath = join(tmp, `.camiprint-write-test-${Date.now()}`);
+    writeFileSync(testPath, '');
+    unlinkSync(testPath);
+    _dataDir = tmp;
+    return _dataDir;
+  } catch {
+    _dataDir = join(/* turbopackIgnore: true */ process.cwd(), 'data');
+    return _dataDir;
+  }
+};
+
 const DATA_FILE_PATH =
   process.env.NODE_ENV === 'test'
-    ? join(/* turbopackIgnore: true */ process.cwd(), 'data', `quotes.${process.pid}.json`)
-    : join(/* turbopackIgnore: true */ process.cwd(), 'data', 'quotes.json');
+    ? join(tmpdir(), `quotes.${process.pid}.json`)
+    : join(getDataDir(), 'quotes.json');
 const GLOBAL_STORAGE_LOCK_KEY = '__camiart_quotes_storage_lock__';
 
 const withStorageLock = async <T>(operation: () => Promise<T>): Promise<T> => {

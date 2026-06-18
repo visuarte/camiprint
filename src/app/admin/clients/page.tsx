@@ -86,12 +86,12 @@ export default function AdminClientsPage() {
   }, [page, search]);
 
   const statusTone = (status: string | null) => {
-    if (!status) return 'text-[#D8DEE8] border-muted-steel/20 bg-surface-container-lowest';
+    if (!status) return 'text-gray-600 border-muted-steel/20 bg-surface-container-lowest';
     const s = status.toLowerCase();
     if (s === 'paid' || s === 'shipped' || s === 'completed') return 'text-green-400 border-green-500/40 bg-green-500/10';
     if (s === 'pending' || s === 'new') return 'text-hazard-orange border-hazard-orange/40 bg-hazard-orange/10';
     if (s === 'cancelled') return 'text-red-300 border-red-500/40 bg-red-500/10';
-    return 'text-[#D8DEE8] border-muted-steel/20 bg-surface-container-lowest';
+    return 'text-gray-600 border-muted-steel/20 bg-surface-container-lowest';
   };
 
   const handleReset = () => {
@@ -155,20 +155,20 @@ export default function AdminClientsPage() {
       <section className="grid grid-cols-1 xl:grid-cols-3 gap-4">
         <div className="border border-hazard-orange/30 bg-surface-charcoal p-4 md:p-5 relative overflow-hidden min-h-[150px] flex flex-col justify-between">
           <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">TOTAL CLIENTES</p>
-          <p className="font-display-lg text-[32px] md:text-[36px] leading-none font-black text-white">{summary.total.toLocaleString()}</p>
-          <p className="mt-2 text-[#D8DEE8] text-xs md:text-sm leading-5">Clientes reales registrados en la base de datos.</p>
+          <p className="font-display-lg text-[32px] md:text-[36px] leading-none font-black text-gray-900">{summary.total.toLocaleString()}</p>
+          <p className="mt-2 text-gray-600 text-xs md:text-sm leading-5">Clientes reales registrados en la base de datos.</p>
         </div>
         <div className="border border-muted-steel/10 bg-surface-charcoal p-4 md:p-5 min-h-[150px] flex flex-col justify-between">
           <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">TOTAL PEDIDOS</p>
-          <p className="font-display-lg text-[32px] md:text-[36px] leading-none font-black text-white">{summary.totalOrders.toLocaleString()}</p>
-          <p className="mt-2 text-[#D8DEE8] text-xs md:text-sm leading-5">Pedidos asociados a los clientes filtrados.</p>
+          <p className="font-display-lg text-[32px] md:text-[36px] leading-none font-black text-gray-900">{summary.totalOrders.toLocaleString()}</p>
+          <p className="mt-2 text-gray-600 text-xs md:text-sm leading-5">Pedidos asociados a los clientes filtrados.</p>
         </div>
         <div className="border border-muted-steel/10 bg-surface-charcoal p-4 md:p-5 min-h-[150px] flex flex-col justify-between">
           <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">INGRESOS</p>
-          <p className="font-display-lg text-[32px] md:text-[36px] leading-none font-black text-white">
+          <p className="font-display-lg text-[32px] md:text-[36px] leading-none font-black text-gray-900">
             €{summary.totalRevenue.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
           </p>
-          <p className="mt-2 text-[#D8DEE8] text-xs md:text-sm leading-5">Ingresos totales derivados de esos clientes.</p>
+          <p className="mt-2 text-gray-600 text-xs md:text-sm leading-5">Ingresos totales derivados de esos clientes.</p>
         </div>
       </section>
 
@@ -177,11 +177,11 @@ export default function AdminClientsPage() {
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-5">
             <div>
               <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">BASE DE DATOS</p>
-              <h1 className="font-headline-md text-[28px] md:text-[34px] text-white leading-none">CLIENTES REALES</h1>
+              <h1 className="font-headline-md text-[28px] md:text-[34px] text-gray-900 leading-none">CLIENTES REALES</h1>
             </div>
             <Link
               href="/admin/orders"
-              className="h-9 inline-flex items-center px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] leading-none hover:bg-surface-container-high transition-colors"
+              className="h-9 inline-flex items-center px-4 border border-muted-steel/20 text-gray-600 font-label-caps text-[11px] leading-none hover:bg-surface-container-high transition-colors"
             >
               VER PEDIDOS →
             </Link>
@@ -197,11 +197,11 @@ export default function AdminClientsPage() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="h-11 px-4 bg-surface-bright border border-muted-steel/20 text-white placeholder:text-[#D8DEE8]/50 outline-none"
+                className="h-11 px-4 bg-surface-bright border border-muted-steel/20 text-gray-900 placeholder:text-gray-600/50 outline-none"
               />
               <button
                 onClick={handleReset}
-                className="h-11 px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] tracking-[0.08em] hover:border-hazard-orange hover:text-hazard-orange transition-colors"
+                className="h-11 px-4 border border-muted-steel/20 text-gray-600 font-label-caps text-[11px] tracking-[0.08em] hover:border-hazard-orange hover:text-hazard-orange transition-colors"
               >
                 LIMPIAR FILTROS
               </button>
@@ -221,7 +221,7 @@ export default function AdminClientsPage() {
               ))}
             </div>
           ) : clients.length === 0 ? (
-            <div className="border border-muted-steel/10 bg-surface-container-lowest p-6 text-[#D8DEE8] text-sm">
+            <div className="border border-muted-steel/10 bg-surface-container-lowest p-6 text-gray-600 text-sm">
               No hay clientes reales para mostrar con esos filtros.
             </div>
           ) : (
@@ -231,27 +231,27 @@ export default function AdminClientsPage() {
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div className="min-w-0">
                       <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">{client.id.slice(0, 8).toUpperCase()}</p>
-                      <h3 className="text-[16px] text-white font-semibold leading-snug truncate">{client.name}</h3>
-                      <p className="text-[#D8DEE8] text-sm mt-1 break-all">{client.email}</p>
-                      <p className="text-[#D8DEE8]/80 text-sm mt-1">{client.phone}</p>
-                      <p className="text-[#D8DEE8]/60 text-xs mt-2 line-clamp-2">{client.address}</p>
+                      <h3 className="text-[16px] text-gray-900 font-semibold leading-snug truncate">{client.name}</h3>
+                      <p className="text-gray-600 text-sm mt-1 break-all">{client.email}</p>
+                      <p className="text-gray-600/80 text-sm mt-1">{client.phone}</p>
+                      <p className="text-gray-600/60 text-xs mt-2 line-clamp-2">{client.address}</p>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-3 min-w-[280px]">
                       <div className="border border-muted-steel/10 bg-surface-charcoal p-3">
-                        <p className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">PEDIDOS</p>
-                        <p className="text-white text-lg font-bold mt-1">{client.orderCount}</p>
+                        <p className="font-label-caps text-[10px] text-gray-600 tracking-[0.08em]">PEDIDOS</p>
+                        <p className="text-gray-900 text-lg font-bold mt-1">{client.orderCount}</p>
                       </div>
                       <div className="border border-muted-steel/10 bg-surface-charcoal p-3">
-                        <p className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">GASTADO</p>
-                        <p className="text-white text-lg font-bold mt-1">€{client.totalSpent.toFixed(2)}</p>
+                        <p className="font-label-caps text-[10px] text-gray-600 tracking-[0.08em]">GASTADO</p>
+                        <p className="text-gray-900 text-lg font-bold mt-1">€{client.totalSpent.toFixed(2)}</p>
                       </div>
                       <div className="border border-muted-steel/10 bg-surface-charcoal p-3 col-span-2 sm:col-span-1 lg:col-span-2">
-                        <p className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">ÚLTIMO PEDIDO</p>
+                        <p className="font-label-caps text-[10px] text-gray-600 tracking-[0.08em]">ÚLTIMO PEDIDO</p>
                         <p className={`inline-flex mt-1 px-2.5 py-1 border text-[10px] font-label-caps tracking-[0.08em] ${statusTone(client.lastOrderStatus)}`}>
                           {client.lastOrderStatus ?? 'SIN PEDIDOS'}
                         </p>
-                        <p className="text-[#D8DEE8] text-xs mt-2">
+                        <p className="text-gray-600 text-xs mt-2">
                           {client.lastOrderAt ? new Date(client.lastOrderAt).toLocaleDateString('es-ES') : 'No hay pedido reciente'}
                         </p>
                       </div>
@@ -261,11 +261,11 @@ export default function AdminClientsPage() {
                   <div className="mt-4 flex flex-wrap items-center gap-3">
                     <Link
                       href="/admin/orders"
-                      className="inline-flex items-center h-9 px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] tracking-[0.08em] hover:bg-surface-container-high transition-colors"
+                      className="inline-flex items-center h-9 px-4 border border-muted-steel/20 text-gray-600 font-label-caps text-[11px] tracking-[0.08em] hover:bg-surface-container-high transition-colors"
                     >
                       VER PEDIDOS
                     </Link>
-                    <span className="text-[#D8DEE8]/60 text-xs">
+                    <span className="text-gray-600/60 text-xs">
                       Registrado el {new Date(client.createdAt).toLocaleDateString('es-ES')}
                     </span>
                   </div>
@@ -278,17 +278,17 @@ export default function AdminClientsPage() {
             <button
               onClick={() => setPage((current) => Math.max(1, current - 1))}
               disabled={page <= 1}
-              className="h-10 px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] tracking-[0.08em] disabled:opacity-40 disabled:cursor-not-allowed hover:border-hazard-orange hover:text-hazard-orange transition-colors"
+              className="h-10 px-4 border border-muted-steel/20 text-gray-600 font-label-caps text-[11px] tracking-[0.08em] disabled:opacity-40 disabled:cursor-not-allowed hover:border-hazard-orange hover:text-hazard-orange transition-colors"
             >
               ← ANTERIOR
             </button>
-            <span className="font-label-caps text-[10px] text-[#D8DEE8] tracking-[0.08em]">
+            <span className="font-label-caps text-[10px] text-gray-600 tracking-[0.08em]">
               PÁGINA {page} DE {Math.max(1, totalPages)}
             </span>
             <button
               onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
               disabled={page >= totalPages}
-              className="h-10 px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] tracking-[0.08em] disabled:opacity-40 disabled:cursor-not-allowed hover:border-hazard-orange hover:text-hazard-orange transition-colors"
+              className="h-10 px-4 border border-muted-steel/20 text-gray-600 font-label-caps text-[11px] tracking-[0.08em] disabled:opacity-40 disabled:cursor-not-allowed hover:border-hazard-orange hover:text-hazard-orange transition-colors"
             >
               SIGUIENTE →
             </button>
@@ -304,27 +304,27 @@ export default function AdminClientsPage() {
                 placeholder="Nombre y apellidos o empresa"
                 value={newClient.name}
                 onChange={(e) => setNewClient((current) => ({ ...current, name: e.target.value }))}
-                className="w-full h-10 px-3 bg-surface-bright border border-muted-steel/20 text-white placeholder:text-[#D8DEE8]/50 outline-none"
+                className="w-full h-10 px-3 bg-surface-bright border border-muted-steel/20 text-gray-900 placeholder:text-gray-600/50 outline-none"
               />
               <input
                 type="email"
                 placeholder="Email"
                 value={newClient.email}
                 onChange={(e) => setNewClient((current) => ({ ...current, email: e.target.value }))}
-                className="w-full h-10 px-3 bg-surface-bright border border-muted-steel/20 text-white placeholder:text-[#D8DEE8]/50 outline-none"
+                className="w-full h-10 px-3 bg-surface-bright border border-muted-steel/20 text-gray-900 placeholder:text-gray-600/50 outline-none"
               />
               <input
                 type="text"
                 placeholder="Teléfono"
                 value={newClient.phone}
                 onChange={(e) => setNewClient((current) => ({ ...current, phone: e.target.value }))}
-                className="w-full h-10 px-3 bg-surface-bright border border-muted-steel/20 text-white placeholder:text-[#D8DEE8]/50 outline-none"
+                className="w-full h-10 px-3 bg-surface-bright border border-muted-steel/20 text-gray-900 placeholder:text-gray-600/50 outline-none"
               />
               <textarea
                 placeholder="Dirección"
                 value={newClient.address}
                 onChange={(e) => setNewClient((current) => ({ ...current, address: e.target.value }))}
-                className="w-full h-24 px-3 py-2 bg-surface-bright border border-muted-steel/20 text-white placeholder:text-[#D8DEE8]/50 outline-none resize-none"
+                className="w-full h-24 px-3 py-2 bg-surface-bright border border-muted-steel/20 text-gray-900 placeholder:text-gray-600/50 outline-none resize-none"
               />
               <button
                 type="submit"
@@ -339,12 +339,12 @@ export default function AdminClientsPage() {
           </div>
 
           <div className="flex items-end justify-between gap-4 mb-5">
-            <h2 className="font-headline-md text-[22px] md:text-[26px] leading-none text-white">CLIENTES RECIENTES</h2>
+            <h2 className="font-headline-md text-[22px] md:text-[26px] leading-none text-gray-900">CLIENTES RECIENTES</h2>
           </div>
 
           <div className="space-y-3">
             {recentClients.length === 0 ? (
-              <div className="border border-muted-steel/10 bg-surface-container-lowest p-4 text-[#D8DEE8] text-sm">
+              <div className="border border-muted-steel/10 bg-surface-container-lowest p-4 text-gray-600 text-sm">
                 No hay clientes recientes para mostrar.
               </div>
             ) : (
@@ -353,8 +353,8 @@ export default function AdminClientsPage() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-1">{client.name}</p>
-                      <p className="text-[13px] text-white truncate">{client.email}</p>
-                      <p className="text-[#D8DEE8] text-xs mt-1">{client.orderCount} pedidos · €{client.totalSpent.toFixed(2)}</p>
+                      <p className="text-[13px] text-gray-900 truncate">{client.email}</p>
+                      <p className="text-gray-600 text-xs mt-1">{client.orderCount} pedidos · €{client.totalSpent.toFixed(2)}</p>
                     </div>
                     <span className={`inline-flex px-2.5 py-1 border text-[10px] font-label-caps tracking-[0.08em] ${statusTone(client.lastOrderStatus)}`}>
                       {client.lastOrderStatus ?? 'SIN PEDIDOS'}
@@ -368,10 +368,10 @@ export default function AdminClientsPage() {
           <div className="mt-6 border-t border-muted-steel/10 pt-4">
             <p className="font-label-caps text-[10px] text-hazard-orange tracking-[0.08em] mb-2">ACCIONES</p>
             <div className="space-y-2">
-              <Link href="/admin/orders" className="block h-10 px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] tracking-[0.08em] hover:bg-surface-container-high transition-colors leading-[40px]">
+              <Link href="/admin/orders" className="block h-10 px-4 border border-muted-steel/20 text-gray-600 font-label-caps text-[11px] tracking-[0.08em] hover:bg-surface-container-high transition-colors leading-[40px]">
                 REVISAR PEDIDOS →
               </Link>
-              <Link href="/admin/settings" className="block h-10 px-4 border border-muted-steel/20 text-[#D8DEE8] font-label-caps text-[11px] tracking-[0.08em] hover:bg-surface-container-high transition-colors leading-[40px]">
+              <Link href="/admin/settings" className="block h-10 px-4 border border-muted-steel/20 text-gray-600 font-label-caps text-[11px] tracking-[0.08em] hover:bg-surface-container-high transition-colors leading-[40px]">
                 AJUSTES DEL SISTEMA →
               </Link>
             </div>

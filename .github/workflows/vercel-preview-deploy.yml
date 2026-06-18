@@ -1,24 +1,27 @@
 name: Vercel Preview Deploy
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 on:
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened]
   push:
-    branches: [staging]
+    branches: [develop]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
 jobs:
   deploy-preview:
     name: 🚀 Deploy Preview
     runs-on: ubuntu-latest
+    environment: Preview
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     outputs:
       preview_url: ${{ steps.deploy.outputs.preview_url }}
 
@@ -26,23 +29,34 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Generate Prisma Client
+        run: pnpm run postinstall
 
       - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+        run: npm install -g vercel@latest
 
       - name: Pull Vercel Environment Info
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=preview --git-branch develop --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build Project Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          STRIPE_SECRET_KEY: sk_test_placeholder_for_ci
+          QUOTES_REPOSITORY_DRIVER: json
 
       - name: Deploy Preview to Vercel
         id: deploy
@@ -50,13 +64,6 @@ jobs:
           URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
           echo "preview_url=$URL" >> "$GITHUB_OUTPUT"
           echo "Deployed to: $URL"
-
-      - name: Assign Staging Alias (staging branch only)
-        if: github.ref == 'refs/heads/staging'
-        run: |
-          vercel alias set ${{ steps.deploy.outputs.preview_url }} staging.camiart.com \
-            --token=${{ secrets.VERCEL_TOKEN }}
-          echo "✅ Staging alias set: https://staging.camiart.com"
 
       - name: Comment Preview URL on PR
         if: github.event_name == 'pull_request'
@@ -76,26 +83,35 @@ jobs:
     name: 🔥 Smoke Tests
     needs: deploy-preview
     runs-on: ubuntu-latest
+    environment: Preview
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Generate Prisma Client
+        run: pnpm run postinstall
 
       - name: Wait for deployment to be ready
         run: |
           URL=${{ needs.deploy-preview.outputs.preview_url }}
           echo "Waiting for $URL to be ready..."
           for i in $(seq 1 30); do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL/api/health" || echo "000")
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL/api/v1/health" || echo "000")
             if [ "$STATUS" = "200" ]; then
               echo "✅ Deployment ready (HTTP $STATUS)"
               exit 0
@@ -107,35 +123,45 @@ jobs:
           exit 1
 
       - name: Run Smoke Tests
-        run: npm run smoke:staging
+        run: pnpm run smoke:staging
         env:
           BASE_URL: ${{ needs.deploy-preview.outputs.preview_url }}
 
   build-check:
     name: 🏗️ Build Verification
     runs-on: ubuntu-latest
+    environment: Preview
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Generate Prisma Client
+        run: pnpm run postinstall
 
       - name: TypeScript Check
         run: npx tsc --noEmit
         continue-on-error: true
 
       - name: Build Project
-        run: npm run build:turbo
+        run: pnpm run build:turbo
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_TEST }}
+          STRIPE_SECRET_KEY: sk_test_placeholder_for_ci
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL_STAGING }}
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY_STAGING }}
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL_STAGING }}

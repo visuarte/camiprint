@@ -1,5 +1,6 @@
-import { promises as fs } from 'node:fs';
+import { promises as fs, writeFileSync, unlinkSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { prisma } from '@/server/db';
 import { getPlatformConfig } from '@/server/platform/config';
 
@@ -34,10 +35,28 @@ interface QuoteCommunicationRow {
   created_at: Date | string;
 }
 
+let _dataDir: string | null = null;
+
+const getDataDir = (): string => {
+  if (_dataDir) return _dataDir;
+
+  const tmp = tmpdir();
+  try {
+    const testPath = join(tmp, `.camiprint-write-test-${Date.now()}`);
+    writeFileSync(testPath, '');
+    unlinkSync(testPath);
+    _dataDir = tmp;
+    return _dataDir;
+  } catch {
+    _dataDir = join(process.cwd(), 'data');
+    return _dataDir;
+  }
+};
+
 const DATA_FILE_PATH =
   process.env.NODE_ENV === 'test'
-    ? join(process.cwd(), 'data', `quote-communication.${process.pid}.json`)
-    : join(process.cwd(), 'data', 'quote-communication.json');
+    ? join(tmpdir(), `quote-communication.${process.pid}.json`)
+    : join(getDataDir(), 'quote-communication.json');
 
 const GLOBAL_STORAGE_LOCK_KEY = '__camiart_quote_communication_storage_lock__';
 const GLOBAL_TIMELINE_TABLE_READY_KEY = '__camiart_quote_communication_table_ready__';

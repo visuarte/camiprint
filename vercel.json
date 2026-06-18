@@ -1,11 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "buildCommand": "npm run build",
-  "installCommand": "npm install --legacy-peer-deps",
+  "buildCommand": "pnpm run build",
+  "installCommand": "pnpm install --frozen-lockfile",
   "regions": ["iad1"],
   "env": {
-    "QUOTES_REPOSITORY_DRIVER": "postgres",
     "RATE_LIMIT_STORE_DRIVER": "memory",
     "LOG_LEVEL": "info",
     "TRUSTED_PROXY_COUNT": "2",
@@ -28,7 +27,7 @@
   "git": {
     "deploymentEnabled": {
       "main": true,
-      "staging": true
+      "develop": true
     }
   },
   "github": {
