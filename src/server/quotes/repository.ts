@@ -9,7 +9,7 @@ interface QuotesStore {
 }
 
 const isVercel = (): boolean => {
-  const env = typeof process !== 'undefined' ? process.env : {};
+  const env: Record<string, string | undefined> = typeof process !== 'undefined' ? process.env : {};
   return env['VERCEL'] === '1'
     || !!env['VERCEL_ENV']
     || !!env['VERCEL_REGION']
