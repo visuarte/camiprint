@@ -8,11 +8,15 @@ interface QuotesStore {
   records: QuoteLeadRecord[];
 }
 
+const isVercel = (): boolean => {
+  return process.env.VERCEL === '1'
+    || !!process.env.VERCEL_ENV
+    || !!process.env.VERCEL_REGION
+    || !!process.env.VERCEL_URL;
+};
+
 const getDataDir = () => {
-  // Vercel serverless (preview/development): only /tmp is writable
-  if (process.env.VERCEL_ENV === 'preview' || process.env.VERCEL_ENV === 'development') {
-    return tmpdir();
-  }
+  if (isVercel()) return tmpdir();
   return join(/* turbopackIgnore: true */ process.cwd(), 'data');
 };
 
