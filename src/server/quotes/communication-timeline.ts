@@ -1,4 +1,4 @@
-import { promises as fs } from 'node:fs';
+import { promises as fs, writeFileSync, unlinkSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { prisma } from '@/server/db';
@@ -35,17 +35,22 @@ interface QuoteCommunicationRow {
   created_at: Date | string;
 }
 
-const isVercel = (): boolean => {
-  const env: Record<string, string | undefined> = typeof process !== 'undefined' ? process.env : {};
-  return env['VERCEL'] === '1'
-    || !!env['VERCEL_ENV']
-    || !!env['VERCEL_REGION']
-    || !!env['VERCEL_URL'];
-};
+let _dataDir: string | null = null;
 
-const getDataDir = () => {
-  if (isVercel()) return tmpdir();
-  return join(process.cwd(), 'data');
+const getDataDir = (): string => {
+  if (_dataDir) return _dataDir;
+
+  const tmp = tmpdir();
+  try {
+    const testPath = join(tmp, `.camiprint-write-test-${Date.now()}`);
+    writeFileSync(testPath, '');
+    unlinkSync(testPath);
+    _dataDir = tmp;
+    return _dataDir;
+  } catch {
+    _dataDir = join(process.cwd(), 'data');
+    return _dataDir;
+  }
 };
 
 const DATA_FILE_PATH =

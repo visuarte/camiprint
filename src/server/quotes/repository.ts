@@ -1,6 +1,6 @@
 import type { QuoteLeadRecord, QuoteRequestInput } from '@/server/quotes/types';
 import type { QuoteRepository } from '@/server/quotes/contracts';
-import { promises as fs } from 'node:fs';
+import { promises as fs, writeFileSync, unlinkSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { tmpdir } from 'node:os';
 
@@ -8,17 +8,24 @@ interface QuotesStore {
   records: QuoteLeadRecord[];
 }
 
-const isVercel = (): boolean => {
-  const env: Record<string, string | undefined> = typeof process !== 'undefined' ? process.env : {};
-  return env['VERCEL'] === '1'
-    || !!env['VERCEL_ENV']
-    || !!env['VERCEL_REGION']
-    || !!env['VERCEL_URL'];
-};
+let _dataDir: string | null = null;
 
-const getDataDir = () => {
-  if (isVercel()) return tmpdir();
-  return join(/* turbopackIgnore: true */ process.cwd(), 'data');
+const getDataDir = (): string => {
+  if (_dataDir) return _dataDir;
+
+  // Always try /tmp first on any platform — it's writable everywhere
+  // Fall back to cwd/data for local development
+  const tmp = tmpdir();
+  try {
+    const testPath = join(tmp, `.camiprint-write-test-${Date.now()}`);
+    writeFileSync(testPath, '');
+    unlinkSync(testPath);
+    _dataDir = tmp;
+    return _dataDir;
+  } catch {
+    _dataDir = join(/* turbopackIgnore: true */ process.cwd(), 'data');
+    return _dataDir;
+  }
 };
 
 const DATA_FILE_PATH =
