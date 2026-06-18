@@ -36,10 +36,11 @@ interface QuoteCommunicationRow {
 }
 
 const isVercel = (): boolean => {
-  return process.env.VERCEL === '1'
-    || !!process.env.VERCEL_ENV
-    || !!process.env.VERCEL_REGION
-    || !!process.env.VERCEL_URL;
+  const env = typeof process !== 'undefined' ? process.env : {};
+  return env['VERCEL'] === '1'
+    || !!env['VERCEL_ENV']
+    || !!env['VERCEL_REGION']
+    || !!env['VERCEL_URL'];
 };
 
 const getDataDir = () => {
