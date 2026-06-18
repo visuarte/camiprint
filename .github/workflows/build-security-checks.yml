@@ -17,25 +17,30 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: 🔍 Brand Watchdog Check
-        run: npm run watchdog:brand
+        run: pnpm run watchdog:brand
         continue-on-error: false
 
       - name: 📊 Vulnerability Scan
-        run: npm run vuln:monitor
+        run: pnpm run vuln:monitor
         continue-on-error: true
 
       - name: 🔐 Strict Vulnerability Check (High/Critical only)
-        run: npm run vuln:monitor:strict
+        run: pnpm run vuln:monitor:strict
         continue-on-error: true
 
   build:
@@ -47,17 +52,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: 🏗️ Build Project
-        run: npm run build:turbo
+        run: pnpm run build:turbo
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_TEST }}
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
@@ -70,7 +80,7 @@ jobs:
         continue-on-error: true
 
       - name: 🧪 Run Tests
-        run: npm run test:all
+        run: pnpm run test:all
         continue-on-error: true
 
   e2e-mobile-smoke:
@@ -82,20 +92,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
 
       - name: 📱 Run iPhone contact smoke + watchdog endpoint
-        run: npm run test:e2e:mobile-smoke
+        run: pnpm run test:e2e:mobile-smoke
 
   e2e-mobile-smoke-pixel-optional:
     name: E2E Mobile Smoke (Pixel) Optional
@@ -107,20 +122,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
 
       - name: 🤖 Run Pixel contact smoke + watchdog endpoint
-        run: npm run test:e2e:mobile-smoke:pixel
+        run: pnpm run test:e2e:mobile-smoke:pixel
         continue-on-error: true
 
   e2e-browserstack-safari-optional:
@@ -133,14 +153,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Validate BrowserStack credentials
         id: browserstack-check
@@ -163,7 +188,7 @@ jobs:
           BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
           BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
           PLAYWRIGHT_BASE_URL: http://127.0.0.1:3000
-        run: npm run test:e2e:browserstack:safari
+        run: pnpm run test:e2e:browserstack:safari
         continue-on-error: true
 
   upload-reports:
@@ -176,17 +201,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Generate Vulnerability Report
-        run: npm run vuln:monitor
+        run: pnpm run vuln:monitor
         continue-on-error: true
 
       - name: Upload Vulnerability Reports as Artifacts
