@@ -1,5 +1,6 @@
 import { GorFactoryClient } from '@/server/integrations/gor-factory/client';
 import { getRedisClient } from '@/server/platform/redis/client';
+import { sanitizeCatalogItem, sanitizeBrandField, getProductPricing } from '@/server/products/pricing-engine';
 
 const REDIS_URL = process.env.REDIS_URL || '';
 const PRICE_CACHE_KEY = 'gor:pricecache';
@@ -157,6 +158,27 @@ export async function GET(request: Request) {
             m.priceMin = Math.min(...prices);
             m.priceMax = Math.max(...prices);
           }
+        }
+      }
+    }
+
+    // Sanitize brand names and enrich with Camiart pricing
+    for (const m of models as Array<Record<string, unknown>>) {
+      sanitizeCatalogItem(m)
+      // Enrich with custom pricing from DB
+      const sku = (m.modelcode as string) || ''
+      if (sku) {
+        const pricing = await getProductPricing(sku).catch(() => null)
+        if (pricing && pricing.publicPrice > 0) {
+          m.priceMin = pricing.publicPrice
+          m.priceMax = pricing.publicPrice
+        }
+        // Override product name with Camiart name
+        const dbPricing = await import('@/server/db').then(({ prisma }) =>
+          prisma.productPricing.findUnique({ where: { sku } })
+        )
+        if (dbPricing?.productName) {
+          m.modelname = dbPricing.productName
         }
       }
     }
