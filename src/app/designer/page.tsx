@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import AppHeader from '@/components/AppHeader'
+import Footer from '@/components/Footer'
 import MockupGenerator from '@/components/MockupGenerator'
 
 export const metadata: Metadata = {
@@ -8,8 +10,9 @@ export const metadata: Metadata = {
 
 export default function DesignerPage() {
   return (
-    <main className="min-h-screen bg-white pt-28 pb-16">
-      <div className="mx-auto max-w-6xl px-5 md:px-16">
+    <main className="min-h-screen bg-white">
+      <AppHeader variant="light" />
+      <div className="mx-auto max-w-6xl px-5 pt-28 pb-16 md:px-16">
         <div className="mb-8">
           <h1 className="text-3xl font-black text-gray-900">Diseñador de Camisetas</h1>
           <p className="mt-2 text-gray-500">
@@ -18,6 +21,7 @@ export default function DesignerPage() {
         </div>
         <MockupGenerator />
       </div>
+      <Footer variant="light" />
     </main>
   )
 }

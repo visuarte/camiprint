@@ -220,14 +220,24 @@ export default function MockupGenerator() {
             model.traverse((child: any) => {
               if (child.isMesh) { child.castShadow = true; child.receiveShadow = true }
             })
+            // Normalizar escala — si el modelo está en mm (bounding box ~1000), escalar a metros
             const box = new THREE.Box3().setFromObject(model)
+            const size = box.getSize(new THREE.Vector3())
+            const maxDim = Math.max(size.x, size.y, size.z)
+            if (maxDim > 10) {
+              // Modelo probablemente en milímetros → escalar a metros
+              const scale = 1 / maxDim
+              model.scale.set(scale, scale, scale)
+              // Recalcular bounding box después del escalado
+              box.setFromObject(model)
+            }
             const center = box.getCenter(new THREE.Vector3())
             model.position.sub(center)
             model.position.y += 0.3
             modelRef.current = model
             scene.add(model)
             setLoading(false)
-            console.log('[MockupGenerator] Modelo cargado OK')
+            console.log('[MockupGenerator] Modelo cargado OK. Escala:', maxDim > 10 ? `normalizada (1/${maxDim.toFixed(0)})` : 'original')
           } catch (err) {
             console.error('[MockupGenerator] Error procesando modelo:', err)
             setError('Error al procesar el modelo 3D')
