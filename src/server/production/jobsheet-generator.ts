@@ -1,7 +1,6 @@
 import { prisma } from '@/server/db'
 import { createGorFactory } from '@/server/integrations/gor-factory/factory'
-// @ts-expect-error - archiver no tiene default export en ESM
-import archiver from 'archiver'
+import * as archiver from 'archiver'
 import { Writable } from 'node:stream'
 import { Readable } from 'node:stream'
 import { join } from 'node:path'
@@ -188,7 +187,7 @@ export async function generateJobSheet(orderId: string): Promise<JobSheetResult>
   const zipPath = join(tmpdir(), `${jobSheetId}.zip`)
   await new Promise<void>((resolve, reject) => {
     const output = require('fs').createWriteStream(zipPath)
-    const archive = (archiver as any)('zip', { zlib: { level: 9 } })
+    const archive = (archiver as any).default('zip', { zlib: { level: 9 } })
     archive.on('error', reject)
     archive.pipe(output)
     archive.directory(tmpDir, false)
