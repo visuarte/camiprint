@@ -102,6 +102,24 @@ export async function GET(request: Request) {
 
     const models = Object.values(grouped);
 
+    // Count sales by productId to sort by popularity
+    try {
+      const sales = await import('@/server/db').then(({ prisma }) =>
+        prisma.orderItem.groupBy({
+          by: ['productId'],
+          _sum: { quantity: true },
+          orderBy: { _sum: { quantity: 'desc' } },
+        })
+      )
+      const salesCount = new Map(sales.map((s: any) => [s.productId, s._sum.quantity || 0]))
+      ;(models as Array<Record<string, unknown>>).sort((a: any, b: any) => {
+        const aSales = salesCount.get(a.modelcode) || 0
+        const bSales = salesCount.get(b.modelcode) || 0
+        if (aSales !== bSales) return bSales - aSales
+        return (a.modelcode || '').localeCompare(b.modelcode || '')
+      })
+    } catch {}
+
     const responseBody: Record<string, unknown> = {
       brand,
       families: [...new Set(models.map((m) => m.family).filter(Boolean))].sort(),
