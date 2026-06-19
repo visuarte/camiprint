@@ -29,6 +29,24 @@ model Product {
   @@index([createdAt])
 }
 
+// Product pricing — almacena costes y márgenes (oculto del frontend público)
+model ProductPricing {
+  id            String   @id @default(cuid())
+  sku           String   @unique @db.VarChar(100)
+  source        String   @default("gor")
+  productName   String?  @db.VarChar(255)
+  costPrice     Float    @default(0)
+  printingCost  Float    @default(0)
+  marginMarkup  Float    @default(0.6)
+  fixedMargin   Float?
+  publicPrice   Float?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([sku])
+  @@index([source])
+}
+
 // Cart model - Shopping cart per user
 model Cart {
   id        String   @id @default(cuid())
