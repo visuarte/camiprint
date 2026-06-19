@@ -3,7 +3,8 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useCart } from '@/lib/store';
 import Image from 'next/image';
-import ProductViewerModal from '@/components/ProductViewerModal';
+import ProductViewerModal from '@/components/ProductViewerModal'
+import ProductVideo from '@/components/ProductVideo';
 
 const COLOR_MAP: Record<string, string> = {
   BLANCO: '#ffffff', NEGRO: '#111111', GRIS: '#888888',
@@ -108,6 +109,11 @@ export default function ProductCard({ product }: ProductCardProps) {
           {product.description && (
             <p className="mt-1 line-clamp-2 text-sm text-[#e2e2e2]/60">{product.description}</p>
           )}
+          <ProductVideo
+            videoSrc={`/videos/${product.modelcode.toLowerCase()}.mp4`}
+            posterImage={displayImage}
+            productName={product.modelname}
+          />
         </div>
 
         {product.priceMin != null && (
