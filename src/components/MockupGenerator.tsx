@@ -162,6 +162,11 @@ export default function MockupGenerator() {
   const [fontSize, setFontSize] = useState(24)
   const [position, setPosition] = useState<Position>('chest')
   const [shirtColor, setShirtColor] = useState('#f5f5f0')
+  const [baking, setBaking] = useState(false)
+  const [glbUrl, setGlbUrl] = useState<string | null>(null)
+
+  // Referencia para la imagen del diseño actual (para re-bake)
+  const designDataUrlRef = useRef<string | null>(null)
 
   const redraw = useCallback(() => {
     if (previewRef.current) {
@@ -195,6 +200,44 @@ export default function MockupGenerator() {
     link.download = 'camiseta-diseno.png'
     link.href = previewRef.current.toDataURL('image/png')
     link.click()
+  }
+
+  const handleBake3D = async () => {
+    if (!designImage && !designText) return
+    setBaking(true)
+    try {
+      // Convertir diseño a blob
+      const canvas = document.createElement('canvas')
+      canvas.width = 512; canvas.height = 512
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+      ctx.fillStyle = shirtColor
+      ctx.fillRect(0, 0, 512, 512)
+      if (designImage) {
+        const img = new Image()
+        await new Promise<void>((resolve) => { img.onload = () => { ctx.drawImage(img, 0, 0, 512, 512); resolve() }; img.src = designImage })
+      }
+      if (designText) {
+        ctx.fillStyle = '#000'; ctx.textAlign = 'center'; ctx.font = `bold ${fontSize}px Arial`
+        ctx.fillText(designText, 256, 256)
+      }
+      const blob = await new Promise<Blob>((r) => canvas.toBlob(r as any, 'image/png'))
+
+      const form = new FormData()
+      form.append('design', blob, 'design.png')
+      form.append('color', shirtColor)
+      form.append('position', position)
+
+      const res = await fetch('/api/designer/bake', { method: 'POST', body: form })
+      const data = await res.json()
+      if (data.ok) {
+        setGlbUrl(data.glbUrl + '?t=' + Date.now())
+      }
+    } catch (err) {
+      console.error('[MockupGenerator] Error baking 3D:', err)
+    } finally {
+      setBaking(false)
+    }
   }
 
   return (
@@ -279,6 +322,33 @@ export default function MockupGenerator() {
           <button onClick={handleDownload} disabled={!designImage && !designText}
             className="flex-1 rounded-xl bg-gray-900 py-2.5 text-sm font-bold text-white disabled:opacity-40">Descargar</button>
         </div>
+
+        {/* Botón 3D */}
+        {(designImage || designText) && (
+          <button onClick={handleBake3D} disabled={baking}
+            className="w-full rounded-xl border-2 border-blue-200 py-3 text-sm font-bold text-blue-700 transition hover:bg-blue-50 disabled:opacity-40">
+            {baking ? '🔄 Generando vista 3D...' : '🔄 Ver en 3D'}
+          </button>
+        )}
+
+        {/* Visor 3D del GLB texturizado */}
+        {glbUrl && (
+          <div className="mt-4">
+            <details open>
+              <summary className="cursor-pointer text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+                Vista 3D — arrastra para rotar
+              </summary>
+              <div className="aspect-square overflow-hidden rounded-xl border border-gray-200 bg-gradient-to-b from-gray-50 to-white">
+                <iframe
+                  src={`https://gltf-viewer.pages.dev/?url=${encodeURIComponent(window.location.origin + glbUrl)}&autorotate`}
+                  className="h-full w-full"
+                  title="Vista 3D de la camiseta"
+                  sandbox="allow-scripts allow-same-origin"
+                />
+              </div>
+            </details>
+          </div>
+        )}
       </div>
     </div>
   )
