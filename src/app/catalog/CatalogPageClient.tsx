@@ -22,9 +22,12 @@ export default function CatalogPageClient() {
   const [allFamilies, setAllFamilies] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
   const family = searchParams.get('family') || 'TODAS';
   const search = searchParams.get('q') || '';
+  const colorFilter = searchParams.get('color') || '';
+  const compositionFilter = searchParams.get('material') || '';
   const page = parseInt(searchParams.get('page') || '1', 10);
 
   const setParam = useCallback(
@@ -74,8 +77,17 @@ export default function CatalogPageClient() {
           m.description.toLowerCase().includes(q),
       );
     }
+    if (colorFilter) {
+      result = result.filter((m) =>
+        m.colors.some((c) => c.name.toLowerCase().includes(colorFilter.toLowerCase())),
+      );
+    }
+    if (compositionFilter) {
+      const q = compositionFilter.toLowerCase();
+      result = result.filter((m) => m.composition.toLowerCase().includes(q));
+    }
     return result;
-  }, [models, family, search]);
+  }, [models, family, search, colorFilter, compositionFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
   const safePage = Math.min(page, totalPages);
@@ -87,6 +99,20 @@ export default function CatalogPageClient() {
       router.replace(`${pathname}?${p.toString()}`, { scroll: false });
     }
   }, [safePage, page, searchParams, router, pathname]);
+
+  const allColors = useMemo(() => {
+    const set = new Set<string>()
+    models.forEach((m) => m.colors.forEach((c) => set.add(c.name)))
+    return Array.from(set).slice(0, 20)
+  }, [models])
+
+  const allCompositions = useMemo(() => {
+    const set = new Set<string>()
+    models.forEach((m) => {
+      if (m.composition) set.add(m.composition)
+    })
+    return Array.from(set)
+  }, [models])
 
   const paginated = filtered.slice((safePage - 1) * PER_PAGE, safePage * PER_PAGE);
 
@@ -184,12 +210,54 @@ export default function CatalogPageClient() {
                 className="w-full rounded-xl border border-[#e2e2e2]/12 bg-[#1f1f1f] py-2 pl-9 pr-4 text-sm text-gray-900 placeholder:text-gray-700/40 focus:border-[#ff4f00]/50 focus:outline-none focus:ring-1 focus:ring-[#ff4f00]/30"
               />
             </div>
+            <button onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+              className={`${spaceGrotesk.className} shrink-0 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-widest transition-all ${
+                showAdvancedFilters || colorFilter || compositionFilter
+                  ? 'bg-[#ff4f00] text-[#0A0A0A]'
+                  : 'border border-[#e2e2e2]/15 text-gray-700/60 hover:border-[#ff4f00]'
+              }`}>
+              Filtros {(colorFilter || compositionFilter) ? '·' : ''}
+            </button>
             {!loading && !error && (
               <span className={`${spaceGrotesk.className} shrink-0 text-xs tracking-[0.1em] text-gray-700/40`}>
                 {filtered.length} modelos
               </span>
             )}
           </div>
+          {showAdvancedFilters && (
+            <div className="flex flex-wrap gap-3 pt-2">
+              {allColors.length > 0 && (
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mr-1">Color:</span>
+                  <button onClick={() => setParam('color', '')}
+                    className={`rounded-full px-2.5 py-1 text-[10px] font-medium transition-all ${
+                      !colorFilter ? 'bg-gray-900 text-white' : 'border border-gray-200 text-gray-500 hover:border-gray-300'
+                    }`}>Todos</button>
+                  {allColors.slice(0, 10).map((c) => (
+                    <button key={c} onClick={() => setParam('color', c)}
+                      className={`rounded-full px-2.5 py-1 text-[10px] font-medium transition-all ${
+                        colorFilter === c ? 'bg-gray-900 text-white' : 'border border-gray-200 text-gray-500 hover:border-gray-300'
+                      }`}>{c}</button>
+                  ))}
+                </div>
+              )}
+              {allCompositions.length > 1 && (
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mr-1">Material:</span>
+                  <button onClick={() => setParam('material', '')}
+                    className={`rounded-full px-2.5 py-1 text-[10px] font-medium transition-all ${
+                      !compositionFilter ? 'bg-gray-900 text-white' : 'border border-gray-200 text-gray-500 hover:border-gray-300'
+                    }`}>Todos</button>
+                  {allCompositions.slice(0, 6).map((c) => (
+                    <button key={c} onClick={() => setParam('material', c)}
+                      className={`rounded-full px-2.5 py-1 text-[10px] font-medium transition-all ${
+                        compositionFilter === c ? 'bg-gray-900 text-white' : 'border border-gray-200 text-gray-500 hover:border-gray-300'
+                      }`}>{c}</button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </section>
 

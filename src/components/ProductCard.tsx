@@ -3,6 +3,7 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useCart } from '@/lib/store';
 import Image from 'next/image';
+import ProductViewerModal from '@/components/ProductViewerModal';
 
 const COLOR_MAP: Record<string, string> = {
   BLANCO: '#ffffff', NEGRO: '#111111', GRIS: '#888888',
@@ -54,6 +55,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [multiplier, setMultiplier] = useState(1.5);
   const [printingCost, setPrintingCost] = useState(2);
+  const [viewerOpen, setViewerOpen] = useState(false);
 
   useEffect(() => {
     fetch('/api/site-settings').then(r => r.json()).then(data => {
@@ -91,6 +93,13 @@ export default function ProductCard({ product }: ProductCardProps) {
         <span className="absolute left-3 top-3 rounded-full border border-[#ff4f00]/30 bg-[#ff4f00]/10 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-[#ff4f00]">
           {product.family || product.brand}
         </span>
+        <button onClick={() => setViewerOpen(true)}
+          className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1.5 text-xs text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80">
+          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+          </svg>
+          3D
+        </button>
       </div>
 
       <div className="p-5 space-y-4">
@@ -163,6 +172,13 @@ export default function ProductCard({ product }: ProductCardProps) {
           {isAdding ? '✓ AÑADIDO' : 'AÑADIR AL PEDIDO'}
         </button>
       </div>
+
+      <ProductViewerModal
+        open={viewerOpen}
+        onClose={() => setViewerOpen(false)}
+        productName={product.modelname}
+        fallbackImage={displayImage}
+      />
     </article>
   );
 }
