@@ -5,7 +5,7 @@
   "installCommand": "pnpm install --frozen-lockfile",
   "regions": ["iad1"],
   "env": {
-    "RATE_LIMIT_STORE_DRIVER": "memory",
+    "RATE_LIMIT_STORE_DRIVER": "redis",
     "LOG_LEVEL": "info",
     "TRUSTED_PROXY_COUNT": "2",
     "NEXT_PUBLIC_QUOTES_API_ENABLED": "true",
@@ -46,6 +46,10 @@
     {
       "path": "/api/cron/sync-gor-stock",
       "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/db-backup",
+      "schedule": "0 2 * * *"
     }
   ]
 }
