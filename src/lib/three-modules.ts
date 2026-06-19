@@ -10,6 +10,7 @@ export type ThreeModules = {
   GLTFLoader: any;
   OrbitControls: any;
   DecalGeometry: any;
+  mergeGeometries: any;
 };
 
 /** Carga Three.js desde npm. Rápido y sin CSP issues. */
@@ -22,8 +23,9 @@ export async function ensureThreeModules(): Promise<ThreeModules> {
     const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
     const { OrbitControls } = await import('three/examples/jsm/controls/OrbitControls.js');
     const { DecalGeometry } = await import('three/examples/jsm/geometries/DecalGeometry.js');
+    const { mergeGeometries } = await import('three/examples/jsm/utils/BufferGeometryUtils.js');
 
-    cache = { THREE, GLTFLoader, OrbitControls, DecalGeometry };
+    cache = { THREE, GLTFLoader, OrbitControls, DecalGeometry, mergeGeometries };
     console.log('[three] ✅ Cargado desde npm');
     return cache;
   } catch (err) {
