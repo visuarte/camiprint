@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { CardElement, PaymentRequestButtonElement, useStripe, useElements, Elements } from '@stripe/react-stripe-js';
 import { useCart } from '@/lib/store';
 import { formatEUR } from '@/lib/format';
 import { useRouter } from 'next/navigation';
-import type { StripeCardElementChangeEvent } from '@stripe/stripe-js';
+import type { StripeCardElementChangeEvent, PaymentRequest } from '@stripe/stripe-js';
 
 interface FormData {
   name: string;
@@ -58,8 +58,63 @@ export function CheckoutForm() {
     }, 10000);
     return () => clearTimeout(id);
   }, [formData.email, formData.name, items, getTotal]);
+
+  // Initialize Payment Request (Apple Pay / Google Pay)
+  useEffect(() => {
+    if (!stripe || items.length === 0) return;
+    const pr = stripe.paymentRequest({
+      country: 'ES',
+      currency: 'eur',
+      total: { label: 'CamiArt', amount: Math.round(getTotal() * 100) },
+      requestPayerName: true,
+      requestPayerEmail: true,
+      requestPayerPhone: true,
+      requestShipping: true,
+      shippingOptions: [{
+        id: 'standard',
+        label: 'Envío gratis',
+        amount: 0,
+      }],
+    });
+    pr.canMakePayment().then((result) => {
+      if (result) setCanMakePayment(true);
+    });
+    pr.on('paymentmethod', async (e: any) => {
+      try {
+        const orderRes = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: e.payerName || formData.name,
+            email: e.payerEmail || formData.email,
+            phone: e.payerPhone || formData.phone,
+            address: e.shippingAddress?.line1 || formData.address,
+            items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+            total: getTotal(),
+          }),
+        });
+        const { orderId, clientSecret } = await orderRes.json();
+        const { error: confirmError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+          payment_method: e.paymentMethod.id,
+        });
+        if (confirmError) {
+          e.complete('fail');
+          return;
+        }
+        e.complete('success');
+        clearCart();
+        setSuccess(true);
+        setTimeout(() => router.push(`/checkout/success?orderId=${orderId}`), 1500);
+      } catch {
+        e.complete('fail');
+      }
+    });
+    setPaymentRequest(pr);
+  }, [stripe, items, getTotal, formData, router, clearCart]);
   const [cardError, setCardError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [paymentRequest, setPaymentRequest] = useState<PaymentRequest | null>(null);
+  const [canMakePayment, setCanMakePayment] = useState(false);
 
   // Validar email
   const validateEmail = (email: string): boolean => {
@@ -359,6 +414,20 @@ export function CheckoutForm() {
       {/* Información de Pago */}
       <div className="rounded-[1.5rem] border border-white/10 bg-cami-900/60 p-6 shadow-glow">
         <h3 className="mb-6 font-display text-2xl text-white">Datos de pago</h3>
+
+        {canMakePayment && paymentRequest && (
+          <div className="mb-6">
+            <div className="mb-3 flex items-center gap-3">
+              <hr className="flex-1 border-white/10" />
+              <span className="text-xs font-medium uppercase tracking-wider text-white/40">Pago rápido</span>
+              <hr className="flex-1 border-white/10" />
+            </div>
+            <PaymentRequestButtonElement
+              options={{ paymentRequest }}
+              className="[&_.PaymentRequestButton]:rounded-xl"
+            />
+          </div>
+        )}
 
         <div>
           <label className="mb-2 block text-sm font-medium text-[#e2e2e2]">

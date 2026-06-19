@@ -357,6 +357,37 @@ export default function CatalogPageClient() {
                 </button>
               </div>
             )}
+            {models.length > 0 && (
+              <section className="mt-16 border-t border-gray-200 pt-12">
+                <h2 className={`${montserrat.className} text-2xl font-black text-gray-900`}>Completa el look</h2>
+                <p className="mt-2 text-sm text-gray-500">Combina con otras prendas y accesorios</p>
+                <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
+                  {models
+                    .filter((m) => m.family !== (family !== 'TODAS' ? family : undefined))
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, 6)
+                    .map((m) => (
+                      <button key={m.modelcode} onClick={() => setParam('family', m.family)}
+                        className="group cursor-pointer rounded-xl border border-gray-100 bg-white p-3 text-center transition-all hover:border-gray-200 hover:shadow-sm"
+                      >
+                        <div className="mx-auto h-24 w-24 overflow-hidden rounded-lg bg-gray-50">
+                          {m.imageUrl ? (
+                            <img src={m.imageUrl} alt={m.modelname} className="h-full w-full object-contain p-2 transition-transform group-hover:scale-105" />
+                          ) : (
+                            <div className="flex h-full items-center justify-center text-gray-300">
+                              <svg className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                        <p className="mt-2 text-xs font-semibold text-gray-800">{m.modelname}</p>
+                        <p className="text-[10px] text-gray-400">{m.family}</p>
+                      </button>
+                    ))}
+                </div>
+              </section>
+            )}
           </>
         )}
       </section>
