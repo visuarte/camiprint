@@ -80,11 +80,12 @@ export default function MockupGenerator() {
   }, [])
 
   const renderDecal = useCallback(async () => {
-    if (!modules || !sceneRef.current) return
-    const { THREE } = modules
+    if (!modules || !shirtMeshRef.current || !sceneRef.current) return
+    const { THREE, DecalGeometry } = modules
     const modelDim = modelExtentsRef.current.maxDim
 
     try {
+      // Limpiar decal anterior
       if (decalRef.current) {
         sceneRef.current.remove(decalRef.current)
         decalRef.current.geometry?.dispose()
@@ -98,6 +99,7 @@ export default function MockupGenerator() {
       const cfg = decalCfg[position]
       if (!cfg) return
 
+      // Canvas con el diseño del usuario
       const canvas = document.createElement('canvas')
       canvas.width = 512; canvas.height = 512
       const ctx = canvas.getContext('2d')
@@ -147,27 +149,27 @@ export default function MockupGenerator() {
       const material = new THREE.MeshStandardMaterial({
         map: texture,
         transparent: true,
+        depthTest: true,
         depthWrite: false,
-        side: THREE.DoubleSide,
-        alphaTest: 0.01,
         polygonOffset: true,
-        polygonOffsetFactor: -2,
+        polygonOffsetFactor: -4,
+        side: THREE.DoubleSide,
+        alphaTest: 0.05,
       })
 
+      // Usar DecalGeometry sobre el mesh de la camiseta
       const [px, py, pz] = cfg.pos
+      const [rx, ry, rz] = cfg.rot
       const s = cfg.size
-      const geo = new THREE.PlaneGeometry(s, s)
+      const posVec = new THREE.Vector3(px, py, pz)
+      const rotEuler = new THREE.Euler(rx, ry, rz)
+      const sizeVec = new THREE.Vector3(s, s, s)
+      const geo = new DecalGeometry(shirtMeshRef.current, posVec, rotEuler, sizeVec)
+
       const mesh = new THREE.Mesh(geo, material)
-      mesh.position.set(px, py, pz)
-
-      // Orientar según la posición
-      if (position === 'back') mesh.rotation.y = Math.PI
-      else if (position === 'sleeve-left') mesh.rotation.y = -Math.PI / 2
-      else if (position === 'sleeve-right') mesh.rotation.y = Math.PI / 2
-
       sceneRef.current.add(mesh)
       decalRef.current = mesh
-      console.log('[MockupGenerator] Decal renderizado en:', position, cfg.pos)
+      console.log('[MockupGenerator] DecalGeometry aplicado en:', position)
     } catch (err) {
       console.error('[MockupGenerator] Error renderizando decal:', err)
     }
