@@ -38,12 +38,38 @@ async function isAdminSession(req: NextRequest): Promise<boolean> {
   return false
 }
 
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://camiart.com,https://staging.camiart.com').split(',').map(s => s.trim()).filter(Boolean)
+
+function addCorsHeaders(response: NextResponse, origin: string): NextResponse {
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    response.headers.set('Access-Control-Allow-Origin', origin)
+    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, stripe-signature, x-gor-signature')
+  }
+  return response
+}
+
 export async function proxy(req: NextRequest) {
+  const origin = req.headers.get('origin') || ''
+
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new NextResponse(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': ALLOWED_ORIGINS.includes(origin) ? origin : '',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, stripe-signature, x-gor-signature',
+        'Access-Control-Max-Age': '86400',
+      },
+    })
+  }
+
   const sessionResponse = await updateSession(req)
   const { pathname } = req.nextUrl
 
   if (!pathname.startsWith('/admin') && !pathname.startsWith('/api/admin')) {
-    return sessionResponse
+    return addCorsHeaders(sessionResponse, origin)
   }
 
   if (pathname === '/api/admin/auth/login' || pathname === '/api/admin/auth/token-login') {
