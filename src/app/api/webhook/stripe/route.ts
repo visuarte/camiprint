@@ -4,6 +4,7 @@ import Stripe from 'stripe';
 import pino from 'pino';
 import { stripe } from '@/lib/stripe';
 import { emailService } from '@/server/emails/service';
+import { generateJobSheet } from '@/server/production/jobsheet-generator';
 
 const webhookLog = pino({ name: 'stripe-webhook', level: process.env.LOG_LEVEL || 'info' });
 
@@ -116,6 +117,16 @@ export async function POST(req: NextRequest) {
         const err = emailError as Error;
         webhookLog.error({ orderId, error: err.message }, 'Confirmation email send threw');
         // Don't throw - email is best-effort
+      }
+
+      // Auto-generate jobsheet for workshop
+      try {
+        const jobSheet = await generateJobSheet(orderId);
+        webhookLog.info({ orderId, jobSheetId: jobSheet.jobSheetId, blobUrl: jobSheet.blobUrl }, 'JobSheet generated');
+      } catch (jsError) {
+        const err = jsError as Error;
+        webhookLog.error({ orderId, error: err.message }, 'JobSheet generation failed');
+        // Don't throw - jobsheet is best-effort
       }
     }
 

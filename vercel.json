@@ -42,6 +42,10 @@
     {
       "path": "/api/cron/quotes-sla-breach",
       "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/sync-gor-stock",
+      "schedule": "0 */6 * * *"
     }
   ]
 }
