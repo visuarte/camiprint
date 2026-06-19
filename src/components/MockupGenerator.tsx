@@ -44,6 +44,7 @@ export default function MockupGenerator() {
   const rendererRef = useRef<any>(null)
   const controlsRef = useRef<any>(null)
   const modelRef = useRef<any>(null)
+  const shirtMeshRef = useRef<any>(null) // Mesh principal para proyectar el decal
   const decalRef = useRef<any>(null)
   const animFrameRef = useRef<number>(0)
   const mountedRef = useRef(true)
@@ -79,8 +80,8 @@ export default function MockupGenerator() {
   }, [])
 
   const renderDecal = useCallback(async () => {
-    if (!modules || !modelRef.current || !sceneRef.current) return
-    const { THREE, DecalGeometry } = modules
+    if (!modules || !sceneRef.current) return
+    const { THREE } = modules
     const modelDim = modelExtentsRef.current.maxDim
 
     try {
@@ -90,6 +91,8 @@ export default function MockupGenerator() {
         decalRef.current.material?.dispose()
         decalRef.current = null
       }
+
+      if (!designImage && !designText) return
 
       const decalCfg = getDecalConfig(modelDim)
       const cfg = decalCfg[position]
@@ -101,15 +104,10 @@ export default function MockupGenerator() {
       if (!ctx) return
       ctx.clearRect(0, 0, 512, 512)
 
-      // Fondo transparente con marca de agua sutil
-      ctx.fillStyle = 'rgba(255,255,255,0.05)'
-      ctx.fillRect(0, 0, 512, 512)
-
       if (designImage) {
         const img = new Image()
         await new Promise<void>((resolve, reject) => {
           img.onload = () => {
-            // Ajustar la imagen al centro con padding, manteniendo aspect ratio
             const padding = 40
             const drawSize = 512 - padding * 2
             const aspect = img.width / img.height
@@ -144,22 +142,32 @@ export default function MockupGenerator() {
 
       const texture = new THREE.CanvasTexture(canvas)
       texture.needsUpdate = true
+      texture.premultiplyAlpha = false
 
       const material = new THREE.MeshStandardMaterial({
-        map: texture, transparent: true, depthTest: true, depthWrite: false,
-        polygonOffset: true, polygonOffsetFactor: -1, side: THREE.DoubleSide,
+        map: texture,
+        transparent: true,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+        alphaTest: 0.01,
+        polygonOffset: true,
+        polygonOffsetFactor: -2,
       })
 
       const [px, py, pz] = cfg.pos
-      const [rx, ry, rz] = cfg.rot
-      const size = cfg.size
-      const posVec = new THREE.Vector3(px, py, pz)
-      const rotEuler = new THREE.Euler(rx, ry, rz)
-      const geo = new DecalGeometry(modelRef.current, posVec, rotEuler, new THREE.Vector3(size, size, size))
-
+      const s = cfg.size
+      const geo = new THREE.PlaneGeometry(s, s)
       const mesh = new THREE.Mesh(geo, material)
+      mesh.position.set(px, py, pz)
+
+      // Orientar según la posición
+      if (position === 'back') mesh.rotation.y = Math.PI
+      else if (position === 'sleeve-left') mesh.rotation.y = -Math.PI / 2
+      else if (position === 'sleeve-right') mesh.rotation.y = Math.PI / 2
+
       sceneRef.current.add(mesh)
       decalRef.current = mesh
+      console.log('[MockupGenerator] Decal renderizado en:', position, cfg.pos)
     } catch (err) {
       console.error('[MockupGenerator] Error renderizando decal:', err)
     }
@@ -214,6 +222,19 @@ export default function MockupGenerator() {
                 meshes.push(child)
               }
             })
+
+            // Usar el mesh más grande como superficie para el decal
+            let mainMesh: any = null
+            let maxArea = 0
+            for (const m of meshes) {
+              if (m.geometry) {
+                const box = new THREE.Box3().setFromObject(m)
+                const size = box.getSize(new THREE.Vector3())
+                const area = size.x * size.y
+                if (area > maxArea) { maxArea = area; mainMesh = m }
+              }
+            }
+            shirtMeshRef.current = mainMesh || model
 
             // Centrar modelo
             const box = new THREE.Box3().setFromObject(model)
