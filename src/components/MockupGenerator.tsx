@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, useCallback } from 'react'
+import ShaderViewer3D from '@/components/ShaderViewer3D'
 import type { ThreeModules } from '@/lib/three-modules'
 
 type Position = 'chest' | 'back' | 'sleeve-left' | 'sleeve-right'
@@ -73,14 +74,7 @@ export default function MockupGenerator() {
   const [shirtColor, setShirtColor] = useState('#f5f5f0')
   const [show3d, setShow3d] = useState(false)
   const [modules, setModules] = useState<ThreeModules | null>(null)
-  const modelRef = useRef<any>(null)
-  const mergedGeoRef = useRef<any>(null)
-  const sceneRef = useRef<any>(null)
-  const decalRef = useRef<any>(null)
-  const camRef = useRef<any>(null)
-  const controlsRef = useRef<any>(null)
-  const rendererRef = useRef<any>(null)
-  const animRef = useRef<number>(0)
+  const [show3d, setShow3d] = useState(false)
 
   // Redibujar preview 2D
   const redraw = useCallback(() => {
@@ -269,10 +263,15 @@ export default function MockupGenerator() {
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
       <div>
         {show3d ? (
-          <div ref={container3dRef} className="relative aspect-square overflow-hidden rounded-2xl bg-gray-50 shadow-sm lg:min-h-[500px]">
-            <canvas ref={canvas3dRef} className="h-full w-full" />
-            {!modules && <div className="absolute inset-0 flex items-center justify-center"><span className="text-sm text-gray-400">Cargando visor 3D...</span></div>}
-          </div>
+          <ShaderViewer3D
+            modules={modules}
+            designImage={designImage}
+            designText={designText}
+            fontSize={fontSize}
+            shirtColor={shirtColor}
+            position={position}
+            visible={show3d}
+          />
         ) : (
           <canvas ref={previewRef} width={500} height={500} className="w-full rounded-2xl bg-gradient-to-b from-gray-50 to-white shadow-sm" />
         )}
