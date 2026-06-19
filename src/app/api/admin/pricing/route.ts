@@ -68,6 +68,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing sku' }, { status: 422 });
     }
 
+    // Validar márgenes para evitar errores tipográficos catastróficos
+    if (marginMarkup !== undefined && (marginMarkup < 0 || marginMarkup > 2.0)) {
+      return NextResponse.json({ error: 'marginMarkup debe estar entre 0 y 2.0 (0%–200%)' }, { status: 422 });
+    }
+    if (fixedMargin !== undefined && fixedMargin < 0) {
+      return NextResponse.json({ error: 'fixedMargin no puede ser negativo' }, { status: 422 });
+    }
+    if (publicPrice !== undefined && publicPrice < 0) {
+      return NextResponse.json({ error: 'publicPrice no puede ser negativo' }, { status: 422 });
+    }
+    if (costPrice !== undefined && costPrice < 0) {
+      return NextResponse.json({ error: 'costPrice no puede ser negativo' }, { status: 422 });
+    }
+    if (printingCost !== undefined && printingCost < 0) {
+      return NextResponse.json({ error: 'printingCost no puede ser negativo' }, { status: 422 });
+    }
+
     const data: any = {};
     if (costPrice !== undefined) data.costPrice = costPrice;
     if (printingCost !== undefined) data.printingCost = printingCost;

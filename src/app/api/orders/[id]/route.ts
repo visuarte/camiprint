@@ -1,42 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/server/db';
-import { createErrorResponse } from '@/lib/error-handler';
+import { verifyAdminToken } from '@/app/api/admin/auth-utils';
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params;
+    if (!(await verifyAdminToken(req))) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
+    const { id } = await params;
     if (!id) {
-      return NextResponse.json(
-        {
-          error: 'Order ID is required',
-        },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Order ID is required' }, { status: 400 });
     }
 
     const order = await prisma.order.findUnique({
       where: { id },
-      include: {
-        items: {
-          include: {
-            product: true,
-          },
-        },
-        customer: true,
-      },
+      include: { items: { include: { product: true } }, customer: true },
     });
 
     if (!order) {
-      return NextResponse.json(
-        {
-          error: 'Order not found',
-        },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Order not found' }, { status: 404 });
     }
 
     return NextResponse.json({
@@ -47,13 +33,15 @@ export async function GET(
       address: order.address,
       totalAmount: order.totalAmount,
       status: order.status,
+      productionSource: order.productionSource,
+      gorOrderRef: order.gorOrderRef,
+      trackingNumber: order.trackingNumber,
+      trackingCarrier: order.trackingCarrier,
       items: order.items,
-      stripePaymentIntentId: order.stripePaymentIntentId,
       createdAt: order.createdAt,
       updatedAt: order.updatedAt,
     });
   } catch (error) {
-    const errorResponse = createErrorResponse(error);
-    return NextResponse.json(errorResponse.body, { status: errorResponse.status });
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 });
   }
 }

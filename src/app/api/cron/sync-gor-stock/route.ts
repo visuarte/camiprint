@@ -18,9 +18,8 @@ export async function GET(request: Request) {
       m.createGorFactory()
     );
 
-    const syncEngine = await import('@/server/integrations/gor-factory/sync-engine').then(
-      (m) => new m.GorSyncEngine(gorFactory)
-    );
+    const { GorSyncEngine } = await import('@/server/integrations/gor-factory/sync-engine')
+    const syncEngine = new GorSyncEngine();
 
     const result = await syncEngine.syncAll('01');
 

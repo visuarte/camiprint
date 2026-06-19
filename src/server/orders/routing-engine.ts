@@ -37,59 +37,52 @@ export interface RoutingDecision {
 
 export function decideRouting(items: OrderItemInput[]): RoutingDecision {
   const totalQuantity = items.reduce((sum, i) => sum + i.quantity, 0)
-  const hasGorTechnique = items.some((i) =>
+
+  // Separate items by technique
+  const gorItems = items.filter((i) =>
     i.technique && GOR_TECHNIQUES.includes(i.technique.toUpperCase())
   )
-  const hasLocalTechnique = items.every((i) =>
+  const localItems = items.filter((i) =>
     !i.technique || LOCAL_TECHNIQUES.includes(i.technique.toUpperCase())
   )
 
-  // All items have Gor techniques → full outsourced
-  if (hasGorTechnique && totalQuantity > 0) {
-    return {
-      source: 'gor_factory',
-      reason: `Técnica requiere producción industrial (${items.filter(i => i.technique && GOR_TECHNIQUES.includes(i.technique.toUpperCase())).map(i => i.technique).join(', ')})`,
-      localItems: [],
-      gorItems: items,
-      totalQuantity,
+  // If everything has no technique or local technique, check volume
+  if (gorItems.length === 0) {
+    if (totalQuantity >= LOCAL_THRESHOLD) {
+      return {
+        source: 'gor_factory',
+        reason: `Volumen alto (${totalQuantity} uds ≥ ${LOCAL_THRESHOLD} umbral) — deriva a producción industrial`,
+        localItems: [],
+        gorItems: items,
+        totalQuantity,
+      }
     }
-  }
-
-  // Total quantity exceeds threshold → outsourced
-  if (totalQuantity >= LOCAL_THRESHOLD) {
-    return {
-      source: 'gor_factory',
-      reason: `Volumen alto (${totalQuantity} uds ≥ ${LOCAL_THRESHOLD} umbral) — deriva a producción industrial`,
-      localItems: [],
-      gorItems: items,
-      totalQuantity,
-    }
-  }
-
-  // All items are local techniques → keep in-house
-  if (hasLocalTechnique || !items.some((i) => i.technique)) {
     return {
       source: 'local',
-      reason: `Volumen bajo (${totalQuantity} uds) con técnica DTF/Vinilo — producción en taller propio`,
+      reason: `Volumen bajo (${totalQuantity} uds) — producción en taller propio`,
       localItems: items,
       gorItems: [],
       totalQuantity,
     }
   }
 
-  // Mixed: separate items
-  const localItems = items.filter((i) =>
-    !i.technique || LOCAL_TECHNIQUES.includes(i.technique.toUpperCase())
-  )
-  const gorItems = items.filter((i) =>
-    i.technique && GOR_TECHNIQUES.includes(i.technique.toUpperCase())
-  )
+  // Mixed: some items need industrial, others can be local
+  if (localItems.length > 0) {
+    return {
+      source: 'hybrid',
+      reason: `Producción dividida: ${localItems.length} ítems en taller, ${gorItems.length} ítems a fábrica`,
+      localItems,
+      gorItems,
+      totalQuantity,
+    }
+  }
 
+  // All items need industrial production
   return {
-    source: 'hybrid',
-    reason: `Producción dividida: ${localItems.length} ítems en taller, ${gorItems.length} ítems a fábrica`,
-    localItems,
-    gorItems,
+    source: 'gor_factory',
+    reason: `Técnica requiere producción industrial (${gorItems.map(i => i.technique).join(', ')})`,
+    localItems: [],
+    gorItems: items,
     totalQuantity,
   }
 }
@@ -100,50 +93,63 @@ export async function sendToGorFactory(
   customer: CustomerInfo,
   designUrls: string[]
 ): Promise<string | null> {
-  try {
-    const gor = createGorFactory()
+  let lastError: string | null = null
 
-    // Fetch catalog to get GOR itemcodes
-    const catalog = await gor.catalog.getCatalog('roly')
-    const itemcodeMap = new Map<string, string>()
-    for (const item of items) {
-      const match = catalog.find((m: any) =>
-        m.items?.some((i: any) => i.itemcode === item.productId || i.description?.includes(item.productId))
-      )
-      if (match) {
-        const firstItem = match.items?.[0]
-        if (firstItem) itemcodeMap.set(item.productId, firstItem.itemcode)
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const gor = createGorFactory()
+      const catalogResult = await gor.catalog.getCatalog('roly')
+      const catalog = catalogResult.success && catalogResult.data ? catalogResult.data : []
+      const itemcodeMap = new Map<string, string>()
+      for (const item of items) {
+        const match = (catalog as any[]).find((m: any) =>
+          m.items?.some((i: any) => i.itemcode === item.productId || i.description?.includes(item.productId))
+        )
+        if (match) {
+          const firstItem = match.items?.[0]
+          if (firstItem) itemcodeMap.set(item.productId, firstItem.itemcode)
+        }
+      }
+
+      const payload: GorOrderPayload = {
+        deliveryaddress: {
+          addressname: customer.name,
+          address: customer.address,
+          city: customer.city || 'Madrid',
+          postcode: customer.postcode || '28001',
+          state: customer.state || 'Madrid',
+          country: customer.country || 'ES',
+        },
+        reference: orderId,
+        comments: `Pedido ${orderId} - ${items.length} líneas. Diseños: ${designUrls.join(', ') || 'N/A'}`,
+        lines: items.map((item) => ({
+          itemcode: itemcodeMap.get(item.productId) || item.productId,
+          quantity: String(item.quantity),
+          warehouse: '01',
+        })),
+      }
+
+      const result = await gor.orders.createOrder(payload)
+      if (result.success && result.data?.orderNumber) {
+        return result.data.orderNumber
+      }
+      lastError = result.error || 'GOR API returned unsuccessful'
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : String(error)
+      if (attempt < 3) {
+        await new Promise((r) => setTimeout(r, 1000 * attempt))
       }
     }
-
-    const payload: GorOrderPayload = {
-      deliveryaddress: {
-        addressname: customer.name,
-        address: customer.address,
-        city: customer.city || 'Madrid',
-        postcode: customer.postcode || '28001',
-        state: customer.state || 'Madrid',
-        country: customer.country || 'ES',
-      },
-      reference: orderId,
-      comments: `Pedido ${orderId} - ${items.length} líneas. Diseños: ${designUrls.join(', ') || 'N/A'}`,
-      lines: items.map((item) => ({
-        itemcode: itemcodeMap.get(item.productId) || item.productId,
-        quantity: String(item.quantity),
-        warehouse: '01',
-      })),
-    }
-
-    const result = await gor.orders.createOrder(payload)
-
-    if (result.success && result.data?.orderNumber) {
-      return result.data.orderNumber
-    }
-    return null
-  } catch (error) {
-    console.error('[HybridRouter] Error sending to Gor Factory:', error)
-    return null
   }
+
+  // All attempts failed — mark order for manual review
+  await prisma.order.update({
+    where: { id: orderId },
+    data: { status: 'production_error' },
+  }).catch(() => {})
+
+  console.error(`[HybridRouter] Failed to send order ${orderId} to Gor Factory after 3 attempts: ${lastError}`)
+  return null
 }
 
 export async function createProductionOrderAndTicket(
@@ -169,14 +175,9 @@ export async function createProductionOrderAndTicket(
     },
   })
 
-  // Create job ticket for the workshop
+  // Create job ticket for the workshop will be done from the admin dashboard
   if (source === 'local') {
-    const { createJobTicket } = await import('@/engine/production/ticket-factory')
-    await createJobTicket({
-      productionOrderId: po.id,
-      department: 'PRINTING',
-      payload: { orderId, autoGenerated: true },
-    })
+    // ProductionOrder already created above — ticket creation is manual from /admin/production
   }
 }
 

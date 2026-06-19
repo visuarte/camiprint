@@ -120,6 +120,7 @@ model Order {
 
   customer      Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
   items         OrderItem[]
+  productionOrders ProductionOrder[] @relation("OrderProduction")
 
   @@index([customerId])
   @@index([status])
@@ -147,9 +148,11 @@ model OrderItem {
 // Production engine models
 model ProductionOrder {
   id              String    @id @default(cuid())
+  orderId         String?                    // relación con Order (nuevo)
   quoteId         String?   // referencia a la cotización original
   externalId      String?   @db.VarChar(255) // e.g., quote or order reference
   customerId      String?   @db.VarChar(255)
+  order           Order?    @relation("OrderProduction", fields: [orderId], references: [id])
   status          String    @default("pending_review") // pending_review, approved, in_production, completed, shipped
   priority        Int       @default(0)
   // Revisión técnica

@@ -25,9 +25,11 @@ const BRAND_SANITIZE: Record<string, string> = {
 }
 
 const NAME_SANITIZE_PATTERNS = [
-  { from: /\bRoly\s+(\w+)\b/gi, to: 'Camiart $1' },
-  { from: /\bAtomic\s+(\w+)/gi, to: 'Premium $1' },
-  { from: /\bGor\b/gi, to: 'Camiart' },
+  { from: /\bRoly\b\s*/gi, to: 'Camiart ' },
+  { from: /\bAtomic\b\s*/gi, to: 'Premium ' },
+  { from: /\bGor\s+Factory\b/gi, to: 'Camiart' },
+  { from: /\bStampia\b/gi, to: 'Camiart Print' },
+  { from: /\bstampia\b/gi, to: 'Camiart Print' },
 ]
 
 export function sanitizeBrandName(name: string): string {
@@ -48,11 +50,18 @@ export function sanitizeBrandField(value: string): string {
 export function sanitizeCatalogItem(item: any): any {
   const sanitized = { ...item }
   if (sanitized.modelname) sanitized.modelname = sanitizeBrandName(sanitized.modelname)
-  if (sanitized.modelname) sanitized.modelname = sanitizeBrandName(sanitized.modelname)
   if (sanitized.description) sanitized.description = sanitizeBrandName(sanitized.description)
   if (sanitized.brand) sanitized.brand = 'camiart'
   if (sanitized.composition) sanitized.composition = sanitized.composition
   if (sanitized.family) sanitized.family = sanitizeBrandName(sanitized.family)
+  // Sanitize categories field (GOR API returns comma-separated categories)
+  if (sanitized.categories) {
+    sanitized.categories = sanitized.categories
+      .split(',')
+      .map((c: string) => sanitizeBrandName(c.trim()))
+      .filter(Boolean)
+      .join(',')
+  }
   return sanitized
 }
 
