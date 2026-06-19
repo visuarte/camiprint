@@ -45,7 +45,7 @@
     },
     {
       "path": "/api/cron/sync-gor-stock",
-      "schedule": "0 */6 * * *"
+      "schedule": "0 5 * * *"
     },
     {
       "path": "/api/cron/db-backup",
