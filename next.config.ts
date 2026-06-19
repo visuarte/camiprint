@@ -62,11 +62,6 @@ const nextConfig: NextConfig = {
         destination: 'https://camiart.com/:path*',
         permanent: true,
       },
-      {
-        source: '/',
-        destination: '/template-2',
-        permanent: false,
-      },
       // Rutas legacy → actuales (permanentes, se ejecutan en el borde)
       {
         source: '/legacy-catalog',
