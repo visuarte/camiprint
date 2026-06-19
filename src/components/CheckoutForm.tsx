@@ -74,6 +74,7 @@ export function CheckoutForm() {
         id: 'standard',
         label: 'Envío gratis',
         amount: 0,
+        detail: '3-7 días laborables',
       }],
     });
     pr.canMakePayment().then((result) => {

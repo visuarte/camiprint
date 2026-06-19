@@ -120,9 +120,10 @@ export async function generateJobSheet(orderId: string): Promise<JobSheetResult>
   // Try to enrich with GOR catalog data
   try {
     const gor = createGorFactory()
-    const catalog = await gor.catalog.getCatalog('roly')
+    const catalogResult = await gor.catalog.getCatalog('roly')
+    const catalog = catalogResult.success && catalogResult.data ? catalogResult.data : []
     lines.forEach((line) => {
-      const match = catalog.find((m: any) =>
+      const match = (catalog as any[]).find((m: any) =>
         m.items?.some((i: any) => i.itemcode === line.productSku || i.description === line.productName)
       )
       if (match) {
@@ -186,7 +187,7 @@ export async function generateJobSheet(orderId: string): Promise<JobSheetResult>
   const zipPath = join(tmpdir(), `${jobSheetId}.zip`)
   await new Promise<void>((resolve, reject) => {
     const output = require('fs').createWriteStream(zipPath)
-    const archive = archiver('zip', { zlib: { level: 9 } })
+    const archive = (archiver as any)('zip', { zlib: { level: 9 } })
     archive.on('error', reject)
     archive.pipe(output)
     archive.directory(tmpDir, false)

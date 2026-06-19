@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
           items: true,
           customer: true,
           productionOrders: {
-            include: { designAssets: true },
+            include: { assets: true },
             take: 1,
           },
         },
@@ -94,22 +94,22 @@ export async function GET(req: NextRequest) {
       prisma.order.count({ where }),
     ]);
 
-    const items: ProductionOrderItem[] = orders.map((order) => {
-      const po = (order as any).productionOrders?.[0];
-      const designAsset = po?.designAssets?.[0];
+    const items: ProductionOrderItem[] = (orders as any[]).map((order: any) => {
+      const po = order.productionOrders?.[0];
+      const designAsset = po?.assets?.[0];
 
       const unifiedStatus = mapToUnifiedStatus(order);
-      const totalQty = order.items.reduce((sum, i) => sum + i.quantity, 0);
+      const totalQty = order.items.reduce((sum: number, i: any) => sum + i.quantity, 0);
 
       return {
         id: order.id,
         orderId: order.id.slice(0, 8).toUpperCase(),
-        customerName: (order as any).customer?.name || order.email?.split('@')[0] || '-',
+        customerName: order.customer?.name || order.email?.split('@')[0] || '-',
         email: order.email,
         phone: order.phone,
         address: order.address,
         totalAmount: order.totalAmount,
-        productionSource: (order.productionSource as any) || 'local',
+        productionSource: order.productionSource || 'local',
         status: unifiedStatus,
         originalStatus: order.status,
         itemsCount: order.items.length,

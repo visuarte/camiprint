@@ -64,19 +64,19 @@ export async function POST(req: NextRequest) {
       // Fetch full order data including items and customer
       const orderData = await prisma.order.findUnique({
         where: { id: orderId },
-        include: {
-          items: {
-            include: {
-              product: true,
-            },
-          },
-          customer: true,
-        },
+        include: { items: { include: { product: true } }, customer: true },
       });
 
       if (!orderData) {
         webhookLog.warn({ orderId }, 'Order not found for payment');
         return NextResponse.json({ ok: true, id: event.id });
+      }
+
+      // Verify amount matches — evitar fraude por metadata manipulation
+      const expectedAmount = Math.round(orderData.totalAmount * 100);
+      if (paymentIntent.amount_received !== expectedAmount) {
+        webhookLog.error({ orderId, expected: expectedAmount, received: paymentIntent.amount_received }, 'PaymentIntent amount mismatch — possible fraud');
+        return NextResponse.json({ ok: false, error: 'Amount mismatch' }, { status: 400 });
       }
 
       await prisma.order.update({
