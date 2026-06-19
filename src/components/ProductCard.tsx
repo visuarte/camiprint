@@ -4,7 +4,8 @@ import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useCart } from '@/lib/store';
 import Image from 'next/image';
 import ProductViewerModal from '@/components/ProductViewerModal'
-import ProductVideo from '@/components/ProductVideo';
+import ProductVideo from '@/components/ProductVideo'
+import BackInStock from '@/components/BackInStock';
 
 const COLOR_MAP: Record<string, string> = {
   BLANCO: '#ffffff', NEGRO: '#111111', GRIS: '#888888',
@@ -177,6 +178,15 @@ export default function ProductCard({ product }: ProductCardProps) {
           className="w-full bg-[#ff4f00] py-3 text-sm font-bold text-[#0A0A0A] transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50">
           {isAdding ? '✓ AÑADIDO' : 'AÑADIR AL PEDIDO'}
         </button>
+
+        <details className="group cursor-pointer">
+          <summary className="text-[11px] font-medium text-[#e2e2e2]/40 transition hover:text-[#e2e2e2]/60">
+            ¿No está disponible? <span className="underline">Avísame</span>
+          </summary>
+          <div className="mt-3">
+            <BackInStock productId={product.modelcode} productName={product.modelname} />
+          </div>
+        </details>
       </div>
 
       <ProductViewerModal
