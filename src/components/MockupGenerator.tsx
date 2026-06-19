@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef, useState, useCallback } from 'react'
-import type { ThreeModules } from '@/lib/three-modules'
 
 type Position = 'chest' | 'back' | 'sleeve-left' | 'sleeve-right'
 
@@ -21,337 +20,203 @@ const SHIRT_COLORS = [
   { name: 'Verde', hex: '#2d7d46' },
 ]
 
-function checkWebGL(): boolean {
-  try { const c = document.createElement('canvas'); return !!(c.getContext('webgl') || c.getContext('webgl2')) }
-  catch { return false }
+// Coordenadas de la silueta de la camiseta (normalizadas 0-1)
+const SHIRT_POLYGON: [number, number][] = [
+  [0.35, 0.02], [0.65, 0.02], [0.92, 0.10], [0.85, 0.30],
+  [0.88, 0.70], [0.90, 0.95], [0.10, 0.95], [0.12, 0.70],
+  [0.15, 0.30], [0.08, 0.10],
+]
+
+const CUFF_POLYGON: [number, number][] = [
+  [0.42, 0.04], [0.50, 0.12], [0.58, 0.04],
+]
+
+// Zonas de estampado por posición (normalizadas 0-1)
+const STAMP_ZONES: Record<Position, { x: number; y: number; w: number; h: number }> = {
+  chest: { x: 0.20, y: 0.22, w: 0.60, h: 0.38 },
+  back: { x: 0.20, y: 0.22, w: 0.60, h: 0.38 },
+  'sleeve-left': { x: 0.03, y: 0.18, w: 0.12, h: 0.20 },
+  'sleeve-right': { x: 0.85, y: 0.18, w: 0.12, h: 0.20 },
+}
+
+function drawShirtPreview(
+  canvas: HTMLCanvasElement,
+  shirtColor: string,
+  designImage: string | null,
+  designText: string,
+  fontSize: number,
+  position: Position,
+) {
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return
+
+  const W = canvas.width
+  const H = canvas.height
+  ctx.clearRect(0, 0, W, H)
+
+  const toPx = (x: number, y: number) => [x * W, y * H] as const
+
+  // Dibujar silueta de la camiseta
+  ctx.beginPath()
+  const [sx, sy] = toPx(SHIRT_POLYGON[0][0], SHIRT_POLYGON[0][1])
+  ctx.moveTo(sx, sy)
+  for (let i = 1; i < SHIRT_POLYGON.length; i++) {
+    const [px, py] = toPx(SHIRT_POLYGON[i][0], SHIRT_POLYGON[i][1])
+    ctx.lineTo(px, py)
+  }
+  ctx.closePath()
+  ctx.fillStyle = shirtColor
+  ctx.fill()
+  ctx.strokeStyle = 'rgba(150,150,150,0.4)'
+  ctx.lineWidth = 1.5
+  ctx.stroke()
+
+  // Cuello
+  ctx.beginPath()
+  const [cx1, cy1] = toPx(CUFF_POLYGON[0][0], CUFF_POLYGON[0][1])
+  const [cx2, cy2] = toPx(CUFF_POLYGON[1][0], CUFF_POLYGON[1][1])
+  const [cx3, cy3] = toPx(CUFF_POLYGON[2][0], CUFF_POLYGON[2][1])
+  ctx.moveTo(cx1, cy1)
+  ctx.lineTo(cx2, cy2)
+  ctx.lineTo(cx3, cy3)
+  ctx.closePath()
+  ctx.fillStyle = shirtColor
+  ctx.fill()
+  ctx.strokeStyle = 'rgba(150,150,150,0.4)'
+  ctx.lineWidth = 1.5
+  ctx.stroke()
+
+  // Zona de estampado
+  const zone = STAMP_ZONES[position]
+  const zx = zone.x * W, zy = zone.y * H, zw = zone.w * W, zh = zone.h * H
+
+  // Si hay diseño, dibujarlo dentro de la zona
+  if (designImage) {
+    const img = new Image()
+    img.onload = () => {
+      const aspect = img.width / img.height
+      let dw = zw * 0.9, dh = zh * 0.9
+      if (aspect > 1) dh = dw / aspect
+      else dw = dh * aspect
+      const dx = zx + (zw - dw) / 2
+      const dy = zy + (zh - dh) / 2
+      ctx.save()
+      ctx.beginPath()
+      ctx.rect(zx, zy, zw, zh)
+      ctx.clip()
+      ctx.drawImage(img, dx, dy, dw, dh)
+      ctx.restore()
+    }
+    img.src = designImage
+  }
+
+  // Texto
+  if (designText) {
+    ctx.save()
+    ctx.beginPath()
+    ctx.rect(zx, zy, zw, zh)
+    ctx.clip()
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillStyle = '#000000'
+    const maxWidth = zw * 0.85
+    const words = designText.split(' ')
+    const lines: string[] = []
+    let currentLine = ''
+    ctx.font = `bold ${fontSize}px Arial, sans-serif`
+    for (const word of words) {
+      const test = currentLine + word + ' '
+      if (ctx.measureText(test).width > maxWidth) {
+        lines.push(currentLine.trim())
+        currentLine = word + ' '
+      } else {
+        currentLine = test
+      }
+    }
+    lines.push(currentLine.trim())
+    const lh = fontSize * 1.3
+    const sy2 = zy + zh / 2 - ((lines.length - 1) * lh) / 2
+    lines.forEach((line, i) => ctx.fillText(line, zx + zw / 2, sy2 + i * lh))
+    ctx.restore()
+  }
+
+  // Borde de zona (sutil)
+  ctx.strokeStyle = 'rgba(200,100,50,0.3)'
+  ctx.lineWidth = 1
+  ctx.setLineDash([4, 4])
+  ctx.strokeRect(zx, zy, zw, zh)
+  ctx.setLineDash([])
+
+  // Etiqueta de posición
+  ctx.fillStyle = 'rgba(150,150,150,0.5)'
+  ctx.font = '11px Arial, sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText(POSITION_LABELS[position], W / 2, H - 10)
 }
 
 export default function MockupGenerator() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const previewRef = useRef<HTMLCanvasElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [modules, setModules] = useState<ThreeModules | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [webglError, setWebglError] = useState(false)
   const [designImage, setDesignImage] = useState<string | null>(null)
   const [designText, setDesignText] = useState('')
   const [fontSize, setFontSize] = useState(24)
   const [position, setPosition] = useState<Position>('chest')
   const [shirtColor, setShirtColor] = useState('#f5f5f0')
-  const sceneRef = useRef<any>(null)
-  const cameraRef = useRef<any>(null)
-  const rendererRef = useRef<any>(null)
-  const controlsRef = useRef<any>(null)
-  const modelRef = useRef<any>(null)
-  const shirtMeshRef = useRef<any>(null) // Mesh principal para proyectar el decal
-  const decalRef = useRef<any>(null)
-  const animFrameRef = useRef<number>(0)
-  const mountedRef = useRef(true)
-  const modelExtentsRef = useRef<{ maxDim: number }>({ maxDim: 2 })
 
-  useEffect(() => {
-    if (!checkWebGL()) { setWebglError(true); setLoading(false); console.warn('[MockupGenerator] WebGL no disponible') }
-  }, [])
-
-  useEffect(() => {
-    let cancelled = false
-    import('@/lib/three-modules').then(async (mod) => {
-      try {
-        const loaded = await mod.ensureThreeModules()
-        if (!cancelled) setModules(loaded)
-      } catch (err) {
-        console.error('[MockupGenerator] Error cargando Three.js:', err)
-        if (!cancelled) { setError('Error al cargar el motor 3D'); setLoading(false) }
-      }
-    })
-    return () => { cancelled = true; mountedRef.current = false }
-  }, [])
-
-  const getDecalConfig = useCallback((modelDim: number) => {
-    // Las posiciones son relativas al tamaño del modelo
-    const s = modelDim // escala de referencia
-    return {
-      chest: { pos: [0, s * 0.04, s * 0.08], rot: [0, 0, 0], size: s * 0.18 },
-      back: { pos: [0, s * 0.04, -s * 0.08], rot: [0, Math.PI, 0], size: s * 0.18 },
-      'sleeve-left': { pos: [-s * 0.09, s * 0.05, 0], rot: [0, -Math.PI / 2, 0], size: s * 0.1 },
-      'sleeve-right': { pos: [s * 0.09, s * 0.05, 0], rot: [0, Math.PI / 2, 0], size: s * 0.1 },
+  const redraw = useCallback(() => {
+    if (previewRef.current) {
+      drawShirtPreview(previewRef.current, shirtColor, designImage, designText, fontSize, position)
     }
-  }, [])
+  }, [shirtColor, designImage, designText, fontSize, position])
 
-  const renderDecal = useCallback(async () => {
-    if (!modules || !shirtMeshRef.current || !sceneRef.current) return
-    const { THREE, DecalGeometry } = modules
-    const modelDim = modelExtentsRef.current.maxDim
+  useEffect(() => { redraw() }, [redraw])
 
-    try {
-      // Limpiar decal anterior
-      if (decalRef.current) {
-        sceneRef.current.remove(decalRef.current)
-        decalRef.current.geometry?.dispose()
-        decalRef.current.material?.dispose()
-        decalRef.current = null
-      }
-
-      if (!designImage && !designText) return
-
-      const decalCfg = getDecalConfig(modelDim)
-      const cfg = decalCfg[position]
-      if (!cfg) return
-
-      // Canvas con el diseño del usuario
-      const canvas = document.createElement('canvas')
-      canvas.width = 512; canvas.height = 512
-      const ctx = canvas.getContext('2d')
-      if (!ctx) return
-      ctx.clearRect(0, 0, 512, 512)
-
-      if (designImage) {
-        const img = new Image()
-        await new Promise<void>((resolve, reject) => {
-          img.onload = () => {
-            const padding = 40
-            const drawSize = 512 - padding * 2
-            const aspect = img.width / img.height
-            let dw = drawSize, dh = drawSize
-            if (aspect > 1) { dh = drawSize / aspect } else { dw = drawSize * aspect }
-            const dx = (512 - dw) / 2, dy = (512 - dh) / 2
-            ctx.drawImage(img, 0, 0, img.width, img.height, dx, dy, dw, dh)
-            resolve()
-          }
-          img.onerror = reject
-          img.src = designImage
-        })
-      }
-
-      if (designText) {
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
-        ctx.fillStyle = '#000000'
-        ctx.font = `bold ${fontSize}px Arial, sans-serif`
-        const words = designText.split(' ')
-        const lines: string[] = []
-        let currentLine = ''
-        for (const word of words) {
-          const test = currentLine + word + ' '
-          if (ctx.measureText(test).width > 380) { lines.push(currentLine.trim()); currentLine = word + ' ' }
-          else { currentLine = test }
-        }
-        lines.push(currentLine.trim())
-        const lh = fontSize * 1.2
-        const sy = 256 - ((lines.length - 1) * lh) / 2
-        lines.forEach((line, i) => ctx.fillText(line, 256, sy + i * lh))
-      }
-
-      const texture = new THREE.CanvasTexture(canvas)
-      texture.needsUpdate = true
-      texture.premultiplyAlpha = false
-
-      const material = new THREE.MeshStandardMaterial({
-        map: texture,
-        transparent: true,
-        depthTest: true,
-        depthWrite: false,
-        polygonOffset: true,
-        polygonOffsetFactor: -4,
-        side: THREE.DoubleSide,
-        alphaTest: 0.05,
-      })
-
-      // Usar DecalGeometry sobre el mesh de la camiseta
-      const [px, py, pz] = cfg.pos
-      const [rx, ry, rz] = cfg.rot
-      const s = cfg.size
-      const posVec = new THREE.Vector3(px, py, pz)
-      const rotEuler = new THREE.Euler(rx, ry, rz)
-      const sizeVec = new THREE.Vector3(s, s, s)
-      const geo = new DecalGeometry(shirtMeshRef.current, posVec, rotEuler, sizeVec)
-
-      const mesh = new THREE.Mesh(geo, material)
-      sceneRef.current.add(mesh)
-      decalRef.current = mesh
-      console.log('[MockupGenerator] DecalGeometry aplicado en:', position)
-    } catch (err) {
-      console.error('[MockupGenerator] Error renderizando decal:', err)
+  // Redibujar cuando se cargue la imagen (el onload es async)
+  useEffect(() => {
+    if (designImage) {
+      const img = new Image()
+      img.onload = () => redraw()
+      img.src = designImage
     }
-  }, [modules, designImage, designText, fontSize, position, getDecalConfig])
-
-  useEffect(() => {
-    if (!modules || !containerRef.current || webglError) return
-    const { THREE, GLTFLoader, OrbitControls } = modules
-
-    try {
-      const scene = new THREE.Scene()
-      sceneRef.current = scene
-      const container = containerRef.current
-      const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.01, 1000)
-      cameraRef.current = camera
-
-      if (!canvasRef.current) { setError('Error de inicialización'); setLoading(false); return }
-
-      const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current, alpha: true, antialias: true, powerPreference: 'low-power' })
-      renderer.setSize(container.clientWidth, container.clientHeight)
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-      renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.2
-      rendererRef.current = renderer
-
-      const controls = new OrbitControls(camera, renderer.domElement)
-      controls.enableDamping = true; controls.dampingFactor = 0.08
-      controls.autoRotate = true; controls.autoRotateSpeed = 2
-      controlsRef.current = controls
-
-      scene.add(new THREE.AmbientLight(0xffffff, 0.6))
-      const key = new THREE.DirectionalLight(0xffffff, 1.5); key.position.set(3, 4, 5); scene.add(key)
-      const fill = new THREE.DirectionalLight(0xffffff, 0.5); fill.position.set(-3, 2, -4); scene.add(fill)
-      const rim = new THREE.DirectionalLight(0xffffff, 0.8); rim.position.set(0, -2, 4); scene.add(rim)
-
-      const loader = new GLTFLoader()
-      let timedOut = false
-      const timeoutId = setTimeout(() => { timedOut = true; setError('Timeout cargando modelo'); setLoading(false) }, 30000)
-
-      loader.load('/models/camiseta-camiart.glb',
-        (gltf: any) => {
-          clearTimeout(timeoutId)
-          if (timedOut || !mountedRef.current) return
-          try {
-            const model = gltf.scene
-
-            // NO escalar el modelo — mantener su escala original
-            // Guardar las mallas para poder cambiar color después
-            const meshes: any[] = []
-            model.traverse((child: any) => {
-              if (child.isMesh) {
-                child.castShadow = true; child.receiveShadow = true
-                meshes.push(child)
-              }
-            })
-
-            // Usar el mesh más grande como superficie para el decal
-            let mainMesh: any = null
-            let maxArea = 0
-            for (const m of meshes) {
-              if (m.geometry) {
-                const box = new THREE.Box3().setFromObject(m)
-                const size = box.getSize(new THREE.Vector3())
-                const area = size.x * size.y
-                if (area > maxArea) { maxArea = area; mainMesh = m }
-              }
-            }
-            shirtMeshRef.current = mainMesh || model
-
-            // Centrar modelo
-            const box = new THREE.Box3().setFromObject(model)
-            const size = box.getSize(new THREE.Vector3())
-            const maxDim = Math.max(size.x, size.y, size.z)
-            modelExtentsRef.current = { maxDim }
-
-            // Posicionar cámara según tamaño del modelo
-            const camDist = maxDim * 1.8
-            camera.position.set(0, maxDim * 0.3, camDist)
-            controls.target.set(0, maxDim * 0.15, 0)
-            controls.minDistance = maxDim * 0.5
-            controls.maxDistance = maxDim * 4
-            controls.update()
-
-            const center = box.getCenter(new THREE.Vector3())
-            model.position.sub(center)
-
-            modelRef.current = model
-            scene.add(model)
-            setLoading(false)
-            console.log('[MockupGenerator] Modelo cargado. Dim:', maxDim.toFixed(2), 'Cámara:', camDist.toFixed(2))
-          } catch (err) {
-            console.error('[MockupGenerator] Error:', err); setError('Error procesando modelo'); setLoading(false)
-          }
-        },
-        undefined,
-        (err: any) => {
-          clearTimeout(timeoutId); setError('No se pudo cargar el modelo 3D'); setLoading(false)
-          console.error('[MockupGenerator] Error carga:', err?.message || err)
-        }
-      )
-
-      const animate = () => {
-        if (!mountedRef.current) return
-        animFrameRef.current = requestAnimationFrame(animate)
-        controls.update(); renderer.render(scene, camera)
-      }
-      animate()
-
-      const handleResize = () => {
-        if (!containerRef.current || !cameraRef.current || !rendererRef.current) return
-        const w = containerRef.current.clientWidth, h = containerRef.current.clientHeight
-        camera.aspect = w / h; camera.updateProjectionMatrix(); renderer.setSize(w, h)
-      }
-      window.addEventListener('resize', handleResize)
-
-      return () => {
-        clearTimeout(timeoutId); window.removeEventListener('resize', handleResize)
-        cancelAnimationFrame(animFrameRef.current); try { renderer.dispose() } catch {}
-      }
-    } catch (err) {
-      console.error('[MockupGenerator] Error init:', err); setError('Error al inicializar'); setLoading(false)
-    }
-  }, [modules, webglError])
-
-  useEffect(() => {
-    if (!loading && !error && !webglError) renderDecal()
-  }, [renderDecal, loading, error, webglError])
-
-  useEffect(() => {
-    // Cambiar color de la camiseta — busca el material principal y cambia su color
-    if (!modelRef.current || !modules) return
-    modelRef.current.traverse((child: any) => {
-      if (child.isMesh && child.material) {
-        if (Array.isArray(child.material)) {
-          child.material.forEach((m: any) => { if (m.color) m.color.set(shirtColor) })
-        } else {
-          if (child.material.color) child.material.color.set(shirtColor)
-        }
-      }
-    })
-  }, [shirtColor, modules])
+  }, [designImage, redraw])
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file) { const r = new FileReader(); r.onload = () => setDesignImage(r.result as string); r.readAsDataURL(file) }
+    if (file) {
+      const r = new FileReader()
+      r.onload = () => setDesignImage(r.result as string)
+      r.readAsDataURL(file)
+    }
   }
 
   const handleDownload = () => {
-    if (!canvasRef.current) return
-    const link = document.createElement('a'); link.download = 'camiseta-diseno.png'
-    link.href = canvasRef.current.toDataURL('image/png'); link.click()
+    if (!previewRef.current) return
+    const link = document.createElement('a')
+    link.download = 'camiseta-diseno.png'
+    link.href = previewRef.current.toDataURL('image/png')
+    link.click()
   }
-
-  const showFallback = error || webglError
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-      <div ref={containerRef} className="relative aspect-square overflow-hidden rounded-2xl bg-gradient-to-b from-gray-50 to-white shadow-sm lg:aspect-auto lg:min-h-[500px]">
-        {!showFallback && <canvas ref={canvasRef} className="h-full w-full" />}
-        {loading && !showFallback && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white/80">
-            <div className="flex flex-col items-center gap-2">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600" />
-              <span className="text-sm text-gray-500">Cargando diseñador...</span>
-            </div>
-          </div>
-        )}
-        {showFallback && (
-          <div className="flex h-full w-full flex-col items-center justify-center p-8 text-center">
-            <p className="text-sm font-medium text-gray-700">{webglError ? 'WebGL no disponible' : error || 'Visor no disponible'}</p>
-            {designImage && <img src={designImage} alt="Diseño" className="mt-4 max-h-48 rounded-lg border object-contain" />}
-            {designText && !designImage && <p className="mt-4 text-2xl font-bold text-gray-800" style={{ fontSize }}>{designText}</p>}
-          </div>
-        )}
+      {/* Preview 2D */}
+      <div className="flex items-center justify-center rounded-2xl bg-gradient-to-b from-gray-50 to-white p-4 shadow-sm">
+        <canvas
+          ref={previewRef}
+          width={500}
+          height={650}
+          className="h-auto w-full max-w-[500px] rounded-lg"
+        />
       </div>
 
+      {/* Controles */}
       <div className="space-y-4">
         <div>
           <h3 className="text-lg font-bold text-gray-900">Diseña tu camiseta</h3>
           <p className="text-sm text-gray-500">Sube tu diseño o añade texto</p>
         </div>
 
-        {/* Color de la camiseta */}
+        {/* Color */}
         <div>
           <label className="block text-xs font-bold uppercase tracking-wider text-gray-600">Color de la camiseta</label>
           <div className="mt-1.5 flex flex-wrap gap-2">
@@ -369,7 +234,7 @@ export default function MockupGenerator() {
 
         {/* Imagen */}
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-gray-600">Tu diseño</label>
+          <label className="block text-xs font-bold uppercase tracking-wider text-gray-600">Tu diseño (PNG con transparencia)</label>
           <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
           <button onClick={() => fileInputRef.current?.click()}
             className="mt-1.5 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 px-4 py-5 text-sm text-gray-500 transition hover:border-gray-400">
@@ -386,7 +251,12 @@ export default function MockupGenerator() {
           <label className="block text-xs font-bold uppercase tracking-wider text-gray-600">Texto</label>
           <input type="text" value={designText} placeholder="Ej: Mi marca" onChange={(e) => setDesignText(e.target.value)}
             className="mt-1.5 w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm" />
-          <input type="range" min="12" max="48" value={fontSize} onChange={(e) => setFontSize(parseInt(e.target.value))} className="mt-2 w-full" />
+          <div className="mt-2 flex items-center gap-3">
+            <label className="text-xs text-gray-500">Tamaño:</label>
+            <input type="range" min="12" max="48" value={fontSize}
+              onChange={(e) => setFontSize(parseInt(e.target.value))} className="flex-1" />
+            <span className="text-xs font-medium text-gray-600">{fontSize}px</span>
+          </div>
         </div>
 
         {/* Posición */}

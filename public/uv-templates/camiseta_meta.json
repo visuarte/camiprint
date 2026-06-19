@@ -1,0 +1,11 @@
+{
+  "width_px": 800,
+  "height_px": 800,
+  "stamp_zone": {
+    "x": 0.25,
+    "y": 0.25,
+    "w": 0.5,
+    "h": 0.35
+  },
+  "modelo": "camiseta-camiart.glb"
+}
