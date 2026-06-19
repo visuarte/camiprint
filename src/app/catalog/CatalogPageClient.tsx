@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google';
 import ProductCard from '@/components/ProductCard';
+import BundleSelector from '@/components/BundleSelector';
 import type { GorModel } from '@/components/ProductCard';
 
 const montserrat = Montserrat({ subsets: ['latin'], weight: ['700', '800', '900'] });
@@ -23,6 +24,7 @@ export default function CatalogPageClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [bundleOpen, setBundleOpen] = useState(false);
 
   const family = searchParams.get('family') || 'TODAS';
   const search = searchParams.get('q') || '';
@@ -146,6 +148,10 @@ export default function CatalogPageClient() {
                 <Link href="/guia-estampacion-y-tallas" className={`${spaceGrotesk.className} text-sm font-bold text-gray-500 underline underline-offset-4 transition hover:text-[#ff4f00]`}>
                   Guía de técnicas →
                 </Link>
+                <button onClick={() => setBundleOpen(true)}
+                  className={`${spaceGrotesk.className} bg-green-600 px-6 py-2 text-sm font-bold text-white transition hover:bg-green-700`}>
+                  PACK 3× -15%
+                </button>
               </div>
             </div>
             <div className="grid gap-3 self-end">
@@ -397,6 +403,10 @@ export default function CatalogPageClient() {
           background-image: repeating-linear-gradient(-45deg, #ff4f00, #ff4f00 10px, transparent 10px, transparent 20px);
         }
       `}</style>
+
+      {bundleOpen && (
+        <BundleSelector models={models} onClose={() => setBundleOpen(false)} />
+      )}
     </main>
   );
 }
