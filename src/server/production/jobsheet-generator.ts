@@ -1,5 +1,6 @@
 import { prisma } from '@/server/db'
 import { createGorFactory } from '@/server/integrations/gor-factory/factory'
+// @ts-expect-error - archiver no tiene default export en ESM
 import archiver from 'archiver'
 import { Writable } from 'node:stream'
 import { Readable } from 'node:stream'
