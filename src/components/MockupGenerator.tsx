@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef, useState, useCallback } from 'react'
-import type { ThreeModules } from '@/lib/three-modules'
 
 type Position = 'chest' | 'back' | 'sleeve-left' | 'sleeve-right'
 
@@ -23,35 +22,36 @@ const SHIRT_POLYGON: [number, number][] = [
 ]
 const CUFF: [number, number][] = [[0.42, 0.04], [0.50, 0.12], [0.58, 0.04]]
 
-// Dibuja el preview 2D en un canvas y devuelve la URL de datos
-function renderPreview(size: number, color: string, img: string | null, text: string, fs: number, pos: Position): string {
-  const c = document.createElement('canvas'); c.width = size; c.height = Math.round(size * 1.3)
-  const ctx = c.getContext('2d')!; ctx.clearRect(0, 0, c.width, c.height)
-  const W = c.width, H = c.height
+function drawShirt(ctx: CanvasRenderingContext2D, W: number, H: number, color: string, img: string | null, text: string, fs: number) {
+  ctx.clearRect(0, 0, W, H)
   const px = (x: number, y: number) => [x * W, y * H] as const
 
   // Silueta
   ctx.beginPath()
   const [sx, sy] = px(SHIRT_POLYGON[0][0], SHIRT_POLYGON[0][1]); ctx.moveTo(sx, sy)
   for (let i = 1; i < SHIRT_POLYGON.length; i++) { const [x, y] = px(SHIRT_POLYGON[i][0], SHIRT_POLYGON[i][1]); ctx.lineTo(x, y) }
-  ctx.closePath(); ctx.fillStyle = color; ctx.fill(); ctx.strokeStyle = 'rgba(150,150,150,0.3)'; ctx.lineWidth = 1; ctx.stroke()
+  ctx.closePath(); ctx.fillStyle = color; ctx.fill()
+  ctx.strokeStyle = 'rgba(150,150,150,0.3)'; ctx.lineWidth = 1; ctx.stroke()
 
   // Cuello
   ctx.beginPath(); const [cx, cy] = px(CUFF[0][0], CUFF[0][1]); ctx.moveTo(cx, cy)
   for (let i = 1; i < CUFF.length; i++) { const [x, y] = px(CUFF[i][0], CUFF[i][1]); ctx.lineTo(x, y) }
   ctx.closePath(); ctx.fillStyle = color; ctx.fill(); ctx.stroke()
 
-  // Zona de estampado (50% del ancho, centrada, ~35% de altura)
+  // Zona de estampado
   const zx = W * 0.25, zy = H * 0.25, zw = W * 0.50, zh = H * 0.35
 
   if (img) {
-    const i = new Image(); i.src = img
-    if (i.complete) {
-      const asp = i.width / i.height; let dw = zw * 0.85, dh = zh * 0.85
-      if (asp > 1) dh = dw / asp; else dw = dh * asp
-      ctx.save(); ctx.beginPath(); ctx.rect(zx, zy, zw, zh); ctx.clip()
-      ctx.drawImage(i, zx + (zw - dw) / 2, zy + (zh - dh) / 2, dw, dh); ctx.restore()
-    }
+    const i = new Image()
+    try {
+      i.src = img
+      if (i.complete && i.width > 0) {
+        const asp = i.width / i.height; let dw = zw * 0.85, dh = zh * 0.85
+        if (asp > 1) dh = dw / asp; else dw = dh * asp
+        ctx.save(); ctx.beginPath(); ctx.rect(zx, zy, zw, zh); ctx.clip()
+        ctx.drawImage(i, zx + (zw - dw) / 2, zy + (zh - dh) / 2, dw, dh); ctx.restore()
+      }
+    } catch {}
   }
   if (text) {
     ctx.save(); ctx.beginPath(); ctx.rect(zx, zy, zw, zh); ctx.clip()
@@ -63,112 +63,38 @@ function renderPreview(size: number, color: string, img: string | null, text: st
     lines.forEach((l, i) => ctx.fillText(l, zx + zw / 2, sy2 + i * lh))
     ctx.restore()
   }
-  return c.toDataURL('image/png')
 }
 
 export default function MockupGenerator() {
-  const previewRef = useRef<HTMLCanvasElement>(null)
-  const canvas3dRef = useRef<HTMLCanvasElement>(null)
-  const container3dRef = useRef<HTMLDivElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [designImage, setDesignImage] = useState<string | null>(null)
   const [designText, setDesignText] = useState('')
   const [fontSize, setFontSize] = useState(24)
-  const [position, setPosition] = useState<Position>('chest')
   const [shirtColor, setShirtColor] = useState('#f5f5f0')
-  const [show3d, setShow3d] = useState(false)
-  const [modules, setModules] = useState<ThreeModules | null>(null)
-  const [texUrl, setTexUrl] = useState<string | null>(null)
+  const [position, setPosition] = useState<Position>('chest')
+  const [viewAngle, setViewAngle] = useState(0) // -30, 0, 30 grados
+  const dragRef = useRef({ dragging: false, startX: 0, startAngle: 0 })
 
-  // Cargar Three.js
+  const redraw = useCallback(() => {
+    if (!canvasRef.current) return
+    const ctx = canvasRef.current.getContext('2d')
+    if (!ctx) return
+    const W = 500, H = 500
+    canvasRef.current.width = W; canvasRef.current.height = H
+    drawShirt(ctx, W, H, shirtColor, designImage, designText, fontSize)
+  }, [shirtColor, designImage, designText, fontSize])
+
+  useEffect(() => { redraw() }, [redraw])
+
+  // Cargar imagen asíncrona
   useEffect(() => {
-    if (!show3d) return
-    import('@/lib/three-modules').then(async (m) => { try { setModules(await m.ensureThreeModules()) } catch {} })
-  }, [show3d])
-
-  // Renderizar preview 2D
-  const updatePreview = useCallback(() => {
-    if (!previewRef.current) return
-    const url = renderPreview(500, shirtColor, designImage, designText, fontSize, position)
+    if (!designImage) return
     const img = new Image()
-    img.onload = () => {
-      const ctx = previewRef.current!.getContext('2d')
-      if (ctx) { ctx.clearRect(0, 0, 500, 500); ctx.drawImage(img, 0, 0, 500, 500) }
-    }
-    img.src = url
-    setTexUrl(url)
-  }, [shirtColor, designImage, designText, fontSize, position])
-
-  useEffect(() => { updatePreview() }, [updatePreview])
-
-  // Renderizar 3D con la textura del canvas
-  useEffect(() => {
-    if (!modules || !canvas3dRef.current || !container3dRef.current || !texUrl) return
-    const { THREE, GLTFLoader, OrbitControls } = modules
-
-    try {
-      const scene = new THREE.Scene()
-      scene.background = new THREE.Color(0xf5f5f5)
-
-      const container = container3dRef.current
-      const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 100)
-      const renderer = new THREE.WebGLRenderer({ canvas: canvas3dRef.current, alpha: true, antialias: true })
-      renderer.setSize(container.clientWidth, container.clientHeight)
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-      renderer.toneMapping = THREE.ACESFilmicToneMapping
-
-      const controls = new OrbitControls(camera, renderer.domElement)
-      controls.enableDamping = true; controls.autoRotate = true; controls.autoRotateSpeed = 2
-      controls.minDistance = 1; controls.maxDistance = 8
-
-      // Luces
-      scene.add(new THREE.AmbientLight(0xffffff, 0.6))
-      const kl = new THREE.DirectionalLight(0xffffff, 1.5); kl.position.set(3, 4, 5); scene.add(kl)
-      const fl = new THREE.DirectionalLight(0xffffff, 0.5); fl.position.set(-3, 2, -4); scene.add(fl)
-
-      // Cargar modelo y aplicar textura
-      const loader = new GLTFLoader()
-      loader.load('/models/camiseta-camiart.glb', (gltf: any) => {
-        const model = gltf.scene
-
-        // Cargar textura desde el data URL del canvas
-        const textureLoader = new THREE.TextureLoader()
-        const texture = textureLoader.load(texUrl)
-
-        model.traverse((child: any) => {
-          if (child.isMesh && child.material) {
-            if (Array.isArray(child.material)) {
-              child.material.forEach((m: any) => { m.map = texture; m.needsUpdate = true })
-            } else {
-              child.material.map = texture
-              child.material.needsUpdate = true
-            }
-          }
-        })
-
-        // Centrar
-        const box = new THREE.Box3().setFromObject(model)
-        const center = box.getCenter(new THREE.Vector3())
-        model.position.sub(center)
-        const maxDim = Math.max(...box.getSize(new THREE.Vector3()).toArray())
-        camera.position.set(0, maxDim * 0.3, maxDim * 1.8)
-        controls.target.set(0, maxDim * 0.15, 0)
-
-        scene.add(model)
-      })
-
-      const animate = () => { requestAnimationFrame(animate); controls.update(); renderer.render(scene, camera) }
-      animate()
-
-      const handleResize = () => {
-        const w = container.clientWidth, h = container.clientHeight
-        camera.aspect = w / h; camera.updateProjectionMatrix(); renderer.setSize(w, h)
-      }
-      window.addEventListener('resize', handleResize)
-
-      return () => { window.removeEventListener('resize', handleResize); renderer.dispose() }
-    } catch (err) { console.error('[MockupGenerator] 3D error:', err) }
-  }, [modules, texUrl])
+    img.onload = () => redraw()
+    img.onerror = () => redraw()
+    img.src = designImage
+  }, [designImage, redraw])
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -176,30 +102,71 @@ export default function MockupGenerator() {
   }
 
   const handleDownload = () => {
-    if (!previewRef.current) return
+    if (!canvasRef.current) return
     const link = document.createElement('a'); link.download = 'camiseta-diseno.png'
-    link.href = previewRef.current.toDataURL('image/png'); link.click()
+    link.href = canvasRef.current.toDataURL('image/png'); link.click()
   }
+
+  // Arrastrar para rotar
+  const handleMouseDown = (e: React.MouseEvent) => { dragRef.current = { dragging: true, startX: e.clientX, startAngle: viewAngle } }
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!dragRef.current.dragging) return
+    const delta = e.clientX - dragRef.current.startX
+    const newAngle = Math.max(-45, Math.min(45, dragRef.current.startAngle + delta * 0.5))
+    setViewAngle(Math.round(newAngle))
+  }
+  const handleMouseUp = () => { dragRef.current.dragging = false }
+
+  useEffect(() => {
+    const handler = () => { dragRef.current.dragging = false }
+    window.addEventListener('mouseup', handler)
+    return () => window.removeEventListener('mouseup', handler)
+  }, [])
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-      {/* Preview 2D / 3D */}
-      <div>
-        {show3d ? (
-          <div ref={container3dRef} className="relative aspect-square overflow-hidden rounded-2xl bg-gray-50 shadow-sm lg:min-h-[500px]">
-            <canvas ref={canvas3dRef} className="h-full w-full" />
-            {!modules && <div className="absolute inset-0 flex items-center justify-center"><span className="text-sm text-gray-400">Cargando visor 3D...</span></div>}
+      {/* Preview con efecto 3D CSS */}
+      <div className="flex items-center justify-center rounded-2xl bg-gradient-to-b from-gray-50 to-white p-4 shadow-sm">
+        <div className="select-none"
+          style={{
+            perspective: '800px',
+            width: 400, height: 400,
+          }}
+        >
+          <div
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onTouchStart={(e) => { const t = e.touches[0]; dragRef.current = { dragging: true, startX: t.clientX, startAngle: viewAngle } }}
+            onTouchMove={(e) => { if (!dragRef.current.dragging) return; const delta = e.touches[0].clientX - dragRef.current.startX; setViewAngle(Math.max(-45, Math.min(45, dragRef.current.startAngle + delta * 0.5))) }}
+            onTouchEnd={() => { dragRef.current.dragging = false }}
+            style={{
+              width: 400, height: 400,
+              transform: `rotateY(${viewAngle}deg) scale(${1 - Math.abs(viewAngle) * 0.002})`,
+              transformStyle: 'preserve-3d',
+              transition: dragRef.current.dragging ? 'none' : 'transform 0.3s ease',
+              cursor: 'grab',
+            }}
+          >
+            <canvas ref={canvasRef} width={500} height={500}
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+            {/* Sombra parallax */}
+            <div style={{
+              position: 'absolute', bottom: '-20px', left: '5%', right: '5%', height: 20,
+              background: `radial-gradient(ellipse, rgba(0,0,0,${0.08 + Math.abs(viewAngle) * 0.003}) 0%, transparent 70%)`,
+              filter: 'blur(6px)',
+              transform: `translateX(${viewAngle * 0.5}px)`,
+            }} />
           </div>
-        ) : (
-          <canvas ref={previewRef} width={500} height={500} className="w-full rounded-2xl bg-gradient-to-b from-gray-50 to-white shadow-sm" />
-        )}
+        </div>
       </div>
 
       {/* Controles */}
       <div className="space-y-4">
         <div>
           <h3 className="text-lg font-bold text-gray-900">Diseña tu camiseta</h3>
-          <p className="text-sm text-gray-500">Sube tu diseño o añade texto</p>
+          <p className="text-sm text-gray-500">Arrastra el diseño para rotarlo en 3D</p>
         </div>
 
         <div>
@@ -215,7 +182,7 @@ export default function MockupGenerator() {
         </div>
 
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-gray-600">Diseño (PNG con transparencia)</label>
+          <label className="block text-xs font-bold uppercase tracking-wider text-gray-600">Diseño</label>
           <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
           <button onClick={() => fileInputRef.current?.click()}
             className="mt-1.5 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 px-4 py-5 text-sm text-gray-500 transition hover:border-gray-400">
@@ -235,11 +202,22 @@ export default function MockupGenerator() {
         </div>
 
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-gray-600">Posición</label>
+          <label className="block text-xs font-bold uppercase tracking-wider text-gray-600">Posición del estampado</label>
           <div className="mt-1.5 grid grid-cols-2 gap-2">
             {(Object.entries(POSITION_LABELS) as [Position, string][]).map(([k, l]) => (
               <button key={k} onClick={() => setPosition(k)}
                 className={`rounded-xl border px-3 py-2 text-xs font-medium transition-all ${position === k ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}>{l}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* Vistas rápidas */}
+        <div>
+          <label className="block text-xs font-bold uppercase tracking-wider text-gray-600">Vista</label>
+          <div className="mt-1.5 flex gap-2">
+            {[{ a: -30, l: 'Izquierda' }, { a: 0, l: 'Frente' }, { a: 30, l: 'Derecha' }].map((v) => (
+              <button key={v.a} onClick={() => setViewAngle(v.a)}
+                className={`flex-1 rounded-xl border px-3 py-2 text-xs font-medium transition-all ${viewAngle === v.a ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}>{v.l}</button>
             ))}
           </div>
         </div>
@@ -250,13 +228,6 @@ export default function MockupGenerator() {
           <button onClick={handleDownload} disabled={!designImage && !designText}
             className="flex-1 rounded-xl bg-gray-900 py-2.5 text-sm font-bold text-white disabled:opacity-40">Descargar</button>
         </div>
-
-        {(designImage || designText) && (
-          <button onClick={() => setShow3d(!show3d)}
-            className="w-full rounded-xl border-2 border-blue-200 py-3 text-sm font-bold text-blue-700 transition hover:bg-blue-50">
-            {show3d ? '◀ Volver a vista 2D' : '🔄 Ver en 3D'}
-          </button>
-        )}
       </div>
     </div>
   )
