@@ -1,11 +1,8 @@
 'use client';
 
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useCart } from '@/lib/store';
 import Image from 'next/image';
-import ProductViewerModal from '@/components/ProductViewerModal'
-import ProductVideo from '@/components/ProductVideo'
-import BackInStock from '@/components/BackInStock';
 
 const COLOR_MAP: Record<string, string> = {
   BLANCO: '#ffffff', NEGRO: '#111111', GRIS: '#888888',
@@ -45,11 +42,7 @@ export interface GorModel {
   priceMax?: number;
 }
 
-interface ProductCardProps {
-  product: GorModel;
-}
-
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product }: { product: GorModel }) {
   const { addToCart } = useCart();
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(10);
@@ -57,7 +50,6 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [multiplier, setMultiplier] = useState(1.5);
   const [printingCost, setPrintingCost] = useState(2);
-  const [viewerOpen, setViewerOpen] = useState(false);
 
   useEffect(() => {
     fetch('/api/site-settings').then(r => r.json()).then(data => {
@@ -73,128 +65,85 @@ export default function ProductCard({ product }: ProductCardProps) {
     if (!selectedColor) { alert('Selecciona un color'); return; }
     if (!selectedSize) { alert('Selecciona una talla'); return; }
     if (quantity < 10) { alert('Mínimo 10 unidades'); return; }
-
     setIsAdding(true);
     addToCart(
       { id: `${product.modelcode}-${selectedSize}`, name: `${product.modelname} - ${selectedColor}`, price: product.priceMin || product.priceMax || 0 },
-      selectedSize,
-      quantity,
+      selectedSize, quantity,
     );
     setTimeout(() => { setQuantity(10); setIsAdding(false); }, 300);
   }, [selectedColor, selectedSize, quantity, addToCart, product]);
 
   return (
-    <article className="group relative overflow-hidden rounded-[1.5rem] border border-[#5c4037]/35 bg-[#1f1f1f] transition-all hover:border-[#ff4f00] hover:-translate-y-1">
-      <div className="relative flex h-72 items-center justify-center overflow-hidden bg-gradient-to-b from-white/5 to-[#1f1f1f]">
+    <article className="group overflow-hidden rounded-2xl bg-white ring-1 ring-gray-100 transition-all hover:shadow-lg hover:ring-gray-200">
+      {/* Image */}
+      <div className="relative aspect-[3/4] overflow-hidden bg-[#f8f8f8]">
         {displayImage ? (
           <Image src={displayImage} alt={product.modelname} fill
-            className="object-contain p-6 transition-transform duration-500 group-hover:scale-105" />
+            className="object-contain p-4 transition-all duration-500 group-hover:scale-105" />
         ) : (
-          <span className="material-symbols-outlined text-6xl text-[#e2e2e2]/20">image</span>
+          <div className="flex h-full items-center justify-center text-gray-200">—</div>
         )}
-        <span className="absolute left-3 top-3 rounded-full border border-[#ff4f00]/30 bg-[#ff4f00]/10 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-[#ff4f00]">
+        <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[10px] font-medium text-gray-500 shadow-sm backdrop-blur">
           {product.family || product.brand}
         </span>
-        <button onClick={() => setViewerOpen(true)}
-          className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1.5 text-xs text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/80">
-          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-          </svg>
-          3D
-        </button>
       </div>
 
-      <div className="p-5 space-y-4">
-        <div>
-          <h3 className="text-xl font-bold text-white">{product.modelname}</h3>
-          {product.description && (
-            <p className="mt-1 line-clamp-2 text-sm text-[#e2e2e2]/60">{product.description}</p>
-          )}
-          <ProductVideo
-            videoSrc={`/videos/${product.modelcode.toLowerCase()}.mp4`}
-            posterImage={displayImage}
-            productName={product.modelname}
-          />
-        </div>
+      {/* Info */}
+      <div className="p-4">
+        <h3 className="text-sm font-semibold leading-snug text-gray-900">{product.modelname}</h3>
+        {product.description && (
+          <p className="mt-1 line-clamp-1 text-xs text-gray-400">{product.description}</p>
+        )}
 
         {product.priceMin != null && (
-          <div>
-            <p className="text-lg font-bold text-white">
-              Desde {(product.priceMin * multiplier + printingCost).toFixed(2)} €
-              <span className="ml-1 text-xs font-normal text-[#e2e2e2]/40">/ud + estampación</span>
-            </p>
-            <p className="text-[10px] text-[#e2e2e2]/30">Prenda base desde {product.priceMin.toFixed(2)}€ + personalización</p>
-          </div>
+          <p className="mt-2 text-sm font-semibold text-gray-900">
+            {(product.priceMin * multiplier + printingCost).toFixed(2)}€
+            <span className="ml-1 text-[10px] font-normal text-gray-400">/ud</span>
+          </p>
         )}
 
-        {/* Color selector - modern pills */}
+        {/* Colors */}
         {product.colors.length > 0 && (
-          <div>
-            <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-[#e2e2e2]/50">
-              Color {selectedColor && <span className="text-[#ff4f00]">— {selectedColor}</span>}
-            </label>
-            <div className="flex flex-wrap gap-1.5">
-              {product.colors.slice(0, 8).map((c) => (
-                <button key={c.code} onClick={() => setSelectedColor(c.name)}
-                  className={`rounded-full border px-3 py-1 text-xs font-medium transition-all ${
-                    selectedColor === c.name
-                      ? 'border-[#ff4f00] bg-[#ff4f00]/10 text-[#ff4f00]'
-                      : 'border-[#e2e2e2]/10 text-[#e2e2e2]/60 hover:border-[#e2e2e2]/30'
-                  }`}>
-                  {c.name}
-                </button>
-              ))}
-              {product.colors.length > 8 && (
-                <span className="text-xs text-[#e2e2e2]/30 self-center">+{product.colors.length - 8}</span>
-              )}
-            </div>
+          <div className="mt-3 flex flex-wrap gap-1">
+            {product.colors.slice(0, 6).map((c) => (
+              <button key={c.code} onClick={() => setSelectedColor(c.name)}
+                className="relative flex items-center gap-1.5 rounded-lg border px-2 py-1 text-[9px] font-medium transition-all"
+                style={{
+                  borderColor: selectedColor === c.name ? '#111' : '#e5e7eb',
+                  background: selectedColor === c.name ? '#f9fafb' : 'transparent',
+                  color: selectedColor === c.name ? '#111' : '#6b7280',
+                }}>
+                <span className="h-2.5 w-2.5 rounded-full ring-1 ring-inset ring-gray-200" style={{ background: colorHex(c.name) }} />
+                {c.name}
+              </button>
+            ))}
+            {product.colors.length > 6 && (
+              <span className="flex items-center text-[9px] text-gray-300">+{product.colors.length - 6}</span>
+            )}
           </div>
         )}
 
-        {/* Size + Quantity - simplified */}
+        {/* Size + Quantity */}
         {product.sizes.length > 0 && (
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-[#e2e2e2]/50">Talla</label>
-              <select value={selectedSize} onChange={(e) => setSelectedSize(e.target.value)}
-                className="w-full rounded-lg border border-[#e2e2e2]/10 bg-[#131313] px-3 py-2 text-sm text-white focus:border-[#ff4f00]/50 focus:outline-none focus:ring-1 focus:ring-[#ff4f00]/30">
-                <option value="">Seleccionar</option>
-                {product.sizes.map((s) => (
-                  <option key={s.code} value={s.name}>{s.name}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="mb-1.5 block text-xs font-bold uppercase tracking-widest text-[#e2e2e2]/50">Unidades</label>
-              <input type="number" min={10} value={quantity}
-                onChange={(e) => setQuantity(Math.max(10, parseInt(e.target.value) || 10))}
-                className="w-full rounded-lg border border-[#e2e2e2]/10 bg-[#131313] px-3 py-2 text-sm text-white focus:border-[#ff4f00]/50 focus:outline-none focus:ring-1 focus:ring-[#ff4f00]/30" />
-              <p className="mt-1 text-[10px] text-[#e2e2e2]/30">Mín. 10 uds</p>
-            </div>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <select value={selectedSize} onChange={(e) => setSelectedSize(e.target.value)}
+              className="rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-[11px] text-gray-600 focus:border-gray-400 focus:outline-none focus:ring-0">
+              <option value="">Talla</option>
+              {product.sizes.map((s) => (
+                <option key={s.code} value={s.name}>{s.name}</option>
+              ))}
+            </select>
+            <input type="number" min={10} value={quantity}
+              onChange={(e) => setQuantity(Math.max(10, parseInt(e.target.value) || 10))}
+              className="rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-[11px] text-gray-600 focus:border-gray-400 focus:outline-none focus:ring-0" />
           </div>
         )}
 
         <button onClick={handleAdd} disabled={isAdding}
-          className="w-full bg-[#ff4f00] py-3 text-sm font-bold text-[#0A0A0A] transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50">
-          {isAdding ? '✓ AÑADIDO' : 'AÑADIR AL PEDIDO'}
+          className="mt-3 w-full rounded-xl bg-gray-900 py-2.5 text-xs font-semibold text-white transition-all hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-40">
+          {isAdding ? '✓ Añadido' : 'Añadir'}
         </button>
-
-        <details className="group cursor-pointer">
-          <summary className="text-[11px] font-medium text-[#e2e2e2]/40 transition hover:text-[#e2e2e2]/60">
-            ¿No está disponible? <span className="underline">Avísame</span>
-          </summary>
-          <div className="mt-3">
-            <BackInStock productId={product.modelcode} productName={product.modelname} />
-          </div>
-        </details>
       </div>
-
-      <ProductViewerModal
-        open={viewerOpen}
-        onClose={() => setViewerOpen(false)}
-        productName={product.modelname}
-        fallbackImage={displayImage}
-      />
     </article>
   );
 }

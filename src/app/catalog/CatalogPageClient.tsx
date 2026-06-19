@@ -3,14 +3,13 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { Manrope, Montserrat, Space_Grotesk } from 'next/font/google';
+import { Inter, Space_Grotesk } from 'next/font/google';
 import ProductCard from '@/components/ProductCard';
 import BundleSelector from '@/components/BundleSelector';
 import type { GorModel } from '@/components/ProductCard';
 
-const montserrat = Montserrat({ subsets: ['latin'], weight: ['700', '800', '900'] });
-const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500'] });
-const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], weight: ['700'] });
+const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'] });
+const space = Space_Grotesk({ subsets: ['latin'], weight: ['500', '700'] });
 
 const PER_PAGE = 24;
 
@@ -67,27 +66,17 @@ export default function CatalogPageClient() {
 
   const filtered = useMemo(() => {
     let result = models;
-    if (family !== 'TODAS') {
-      result = result.filter((m) => m.family === family);
-    }
+    if (family !== 'TODAS') result = result.filter((m) => m.family === family);
     if (search) {
       const q = search.toLowerCase();
-      result = result.filter(
-        (m) =>
-          m.modelname.toLowerCase().includes(q) ||
-          m.modelcode.toLowerCase().includes(q) ||
-          m.description.toLowerCase().includes(q),
-      );
-    }
-    if (colorFilter) {
       result = result.filter((m) =>
-        m.colors.some((c) => c.name.toLowerCase().includes(colorFilter.toLowerCase())),
+        m.modelname.toLowerCase().includes(q) ||
+        m.modelcode.toLowerCase().includes(q) ||
+        m.description.toLowerCase().includes(q),
       );
     }
-    if (compositionFilter) {
-      const q = compositionFilter.toLowerCase();
-      result = result.filter((m) => m.composition.toLowerCase().includes(q));
-    }
+    if (colorFilter) result = result.filter((m) => m.colors.some((c) => c.name.toLowerCase().includes(colorFilter.toLowerCase())));
+    if (compositionFilter) result = result.filter((m) => m.composition.toLowerCase().includes(compositionFilter.toLowerCase()));
     return result;
   }, [models, family, search, colorFilter, compositionFilter]);
 
@@ -103,162 +92,108 @@ export default function CatalogPageClient() {
   }, [safePage, page, searchParams, router, pathname]);
 
   const allColors = useMemo(() => {
-    const set = new Set<string>()
-    models.forEach((m) => m.colors.forEach((c) => set.add(c.name)))
-    return Array.from(set).slice(0, 20)
-  }, [models])
+    const set = new Set<string>();
+    models.forEach((m) => m.colors.forEach((c) => set.add(c.name)));
+    return Array.from(set).slice(0, 20);
+  }, [models]);
 
   const allCompositions = useMemo(() => {
-    const set = new Set<string>()
-    models.forEach((m) => {
-      if (m.composition) set.add(m.composition)
-    })
-    return Array.from(set)
-  }, [models])
+    const set = new Set<string>();
+    models.forEach((m) => { if (m.composition) set.add(m.composition); });
+    return Array.from(set);
+  }, [models]);
 
   const paginated = filtered.slice((safePage - 1) * PER_PAGE, safePage * PER_PAGE);
 
   return (
-    <main className={`${manrope.className} min-h-screen overflow-x-hidden bg-white text-gray-900 pt-24 pb-16`}>
-      {/* Hero */}
-      {/* HERO - sales oriented */}
-      <section className="relative overflow-hidden bg-gray-50 py-16">
-        <div className="hazard-pattern absolute inset-0 opacity-5" />
-        <div className="relative z-10 mx-auto max-w-7xl px-5 md:px-16">
-          <div className="grid gap-8 lg:grid-cols-[1.3fr_0.7fr]">
-            <div>
-              <div className={`${spaceGrotesk.className} inline-flex items-center gap-2 rounded-full border border-[#ff4f00]/30 bg-[#ff4f00]/10 px-4 py-1 text-xs tracking-[0.1em] text-[#ff4f00]`}>
-                <span className="h-2 w-2 animate-pulse rounded-full bg-[#ff4f00]" />
-                PRECIO DESDE 3,83€/UD + ESTAMPACIÓN
-              </div>
-              <h1 className={`${montserrat.className} mt-6 text-4xl font-black leading-tight md:text-6xl`}>
-                Tu logo, tu equipo,{' '}
-                <span className="text-[#ff4f00]">tu uniforme</span>
-              </h1>
-              <p className="mt-5 max-w-2xl text-base leading-8 text-gray-700/70">
-                Camisetas, polos y sudaderas corporativas con tu marca. DTF, bordado o serigrafía. Presupuesto gratis en 24h. Precios desde 10 unidades, estampación incluida.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Link href="/#presupuesto" className={`${spaceGrotesk.className} bg-[#ff4f00] px-8 py-3 text-sm font-bold text-[#0A0A0A] transition hover:scale-105`}>
-                  PEDIR PRESUPUESTO
-                </Link>
-                <a href="#productos" className={`${spaceGrotesk.className} border border-gray-300 px-8 py-3 text-sm font-bold text-gray-700 transition hover:border-[#ff4f00] hover:text-[#ff4f00]`}>
-                  VER CATÁLOGO
-                </a>
-                <Link href="/guia-estampacion-y-tallas" className={`${spaceGrotesk.className} text-sm font-bold text-gray-500 underline underline-offset-4 transition hover:text-[#ff4f00]`}>
-                  Guía de técnicas →
-                </Link>
-                <button onClick={() => setBundleOpen(true)}
-                  className={`${spaceGrotesk.className} bg-green-600 px-6 py-2 text-sm font-bold text-white transition hover:bg-green-700`}>
-                  PACK 3× -15%
-                </button>
-              </div>
-            </div>
-            <div className="grid gap-3 self-end">
-              <div className="rounded-2xl border border-gray-200 bg-white p-4 text-center">
-                <p className={`${spaceGrotesk.className} text-[0.65rem] uppercase tracking-[0.18em] text-[#ff4f00]`}>Desde</p>
-                <p className={`${montserrat.className} mt-1 text-3xl font-black text-gray-900`}>10 uds</p>
-                <p className="text-xs text-gray-400">sin mínimo abusivo</p>
-              </div>
-              <div className="rounded-2xl border border-gray-200 bg-white p-4 text-center">
-                <p className={`${spaceGrotesk.className} text-[0.65rem] uppercase tracking-[0.18em] text-[#ff4f00]`}>Presupuesto</p>
-                <p className={`${montserrat.className} mt-1 text-3xl font-black text-gray-900`}>24h</p>
-                <p className="text-xs text-gray-400">respuesta gratis</p>
-              </div>
-              <div className="rounded-2xl border border-gray-200 bg-white p-4 text-center">
-                <p className={`${spaceGrotesk.className} text-[0.65rem] uppercase tracking-[0.18em] text-[#ff4f00]`}>Envío</p>
-                <p className={`${montserrat.className} mt-1 text-3xl font-black text-gray-900`}>3-7 días</p>
-                <p className="text-xs text-gray-400">a toda España</p>
-              </div>
+    <main className={`${inter.className} min-h-screen bg-white pt-24`}>
+      {/* HERO — minimal, premium */}
+      <section className="border-b border-gray-100 bg-[#fafafa]">
+        <div className="mx-auto max-w-7xl px-6 py-20 md:px-12">
+          <div className="mx-auto max-w-2xl text-center">
+            <span className={`${space.className} inline-block rounded-full border border-gray-200 bg-white px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.15em] text-gray-500 shadow-sm`}>
+              Catálogo profesional · Precios desde 3,83€/ud
+            </span>
+            <h1 className={`${space.className} mt-6 text-4xl font-bold leading-tight tracking-tight text-gray-900 md:text-5xl`}>
+              Prendas para tu marca
+            </h1>
+            <p className="mt-4 text-base leading-relaxed text-gray-400">
+              Camisetas, polos y sudaderas corporativas. Presupuesto gratis en 24h.
+            </p>
+            <div className="mt-8 flex items-center justify-center gap-4">
+              <a href="#productos" className="rounded-xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-gray-800">
+                Ver productos
+              </a>
+              <button onClick={() => setBundleOpen(true)}
+                className="rounded-xl border border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-gray-700 transition-all hover:border-gray-300 hover:shadow-sm">
+                Pack 3× −15%
+              </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Filters bar */}
-      <section className="sticky top-20 z-30 border-b border-gray-200 bg-gray-50/95 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-4 md:px-16">
-          <div className="overflow-x-auto -mx-5 px-5 md:mx-0 md:px-0">
-            <div className="flex flex-nowrap gap-2 w-max md:flex-wrap md:w-auto">
-              <button
-                onClick={() => setParam('family', 'TODAS')}
-                className={`${spaceGrotesk.className} shrink-0 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-widest transition-all ${
-                  family === 'TODAS'
-                    ? 'bg-[#ff4f00] text-[#0A0A0A] shadow-[0_0_12px_rgba(255,79,0,0.4)]'
-                    : 'border border-[#e2e2e2]/15 text-gray-700/60 hover:border-[#ff4f00] hover:text-gray-700'
-                }`}
-              >
-                TODAS
-              </button>
+      {/* FILTERS */}
+      <section className="sticky top-20 z-30 border-b border-gray-100 bg-white/95 backdrop-blur-lg">
+        <div className="mx-auto max-w-7xl px-6 py-4 md:px-12">
+          {/* Family pills */}
+          <div className="-mx-6 overflow-x-auto px-6 md:mx-0 md:px-0">
+            <div className="flex w-max gap-1.5 md:w-auto md:flex-wrap">
+              <button onClick={() => setParam('family', 'TODAS')}
+                className={`shrink-0 rounded-lg px-4 py-2 text-xs font-medium transition-all ${
+                  family === 'TODAS' ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                }`}>Todas</button>
               {allFamilies.map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setParam('family', f)}
-                  className={`${spaceGrotesk.className} shrink-0 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-widest transition-all ${
-                    family === f
-                      ? 'bg-[#ff4f00] text-[#0A0A0A] shadow-[0_0_12px_rgba(255,79,0,0.4)]'
-                      : 'border border-[#e2e2e2]/15 text-gray-700/60 hover:border-[#ff4f00] hover:text-gray-700'
-                  }`}
-                >
-                  {f}
-                </button>
+                <button key={f} onClick={() => setParam('family', f)}
+                  className={`shrink-0 rounded-lg px-4 py-2 text-xs font-medium transition-all ${
+                    family === f ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                  }`}>{f}</button>
               ))}
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          {/* Search + filters */}
+          <div className="mt-3 flex items-center gap-3">
             <div className="relative flex-1 max-w-xs">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-base text-gray-700/40">search</span>
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setParam('q', e.target.value)}
-                placeholder="Buscar modelo..."
-                className="w-full rounded-xl border border-[#e2e2e2]/12 bg-[#1f1f1f] py-2 pl-9 pr-4 text-sm text-gray-900 placeholder:text-gray-700/40 focus:border-[#ff4f00]/50 focus:outline-none focus:ring-1 focus:ring-[#ff4f00]/30"
-              />
+              <svg className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+              </svg>
+              <input type="text" value={search} onChange={(e) => setParam('q', e.target.value)}
+                placeholder="Buscar..." className="w-full rounded-xl border border-gray-200 bg-gray-50 py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder:text-gray-300 focus:border-gray-300 focus:bg-white focus:outline-none focus:ring-0" />
             </div>
             <button onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-              className={`${spaceGrotesk.className} shrink-0 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-widest transition-all ${
+              className={`shrink-0 rounded-xl border px-4 py-2.5 text-xs font-medium transition-all ${
                 showAdvancedFilters || colorFilter || compositionFilter
-                  ? 'bg-[#ff4f00] text-[#0A0A0A]'
-                  : 'border border-[#e2e2e2]/15 text-gray-700/60 hover:border-[#ff4f00]'
+                  ? 'border-gray-900 bg-gray-900 text-white'
+                  : 'border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-700'
               }`}>
-              Filtros {(colorFilter || compositionFilter) ? '·' : ''}
+              Filtros {colorFilter || compositionFilter ? '·' : ''}
             </button>
             {!loading && !error && (
-              <span className={`${spaceGrotesk.className} shrink-0 text-xs tracking-[0.1em] text-gray-700/40`}>
-                {filtered.length} modelos
-              </span>
+              <span className="shrink-0 text-xs text-gray-300">{filtered.length} modelos</span>
             )}
           </div>
+          {/* Advanced filters */}
           {showAdvancedFilters && (
-            <div className="flex flex-wrap gap-3 pt-2">
+            <div className="mt-3 flex flex-wrap gap-4 border-t border-gray-50 pt-3">
               {allColors.length > 0 && (
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mr-1">Color:</span>
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400">Color:</span>
                   <button onClick={() => setParam('color', '')}
-                    className={`rounded-full px-2.5 py-1 text-[10px] font-medium transition-all ${
-                      !colorFilter ? 'bg-gray-900 text-white' : 'border border-gray-200 text-gray-500 hover:border-gray-300'
-                    }`}>Todos</button>
+                    className={`rounded-lg px-2.5 py-1 text-[10px] font-medium transition-all ${!colorFilter ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'}`}>Todos</button>
                   {allColors.slice(0, 10).map((c) => (
                     <button key={c} onClick={() => setParam('color', c)}
-                      className={`rounded-full px-2.5 py-1 text-[10px] font-medium transition-all ${
-                        colorFilter === c ? 'bg-gray-900 text-white' : 'border border-gray-200 text-gray-500 hover:border-gray-300'
-                      }`}>{c}</button>
+                      className={`rounded-lg px-2.5 py-1 text-[10px] font-medium transition-all ${colorFilter === c ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'}`}>{c}</button>
                   ))}
                 </div>
               )}
               {allCompositions.length > 1 && (
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 mr-1">Material:</span>
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400">Material:</span>
                   <button onClick={() => setParam('material', '')}
-                    className={`rounded-full px-2.5 py-1 text-[10px] font-medium transition-all ${
-                      !compositionFilter ? 'bg-gray-900 text-white' : 'border border-gray-200 text-gray-500 hover:border-gray-300'
-                    }`}>Todos</button>
+                    className={`rounded-lg px-2.5 py-1 text-[10px] font-medium transition-all ${!compositionFilter ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'}`}>Todos</button>
                   {allCompositions.slice(0, 6).map((c) => (
                     <button key={c} onClick={() => setParam('material', c)}
-                      className={`rounded-full px-2.5 py-1 text-[10px] font-medium transition-all ${
-                        compositionFilter === c ? 'bg-gray-900 text-white' : 'border border-gray-200 text-gray-500 hover:border-gray-300'
-                      }`}>{c}</button>
+                      className={`rounded-lg px-2.5 py-1 text-[10px] font-medium transition-all ${compositionFilter === c ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'}`}>{c}</button>
                   ))}
                 </div>
               )}
@@ -267,146 +202,64 @@ export default function CatalogPageClient() {
         </div>
       </section>
 
-      {/* Grid */}
-      <section id="productos" className="mx-auto mt-8 max-w-7xl px-5 pb-8 md:px-16">
+      {/* PRODUCT GRID */}
+      <section id="productos" className="mx-auto max-w-7xl px-6 py-10 md:px-12">
         {loading ? (
-          <div>
-            <div className="mb-6 text-center">
-              <div className="inline-flex items-center gap-2 text-sm text-gray-400">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-[#ff4f00]" />
-                Cargando catálogo Roly...
-              </div>
-            </div>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {Array.from({ length: 24 }).map((_, i) => (
-              <div key={i} className="animate-pulse overflow-hidden rounded-[1.5rem] border border-[#5c4037]/35 bg-[#1f1f1f]">
-                {/* Image skeleton */}
-                <div className="relative flex h-72 items-center justify-center bg-[radial-gradient(ellipse_at_center,_#2a2a2a_0%,_#1a1a1a_100%)]">
-                  <div className="absolute left-3 top-3 h-5 w-24 rounded-full bg-[#2a2a2a]" />
-                </div>
-                {/* Body skeleton */}
-                <div className="p-5 space-y-3">
-                  <div className="h-5 w-3/4 rounded bg-[#2a2a2a]" />
-                  <div className="h-3 w-full rounded bg-[#2a2a2a]" />
-                  <div className="h-3 w-2/3 rounded bg-[#2a2a2a]" />
-                  <div className="h-3 w-1/3 rounded bg-[#2a2a2a]" />
-                  <div className="h-5 w-1/4 rounded bg-[#2a2a2a]" />
-                  {/* Color swatches */}
-                  <div className="flex gap-1.5">
-                    {Array.from({ length: 4 }).map((_, j) => (
-                      <div key={j} className="h-7 w-7 rounded-md bg-[#2a2a2a]" />
-                    ))}
-                  </div>
-                  {/* Size inputs */}
-                  {Array.from({ length: 3 }).map((_, j) => (
-                    <div key={j} className="grid grid-cols-[auto_1fr] items-center gap-2">
-                      <div className="h-3 w-8 rounded bg-[#2a2a2a]" />
-                      <div className="h-8 w-full rounded-lg bg-[#2a2a2a]" />
-                    </div>
-                  ))}
-                  {/* Add to cart button */}
-                  <div className="h-11 w-full rounded-xl bg-[#2a2a2a]" />
+          <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="animate-pulse overflow-hidden rounded-2xl bg-white ring-1 ring-gray-100">
+                <div className="aspect-[3/4] bg-gray-50" />
+                <div className="space-y-2 p-4">
+                  <div className="h-4 w-3/4 rounded bg-gray-100" />
+                  <div className="h-3 w-1/2 rounded bg-gray-50" />
+                  <div className="h-3 w-1/3 rounded bg-gray-50" />
                 </div>
               </div>
             ))}
           </div>
-          </div>
         ) : error ? (
-          <div className="rounded-[1.5rem] border border-red-400/20 bg-red-950/30 p-8 text-center">
-            <h2 className={`${montserrat.className} mb-2 text-lg font-bold text-red-200`}>Error al cargar catálogo</h2>
-            <p className="text-sm text-red-100/80">{error}</p>
-            <button onClick={() => window.location.reload()} className={`${montserrat.className} mt-4 bg-[#ff4f00] px-6 py-2 text-sm font-bold text-[#0A0A0A]`}>
-              REINTENTAR
-            </button>
+          <div className="rounded-2xl border border-red-100 bg-red-50 p-8 text-center">
+            <p className="text-sm font-medium text-red-600">Error al cargar el catálogo</p>
+            <p className="mt-1 text-xs text-red-400">{error}</p>
+            <button onClick={() => window.location.reload()} className="mt-4 rounded-xl bg-red-600 px-5 py-2 text-xs font-semibold text-white">Reintentar</button>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="rounded-[1.5rem] border border-[#5c4037]/25 bg-[#1f1f1f] py-16 text-center">
-            <span className="material-symbols-outlined text-5xl text-gray-700/20">search_off</span>
-            <p className={`${montserrat.className} mt-4 text-lg font-bold text-gray-700/60`}>No hay modelos en esta categoría.</p>
+          <div className="py-20 text-center">
+            <p className="text-sm font-medium text-gray-500">No hay modelos en esta categoría.</p>
+            <button onClick={() => { setParam('family', 'TODAS'); setParam('q', ''); setParam('color', ''); setParam('material', ''); }}
+              className="mt-3 text-xs text-gray-400 underline underline-offset-2 hover:text-gray-600">Limpiar filtros</button>
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-4">
               {paginated.map((model) => (
                 <ProductCard key={model.modelcode} product={model} />
               ))}
             </div>
 
             {totalPages > 1 && (
-              <div className="mt-10 flex items-center justify-center gap-2">
-                <button
-                  onClick={() => setParam('page', String(safePage - 1))}
-                  disabled={safePage <= 1}
-                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#e2e2e2]/15 text-sm text-gray-700/60 transition hover:border-[#ff4f00] hover:text-[#ff4f00] disabled:cursor-not-allowed disabled:opacity-30"
-                >
-                  <span className="material-symbols-outlined">chevron_left</span>
+              <div className="mt-12 flex items-center justify-center gap-2">
+                <button onClick={() => setParam('page', String(safePage - 1))} disabled={safePage <= 1}
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 text-sm text-gray-400 transition hover:border-gray-300 hover:text-gray-600 disabled:cursor-not-allowed disabled:opacity-30">
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6" /></svg>
                 </button>
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                  <button
-                    key={p}
-                    onClick={() => setParam('page', String(p))}
-                    className={`${spaceGrotesk.className} flex h-10 w-10 items-center justify-center rounded-xl text-xs font-bold transition-all ${
-                      p === safePage
-                        ? 'bg-[#ff4f00] text-[#0A0A0A]'
-                        : 'border border-[#e2e2e2]/15 text-gray-700/60 hover:border-[#ff4f00] hover:text-gray-700'
-                    }`}
-                  >
-                    {p}
-                  </button>
+                  <button key={p} onClick={() => setParam('page', String(p))}
+                    className={`${space.className} flex h-9 w-9 items-center justify-center rounded-xl text-xs font-semibold transition-all ${
+                      p === safePage ? 'bg-gray-900 text-white' : 'border border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                    }`}>{p}</button>
                 ))}
-                <button
-                  onClick={() => setParam('page', String(safePage + 1))}
-                  disabled={safePage >= totalPages}
-                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#e2e2e2]/15 text-sm text-gray-700/60 transition hover:border-[#ff4f00] hover:text-[#ff4f00] disabled:cursor-not-allowed disabled:opacity-30"
-                >
-                  <span className="material-symbols-outlined">chevron_right</span>
+                <button onClick={() => setParam('page', String(safePage + 1))} disabled={safePage >= totalPages}
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-200 text-sm text-gray-400 transition hover:border-gray-300 hover:text-gray-600 disabled:cursor-not-allowed disabled:opacity-30">
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6" /></svg>
                 </button>
               </div>
-            )}
-            {models.length > 0 && (
-              <section className="mt-16 border-t border-gray-200 pt-12">
-                <h2 className={`${montserrat.className} text-2xl font-black text-gray-900`}>Completa el look</h2>
-                <p className="mt-2 text-sm text-gray-500">Combina con otras prendas y accesorios</p>
-                <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
-                  {models
-                    .filter((m) => m.family !== (family !== 'TODAS' ? family : undefined))
-                    .sort(() => Math.random() - 0.5)
-                    .slice(0, 6)
-                    .map((m) => (
-                      <button key={m.modelcode} onClick={() => setParam('family', m.family)}
-                        className="group cursor-pointer rounded-xl border border-gray-100 bg-white p-3 text-center transition-all hover:border-gray-200 hover:shadow-sm"
-                      >
-                        <div className="mx-auto h-24 w-24 overflow-hidden rounded-lg bg-gray-50">
-                          {m.imageUrl ? (
-                            <img src={m.imageUrl} alt={m.modelname} className="h-full w-full object-contain p-2 transition-transform group-hover:scale-105" />
-                          ) : (
-                            <div className="flex h-full items-center justify-center text-gray-300">
-                              <svg className="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                              </svg>
-                            </div>
-                          )}
-                        </div>
-                        <p className="mt-2 text-xs font-semibold text-gray-800">{m.modelname}</p>
-                        <p className="text-[10px] text-gray-400">{m.family}</p>
-                      </button>
-                    ))}
-                </div>
-              </section>
             )}
           </>
         )}
       </section>
 
-      <style>{`
-        .hazard-pattern {
-          background-image: repeating-linear-gradient(-45deg, #ff4f00, #ff4f00 10px, transparent 10px, transparent 20px);
-        }
-      `}</style>
-
-      {bundleOpen && (
-        <BundleSelector models={models} onClose={() => setBundleOpen(false)} />
-      )}
+      {bundleOpen && <BundleSelector models={models} onClose={() => setBundleOpen(false)} />}
     </main>
   );
 }
