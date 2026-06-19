@@ -22,6 +22,7 @@ interface AppHeaderProps {
 const landingNav: NavItem[] = [
   { label: 'INICIO', href: '/' },
   { label: 'PRODUCTOS', href: '/catalog' },
+  { label: 'DISEÑADOR', href: '/designer' },
   { label: 'PROCESO', href: '/#proceso' },
   { label: 'FAQ', href: '/#faq' },
   { label: 'CONTACTO', href: '/#contacto', isAction: true },
@@ -30,6 +31,7 @@ const landingNav: NavItem[] = [
 const ecommerceNav: NavItem[] = [
   { label: 'INICIO', href: '/' },
   { label: 'CATÁLOGO', href: '/catalog' },
+  { label: 'DISEÑADOR', href: '/designer' },
 ];
 
 export default function AppHeader({ variant = 'dark' }: AppHeaderProps) {

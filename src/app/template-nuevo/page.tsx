@@ -7,6 +7,7 @@ import Link from 'next/link';
 import AppHeader from '@/components/AppHeader';
 import Footer from '@/components/Footer';
 import ContactSection from '@/app/components/ContactSection';
+import UGCGallery from '@/components/UGCGallery';
 
 const montserrat = Montserrat({ subsets: ['latin'], weight: ['700', '800', '900'] });
 const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600'] });
@@ -129,6 +130,8 @@ export default function LightLanding() {
           </div>
         </div>
       </section>
+
+      <UGCGallery />
 
       {/* TESTIMONIALS */}
       <section className="mx-auto max-w-7xl px-5 py-24 md:px-10">
