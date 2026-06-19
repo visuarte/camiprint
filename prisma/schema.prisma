@@ -81,25 +81,31 @@ model Customer {
 model Order {
   id            String   @id @default(cuid())
   customerId    String
-  totalAmount   Float    // Total order amount
-  status        String   @default("pending") // pending, paid, shipped, delivered, cancelled
+  totalAmount   Float
+  status        String   @default("pending")
   email         String   @db.VarChar(255)
   phone         String   @db.VarChar(20)
   address       String   @db.Text
-  stripePaymentIntentId String? @db.VarChar(255) // Stripe payment intent ID
-  // Fields to support admin responses to quotes
+  stripePaymentIntentId String? @db.VarChar(255)
+  // Producción híbrida
+  productionSource  String   @default("local") // local | gor_factory | hybrid
+  gorOrderRef       String?  @db.VarChar(255)  // Referencia del pedido en Gor Factory
+  trackingNumber    String?  @db.VarChar(255)
+  trackingCarrier   String?  @db.VarChar(50)
+  shippedAt         DateTime?
+  // Admin response fields
   responseMessage String? @db.Text
   respondedBy     String? @db.VarChar(255)
   respondedAt     DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  // Relations
   customer      Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
   items         OrderItem[]
 
   @@index([customerId])
   @@index([status])
+  @@index([productionSource])
   @@index([createdAt])
 }
 
