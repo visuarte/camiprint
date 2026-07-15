@@ -1,16 +1,12 @@
 import type { MetadataRoute } from 'next';
 import { brandConfig } from '@/config/brand';
-
-const locations = [
-  'sevilla', 'alicante', 'valencia', 'murcia', 'madrid',
-  'barcelona', 'malaga', 'bilbao', 'zaragoza', 'palma', 'las-palmas',
-];
+import { CITY_SLUGS } from '@/config/cities';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   const base = brandConfig.siteUrl;
 
-  const locationPages = locations.flatMap(city => [
+  const locationPages = CITY_SLUGS.flatMap(city => [
     { url: `${base}/camisetas-personalizadas-${city}`, lastModified: now, changeFrequency: 'weekly' as const, priority: 0.9 },
     { url: `${base}/impresion-dtf-${city}`, lastModified: now, changeFrequency: 'weekly' as const, priority: 0.9 },
   ]);
