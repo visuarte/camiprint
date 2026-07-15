@@ -88,6 +88,22 @@ const nextConfig: NextConfig = {
         destination: '/politica-privacidad',
         permanent: true,
       },
+      // Templates legacy — borrados 15 Jul 2026 (limpieza código muerto)
+      {
+        source: '/template-2',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/template-3',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/template-nuevo',
+        destination: '/',
+        permanent: true,
+      },
     ];
   },
 
