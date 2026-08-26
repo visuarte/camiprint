@@ -19,13 +19,17 @@ jobs:
     
     steps:
       - uses: actions/checkout@v4
-      
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'npm'
-      
-      - run: npm install --legacy-peer-deps
-      
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+
       - name: 🔍 Brand Watchdog
-        run: npm run watchdog:brand
+        run: pnpm run watchdog:brand
