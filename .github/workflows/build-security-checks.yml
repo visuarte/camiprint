@@ -80,6 +80,7 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL_TEST }}
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
           QUOTES_REPOSITORY_DRIVER: json
           RATE_LIMIT_STORE_DRIVER: memory
 
@@ -93,6 +94,13 @@ jobs:
     name: E2E Mobile Smoke (iPhone)
     runs-on: ubuntu-latest
     needs: security-checks
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL_TEST }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      QUOTES_REPOSITORY_DRIVER: json
+      RATE_LIMIT_STORE_DRIVER: memory
 
     steps:
       - name: Checkout code
