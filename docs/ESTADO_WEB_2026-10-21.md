@@ -1,6 +1,6 @@
 # camiart.com — estado de la web (21 Oct 2026, 19:45)
 
-> **ACTUALIZADO 21 oct 21:00: la web vuelve a producción con base de datos nueva.** Retrato medido, no de memoria. Todo lo de abajo está comprobado contra producción
+> **ACTUALIZADO 21 oct 22:15 — DECISIÓN DE DIEGO: la web vuelve a MANTENIMIENTO y se queda cerrada de momento, ya con la base de datos nueva montada y verificada.** Retrato medido, no de memoria. Todo lo de abajo está comprobado contra producción
 > o contra el disco en el momento que dice la cabecera.
 > De cara a decidir el acceso a Supabase: **antes el estado, después la llave.**
 
@@ -20,7 +20,11 @@
 | Legales | `/aviso-legal`, `/politica-*`, `/terminos-y-condiciones` | Canon legal web |
 | Portfolio y guías | `/portfolio`, `/guia-tallas`, `/impresion-dtf`, `/merchandising-empresas`, `/camisetas-personalizadas` | Contenido/SEO |
 
-## 2. Estado (21 oct, 19:45) — **EN OBRAS** → resuelto a las 21:00, ver `PLAN_NUEVA_BASE_DE_DATOS.md`
+## 2. Estado (21 oct, 22:15) — **EN MANTENIMIENTO, cerrada a propósito**
+
+`MAINTENANCE_MODE=1` en Vercel. Las 15 rutas sirven la portada de obras; `/api` sigue respondiendo
+(verificado: `/api/products` 200) para poder diagnosticar. La base de datos está viva y sembrada;
+lo que está cerrado es la puerta, no el motor.
 
 Comprobado ruta por ruta (15/15): todas sirven la portada de obras con **HTTP 200**.
 

@@ -39,6 +39,14 @@
 > El modo obras se apaga **borrando la variable** `MAINTENANCE_MODE` en Vercel (hecho). No hay que
 > revertir código, y el historial de git queda entero.
 
+### Cierre del día (22:15)
+
+- **La web vuelve a mantenimiento por decisión de Diego** (`MAINTENANCE_MODE=1`): cerrada de momento,
+  con el motor ya montado y verificado detrás.
+- **CI en verde por primera vez desde el 5 de junio**: build sin secreto de Stripe, 16 tests obsoletos
+  del rediseño eliminados, mocks de cookies corregidos y un overflow real de 137px en móvil arreglado.
+- **Contraseña de la base rotada** y propagada a Vercel; token de Supabase **revocado** (401) y borrado.
+
 ### Pendiente tras la A
 
 1. **Rotar la contraseña de la base** desde el dashboard (Settings → Database → Reset password): la
