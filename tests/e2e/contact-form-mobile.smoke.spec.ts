@@ -5,12 +5,37 @@ test.describe('Smoke multi-device: formulario de contacto', () => {
   test('no hay overflow horizontal en la home', async ({ page }) => {
     await page.goto('/');
 
-    const hasHorizontalOverflow = await page.evaluate(() => {
+    // Se listan los culpables para que el log del CI diga QUÉ elemento
+    // desborda, no solo que desborda.
+    const info = await page.evaluate(() => {
       const doc = document.documentElement;
-      return doc.scrollWidth - doc.clientWidth > 1;
+      const vw = doc.clientWidth;
+      const culpables: Array<Record<string, unknown>> = [];
+      document.querySelectorAll('*').forEach((el) => {
+        const r = el.getBoundingClientRect();
+        if (r.width > vw + 1) {
+          culpables.push({
+            tag: el.tagName.toLowerCase(),
+            clase: String((el as HTMLElement).className || '').slice(0, 60),
+            ancho: Math.round(r.width),
+            izquierda: Math.round(r.left),
+            texto: (el.textContent || '').trim().slice(0, 40),
+          });
+        }
+      });
+      return {
+        viewport: vw,
+        scrollWidth: doc.scrollWidth,
+        overflow: doc.scrollWidth - doc.clientWidth,
+        culpables: culpables.slice(0, 6),
+      };
     });
 
-    expect(hasHorizontalOverflow).toBe(false);
+    expect(
+      info.overflow <= 1,
+      `Overflow de ${info.overflow}px (viewport ${info.viewport}, scrollWidth ${info.scrollWidth}). ` +
+        `Elementos más anchos que la pantalla: ${JSON.stringify(info.culpables)}`
+    ).toBe(true);
   });
 
   test('es visible y clicable', async ({ page }) => {

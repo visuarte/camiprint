@@ -9,7 +9,14 @@ describe('Admin Vercel script endpoint', () => {
   it('returns JSON with { script } when authenticated', async () => {
     const req: any = {
       headers: { get: (k: string) => (k.toLowerCase() === 'authorization' ? 'Bearer test-token' : null) },
-      cookies: { get: (_: string) => undefined },
+      // El cliente SSR de Supabase pide getAll()/setAll(); con solo get() lanzaba
+      // "req.cookies.getAll is not a function" como rechazo no capturado y
+      // tumbaba el proceso de test aunque las aserciones pasaran.
+      cookies: {
+        get: (_: string) => undefined,
+        getAll: () => [],
+        set: (_: string, __: string, ___: unknown) => undefined,
+      },
     };
 
     const res: any = await GET(req);
