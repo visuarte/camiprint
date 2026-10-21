@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Camiprint">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="CamiArt">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#0b1220"/>
@@ -9,7 +9,7 @@
   <circle cx="1030" cy="130" r="160" fill="#22d3ee" fill-opacity="0.12"/>
   <circle cx="130" cy="560" r="190" fill="#38bdf8" fill-opacity="0.12"/>
   <text x="90" y="250" fill="#f8fafc" font-family="Arial, Helvetica, sans-serif" font-size="66" font-weight="700">
-    Camiprint
+    CamiArt
   </text>
   <text x="90" y="330" fill="#cbd5e1" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="500">
     Camisetas Personalizadas para Empresas
