@@ -19,6 +19,7 @@
 | 2 | Interruptor de obras en `next.config.ts` (`rewrites`, `MAINTENANCE_MODE=1`) | la variable está en Vercel Production |
 | 3 | Cron `quotes-sla-breach-cron` desactivado en el repo | `gh workflow list` → *disabled* |
 | 4 | Copia de seguridad del `.env` productivo: no hay datos que guardar (el proyecto está borrado) | — |
+| 5 | Avisos de presupuesto: `QUOTES_NOTIFICATION_EMAIL` (Vercel, Production) apunta a un buzón real | antes iban a `hola@camiprint.com`, dominio **sin MX** → rebotaban |
 
 > El modo obras se apaga **borrando la variable** `MAINTENANCE_MODE` en Vercel. No hay que
 > revertir código, y el historial de git queda entero.
