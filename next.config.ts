@@ -108,6 +108,25 @@ const nextConfig: NextConfig = {
   },
 
   async rewrites() {
+    // ── MODO OBRAS ──────────────────────────────────────────────────────
+    // La web está en construcción (base de datos nueva, ver
+    // docs/PLAN_NUEVA_BASE_DE_DATOS.md). Con MAINTENANCE_MODE=1 en el entorno
+    // todas las páginas sirven la portada de obras; /api sigue respondiendo
+    // para poder probar y diagnosticar. Se apaga borrando la variable: no hay
+    // que revertir código.
+    if (process.env.MAINTENANCE_MODE === '1') {
+      return [
+        {
+          source: '/((?!_next|api|mantenimiento|favicon|assets|images|robots|sitemap).*)',
+          destination: '/mantenimiento.html',
+        },
+        {
+          source: '/api/admin/:path*',
+          destination: '/api/admin/:path*',
+        },
+      ];
+    }
+
     return [
       // El Puente: todo tráfico admin pasa por el proxy validador
       {
