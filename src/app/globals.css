@@ -246,3 +246,38 @@ a {
     height: auto;
   }
 }
+
+/* ── Rejillas de la portada ───────────────────────────────────────────────
+   Estaban con columnas fijas en estilos en línea (repeat(4,1fr) y
+   repeat(3,1fr)): en un móvil de 390px las tarjetas se salían 137px por la
+   derecha y quedaban cortadas (el body tiene overflow-x-hidden, así que no
+   se podía ni arrastrar para verlas). Detectado por el smoke de iPhone 13
+   del CI, 21 oct 2026: overflow 137px (scrollWidth 527 vs viewport 390).
+   Estas clases bajan de 4→2→1 y de 3→1 según el ancho. */
+.grid-portada-4 {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(4, 1fr);
+}
+.grid-portada-3 {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(3, 1fr);
+}
+.grid-portada-3-testimonios {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 900px) {
+  .grid-portada-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-portada-3,
+  .grid-portada-3-testimonios { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .grid-portada-4,
+  .grid-portada-3,
+  .grid-portada-3-testimonios { grid-template-columns: 1fr; }
+}

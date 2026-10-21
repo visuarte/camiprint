@@ -160,7 +160,7 @@ export default function HomePage() {
               <p style={{ textAlign: 'center', color: 'var(--c-text-secondary)', marginTop: 8, fontSize: 16 }}>
                 Cuatro categorías, una calidad
               </p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginTop: 40 }}>
+              <div className="grid-portada-4" style={{ marginTop: 40 }}>
                 {[
                   { name: 'Camisetas', img: '/portfolio/real-1.jpg', desc: 'DTF, vinilo, serigrafía' },
                   { name: 'Polos', img: '/portfolio/real-2.jpg', desc: 'Bordado corporativo' },
@@ -185,7 +185,7 @@ export default function HomePage() {
             <div style={{ maxWidth: 900, margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
               <h2 style={{ fontFamily: 'var(--ff-display)', fontSize: 36, fontWeight: 900, margin: 0 }}>Cómo funciona</h2>
               <p style={{ color: 'var(--c-text-secondary)', marginTop: 8, fontSize: 16 }}>Tres pasos. Sin complicaciones.</p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, marginTop: 48 }}>
+              <div className="grid-portada-3" style={{ marginTop: 48 }}>
                 {[
                   { n: '01', t: 'Diseñas', d: 'Elige modelo y color. Sube tu logo o usa nuestro diseñador 3D.' },
                   { n: '02', t: 'Aprobamos', d: 'Te enviamos la prueba virtual gratis. Hasta 3 cambios sin coste.' },
@@ -208,7 +208,7 @@ export default function HomePage() {
           <section style={{ padding: '80px 0' }}>
             <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
               <h2 style={{ fontFamily: 'var(--ff-display)', fontSize: 36, fontWeight: 900, textAlign: 'center', margin: 0 }}>Lo que dicen</h2>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20, marginTop: 40 }}>
+              <div className="grid-portada-3-testimonios" style={{ marginTop: 40 }}>
                 {[
                   { n: 'Marina G.', c: 'Brasa Norte', t: '120 camisetas para todo el equipo. La calidad superó nuestras expectativas.' },
                   { n: 'Javier R.', c: 'Nexo Logistics', t: '200 camisetas en 8 días. Entregaron a tiempo con acabado excelente.' },
