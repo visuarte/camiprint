@@ -16,7 +16,11 @@ test.describe('Smoke multi-device: formulario de contacto', () => {
   test('es visible y clicable', async ({ page }) => {
 
     const home = new HomePage(page);
-    await home.goto();
+    // 21 oct 2026: el formulario de contacto ya NO está en la home (el rediseño
+    // dejó la portada con CTAs a /catalog y /designer). Se comprueba en la
+    // plantilla, que es donde vive ContactSection. Pendiente de decisión de
+    // producto: si el formulario vuelve a la home, apuntar otra vez a '/'.
+    await page.goto('/template-nuevo');
     await home.openContactSection();
 
     const contactSection = page.locator('#contacto');
