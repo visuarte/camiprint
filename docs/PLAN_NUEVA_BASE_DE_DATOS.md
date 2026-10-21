@@ -21,8 +21,32 @@
 | 4 | Copia de seguridad del `.env` productivo: no hay datos que guardar (el proyecto está borrado) | — |
 | 5 | Avisos de presupuesto: `QUOTES_NOTIFICATION_EMAIL` (Vercel, Production) apunta a un buzón real | antes iban a `hola@camiprint.com`, dominio **sin MX** → rebotaban |
 
-> El modo obras se apaga **borrando la variable** `MAINTENANCE_MODE` en Vercel. No hay que
+### 21 oct 2026, 21:00 — la Opción A está HECHA (proyecto `ymansresyxotrmjjriuv`, eu-central-1)
+
+| | Qué | Prueba |
+|---|---|---|
+| 1 | Proyecto nuevo en Supabase (Europa) | API: `ACTIVE_HEALTHY` |
+| 2 | 18 tablas del esquema + `_prisma_migrations` con las 4 migraciones y sus checksums | `select count(*) from pg_tables` = 20 |
+| 3 | **RLS cerrado en todas** | tablas sin RLS = **0** · políticas = **0** |
+| 4 | `alter default privileges`: toda tabla nueva nace cerrada | ejecutado |
+| 5 | Catálogo sembrado | 48 filas en `Product` |
+| 6 | 15 variables actualizadas en Vercel (las públicas, en `vercel.json`) | `vercel env ls` |
+| 7 | Web **fuera de obras** | `/`, `/catalog` 200 con su título real |
+| 8 | Catálogo vivo | `/api/products` 200 · `/api/v1/gor-catalog` 200 (409 modelos) |
+| 9 | Presupuesto de punta a punta | POST → 201 · fila en `Quote` · **borrada** después |
+| 10 | Cron reactivado y en verde | run `39657100651` → success (9 s) |
+
+> El modo obras se apaga **borrando la variable** `MAINTENANCE_MODE` en Vercel (hecho). No hay que
 > revertir código, y el historial de git queda entero.
+
+### Pendiente tras la A
+
+1. **Rotar la contraseña de la base** desde el dashboard (Settings → Database → Reset password): la
+   contraseña apareció en una traza de depuración de Prisma mientras se diagnosticaba la conexión.
+   El rol `postgres` del proyecto **no es superusuario**, así que no se puede cambiar por SQL.
+2. **Revocar el token de Supabase** usado para el montaje (Account → Access Tokens).
+3. **Resend**: la cuota mensual está agotada (cuenta compartida con Brefy) — los avisos por correo
+   no salen hasta recargar o cambiar de proveedor.
 
 ---
 

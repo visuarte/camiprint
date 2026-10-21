@@ -1,6 +1,6 @@
 # camiart.com — estado de la web (21 Oct 2026, 19:45)
 
-> Retrato medido, no de memoria. Todo lo de abajo está comprobado contra producción
+> **ACTUALIZADO 21 oct 21:00: la web vuelve a producción con base de datos nueva.** Retrato medido, no de memoria. Todo lo de abajo está comprobado contra producción
 > o contra el disco en el momento que dice la cabecera.
 > De cara a decidir el acceso a Supabase: **antes el estado, después la llave.**
 
@@ -20,7 +20,7 @@
 | Legales | `/aviso-legal`, `/politica-*`, `/terminos-y-condiciones` | Canon legal web |
 | Portfolio y guías | `/portfolio`, `/guia-tallas`, `/impresion-dtf`, `/merchandising-empresas`, `/camisetas-personalizadas` | Contenido/SEO |
 
-## 2. Estado ahora mismo — **EN OBRAS**
+## 2. Estado (21 oct, 19:45) — **EN OBRAS** → resuelto a las 21:00, ver `PLAN_NUEVA_BASE_DE_DATOS.md`
 
 Comprobado ruta por ruta (15/15): todas sirven la portada de obras con **HTTP 200**.
 
