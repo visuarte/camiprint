@@ -115,18 +115,23 @@ const nextConfig: NextConfig = {
     // para poder probar y diagnosticar. Se apaga borrando la variable: no hay
     // que revertir código.
     if (process.env.MAINTENANCE_MODE === '1') {
-      return [
-        // La raíz necesita su propia regla: el patrón negativo no casa con "/".
-        { source: '/', destination: '/mantenimiento.html' },
-        {
-          source: '/((?!_next|api|mantenimiento|favicon|assets|images|robots|sitemap).*)',
-          destination: '/mantenimiento.html',
-        },
-        {
-          source: '/api/admin/:path*',
-          destination: '/api/admin/:path*',
-        },
-      ];
+      // beforeFiles: las páginas ya prerenderizadas (incluida la portada) se
+      // saltan los rewrites normales, así que el desvío va ANTES del sistema
+      // de ficheros. /_next y /api quedan fuera para que el sitio siga
+      // sirviendo estilos y para poder diagnosticar la API.
+      return {
+        beforeFiles: [
+          { source: '/', destination: '/mantenimiento.html' },
+          {
+            source: '/((?!_next|api|mantenimiento|favicon|assets|images|robots|sitemap).*)',
+            destination: '/mantenimiento.html',
+          },
+        ],
+        afterFiles: [
+          { source: '/api/admin/:path*', destination: '/api/admin/:path*' },
+        ],
+        fallback: [],
+      };
     }
 
     return [
