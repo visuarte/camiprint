@@ -10,42 +10,49 @@ test.describe('Smoke multi-device: formulario de contacto', () => {
     const info = await page.evaluate(() => {
       const doc = document.documentElement;
       const vw = doc.clientWidth;
-      const culpables: Array<Record<string, unknown>> = [];
+      const fuera: Array<Record<string, unknown>> = [];
+      const anchos: Array<Record<string, unknown>> = [];
       document.querySelectorAll('*').forEach((el) => {
         const r = el.getBoundingClientRect();
-        if (r.width > vw + 1) {
-          culpables.push({
-            tag: el.tagName.toLowerCase(),
-            clase: String((el as HTMLElement).className || '').slice(0, 60),
-            ancho: Math.round(r.width),
-            izquierda: Math.round(r.left),
-            texto: (el.textContent || '').trim().slice(0, 40),
-          });
-        }
+        const datos = {
+          tag: el.tagName.toLowerCase(),
+          clase: String((el as HTMLElement).className || '').slice(0, 50),
+          ancho: Math.round(r.width),
+          izq: Math.round(r.left),
+          der: Math.round(r.right),
+          texto: (el.textContent || '').trim().slice(0, 30),
+        };
+        // El culpable puede no ser "más ancho" sino estar desplazado a la
+        // derecha (negative margins, transforms, position fixed...).
+        if (r.right > vw + 1 || r.left < -1) fuera.push(datos);
+        anchos.push(datos);
       });
+      anchos.sort((a: any, b: any) => b.ancho - a.ancho);
       return {
         viewport: vw,
         scrollWidth: doc.scrollWidth,
         overflow: doc.scrollWidth - doc.clientWidth,
-        culpables: culpables.slice(0, 6),
+        fuera: fuera.slice(0, 6),
+        masAnchos: anchos.slice(0, 5),
       };
     });
 
     expect(
       info.overflow <= 1,
       `Overflow de ${info.overflow}px (viewport ${info.viewport}, scrollWidth ${info.scrollWidth}). ` +
-        `Elementos más anchos que la pantalla: ${JSON.stringify(info.culpables)}`
+        `Fuera de pantalla: ${JSON.stringify(info.fuera)} · ` +
+        `Más anchos: ${JSON.stringify(info.masAnchos)}`
     ).toBe(true);
   });
 
-  test('es visible y clicable', async ({ page }) => {
+  // PENDIENTE DE PRODUCTO (21 oct 2026): el formulario de contacto ya no está
+  // alcanzable. Vive en ContactSection, que solo pinta /template-nuevo, y esa
+  // ruta redirige 308 a / (next.config.ts). Se deja marcado como fixme —no se
+  // finge que pasa— hasta que el formulario vuelva a una página viva.
+  test.fixme('es visible y clicable', async ({ page }) => {
 
     const home = new HomePage(page);
-    // 21 oct 2026: el formulario de contacto ya NO está en la home (el rediseño
-    // dejó la portada con CTAs a /catalog y /designer). Se comprueba en la
-    // plantilla, que es donde vive ContactSection. Pendiente de decisión de
-    // producto: si el formulario vuelve a la home, apuntar otra vez a '/'.
-    await page.goto('/template-nuevo');
+    await page.goto('/');
     await home.openContactSection();
 
     const contactSection = page.locator('#contacto');

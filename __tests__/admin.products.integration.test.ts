@@ -62,6 +62,10 @@ function makeRequest(overrides?: {
         }
         return undefined;
       },
+      // El cliente SSR de Supabase pide getAll()/setAll(); sin ellos lanzaba
+      // "req.cookies.getAll is not a function" como rechazo no capturado.
+      getAll: () => (overrides?.cookieToken ? [{ name: 'admin_token', value: overrides.cookieToken }] : []),
+      set: () => undefined,
     },
     json: async () => overrides?.body ?? {},
   } as any;
