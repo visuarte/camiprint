@@ -3,7 +3,9 @@
   "framework": "nextjs",
   "buildCommand": "pnpm run build",
   "installCommand": "pnpm install --frozen-lockfile",
-  "regions": ["iad1"],
+  "regions": [
+    "iad1"
+  ],
   "env": {
     "RATE_LIMIT_STORE_DRIVER": "memory",
     "LOG_LEVEL": "info",
@@ -11,15 +13,26 @@
     "NEXT_PUBLIC_QUOTES_API_ENABLED": "true",
     "NODE_ENV": "production",
     "RESEND_FROM_EMAIL": "noreply@camiart.com",
-    "RESEND_FROM_NAME": "CamiArt"
+    "RESEND_FROM_NAME": "CamiArt",
+    "NEXT_PUBLIC_SUPABASE_URL": "https://ymansresyxotrmjjriuv.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_tSfVlMBZyrSnFIe2UhW-Vg_mPSTCn_J"
   },
   "headers": [
     {
       "source": "/api/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains"
+        }
       ]
     }
   ],
@@ -52,4 +65,3 @@
     }
   ]
 }
-
